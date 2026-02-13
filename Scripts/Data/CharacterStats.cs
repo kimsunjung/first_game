@@ -6,11 +6,11 @@ namespace FirstGame.Data
 	[GlobalClass]
 	public partial class CharacterStats : Resource
 	{
-        // Event: current, max
+        // 이벤트: 현재체력, 최대체력 (Event: current, max)
 		public event Action<int, int> OnHealthChanged;
 
 		[Export] public float MoveSpeed { get; set; } = 300.0f;
-        [Export] public float AttackRange { get; set; } = 80.0f; // Added for attack logic
+        [Export] public float AttackRange { get; set; } = 80.0f; // 공격 사거리 (Added for attack logic)
 		[Export] public int MaxHealth { get; set; } = 100;
         
         private int _currentHealth = 100;
@@ -20,7 +20,7 @@ namespace FirstGame.Data
             get => _currentHealth;
             set
             {
-                // Clamp health between 0 and MaxHealth
+                // 체력을 0과 최대 체력 사이로 제한 (Clamp health between 0 and MaxHealth)
                 _currentHealth = Mathf.Clamp(value, 0, MaxHealth);
                 OnHealthChanged?.Invoke(_currentHealth, MaxHealth);
             }

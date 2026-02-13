@@ -5,10 +5,10 @@ namespace FirstGame.Core
 {
 	public partial class GameManager : Node
 	{
-		// Singleton Pattern
+		// 싱글톤 패턴 (Singleton Pattern)
 		public static GameManager Instance { get; private set; }
 
-		// Example Global State (Gold)
+		// 예시: 전역 상태 (골드) (Example Global State)
 		private int _playerGold = 0;
 		public int PlayerGold 
 		{ 
@@ -20,7 +20,7 @@ namespace FirstGame.Core
 			}
 		}
 
-		// Event for UI updates (WinForms style)
+		// UI 업데이트용 이벤트 (Event for UI updates)
 		public event Action<int> OnGoldChanged;
 
 		public override void _Ready()
@@ -28,13 +28,21 @@ namespace FirstGame.Core
 			if (Instance == null)
 			{
 				Instance = this;
-				// Optional: Make this persist across scene loads
+				// 옵션: 씬 로드 시 유지 (Optional: Make this persist across scene loads)
 				// ProcessMode = ProcessModeEnum.Always; 
-				GD.Print("GameManager Initialized");
+				GD.Print("게임 매니저 초기화됨 (GameManager Initialized)");
 			}
 			else
 			{
 				QueueFree();
+			}
+		}
+
+		public override void _ExitTree()
+		{
+			if (Instance == this)
+			{
+				Instance = null;
 			}
 		}
 	}

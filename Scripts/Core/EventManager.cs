@@ -5,7 +5,7 @@ namespace FirstGame.Core
 {
 	public static class EventManager
 	{
-		// Example: Player Death Event
+		// 예시: 플레이어 사망 이벤트 (Example: Player Death Event)
 		public static event Action OnPlayerDeath;
 
 		public static void TriggerPlayerDeath()
@@ -13,6 +13,6 @@ namespace FirstGame.Core
 			OnPlayerDeath?.Invoke();
 		}
 
-		// Add more global events here as needed
+		// 필요 시 전역 이벤트 추가 (Add more global events here as needed)
 	}
 }

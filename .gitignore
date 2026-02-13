@@ -12,6 +12,9 @@ obj/
 *.user
 *.suo
 
+# Claude Code
+CLAUDE.md
+
 # OS
 Thumbs.db
 Desktop.ini

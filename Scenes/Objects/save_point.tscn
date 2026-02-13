@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=3 uid="uid://b8x4y2z5w4v0"]
+
+[ext_resource type="Script" uid="uid://crhp7cy0gjh6o" path="res://Scripts/Entities/SavePoint/SavePoint.cs" id="1_saveP"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_save"]
+radius = 50.0
+
+[node name="SavePoint" type="Area2D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_saveP")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_save")
+debug_color = Color(0.2, 0.8, 0.2, 0.42)
+
+[node name="SaveIcon" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -15.0
+offset_right = 30.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "[SAVE]"
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="."]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -60.0
+offset_top = 40.0
+offset_right = 60.0
+offset_bottom = 63.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 14
+text = "Press E to Save"
+horizontal_alignment = 1

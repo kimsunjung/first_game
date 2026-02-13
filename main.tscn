@@ -3,13 +3,20 @@
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://ycuqlv4685cv" path="res://Scenes/Characters/player.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://c8qj0y5x4k3l" path="res://Scenes/UI/hud.tscn" id="3_hud"]
+[ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="4_spawner"]
+[ext_resource type="PackedScene" uid="uid://b8x4y205w4v0" path="res://Scenes/Objects/save_point.tscn" id="5_savepoint"]
 
 [node name="Main" type="Node2D" unique_id=667305305]
 
-[node name="Enemy" parent="." unique_id=188341649 instance=ExtResource("1_0xm2m")]
-position = Vector2(246, 289)
+[node name="EnemySpawner" type="Node2D" parent="." unique_id=1651480248]
+position = Vector2(400, 300)
+script = ExtResource("4_spawner")
+EnemyScene = ExtResource("1_0xm2m")
+
+[node name="SavePoint" parent="." unique_id=1136075287 instance=ExtResource("5_savepoint")]
+position = Vector2(500, 200)
 
 [node name="Player" parent="." unique_id=1068721970 instance=ExtResource("2_h2yge")]
-position = Vector2(649, 325)
+position = Vector2(689, 335)
 
-[node name="HUD" parent="." instance=ExtResource("3_hud")]
+[node name="HUD" parent="." unique_id=453428201 instance=ExtResource("3_hud")]

@@ -10,93 +10,97 @@ namespace FirstGame.Entities.Enemies
 	{
 		[Export] public EnemyStats Stats { get; set; }
 		
-		// Target to chase (usually the player)
+		// 추적할 타겟 (보통 플레이어) (Target to chase)
 		private Node2D _target;
 
 		public override void _Ready()
 		{
-			if (Stats == null) Stats = new EnemyStats();
+			// Stats 공유 문제 해결: 고유 인스턴스로 복제 (Fix shared resource issue: Duplicate)
+			if (Stats != null)
+				Stats = (EnemyStats)Stats.Duplicate();
+			else
+				Stats = new EnemyStats();
 			
-			// Initialize health
+			// 체력 초기화 (Initialize health)
 			Stats.CurrentHealth = Stats.MaxHealth;
 			
-			// Find player by group or singleton (Adjust based on your preference)
-			// For now, let's assume we find a node in the "Player" group, or we can set it later.
-			// A simple way is to look for the player when physics process runs or via a detection area.
+			// 그룹으로 플레이어 찾기 (Find player by group)
+			// 지금은 "Player" 그룹의 첫 번째 노드를 찾음. (Assumes "Player" group has target)
 		}
 
 		private float _attackTimer = 0f;
 
 		public override void _PhysicsProcess(double delta)
 		{
-			if (_target == null)
+			if (!IsInstanceValid(_target))
 			{
 				FindTarget();
 				return;
 			}
 
-            // Cooldown Timer
-            _attackTimer -= (float)delta;
+			// 쿨타임 타이머 (Cooldown Timer)
+			_attackTimer -= (float)delta;
 
-			// Simple Chase AI
+			// 간단한 추적 AI (Simple Chase AI)
 			Vector2 direction = GlobalPosition.DirectionTo(_target.GlobalPosition);
 			float distance = GlobalPosition.DistanceTo(_target.GlobalPosition);
 
+			// 디버깅: 거리 확인 (Debug distance)
+			// GD.Print($"Enemy Distance to Player: {distance}");
+
 			if (distance <= Stats.AttackRange)
 			{
-                // In Attack Range: Stop and Attack
+				// 공격 사거리 내: 정지 및 공격 (In Attack Range: Stop and Attack)
 				Velocity = Vector2.Zero;
-                TryAttack();
+				TryAttack();
 			}
 			else if (distance <= Stats.DetectionRange)
 			{
-                // In Chase Range: Move towards target
+				// 추적 사거리 내: 타겟 향해 이동 (In Chase Range: Move towards target)
 				Velocity = direction * Stats.MoveSpeed;
 			}
-            else
-            {
-                // Out of range: Stop
-                Velocity = Vector2.Zero;
-            }
-            
-            MoveAndSlide();
+			else
+			{
+				// 사거리 밖: 정지 (Out of range: Stop)
+				Velocity = Vector2.Zero;
+			}
+			
+			MoveAndSlide();
 		}
-        
-        private void TryAttack()
-        {
-            if (_attackTimer <= 0f && _target is IDamageable target)
-            {
-                target.TakeDamage(Stats.BaseDamage);
-                _attackTimer = Stats.AttackCooldown;
-                GD.Print($"Enemy attacked for {Stats.BaseDamage} damage!");
-            }
-        }
+		
+		private void TryAttack()
+		{
+			// 타겟 유효성 검사 추가 (Add target validation)
+			if (_attackTimer <= 0f && IsInstanceValid(_target) && _target is IDamageable target)
+			{
+				target.TakeDamage(Stats.BaseDamage);
+				_attackTimer = Stats.AttackCooldown;
+				GD.Print($"적이 {Stats.BaseDamage}의 데미지로 공격! (Enemy attacked!)");
+			}
+		}
 		
 		private void FindTarget()
 		{
-			// Simple way to find player: Get first node in "Player" group
-			// User needs to add Player to "Player" group in editor
 			var players = GetTree().GetNodesInGroup("Player");
 			if (players.Count > 0)
 			{
 				_target = players[0] as Node2D;
 			}
+			// 물리 프로세스가 실행될 때 플레이어를 찾거나 탐지 영역(Detection Area)을 사용하는 방법도 있음. (Or use Detection Area)
 		}
 
-		// IDamageable Implementation
+		// IDamageable 구현 (IDamageable Implementation)
 		public void TakeDamage(int damage)
 		{
 			Stats.CurrentHealth -= damage;
-			GD.Print($"Enemy took {damage} damage. Current Health: {Stats.CurrentHealth}");
+			GD.Print($"적이 {damage} 데미지를 입음. 현재 체력: {Stats.CurrentHealth} (Enemy took damage)");
 
-			// Visual Feedback: Flash white/red
-			// Fix: Modulate the Sprite2D, not the root, because root modulation affects all children but might be overridden or subtle.
-			// Also, since the enemy is already red, let's flash it to White (bright) or Transparent.
+			// 시각적 피드백: 흰색으로 깜빡임 (Visual Feedback: Flash white)
 			var sprite = GetNode<Sprite2D>("Sprite2D");
 			if (sprite != null)
 			{
 				var originalColor = sprite.Modulate;
-				sprite.Modulate = Colors.White; // Flash white to indicate hit
+				sprite.Modulate = Colors.White; // 피격 시 흰색으로 깜빡임 (Flash white)
 				GetTree().CreateTimer(0.1).Timeout += () => 
 				{
 					if (IsInstanceValid(sprite)) sprite.Modulate = originalColor;
@@ -111,9 +115,10 @@ namespace FirstGame.Entities.Enemies
 
 		private void Die()
 		{
-			GD.Print("Enemy Died!");
-			// Reward Gold
+			GD.Print("적 사망! (Enemy Died!)");
+			// 골드 보상 (Reward Gold)
 			GameManager.Instance.PlayerGold += 10;
+			SaveManager.SaveGame(); // 적 처치 후 자동저장
 			QueueFree();
 		}
 	}
