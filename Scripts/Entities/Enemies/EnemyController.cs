@@ -3,6 +3,7 @@ using System;
 using FirstGame.Core;
 using FirstGame.Core.Interfaces;
 using FirstGame.Data;
+using FirstGame.Entities.Player;
 
 namespace FirstGame.Entities.Enemies
 {
@@ -12,6 +13,7 @@ namespace FirstGame.Entities.Enemies
 		
 		// 추적할 타겟 (보통 플레이어) (Target to chase)
 		private Node2D _target;
+		private ProgressBar _healthBar;
 
 		public override void _Ready()
 		{
@@ -20,12 +22,14 @@ namespace FirstGame.Entities.Enemies
 				Stats = (EnemyStats)Stats.Duplicate();
 			else
 				Stats = new EnemyStats();
-			
+
 			// 체력 초기화 (Initialize health)
 			Stats.CurrentHealth = Stats.MaxHealth;
-			
-			// 그룹으로 플레이어 찾기 (Find player by group)
-			// 지금은 "Player" 그룹의 첫 번째 노드를 찾음. (Assumes "Player" group has target)
+
+			// 체력바 초기화
+			_healthBar = GetNode<ProgressBar>("HealthBar");
+			_healthBar.MaxValue = Stats.MaxHealth;
+			_healthBar.Value = Stats.CurrentHealth;
 		}
 
 		private float _attackTimer = 0f;
@@ -93,6 +97,7 @@ namespace FirstGame.Entities.Enemies
 		public void TakeDamage(int damage)
 		{
 			Stats.CurrentHealth -= damage;
+			_healthBar.Value = Stats.CurrentHealth;
 			GD.Print($"적이 {damage} 데미지를 입음. 현재 체력: {Stats.CurrentHealth} (Enemy took damage)");
 
 			// 시각적 피드백: 흰색으로 깜빡임 (Visual Feedback: Flash white)
@@ -118,6 +123,23 @@ namespace FirstGame.Entities.Enemies
 			GD.Print("적 사망! (Enemy Died!)");
 			// 골드 보상 (Reward Gold)
 			GameManager.Instance.PlayerGold += 10;
+
+			// 아이템 드롭 (Item Drop)
+			if (Stats.PossibleDrops != null && Stats.PossibleDrops.Length > 0)
+			{
+				if (GD.Randf() <= Stats.DropChance)
+				{
+					int index = (int)GD.RandRange(0, Stats.PossibleDrops.Length - 1);
+					var droppedItem = Stats.PossibleDrops[index];
+					var players = GetTree().GetNodesInGroup("Player");
+					if (players.Count > 0 && players[0] is PlayerController player)
+					{
+						player.Inventory.AddItem(droppedItem);
+						GD.Print($"아이템 드롭: {droppedItem.ItemName} (Item Dropped: {droppedItem.ItemName})");
+					}
+				}
+			}
+
 			SaveManager.SaveGame(); // 적 처치 후 자동저장
 			QueueFree();
 		}

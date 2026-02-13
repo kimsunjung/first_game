@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://c8qj0y5x4k3l" path="res://Scenes/UI/hud.tscn" id="3_hud"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="4_spawner"]
 [ext_resource type="PackedScene" uid="uid://b8x4y205w4v0" path="res://Scenes/Objects/save_point.tscn" id="5_savepoint"]
+[ext_resource type="PackedScene" uid="uid://c5v8q2m1n0qa" path="res://Scenes/UI/inventory_ui.tscn" id="6_invUI"]
 
 [node name="Main" type="Node2D" unique_id=667305305]
 
@@ -20,3 +21,5 @@ position = Vector2(500, 200)
 position = Vector2(689, 335)
 
 [node name="HUD" parent="." unique_id=453428201 instance=ExtResource("3_hud")]
+
+[node name="InventoryUI" parent="." instance=ExtResource("6_invUI")]

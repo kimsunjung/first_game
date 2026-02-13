@@ -19,25 +19,22 @@ namespace FirstGame.Entities
 
         public override void _Process(double delta)
         {
-            // 플레이어가 범위 안에 있고 상호작용 키(E)를 누르면 저장
-            if (_playerInRange)
+            // 플레이어가 범위 안에 있고 상호작용 키(E)를 누르면 저장 (Save if player is in range and presses interact key)
+            if (_playerInRange && Input.IsActionJustPressed("interact"))
             {
-                 if (Input.IsActionJustPressed("interact"))
-                 {
-                     GD.Print("SavePoint: E key pressed, saving game...");
-                     SaveManager.SaveGame("manual");
-                 }
+                // GD.Print("SavePoint: E key pressed, saving game...");
+                SaveManager.SaveGame("manual");
             }
         }
 
         private void OnBodyEntered(Node2D body)
         {
-            GD.Print($"SavePoint: Body detected - {body.Name} (Group: {body.IsInGroup("Player")})");
+            // GD.Print($"SavePoint: Body detected - {body.Name} (Group: {body.IsInGroup("Player")})");
             if (body.IsInGroup("Player"))
             {
                 _playerInRange = true;
                 _promptLabel.Visible = true;
-                GD.Print("SavePoint: Player Entered Range");
+                // GD.Print("SavePoint: Player Entered Range");
             }
         }
 
@@ -47,7 +44,7 @@ namespace FirstGame.Entities
             {
                 _playerInRange = false;
                 _promptLabel.Visible = false;
-                GD.Print("SavePoint: Player Exited Range");
+                // GD.Print("SavePoint: Player Exited Range");
             }
         }
     }

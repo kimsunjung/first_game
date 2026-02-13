@@ -9,6 +9,7 @@ namespace FirstGame.Entities.Player
 	public partial class PlayerController : CharacterBody2D, IDamageable
 	{
 		[Export] public PlayerStats Stats { get; set; }
+		public Inventory Inventory { get; private set; } // 인벤토리 추가 (Inventory added)
 
 		private bool _isDead = false;
 
@@ -42,6 +43,8 @@ namespace FirstGame.Entities.Player
 			else
 				Stats = new PlayerStats();
 
+			Inventory = new Inventory(); // 인벤토리 초기화 (Initialize Inventory)
+
 			if (SaveManager.PendingLoadData != null)
 			{
 				// 저장 데이터 적용 (Apply loaded data)
@@ -50,6 +53,38 @@ namespace FirstGame.Entities.Player
 				Stats.MaxHealth = data.PlayerMaxHealth;    // MaxHealth 먼저 설정 (Set MaxHealth first)
 				Stats.CurrentHealth = data.PlayerHealth;   // 그 다음 CurrentHealth (Then CurrentHealth)
 				GameManager.Instance.PlayerGold = data.PlayerGold; // 골드 복원 (Restore Gold)
+
+				// 인벤토리 복원 (Restore Inventory)
+				if (data.InventoryItems != null)
+				{
+					foreach (var savedSlot in data.InventoryItems)
+					{
+						var item = GD.Load<ItemData>(savedSlot.ItemPath);
+						if (item != null)
+							Inventory.AddItem(item, savedSlot.Quantity);
+					}
+				}
+
+				// 장비 복원 (Restore Equipment)
+				if (!string.IsNullOrEmpty(data.EquippedWeaponPath))
+				{
+					var weapon = GD.Load<ItemData>(data.EquippedWeaponPath);
+					if (weapon != null)
+					{
+						Inventory.AddItem(weapon);
+						Inventory.EquipItem(Inventory.Slots.Count - 1, this);
+					}
+				}
+				if (!string.IsNullOrEmpty(data.EquippedArmorPath))
+				{
+					var armor = GD.Load<ItemData>(data.EquippedArmorPath);
+					if (armor != null)
+					{
+						Inventory.AddItem(armor);
+						Inventory.EquipItem(Inventory.Slots.Count - 1, this);
+					}
+				}
+
 				SaveManager.PendingLoadData = null;        // 적용 후 초기화 (Reset after applying)
 			}
 			else if (!SaveManager.HasSave())

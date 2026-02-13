@@ -2,12 +2,14 @@
 
 [ext_resource type="Script" uid="uid://dp8ftpi2qj4we" path="res://Scripts/Entities/Enemies/EnemyController.cs" id="1_7k104"]
 [ext_resource type="Texture2D" uid="uid://bd2iogb0ulty1" path="res://icon.svg" id="2_4gyqm"]
+[ext_resource type="Resource" path="res://Resources/Stats/enemy_default_stats.tres" id="3_stats"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7k104"]
 size = Vector2(64, 66)
 
 [node name="Enemy" type="CharacterBody2D" unique_id=188341649 groups=["Enemy"]]
 script = ExtResource("1_7k104")
+Stats = ExtResource("3_stats")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2069652244]
 modulate = Color(0.9882353, 0.003921569, 0, 1)
@@ -15,3 +17,12 @@ texture = ExtResource("2_4gyqm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1554121679]
 shape = SubResource("RectangleShape2D_7k104")
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -32.0
+offset_top = -50.0
+offset_right = 32.0
+offset_bottom = -42.0
+max_value = 100.0
+value = 100.0
+show_percentage = false

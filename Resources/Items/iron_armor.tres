@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "Iron Armor"
+Description = "최대 체력 +20 (Max HP +20)"
+Price = 120
+Type = 2
+IsStackable = false
+MaxStack = 1
+HealAmount = 0
+BonusDamage = 0
+BonusMaxHealth = 20
+BonusMoveSpeed = 0.0

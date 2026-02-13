@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using FirstGame.Data;
 using FirstGame.Entities.Player;
+using System.Collections.Generic;
 
 namespace FirstGame.Core
 {
@@ -38,6 +39,22 @@ namespace FirstGame.Core
                 PlayerGold = GameManager.Instance.PlayerGold,
                 Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
+
+            // 인벤토리 저장 (Save Inventory)
+            data.InventoryItems = new List<SavedItemSlot>();
+            foreach (var invSlot in playerCtrl.Inventory.Slots)
+            {
+                data.InventoryItems.Add(new SavedItemSlot
+                {
+                    ItemPath = invSlot.Item.ResourcePath,
+                    Quantity = invSlot.Quantity
+                });
+            }
+
+            if (playerCtrl.Inventory.EquippedWeapon != null)
+                data.EquippedWeaponPath = playerCtrl.Inventory.EquippedWeapon.ResourcePath;
+            if (playerCtrl.Inventory.EquippedArmor != null)
+                data.EquippedArmorPath = playerCtrl.Inventory.EquippedArmor.ResourcePath;
 
             // 디렉토리 생성
             DirAccess.MakeDirRecursiveAbsolute(
