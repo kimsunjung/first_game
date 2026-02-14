@@ -11,11 +11,11 @@ namespace FirstGame.Entities.Player
 		[Export] public PlayerStats Stats { get; set; }
 		public Inventory Inventory { get; private set; } // 인벤토리 추가 (Inventory added)
 
-		private bool _isDead = false;
+		public bool IsDead { get; private set; } = false;
 
 		public void TakeDamage(int damage)
 		{
-			if (_isDead) return;
+			if (IsDead) return;
 
 			Stats.CurrentHealth -= damage;
 			GD.Print($"Player took {damage} damage. HP: {Stats.CurrentHealth}/{Stats.MaxHealth}");
@@ -28,7 +28,7 @@ namespace FirstGame.Entities.Player
 
 		private void Die()
 		{
-			_isDead = true;
+			IsDead = true;
 			GD.Print("플레이어 사망! (Player Died!)");
 			EventManager.TriggerPlayerDeath();
 			SetPhysicsProcess(false); // 이동 비활성화 (Disable movement)
@@ -65,25 +65,16 @@ namespace FirstGame.Entities.Player
 					}
 				}
 
-				// 장비 복원 (Restore Equipment)
+				// 장비 복원 (스탯 보너스 없이 슬롯만 설정 - 저장된 MaxHealth/BaseDamage에 이미 포함됨)
+				ItemData loadedWeapon = null;
+				ItemData loadedArmor = null;
+
 				if (!string.IsNullOrEmpty(data.EquippedWeaponPath))
-				{
-					var weapon = GD.Load<ItemData>(data.EquippedWeaponPath);
-					if (weapon != null)
-					{
-						Inventory.AddItem(weapon);
-						Inventory.EquipItem(Inventory.Slots.Count - 1, this);
-					}
-				}
+					loadedWeapon = GD.Load<ItemData>(data.EquippedWeaponPath);
 				if (!string.IsNullOrEmpty(data.EquippedArmorPath))
-				{
-					var armor = GD.Load<ItemData>(data.EquippedArmorPath);
-					if (armor != null)
-					{
-						Inventory.AddItem(armor);
-						Inventory.EquipItem(Inventory.Slots.Count - 1, this);
-					}
-				}
+					loadedArmor = GD.Load<ItemData>(data.EquippedArmorPath);
+
+				Inventory.RestoreEquipment(loadedWeapon, loadedArmor);
 
 				SaveManager.PendingLoadData = null;        // 적용 후 초기화 (Reset after applying)
 			}
@@ -93,7 +84,7 @@ namespace FirstGame.Entities.Player
 				SaveManager.SaveGame();
 			}
 
-			_isDead = false; // 부활 시 초기화 (Reset on respawn)
+			IsDead = false; // 부활 시 초기화 (Reset on respawn)
 			
 			GD.Print("플레이어 초기화됨 (Player Initialized)");
 		}
@@ -104,8 +95,24 @@ namespace FirstGame.Entities.Player
 			MoveAndSlide();
 		}
 
+		// 퀵슬롯 사용 (Use Quick Slots with 1-4 keys)
+		public override void _UnhandledInput(InputEvent @event)
+		{
+			if (IsDead) return;
+			if (@event is InputEventKey k && k.Pressed && !k.Echo)
+			{
+				var key = k.Keycode != Key.None ? k.Keycode : k.PhysicalKeycode;
+				if (key == Key.Key1) Inventory.UseQuickSlot(0, this);
+				else if (key == Key.Key2) Inventory.UseQuickSlot(1, this);
+				else if (key == Key.Key3) Inventory.UseQuickSlot(2, this);
+				else if (key == Key.Key4) Inventory.UseQuickSlot(3, this);
+			}
+		}
+
 		private void GetInput()
 		{
+			if (IsDead) return;
+
 			// 이동 (Movement)
 			Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 			Velocity = inputDir * Stats.MoveSpeed;

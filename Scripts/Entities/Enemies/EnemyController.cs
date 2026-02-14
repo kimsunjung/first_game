@@ -26,10 +26,36 @@ namespace FirstGame.Entities.Enemies
 			// 체력 초기화 (Initialize health)
 			Stats.CurrentHealth = Stats.MaxHealth;
 
-			// 체력바 초기화
+			// 체력바 노드 가져오기 및 스타일 설정 (Get HealthBar node and set style)
 			_healthBar = GetNode<ProgressBar>("HealthBar");
 			_healthBar.MaxValue = Stats.MaxHealth;
 			_healthBar.Value = Stats.CurrentHealth;
+
+			// 체력바 스타일 커스터마이징 (Customize HealthBar Style)
+			// 배경 스타일 (Background Style: Dark Gray)
+			var bgStyle = new StyleBoxFlat
+			{
+				BgColor = new Color(0.1f, 0.1f, 0.1f, 0.8f),
+				CornerRadiusTopLeft = 2,
+				CornerRadiusTopRight = 2,
+				CornerRadiusBottomRight = 2,
+				CornerRadiusBottomLeft = 2
+			};
+			_healthBar.AddThemeStyleboxOverride("background", bgStyle);
+
+			// 채우기 스타일 (Fill Style: Red)
+			var fillStyle = new StyleBoxFlat
+			{
+				BgColor = new Color(0.8f, 0.1f, 0.1f, 1.0f),
+				CornerRadiusTopLeft = 2,
+				CornerRadiusTopRight = 2,
+				CornerRadiusBottomRight = 2,
+				CornerRadiusBottomLeft = 2
+			};
+			_healthBar.AddThemeStyleboxOverride("fill", fillStyle);
+			
+			// 체력바 크기 및 위치 조정 (Adjust size and position if needed)
+			// 현재 씬 설정(enemy.tscn)을 따르되, 필요시 코드에서 강제할 수 있음.
 		}
 
 		private float _attackTimer = 0f;
@@ -42,10 +68,10 @@ namespace FirstGame.Entities.Enemies
 				return;
 			}
 
-			// 쿨타임 타이머 (Cooldown Timer)
+			// 쿨타임 감소 (Decrease Cooldown)
 			_attackTimer -= (float)delta;
-
-			// 간단한 추적 AI (Simple Chase AI)
+			
+			// 타겟 방향 및 거리 계산 (Calculate Direction and Distance)
 			Vector2 direction = GlobalPosition.DirectionTo(_target.GlobalPosition);
 			float distance = GlobalPosition.DistanceTo(_target.GlobalPosition);
 
@@ -61,7 +87,19 @@ namespace FirstGame.Entities.Enemies
 			else if (distance <= Stats.DetectionRange)
 			{
 				// 추적 사거리 내: 타겟 향해 이동 (In Chase Range: Move towards target)
-				Velocity = direction * Stats.MoveSpeed;
+				float stopBuffer = 30.0f; // 정지 완충 거리 (Buffer distance for smooth stop)
+
+				if (distance <= Stats.AttackRange + stopBuffer)
+				{
+					// 감속 구간: 공격 사거리 근처에서 서서히 정지 (Slow down near attack range)
+					float ratio = Mathf.Max(0.15f, (distance - Stats.AttackRange) / stopBuffer);
+					Velocity = direction * Stats.MoveSpeed * ratio;
+				}
+				else
+				{
+					// 일반 추적 (Normal Chase)
+					Velocity = direction * Stats.MoveSpeed;
+				}
 			}
 			else
 			{
@@ -74,12 +112,12 @@ namespace FirstGame.Entities.Enemies
 		
 		private void TryAttack()
 		{
-			// 타겟 유효성 검사 추가 (Add target validation)
+			// 공격 조건 체크: 쿨타임 종료 + 타겟 유효 + 데미지 처리 가능 인터페이스 (Check Attack Conditions)
 			if (_attackTimer <= 0f && IsInstanceValid(_target) && _target is IDamageable target)
 			{
 				target.TakeDamage(Stats.BaseDamage);
-				_attackTimer = Stats.AttackCooldown;
-				GD.Print($"적이 {Stats.BaseDamage}의 데미지로 공격! (Enemy attacked!)");
+				_attackTimer = Stats.AttackCooldown; // 쿨타임 리셋 (Reset Cooldown)
+				GD.Print($"[Enemy] 공격 수행! 데미지: {Stats.BaseDamage} (Attacked! Damage: {Stats.BaseDamage})");
 			}
 		}
 		
@@ -129,7 +167,7 @@ namespace FirstGame.Entities.Enemies
 			{
 				if (GD.Randf() <= Stats.DropChance)
 				{
-					int index = (int)GD.RandRange(0, Stats.PossibleDrops.Length - 1);
+					int index = (int)(GD.Randi() % Stats.PossibleDrops.Length);
 					var droppedItem = Stats.PossibleDrops[index];
 					var players = GetTree().GetNodesInGroup("Player");
 					if (players.Count > 0 && players[0] is PlayerController player)
@@ -140,8 +178,9 @@ namespace FirstGame.Entities.Enemies
 				}
 			}
 
-			SaveManager.SaveGame(); // 적 처치 후 자동저장
-			QueueFree();
+			// 자동 저장 (Auto Save)
+			SaveManager.SaveGame(); 
+			QueueFree(); // 오브젝트 삭제 (Destroy Object)
 		}
 	}
 }

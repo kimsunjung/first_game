@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="4_spawner"]
 [ext_resource type="PackedScene" uid="uid://b8x4y205w4v0" path="res://Scenes/Objects/save_point.tscn" id="5_savepoint"]
 [ext_resource type="PackedScene" uid="uid://c5v8q2m1n0qa" path="res://Scenes/UI/inventory_ui.tscn" id="6_invUI"]
+[ext_resource type="PackedScene" uid="uid://d4k8m2w7v3p1" path="res://Scenes/Objects/shop_npc.tscn" id="7_shopNPC"]
+[ext_resource type="PackedScene" uid="uid://d5q7n4yar2s1" path="res://Scenes/UI/shop_ui.tscn" id="8_shopUI"]
 
 [node name="Main" type="Node2D" unique_id=667305305]
 
@@ -23,3 +25,8 @@ position = Vector2(689, 335)
 [node name="HUD" parent="." unique_id=453428201 instance=ExtResource("3_hud")]
 
 [node name="InventoryUI" parent="." instance=ExtResource("6_invUI")]
+
+[node name="ShopNPC" parent="." instance=ExtResource("7_shopNPC")]
+position = Vector2(600, 200)
+
+[node name="ShopUI" parent="." instance=ExtResource("8_shopUI")]

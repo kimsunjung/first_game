@@ -1,15 +1,11 @@
-[gd_resource type="Resource" script_class="EnemyStats" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://cge62kkw3bt0i"]
 
-[ext_resource type="Script" path="res://Scripts/Data/EnemyStats.cs" id="1_stats"]
-[ext_resource type="Resource" path="res://Resources/Items/health_potion.tres" id="2_potion"]
-[ext_resource type="Resource" path="res://Resources/Items/iron_sword.tres" id="3_sword"]
-[ext_resource type="Resource" path="res://Resources/Items/iron_armor.tres" id="4_armor"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1_stats"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_potion"]
+[ext_resource type="Resource" uid="uid://cmbhd06qrdqnj" path="res://Resources/Items/iron_sword.tres" id="3_sword"]
+[ext_resource type="Resource" uid="uid://cw2xi8qenwlcy" path="res://Resources/Items/iron_armor.tres" id="4_armor"]
 
 [resource]
 script = ExtResource("1_stats")
-DetectionRange = 200.0
-AttackRange = 70.0
-BaseDamage = 5
-AttackCooldown = 1.0
 PossibleDrops = [ExtResource("2_potion"), ExtResource("3_sword"), ExtResource("4_armor")]
-DropChance = 0.5
+MoveSpeed = 150.0

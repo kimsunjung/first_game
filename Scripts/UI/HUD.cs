@@ -19,6 +19,10 @@ namespace FirstGame.UI
 		private Label _saveNotification; // 저장 알림 라벨 추가
 		private Label _itemPickupNotification; // 아이템 획득 알림 (Item pickup notification)
 
+		// 퀵슬롯 UI (Quick Slot UI)
+		private TextureRect[] _quickSlotIcons = new TextureRect[4];
+		private Label[] _quickSlotQtys = new Label[4];
+
 		public override void _Ready()
 		{
 			// 고유 이름(%)으로 노드 가져오기
@@ -39,6 +43,13 @@ namespace FirstGame.UI
 			_itemPickupNotification = GetNode<Label>("%ItemPickupNotification");
 			_itemPickupNotification.Visible = false;
 
+			// 퀵슬롯 노드 연결 (Connect Quick Slot nodes)
+			for (int i = 0; i < 4; i++)
+			{
+				_quickSlotIcons[i] = GetNode<TextureRect>($"%QuickSlotIcon{i + 1}");
+				_quickSlotQtys[i] = GetNode<Label>($"%QuickSlotQty{i + 1}");
+			}
+
 			_restartButton.Pressed += OnRestartPressed;
 			EventManager.OnPlayerDeath += ShowGameOver;
 			SaveManager.OnGameSaved += ShowSaveNotification;
@@ -57,7 +68,10 @@ namespace FirstGame.UI
 				_player = player;
 				_player.Stats.OnHealthChanged += UpdateHealthDisplay;
 				_player.Inventory.OnItemPickedUp += ShowItemPickup; // 아이템 획득 구독 (Subscribe to item pickup)
+				_player.Inventory.OnQuickSlotChanged += UpdateQuickSlotDisplay; // 퀵슬롯 변경 구독
+				_player.Inventory.OnInventoryChanged += UpdateQuickSlotDisplay; // 인벤토리 변경 시 수량 갱신
 				UpdateHealthDisplay(_player.Stats.CurrentHealth, _player.Stats.MaxHealth);
+				UpdateQuickSlotDisplay();
 			}
 		}
 
@@ -70,7 +84,11 @@ namespace FirstGame.UI
 			{
 				_player.Stats.OnHealthChanged -= UpdateHealthDisplay;
 				if (_player.Inventory != null)
+				{
 					_player.Inventory.OnItemPickedUp -= ShowItemPickup;
+					_player.Inventory.OnQuickSlotChanged -= UpdateQuickSlotDisplay;
+					_player.Inventory.OnInventoryChanged -= UpdateQuickSlotDisplay;
+				}
 			}
 
 			EventManager.OnPlayerDeath -= ShowGameOver;
@@ -118,6 +136,29 @@ namespace FirstGame.UI
 		private void UpdateGoldDisplay(int gold)
 		{
 			_goldLabel.Text = $"골드: {gold}"; // "Gold:" -> "골드:"
+		}
+
+		// 퀵슬롯 UI 갱신 (Update Quick Slot Display)
+		private void UpdateQuickSlotDisplay()
+		{
+			if (_player == null) return;
+
+			for (int i = 0; i < 4; i++)
+			{
+				var item = _player.Inventory.QuickSlots[i];
+				if (item != null)
+				{
+					_quickSlotIcons[i].Texture = item.Icon;
+					// 인벤토리에서 해당 아이템의 수량 찾기
+					var slot = _player.Inventory.Slots.Find(s => s.Item.ResourcePath == item.ResourcePath);
+					_quickSlotQtys[i].Text = slot != null ? $"x{slot.Quantity}" : "x0";
+				}
+				else
+				{
+					_quickSlotIcons[i].Texture = null;
+					_quickSlotQtys[i].Text = "";
+				}
+			}
 		}
 	}
 }

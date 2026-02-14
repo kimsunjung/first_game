@@ -21,10 +21,14 @@ namespace FirstGame.Data
         public ItemData EquippedWeapon { get; private set; }
         public ItemData EquippedArmor { get; private set; }
 
+        // 퀵슬롯 (Quick Slots - 4 slots)
+        public ItemData[] QuickSlots { get; private set; } = new ItemData[4];
+
         // UI 갱신용 이벤트 (Events for UI updates)
         public event Action OnInventoryChanged;
         public event Action<ItemData> OnItemPickedUp;   // HUD 알림용 (For HUD notification)
         public event Action OnEquipmentChanged;
+        public event Action OnQuickSlotChanged; // 퀵슬롯 변경 이벤트
 
         // --- 인벤토리 조작 (Inventory Manipulation) ---
 
@@ -56,7 +60,10 @@ namespace FirstGame.Data
         {
             if (slotIndex < 0 || slotIndex >= Slots.Count) return;
 
-            Slots[slotIndex].Quantity -= amount;
+            // 수량 감소 (Decrease Quantity)
+            // 0 이하로 내려가지 않도록 Max 사용 (Prevent negative quantity)
+            Slots[slotIndex].Quantity = Math.Max(0, Slots[slotIndex].Quantity - amount);
+
             if (Slots[slotIndex].Quantity <= 0)
                 Slots.RemoveAt(slotIndex);
 
@@ -93,9 +100,11 @@ namespace FirstGame.Data
 
             if (item.Type == ItemType.Weapon)
             {
-                // 기존 무기 해제 → 인벤토리로 (Unequip existing weapon -> To Inventory)
+                // 기존 무기 해제 시도 (Try unequip existing weapon)
                 if (EquippedWeapon != null)
-                    UnequipWeapon(player);
+                {
+                    if (!UnequipWeapon(player)) return; // 해제 실패 시 중단 (Stop if unequip fails)
+                }
 
                 EquippedWeapon = item;
                 player.Stats.BaseDamage += item.BonusDamage;
@@ -104,7 +113,9 @@ namespace FirstGame.Data
             else if (item.Type == ItemType.Armor)
             {
                 if (EquippedArmor != null)
-                    UnequipArmor(player);
+                {
+                    if (!UnequipArmor(player)) return;
+                }
 
                 EquippedArmor = item;
                 player.Stats.MaxHealth += item.BonusMaxHealth;
@@ -116,24 +127,90 @@ namespace FirstGame.Data
             GD.Print($"{item.ItemName} 장착! (Equipped {item.ItemName})");
         }
 
-        public void UnequipWeapon(PlayerController player)
+        public bool UnequipWeapon(PlayerController player)
         {
-            if (EquippedWeapon == null) return;
+            if (EquippedWeapon == null) return false;
+            
+            // 가방 공간 체크 (Check Inventory Space)
+            if (Slots.Count >= MaxSlots) 
+            {
+                GD.Print("가방이 꽉 차서 무기를 해제할 수 없습니다! (Inventory Full!)");
+                return false; 
+            }
+
             player.Stats.BaseDamage -= EquippedWeapon.BonusDamage;
-            bool added = AddItem(EquippedWeapon, 1);
-            // 인벤토리가 꽉 찼을 때 처리 필요 (Handle full inventory - implementing basic add for now)
+            bool added = AddItem(EquippedWeapon, 1); // AddItem은 성공 여부 반환 (AddItem returns success)
+            if (!added) return false; // 혹시라도 실패하면 중단
+
             EquippedWeapon = null;
             OnEquipmentChanged?.Invoke();
+            return true;
         }
 
-        public void UnequipArmor(PlayerController player)
+
+
+        public bool UnequipArmor(PlayerController player)
         {
-            if (EquippedArmor == null) return;
+            if (EquippedArmor == null) return false;
+            
+            if (Slots.Count >= MaxSlots) 
+            {
+                GD.Print("가방이 꽉 차서 방어구를 해제할 수 없습니다! (Inventory Full!)");
+                return false; 
+            }
+
             player.Stats.MaxHealth -= EquippedArmor.BonusMaxHealth;
             if (player.Stats.CurrentHealth > player.Stats.MaxHealth)
                 player.Stats.CurrentHealth = player.Stats.MaxHealth;
-            AddItem(EquippedArmor, 1);
+            
+            bool added = AddItem(EquippedArmor, 1);
+            if (!added) return false;
+
             EquippedArmor = null;
+            OnEquipmentChanged?.Invoke();
+            return true;
+        }
+
+        // --- 퀵슬롯 로직 (Quick Slot Logic) ---
+
+        public void AssignQuickSlot(int quickSlotIndex, ItemData item)
+        {
+            if (quickSlotIndex < 0 || quickSlotIndex >= QuickSlots.Length) return;
+
+            // 이미 등록된 아이템이면 해제 (Toggle logic or overwrite)
+            // 여기서는 덮어쓰기 방식으로 구현
+            QuickSlots[quickSlotIndex] = item;
+            OnQuickSlotChanged?.Invoke();
+            GD.Print($"퀵슬롯 {quickSlotIndex + 1}번에 {item.ItemName} 등록됨.");
+        }
+
+        public void UseQuickSlot(int quickSlotIndex, PlayerController player)
+        {
+            if (quickSlotIndex < 0 || quickSlotIndex >= QuickSlots.Length) return;
+            var item = QuickSlots[quickSlotIndex];
+            if (item == null) return;
+
+            // 인벤토리에서 해당 아이템 찾기 (Find item in inventory)
+            int slotIndex = Slots.FindIndex(s => s.Item == item);
+
+            if (slotIndex != -1)
+            {
+                UseItem(slotIndex, player); // 아이템 사용 로직 위임
+                // 소비 아이템이면 수량이 줄어들었을 테니 UI 갱신됨.
+                // 만약 다 써서 없어지면? -> UseItem 내부에서 RemoveItem 호출됨.
+                // 퀵슬롯에 등록된 아이템이 인벤토리에 하나도 없게 되면? -> 퀵슬롯은 유지하되 0개로 표시하거나 비활성화 (UI 처리)
+            }
+            else
+            {
+                GD.Print($"{item.ItemName}이(가) 인벤토리에 없습니다!");
+            }
+        }
+
+        // 세이브/로드 시 장비 복원 (스탯 보너스 없이 슬롯만 설정)
+        public void RestoreEquipment(ItemData weapon, ItemData armor)
+        {
+            EquippedWeapon = weapon;
+            EquippedArmor = armor;
             OnEquipmentChanged?.Invoke();
         }
     }

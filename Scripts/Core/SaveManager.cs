@@ -91,6 +91,13 @@ namespace FirstGame.Core
             }
 
             string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
+            
+            if (!File.Exists(path))
+            {
+                GD.PrintErr($"SaveManager: Save file not found at {path}");
+                return;
+            }
+
             string json = File.ReadAllText(path);
             PendingLoadData = JsonSerializer.Deserialize<SaveData>(json);
 

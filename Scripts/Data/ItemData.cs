@@ -16,6 +16,7 @@ namespace FirstGame.Data
         [Export(PropertyHint.MultilineText)] public string Description { get; set; } = "";
         [Export] public Texture2D Icon { get; set; }
         [Export] public int Price { get; set; } = 0;
+        [Export] public int SellPrice { get; set; } = 0; // 판매 가격 (Sell Price)
         [Export] public ItemType Type { get; set; } = ItemType.Consumable;
         [Export] public bool IsStackable { get; set; } = true;
         [Export] public int MaxStack { get; set; } = 99;

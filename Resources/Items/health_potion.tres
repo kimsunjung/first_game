@@ -1,16 +1,10 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://da8ktdgend72m"]
 
-[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
 
 [resource]
 script = ExtResource("1")
 ItemName = "Health Potion"
 Description = "HP를 30 회복합니다 (Restores 30 HP)"
 Price = 50
-Type = 0
-IsStackable = true
-MaxStack = 99
 HealAmount = 30
-BonusDamage = 0
-BonusMaxHealth = 0
-BonusMoveSpeed = 0.0

@@ -10,7 +10,6 @@ namespace FirstGame.Data
 		public event Action<int, int> OnHealthChanged;
 
 		[Export] public float MoveSpeed { get; set; } = 300.0f;
-        [Export] public float AttackRange { get; set; } = 80.0f; // 공격 사거리 (Added for attack logic)
 		[Export] public int MaxHealth { get; set; } = 100;
         
         private int _currentHealth = 100;
