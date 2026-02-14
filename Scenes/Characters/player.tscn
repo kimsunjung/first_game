@@ -7,6 +7,8 @@
 size = Vector2(57, 47)
 
 [node name="Player" type="CharacterBody2D" unique_id=1068721970 groups=["Player"]]
+collision_layer = 1
+collision_mask = 1
 script = ExtResource("1_0pdwm")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=32066236]

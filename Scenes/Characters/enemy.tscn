@@ -8,6 +8,8 @@
 size = Vector2(64, 66)
 
 [node name="Enemy" type="CharacterBody2D" unique_id=188341649 groups=["Enemy"]]
+collision_layer = 2
+collision_mask = 2
 script = ExtResource("1_7k104")
 Stats = ExtResource("3_stats")
 
