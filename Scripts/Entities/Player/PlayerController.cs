@@ -12,6 +12,7 @@ namespace FirstGame.Entities.Player
 		public Inventory Inventory { get; private set; } // 인벤토리 추가 (Inventory added)
 
 		public bool IsDead { get; private set; } = false;
+		private Vector2 _facingDirection = Vector2.Right; // 바라보는 방향 (Facing direction)
 
 		public void TakeDamage(int damage)
 		{
@@ -117,6 +118,10 @@ namespace FirstGame.Entities.Player
 			Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 			Velocity = inputDir * Stats.MoveSpeed;
 
+			// 이동 시 바라보는 방향 업데이트 (Update facing direction when moving)
+			if (inputDir != Vector2.Zero)
+				_facingDirection = inputDir.Normalized();
+
 			// 공격 (Attack)
 			if (Input.IsActionJustPressed("attack"))
 			{
@@ -127,19 +132,22 @@ namespace FirstGame.Entities.Player
 		private void Attack()
 		{
 			GD.Print("플레이어 공격! (Player Attacked!)");
-			
-			// 간단한 히트박스: 범위 내 적 찾기 (Simple hitbox: Find enemies within range)
-			// 나중에는 Area2D를 사용하여 더 정밀하게 구현 예정. (For better precision, use Area2D in the scene later.)
-			// 지금은 즉각적인 피드백을 위해 간단한 거리 체크 사용. (For now, use a simple distance check for immediate feedback.)
+
 			var enemies = GetTree().GetNodesInGroup("Enemy");
 			foreach (Node2D enemyNode in enemies)
 			{
 				if (enemyNode is IDamageable damageableEnemy && enemyNode is Node2D node)
 				{
 					float distance = GlobalPosition.DistanceTo(node.GlobalPosition);
-					if (distance <= Stats.AttackRange) // AttackRange가 PlayerStats/CharacterStats에 있는지 확인 (Ensure AttackRange is in PlayerStats/CharacterStats)
+					if (distance <= Stats.AttackRange)
 					{
-						damageableEnemy.TakeDamage(Stats.BaseDamage);
+						// 바라보는 방향의 적만 공격 (120도 부채꼴)
+						Vector2 dirToEnemy = (node.GlobalPosition - GlobalPosition).Normalized();
+						float dot = _facingDirection.Dot(dirToEnemy);
+						if (dot > 0.5f) // cos(60°) = 0.5 → 좌우 60도씩 총 120도 범위
+						{
+							damageableEnemy.TakeDamage(Stats.BaseDamage);
+						}
 					}
 				}
 			}
