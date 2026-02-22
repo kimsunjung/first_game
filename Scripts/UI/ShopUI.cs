@@ -163,6 +163,7 @@ namespace FirstGame.UI
             if (GameManager.Instance.PlayerGold < totalCost)
             {
                 ShowMessage("골드가 부족합니다! (Not enough gold!)");
+                AudioManager.Instance?.PlaySFX("shop_fail.wav");
                 return;
             }
 
@@ -171,11 +172,13 @@ namespace FirstGame.UI
             if (!canAdd)
             {
                 ShowMessage("가방이 꽉 찼습니다! (Inventory full!)");
+                AudioManager.Instance?.PlaySFX("shop_fail.wav");
                 return;
             }
 
             // 구매 성공
             GameManager.Instance.PlayerGold -= totalCost;
+            AudioManager.Instance?.PlaySFX("shop_buy.wav");
             ShowMessage($"{item.ItemName} x{quantity} 구매! (-{totalCost}G)");
             UpdateGoldDisplay();
             RefreshSellTab();  // 판매 탭도 갱신
@@ -220,6 +223,7 @@ namespace FirstGame.UI
             string itemName = slot.Item.ItemName;
 
             GameManager.Instance.PlayerGold += sellPrice;
+            AudioManager.Instance?.PlaySFX("shop_sell.wav");
             _inventory.RemoveItem(slotIndex, 1);
 
             ShowMessage($"{itemName} 판매! (+{sellPrice}G)");

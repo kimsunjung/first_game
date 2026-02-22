@@ -5,14 +5,17 @@ namespace FirstGame.Core
 {
 	public static class EventManager
 	{
-		// Example: Player Death Event
 		public static event Action OnPlayerDeath;
+		public static event Action<int> OnLevelUp; // (새 레벨)
 
 		public static void TriggerPlayerDeath()
 		{
 			OnPlayerDeath?.Invoke();
 		}
 
-		// Add more global events here as needed
+		public static void TriggerLevelUp(int newLevel)
+		{
+			OnLevelUp?.Invoke(newLevel);
+		}
 	}
 }

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "Leather Armor"
+Description = "가벼운 가죽 방어구. 최대 HP +15, 이동속도 +20"
+Price = 150
+SellPrice = 75
+Type = 2
+IsStackable = false
+MaxStack = 1
+BonusMaxHealth = 15
+BonusMoveSpeed = 20.0

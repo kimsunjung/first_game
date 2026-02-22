@@ -7,6 +7,7 @@ script = ExtResource("1")
 ItemName = "Iron Sword"
 Description = "공격력 +5 (Damage +5)"
 Price = 100
+SellPrice = 50
 Type = 1
 IsStackable = false
 MaxStack = 1

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using FirstGame.Core;
 using FirstGame.Entities.Player;
 
 namespace FirstGame.Data
@@ -79,14 +80,24 @@ namespace FirstGame.Data
 
             if (slot.Item.Type == ItemType.Consumable)
             {
-                // 포션 사용: HP 회복 (Use Potion: Heal)
                 player.Stats.CurrentHealth += slot.Item.HealAmount;
-                GD.Print($"{slot.Item.ItemName} 사용! HP +{slot.Item.HealAmount} (Used {slot.Item.ItemName})");
+                GD.Print($"{slot.Item.ItemName} 사용! HP +{slot.Item.HealAmount}");
+                AudioManager.Instance?.PlaySFX("potion_use.wav");
                 RemoveItem(slotIndex, 1);
             }
             else if (slot.Item.Type == ItemType.Weapon || slot.Item.Type == ItemType.Armor)
             {
                 EquipItem(slotIndex, player);
+            }
+            else if (slot.Item.Type == ItemType.SkillBook)
+            {
+                if (slot.Item.LearnedSkill == null) return;
+                bool learned = player.Stats.LearnSkill(slot.Item.LearnedSkill);
+                if (learned)
+                {
+                    AudioManager.Instance?.PlaySFX("skill_learn.wav");
+                    RemoveItem(slotIndex, 1);
+                }
             }
         }
 
@@ -124,6 +135,7 @@ namespace FirstGame.Data
             }
 
             OnEquipmentChanged?.Invoke();
+            AudioManager.Instance?.PlaySFX("equip.wav");
             GD.Print($"{item.ItemName} 장착! (Equipped {item.ItemName})");
         }
 
@@ -206,11 +218,19 @@ namespace FirstGame.Data
             }
         }
 
-        // 세이브/로드 시 장비 복원 (스탯 보너스 없이 슬롯만 설정)
-        public void RestoreEquipment(ItemData weapon, ItemData armor)
+        // 세이브/로드 시 장비 복원 (스탯 보너스 적용 포함)
+        public void RestoreEquipment(ItemData weapon, ItemData armor, PlayerController player)
         {
-            EquippedWeapon = weapon;
-            EquippedArmor = armor;
+            if (weapon != null)
+            {
+                EquippedWeapon = weapon;
+                player.Stats.BaseDamage += weapon.BonusDamage;
+            }
+            if (armor != null)
+            {
+                EquippedArmor = armor;
+                player.Stats.MaxHealth += armor.BonusMaxHealth;
+            }
             OnEquipmentChanged?.Invoke();
         }
     }

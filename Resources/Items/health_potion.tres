@@ -7,4 +7,5 @@ script = ExtResource("1")
 ItemName = "Health Potion"
 Description = "HP를 30 회복합니다 (Restores 30 HP)"
 Price = 50
+SellPrice = 25
 HealAmount = 30

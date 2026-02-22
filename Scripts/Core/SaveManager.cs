@@ -14,10 +14,8 @@ namespace FirstGame.Core
         private const string AutoSaveSlot = "autosave";
         private const string ManualSaveSlot = "manual";
 
-        // 씬 리로드 후 적용할 데이터 (static이라 씬 전환에도 유지됨)
         public static SaveData PendingLoadData { get; set; } = null;
 
-        // HUD에서 구독하여 "저장됨!" 알림 표시
         public static event Action OnGameSaved;
 
         public static void SaveGame(string slot = AutoSaveSlot)
@@ -26,9 +24,10 @@ namespace FirstGame.Core
             var players = tree.GetNodesInGroup("Player");
             if (players.Count == 0) return;
 
-            var player = players[0] as Node2D;
             var playerCtrl = players[0] as PlayerController;
             if (playerCtrl == null) return;
+
+            var player = players[0] as Node2D;
 
             var data = new SaveData
             {
@@ -36,11 +35,14 @@ namespace FirstGame.Core
                 PlayerPosY = player.GlobalPosition.Y,
                 PlayerHealth = playerCtrl.Stats.CurrentHealth,
                 PlayerMaxHealth = playerCtrl.Stats.MaxHealth,
+                PlayerMp = playerCtrl.Stats.CurrentMp,
+                PlayerLevel = playerCtrl.Stats.Level,
+                PlayerExp = playerCtrl.Stats.Exp,
                 PlayerGold = GameManager.Instance.PlayerGold,
                 Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
-            // 인벤토리 저장 (Save Inventory)
+            // 인벤토리 저장
             data.InventoryItems = new List<SavedItemSlot>();
             foreach (var invSlot in playerCtrl.Inventory.Slots)
             {
@@ -56,12 +58,25 @@ namespace FirstGame.Core
             if (playerCtrl.Inventory.EquippedArmor != null)
                 data.EquippedArmorPath = playerCtrl.Inventory.EquippedArmor.ResourcePath;
 
-            // 디렉토리 생성
+            // 퀵슬롯 저장
+            data.QuickSlotPaths = new List<string>();
+            foreach (var item in playerCtrl.Inventory.QuickSlots)
+            {
+                data.QuickSlotPaths.Add(item != null ? item.ResourcePath : "");
+            }
+
+            // 습득한 스킬 저장
+            data.LearnedSkillPaths = new List<string>();
+            foreach (var skill in playerCtrl.Stats.LearnedSkills)
+            {
+                if (!string.IsNullOrEmpty(skill.ResourcePath))
+                    data.LearnedSkillPaths.Add(skill.ResourcePath);
+            }
+
             DirAccess.MakeDirRecursiveAbsolute(
                 ProjectSettings.GlobalizePath(SaveDir)
             );
 
-            // JSON 파일 저장
             string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
             string json = JsonSerializer.Serialize(data, new JsonSerializerOptions
             {
@@ -75,7 +90,6 @@ namespace FirstGame.Core
 
         public static void LoadGame(string slot = null)
         {
-            // slot이 null이면 최신 저장 파일을 찾음 (수동 > 자동 우선)
             if (slot == null)
             {
                 if (HasSave(ManualSaveSlot)) slot = ManualSaveSlot;
@@ -91,7 +105,7 @@ namespace FirstGame.Core
             }
 
             string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
-            
+
             if (!File.Exists(path))
             {
                 GD.PrintErr($"SaveManager: Save file not found at {path}");

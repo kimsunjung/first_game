@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Resource" path="res://Resources/Skills/power_strike.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "스킬북: 파워 스트라이크"
+Description = "파워 스트라이크 스킬을 배웁니다 (Lv.1 이상)"
+Price = 200
+SellPrice = 100
+Type = 3
+IsStackable = false
+MaxStack = 1
+LearnedSkill = ExtResource("2")

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "Steel Sword"
+Description = "날이 선 강철 검. 공격력 +10"
+Price = 200
+SellPrice = 100
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 10
+AttackType = 0

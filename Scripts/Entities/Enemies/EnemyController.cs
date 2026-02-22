@@ -10,29 +10,26 @@ namespace FirstGame.Entities.Enemies
 	public partial class EnemyController : CharacterBody2D, IDamageable
 	{
 		[Export] public EnemyStats Stats { get; set; }
-		
-		// 추적할 타겟 (보통 플레이어) (Target to chase)
+
 		private Node2D _target;
 		private ProgressBar _healthBar;
+		private AnimatedSprite2D _animSprite;
+		private bool _isDying = false;
+		private float _attackTimer = 0f;
 
 		public override void _Ready()
 		{
-			// Stats 공유 문제 해결: 고유 인스턴스로 복제 (Fix shared resource issue: Duplicate)
 			if (Stats != null)
 				Stats = (EnemyStats)Stats.Duplicate();
 			else
 				Stats = new EnemyStats();
 
-			// 체력 초기화 (Initialize health)
 			Stats.CurrentHealth = Stats.MaxHealth;
 
-			// 체력바 노드 가져오기 및 스타일 설정 (Get HealthBar node and set style)
 			_healthBar = GetNode<ProgressBar>("HealthBar");
 			_healthBar.MaxValue = Stats.MaxHealth;
 			_healthBar.Value = Stats.CurrentHealth;
 
-			// 체력바 스타일 커스터마이징 (Customize HealthBar Style)
-			// 배경 스타일 (Background Style: Dark Gray)
 			var bgStyle = new StyleBoxFlat
 			{
 				BgColor = new Color(0.1f, 0.1f, 0.1f, 0.8f),
@@ -43,7 +40,6 @@ namespace FirstGame.Entities.Enemies
 			};
 			_healthBar.AddThemeStyleboxOverride("background", bgStyle);
 
-			// 채우기 스타일 (Fill Style: Red)
 			var fillStyle = new StyleBoxFlat
 			{
 				BgColor = new Color(0.8f, 0.1f, 0.1f, 1.0f),
@@ -53,74 +49,124 @@ namespace FirstGame.Entities.Enemies
 				CornerRadiusBottomLeft = 2
 			};
 			_healthBar.AddThemeStyleboxOverride("fill", fillStyle);
-			
-			// 체력바 크기 및 위치 조정 (Adjust size and position if needed)
-			// 현재 씬 설정(enemy.tscn)을 따르되, 필요시 코드에서 강제할 수 있음.
+
+			CollisionMask |= 4;
+
+			SetupAnimations();
 		}
 
-		private float _attackTimer = 0f;
+		private void SetupAnimations()
+		{
+			_animSprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
+			if (_animSprite == null)
+			{
+				GD.PrintErr("EnemyController: AnimatedSprite2D 노드를 찾을 수 없음");
+				return;
+			}
+
+			var frames = new SpriteFrames();
+			if (frames.HasAnimation("default"))
+				frames.RemoveAnimation("default");
+
+			string basePath = Stats.AnimBasePath;
+			AddSheetAnimation(frames, "idle", Stats.AnimIdleFile, Stats.AnimIdleFrames, 6, true, basePath);
+			AddSheetAnimation(frames, "run", Stats.AnimRunFile, Stats.AnimRunFrames, 10, true, basePath);
+			AddSheetAnimation(frames, "death", Stats.AnimDeathFile, Stats.AnimDeathFrames, 8, false, basePath);
+
+			_animSprite.SpriteFrames = frames;
+			_animSprite.Play("idle");
+			_animSprite.AnimationFinished += OnAnimationFinished;
+		}
+
+		private void AddSheetAnimation(SpriteFrames frames, string animName, string sheetFile, int frameCount, int fps, bool loop, string basePath)
+		{
+			frames.AddAnimation(animName);
+			frames.SetAnimationSpeed(animName, fps);
+			frames.SetAnimationLoop(animName, loop);
+
+			var texture = GD.Load<Texture2D>(basePath + sheetFile);
+			if (texture == null)
+			{
+				GD.PrintErr($"EnemyController: 텍스처 로드 실패 - {basePath}{sheetFile}");
+				return;
+			}
+
+			int frameWidth = texture.GetWidth() / frameCount;
+			int frameHeight = texture.GetHeight();
+
+			for (int i = 0; i < frameCount; i++)
+			{
+				var atlas = new AtlasTexture();
+				atlas.Atlas = texture;
+				atlas.Region = new Rect2(i * frameWidth, 0, frameWidth, frameHeight);
+				frames.AddFrame(animName, atlas);
+			}
+		}
 
 		public override void _PhysicsProcess(double delta)
 		{
+			if (_isDying) return;
+
 			if (!IsInstanceValid(_target))
 			{
 				FindTarget();
 				return;
 			}
 
-			// 쿨타임 감소 (Decrease Cooldown)
 			_attackTimer -= (float)delta;
-			
-			// 타겟 방향 및 거리 계산 (Calculate Direction and Distance)
+
 			Vector2 direction = GlobalPosition.DirectionTo(_target.GlobalPosition);
 			float distance = GlobalPosition.DistanceTo(_target.GlobalPosition);
 
-			// 디버깅: 거리 확인 (Debug distance)
-			// GD.Print($"Enemy Distance to Player: {distance}");
+			if (_animSprite != null)
+				_animSprite.FlipH = direction.X < 0;
 
 			if (distance <= Stats.AttackRange)
 			{
-				// 공격 사거리 내: 정지 및 공격 (In Attack Range: Stop and Attack)
 				Velocity = Vector2.Zero;
 				TryAttack();
+				PlayAnim("idle");
 			}
 			else if (distance <= Stats.DetectionRange)
 			{
-				// 추적 사거리 내: 타겟 향해 이동 (In Chase Range: Move towards target)
-				float stopBuffer = 30.0f; // 정지 완충 거리 (Buffer distance for smooth stop)
+				float stopBuffer = 30.0f;
 
 				if (distance <= Stats.AttackRange + stopBuffer)
 				{
-					// 감속 구간: 공격 사거리 근처에서 서서히 정지 (Slow down near attack range)
 					float ratio = Mathf.Max(0.15f, (distance - Stats.AttackRange) / stopBuffer);
 					Velocity = direction * Stats.MoveSpeed * ratio;
 				}
 				else
 				{
-					// 일반 추적 (Normal Chase)
 					Velocity = direction * Stats.MoveSpeed;
 				}
+				PlayAnim("run");
 			}
 			else
 			{
-				// 사거리 밖: 정지 (Out of range: Stop)
 				Velocity = Vector2.Zero;
+				PlayAnim("idle");
 			}
-			
+
 			MoveAndSlide();
 		}
-		
+
+		private void PlayAnim(string animName)
+		{
+			if (_animSprite != null && _animSprite.Animation != animName)
+				_animSprite.Play(animName);
+		}
+
 		private void TryAttack()
 		{
-			// 공격 조건 체크: 쿨타임 종료 + 타겟 유효 + 데미지 처리 가능 인터페이스 (Check Attack Conditions)
 			if (_attackTimer <= 0f && IsInstanceValid(_target) && _target is IDamageable target)
 			{
 				target.TakeDamage(Stats.BaseDamage);
-				_attackTimer = Stats.AttackCooldown; // 쿨타임 리셋 (Reset Cooldown)
-				GD.Print($"[Enemy] 공격 수행! 데미지: {Stats.BaseDamage} (Attacked! Damage: {Stats.BaseDamage})");
+				_attackTimer = Stats.AttackCooldown;
+				AudioManager.Instance?.PlaySFX("enemy_attack.wav");
 			}
 		}
-		
+
 		private void FindTarget()
 		{
 			var players = GetTree().GetNodesInGroup("Player");
@@ -128,25 +174,24 @@ namespace FirstGame.Entities.Enemies
 			{
 				_target = players[0] as Node2D;
 			}
-			// 물리 프로세스가 실행될 때 플레이어를 찾거나 탐지 영역(Detection Area)을 사용하는 방법도 있음. (Or use Detection Area)
 		}
 
-		// IDamageable 구현 (IDamageable Implementation)
 		public void TakeDamage(int damage)
 		{
-			Stats.CurrentHealth -= damage;
-			_healthBar.Value = Stats.CurrentHealth;
-			GD.Print($"적이 {damage} 데미지를 입음. 현재 체력: {Stats.CurrentHealth} (Enemy took damage)");
+			if (_isDying) return;
 
-			// 시각적 피드백: 흰색으로 깜빡임 (Visual Feedback: Flash white)
-			var sprite = GetNode<Sprite2D>("Sprite2D");
-			if (sprite != null)
+			Stats.CurrentHealth -= damage;
+			AudioManager.Instance?.PlaySFX("enemy_hit.wav");
+			_healthBar.Value = Stats.CurrentHealth;
+
+			// 피격 시 흰색 플래시
+			if (_animSprite != null)
 			{
-				var originalColor = sprite.Modulate;
-				sprite.Modulate = Colors.White; // 피격 시 흰색으로 깜빡임 (Flash white)
-				GetTree().CreateTimer(0.1).Timeout += () => 
+				var originalColor = _animSprite.Modulate;
+				_animSprite.Modulate = Colors.White;
+				GetTree().CreateTimer(0.1).Timeout += () =>
 				{
-					if (IsInstanceValid(sprite)) sprite.Modulate = originalColor;
+					if (IsInstanceValid(_animSprite)) _animSprite.Modulate = originalColor;
 				};
 			}
 
@@ -158,29 +203,58 @@ namespace FirstGame.Entities.Enemies
 
 		private void Die()
 		{
-			GD.Print("적 사망! (Enemy Died!)");
-			// 골드 보상 (Reward Gold)
+			_isDying = true;
+			AudioManager.Instance?.PlaySFX("enemy_death.wav");
+
+			// 골드 보상
 			GameManager.Instance.PlayerGold += 10;
 
-			// 아이템 드롭 (Item Drop)
+			// 경험치 지급
+			var players = GetTree().GetNodesInGroup("Player");
+			if (players.Count > 0 && players[0] is PlayerController player)
+			{
+				player.GainExp(Stats.ExperienceReward);
+			}
+
+			// 아이템 드롭
 			if (Stats.PossibleDrops != null && Stats.PossibleDrops.Length > 0)
 			{
 				if (GD.Randf() <= Stats.DropChance)
 				{
 					int index = (int)(GD.Randi() % Stats.PossibleDrops.Length);
 					var droppedItem = Stats.PossibleDrops[index];
-					var players = GetTree().GetNodesInGroup("Player");
-					if (players.Count > 0 && players[0] is PlayerController player)
+					var players2 = GetTree().GetNodesInGroup("Player");
+					if (players2.Count > 0 && players2[0] is PlayerController player2)
 					{
-						player.Inventory.AddItem(droppedItem);
-						GD.Print($"아이템 드롭: {droppedItem.ItemName} (Item Dropped: {droppedItem.ItemName})");
+						player2.Inventory.AddItem(droppedItem);
 					}
 				}
 			}
 
-			// 자동 저장 (Auto Save)
-			SaveManager.SaveGame(); 
-			QueueFree(); // 오브젝트 삭제 (Destroy Object)
+			// 자동 저장
+			SaveManager.SaveGame();
+
+			// 사망 애니메이션 재생 후 QueueFree
+			if (_animSprite != null)
+			{
+				_healthBar.Visible = false;
+				SetPhysicsProcess(false);
+				_animSprite.Play("death");
+			}
+			else
+			{
+				QueueFree();
+			}
+		}
+
+		private void OnAnimationFinished()
+		{
+			if (_animSprite == null) return;
+
+			if (_animSprite.Animation == "death")
+			{
+				QueueFree();
+			}
 		}
 	}
 }

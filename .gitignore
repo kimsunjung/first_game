@@ -15,7 +15,12 @@ obj/
 # Claude Code
 CLAUDE.md
 
+# Scripts
+generate_sounds.py
+
 # OS
 Thumbs.db
 Desktop.ini
 .DS_Store
+.claude/settings.local.json
+.gitignore

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "Steel Armor"
+Description = "튼튼한 강철 방어구. 최대 HP +40"
+Price = 300
+SellPrice = 150
+Type = 2
+IsStackable = false
+MaxStack = 1
+BonusMaxHealth = 40

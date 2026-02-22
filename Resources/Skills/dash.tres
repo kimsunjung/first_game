@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "대시"
+Description = "2초간 이동속도 2.5배 증가"
+Type = 2
+MpCost = 10
+Cooldown = 6.0
+RequiredLevel = 5
+DurationSeconds = 2.0

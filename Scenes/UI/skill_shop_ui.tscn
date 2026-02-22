@@ -1,0 +1,63 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/SkillShopUI.cs" id="1_skillshop"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_power_strike.tres" id="2_ps"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_heal.tres" id="3_heal"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_dash.tres" id="4_dash"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_fire_bolt.tres" id="5_fb"]
+
+[node name="SkillShopUI" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_skillshop")
+SkillBooks = Array[Resource]([ExtResource("2_ps"), ExtResource("3_heal"), ExtResource("4_dash"), ExtResource("5_fb")])
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -280.0
+offset_right = 220.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "스킬 상점"
+horizontal_alignment = 1
+
+[node name="SkillShopGoldLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "보유 골드: 0G"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 360)
+
+[node name="SkillList" type="VBoxContainer" parent="PanelContainer/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="SkillShopMessageLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+visible = false
+horizontal_alignment = 1
+modulate = Color(1.0, 0.8, 0.2, 1.0)
+
+[node name="SkillShopCloseButton" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "닫기 (E)"

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "Iron Spear"
+Description = "긴 사정거리의 철제 창. 공격력 +13"
+Price = 250
+SellPrice = 125
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 13
+AttackType = 1

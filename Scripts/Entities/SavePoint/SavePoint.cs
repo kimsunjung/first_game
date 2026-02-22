@@ -24,6 +24,7 @@ namespace FirstGame.Entities
             {
                 // GD.Print("SavePoint: E key pressed, saving game...");
                 SaveManager.SaveGame("manual");
+                AudioManager.Instance?.PlaySFX("save.wav");
             }
         }
 

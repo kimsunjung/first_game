@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+MaxHealth = 35
+MoveSpeed = 140.0
+DetectionRange = 260.0
+AttackRange = 75.0
+BaseDamage = 18
+AttackCooldown = 0.7
+ExperienceReward = 32
+AnimBasePath = "res://Resources/Tilesets/Pixel Crawler - Free Pack/Entities/Mobs/Skeleton Crew/Skeleton - Rogue/"
+AnimIdleFile = "Idle/Idle-Sheet_padded.png"
+AnimIdleFrames = 4
+AnimRunFile = "Run/Run-Sheet.png"
+AnimRunFrames = 6
+AnimDeathFile = "Death/Death-Sheet.png"
+AnimDeathFrames = 6
+DropChance = 0.45

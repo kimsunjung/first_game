@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "Battle Axe"
+Description = "묵직한 전투용 도끼. 공격력 +18"
+Price = 350
+SellPrice = 175
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 18
+AttackType = 2

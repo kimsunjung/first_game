@@ -7,6 +7,7 @@ script = ExtResource("1")
 ItemName = "Iron Armor"
 Description = "최대 체력 +20 (Max HP +20)"
 Price = 120
+SellPrice = 60
 Type = 2
 IsStackable = false
 MaxStack = 1

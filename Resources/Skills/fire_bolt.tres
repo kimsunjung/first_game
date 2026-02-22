@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "파이어볼트"
+Description = "가장 가까운 적에게 2배 원거리 공격"
+Type = 3
+MpCost = 25
+Cooldown = 4.0
+RequiredLevel = 8
+BonusDamageMultiplier = 2
