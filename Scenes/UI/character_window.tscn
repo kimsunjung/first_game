@@ -1,0 +1,109 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/CharacterWindow.cs" id="1_cw"]
+
+[node name="CharacterWindow" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_cw")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -220.0
+offset_right = 180.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "캐릭터 정보  [C]"
+horizontal_alignment = 1
+
+[node name="LevelInfo" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "레벨: 1"
+
+[node name="HpInfo" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "HP: 100 / 100"
+
+[node name="MpInfo" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MP: 50 / 50"
+
+[node name="AtkInfo" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "공격력: 10"
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SpInfo" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+modulate = Color(1.0, 0.9, 0.2, 1.0)
+text = "남은 SP: 0"
+horizontal_alignment = 1
+
+[node name="StrRow" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="StrInfo" type="Label" parent="PanelContainer/VBoxContainer/StrRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "STR: 0  (+0 공격력)"
+
+[node name="StrBtn" type="Button" parent="PanelContainer/VBoxContainer/StrRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+"
+
+[node name="ConRow" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ConInfo" type="Label" parent="PanelContainer/VBoxContainer/ConRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CON: 0  (+0 최대HP)"
+
+[node name="ConBtn" type="Button" parent="PanelContainer/VBoxContainer/ConRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+"
+
+[node name="IntRow" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="IntInfo" type="Label" parent="PanelContainer/VBoxContainer/IntRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "INT: 0  (+0 최대MP)"
+
+[node name="IntBtn" type="Button" parent="PanelContainer/VBoxContainer/IntRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+"
+
+[node name="CloseHint" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+modulate = Color(0.7, 0.7, 0.7, 1.0)
+text = "C키로 닫기"
+horizontal_alignment = 1

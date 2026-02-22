@@ -13,6 +13,10 @@ namespace FirstGame.Data
 		[Export] public float AttackCooldown { get; set; } = 1.0f;
 		[Export] public int ExperienceReward { get; set; } = 15;
 
+		// ─── 식별 및 보스 설정 ──────────────────────────────────────
+		[Export] public string EnemyTypeName { get; set; } = "Orc";
+		[Export] public bool IsBoss { get; set; } = false;
+
 		// ─── 애니메이션 설정 ─────────────────────────────────────────
 		[ExportGroup("Animation")]
 		[Export] public string AnimBasePath { get; set; } =

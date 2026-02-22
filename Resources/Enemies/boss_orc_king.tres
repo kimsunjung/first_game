@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1_es"]
+
+[resource]
+script = ExtResource("1_es")
+MoveSpeed = 80.0
+MaxHealth = 500
+CurrentHealth = 500
+DetectionRange = 300.0
+AttackRange = 90.0
+BaseDamage = 25
+AttackCooldown = 1.5
+ExperienceReward = 200
+EnemyTypeName = "Boss"
+IsBoss = true
+AnimBasePath = "res://Resources/Tilesets/Pixel Crawler - Free Pack/Entities/Mobs/Orc Crew/Orc/"
+AnimIdleFile = "Idle/Idle-Sheet_padded.png"
+AnimIdleFrames = 4
+AnimRunFile = "Run/Run-Sheet.png"
+AnimRunFrames = 6
+AnimDeathFile = "Death/Death-Sheet.png"
+AnimDeathFrames = 6
+DropChance = 1.0

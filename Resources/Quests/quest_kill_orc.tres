@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="QuestData" format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1_qd"]
+
+[resource]
+script = ExtResource("1_qd")
+QuestId = "kill_orc_5"
+QuestTitle = "오크 토벌"
+Description = "오크 5마리를 처치하라!"
+TargetEnemyType = "Orc"
+TargetCount = 5
+GoldReward = 100

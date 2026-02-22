@@ -1,6 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 using FirstGame.Data;
+using FirstGame.Core;
 
 namespace FirstGame.Entities.Enemies
 {
@@ -12,6 +13,12 @@ namespace FirstGame.Entities.Enemies
 		[Export] public int MaxEnemies { get; set; } = 5;
 		[Export] public float SpawnRadius { get; set; } = 300.0f;
 		[Export] public int TileSize { get; set; } = 16;
+		[Export] public EnemyStats BossStatVariant { get; set; }
+
+		// 보스 스폰 카운터 (씬 재로드 시 초기화됨)
+		private int _killCount = 0;
+		private const int BossSpawnKillThreshold = 10;
+		private bool _bossAlive = false;
 
 		private float _spawnTimer = 0f;
 		private HashSet<Vector2I> _obstacleTiles = new();
@@ -46,6 +53,9 @@ namespace FirstGame.Entities.Enemies
 					GD.Print($"EnemySpawner: 바닥 타일 {_groundTiles.Count}개 로드");
 				}
 			}
+
+			EventManager.OnEnemyKilled += OnEnemyKilledHandler;
+			EventManager.OnBossDied += OnBossDiedHandler;
 		}
 
 		public override void _PhysicsProcess(double delta)
@@ -106,6 +116,41 @@ namespace FirstGame.Entities.Enemies
 				return true;
 
 			return false;
+		}
+
+		public override void _ExitTree()
+		{
+			EventManager.OnEnemyKilled -= OnEnemyKilledHandler;
+			EventManager.OnBossDied -= OnBossDiedHandler;
+		}
+
+		private void OnEnemyKilledHandler()
+		{
+			_killCount++;
+			if (!_bossAlive && BossStatVariant != null && _killCount % BossSpawnKillThreshold == 0)
+			{
+				TrySpawnBoss();
+			}
+		}
+
+		private void OnBossDiedHandler()
+		{
+			_bossAlive = false;
+		}
+
+		private void TrySpawnBoss()
+		{
+			if (EnemyScene == null) return;
+			_bossAlive = true;
+			var boss = EnemyScene.Instantiate<EnemyController>();
+			boss.Stats = (EnemyStats)BossStatVariant.Duplicate();
+			// 보스는 스포너 근처에 스폰
+			boss.GlobalPosition = GlobalPosition + new Vector2(0, -150);
+			boss.Scale = new Vector2(2.0f, 2.0f);
+			boss.AddToGroup("Boss");
+			GetParent().AddChild(boss);
+			EventManager.TriggerBossSpawned(BossStatVariant.MaxHealth, BossStatVariant.EnemyTypeName);
+			GD.Print($"보스 등장! {BossStatVariant.EnemyTypeName}");
 		}
 	}
 }

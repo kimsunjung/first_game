@@ -38,6 +38,10 @@ namespace FirstGame.Core
                 PlayerMp = playerCtrl.Stats.CurrentMp,
                 PlayerLevel = playerCtrl.Stats.Level,
                 PlayerExp = playerCtrl.Stats.Exp,
+                StatPoints = playerCtrl.Stats.StatPoints,
+                StrPoints = playerCtrl.Stats.StrPoints,
+                ConPoints = playerCtrl.Stats.ConPoints,
+                IntPoints = playerCtrl.Stats.IntPoints,
                 PlayerGold = GameManager.Instance.PlayerGold,
                 Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };

@@ -9,6 +9,7 @@ namespace FirstGame.Data
 	{
 		public event Action<int> OnLevelUp;
 		public event Action<int, int> OnExpChanged;
+		public event Action<int> OnStatPointsChanged;
 
 		[Export] public int BaseDamage { get; set; } = 10;
 		[Export] public float AttackRange { get; set; } = 80.0f;
@@ -19,6 +20,16 @@ namespace FirstGame.Data
 
 		private int _exp = 0;
 		public int Exp => _exp;
+
+		private int _statPoints = 0;
+		private int _strPoints = 0;
+		private int _conPoints = 0;
+		private int _intPoints = 0;
+
+		public int StatPoints => _statPoints;
+		public int StrPoints => _strPoints;
+		public int ConPoints => _conPoints;
+		public int IntPoints => _intPoints;
 
 		public int ExpToNextLevel => (int)(100 * Math.Pow(_level, 1.5));
 
@@ -45,6 +56,8 @@ namespace FirstGame.Data
 			BaseDamage += 2;
 			MaxMp += 5;
 			CurrentMp = MaxMp;
+			_statPoints += 3;
+			OnStatPointsChanged?.Invoke(_statPoints);
 		}
 
 		public void SetLevelFromSave(int level, int exp)
@@ -55,6 +68,30 @@ namespace FirstGame.Data
 			BaseDamage = 10 + levelsGained * 2;
 			MaxMp = 50 + levelsGained * 5;
 			_exp = Mathf.Max(0, exp);
+		}
+
+		// ─── 스탯 포인트 ─────────────────────────────────────────────
+		public bool AllocateStat(string stat)
+		{
+			if (_statPoints <= 0) return false;
+			switch (stat.ToUpperInvariant())
+			{
+				case "STR": _strPoints++; BaseDamage += 2; break;
+				case "CON": _conPoints++; MaxHealth += 5; CurrentHealth = Mathf.Min(CurrentHealth + 5, MaxHealth); break;
+				case "INT": _intPoints++; MaxMp += 3; CurrentMp = Mathf.Min(CurrentMp + 3, MaxMp); break;
+				default: return false;
+			}
+			_statPoints--;
+			OnStatPointsChanged?.Invoke(_statPoints);
+			return true;
+		}
+
+		public void SetStatPointsFromSave(int sp, int str, int con, int intel)
+		{
+			_statPoints = sp;
+			_strPoints = str;
+			_conPoints = con;
+			_intPoints = intel;
 		}
 
 		// ─── 스킬 시스템 ─────────────────────────────────────────────

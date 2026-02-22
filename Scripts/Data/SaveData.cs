@@ -25,5 +25,11 @@ namespace FirstGame.Data
 		public string EquippedArmorPath { get; set; }
 		public List<string> QuickSlotPaths { get; set; } = new();
 		public List<string> LearnedSkillPaths { get; set; } = new(); // 습득한 스킬 경로
+
+		// 스탯 포인트
+		public int StatPoints { get; set; } = 0;
+		public int StrPoints { get; set; } = 0;
+		public int ConPoints { get; set; } = 0;
+		public int IntPoints { get; set; } = 0;
 	}
 }

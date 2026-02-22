@@ -20,6 +20,13 @@
 [ext_resource type="Resource" path="res://Resources/Enemies/skeleton_warrior.tres" id="17_e6"]
 [ext_resource type="Resource" path="res://Resources/Enemies/skeleton_rogue.tres" id="18_e7"]
 [ext_resource type="Resource" path="res://Resources/Enemies/skeleton_mage.tres" id="19_e8"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/character_window.tscn" id="20_charwin"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/boss_health_bar.tscn" id="21_bosshp"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/quest_npc.tscn" id="22_questnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/quest_ui.tscn" id="23_questui"]
+[ext_resource type="Resource" path="res://Resources/Enemies/boss_orc_king.tres" id="24_boss"]
+[ext_resource type="Resource" path="res://Resources/Quests/quest_kill_orc.tres" id="25_q1"]
+[ext_resource type="Resource" path="res://Resources/Quests/quest_kill_skeleton.tres" id="26_q2"]
 
 [node name="Main" type="Node2D" unique_id=667305305]
 
@@ -30,6 +37,7 @@ position = Vector2(640, 560)
 script = ExtResource("4_spawner")
 EnemyScene = ExtResource("1_0xm2m")
 StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5"), ExtResource("17_e6"), ExtResource("18_e7"), ExtResource("19_e8")])
+BossStatVariant = ExtResource("24_boss")
 
 [node name="SavePoint" parent="." unique_id=1136075287 instance=ExtResource("5_savepoint")]
 position = Vector2(272, 192)
@@ -52,3 +60,13 @@ position = Vector2(208, 192)
 
 [node name="SkillShopNPC" parent="." instance=ExtResource("11_skillNPC")]
 position = Vector2(336, 192)
+
+[node name="CharacterWindow" parent="." instance=ExtResource("20_charwin")]
+
+[node name="BossHealthBar" parent="." instance=ExtResource("21_bosshp")]
+
+[node name="QuestNPC" parent="." instance=ExtResource("22_questnpc")]
+position = Vector2(144, 192)
+AvailableQuests = Array[Resource]([ExtResource("25_q1"), ExtResource("26_q2")])
+
+[node name="QuestUI" parent="." instance=ExtResource("23_questui")]

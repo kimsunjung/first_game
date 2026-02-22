@@ -4,6 +4,7 @@ using FirstGame.Core;
 using FirstGame.Core.Interfaces;
 using FirstGame.Data;
 using FirstGame.Entities.Player;
+using FirstGame.UI;
 
 namespace FirstGame.Entities.Enemies
 {
@@ -184,6 +185,13 @@ namespace FirstGame.Entities.Enemies
 			AudioManager.Instance?.PlaySFX("enemy_hit.wav");
 			_healthBar.Value = Stats.CurrentHealth;
 
+			// 보스 HP 바 업데이트
+			if (Stats.IsBoss)
+				EventManager.TriggerBossHealthChanged(Stats.CurrentHealth, Stats.MaxHealth);
+
+			// 플로팅 데미지 표시
+			PlayerController.SpawnFloatingLabel(GlobalPosition, damage, false, false);
+
 			// 피격 시 흰색 플래시
 			if (_animSprite != null)
 			{
@@ -205,6 +213,11 @@ namespace FirstGame.Entities.Enemies
 		{
 			_isDying = true;
 			AudioManager.Instance?.PlaySFX("enemy_death.wav");
+
+			// 보스/퀘스트 이벤트
+			EventManager.TriggerEnemyKilled();
+			QuestManager.ReportKill(Stats.EnemyTypeName);
+			if (Stats.IsBoss) EventManager.TriggerBossDied();
 
 			// 골드 보상
 			GameManager.Instance.PlayerGold += 10;

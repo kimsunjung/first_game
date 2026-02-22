@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1")
+EnemyTypeName = "Skeleton"
 MaxHealth = 40
 MoveSpeed = 90.0
 DetectionRange = 200.0

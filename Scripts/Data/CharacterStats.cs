@@ -10,6 +10,10 @@ namespace FirstGame.Data
 		public event Action<int, int> OnHealthChanged; // (현재, 최대)
 		public event Action<int, int> OnMpChanged;     // (현재, 최대)
 
+		// ─── 크리티컬 ──────────────────────────────────────────────
+		[Export] public float CritRate { get; set; } = 0.1f;         // 10% 기본 크리트 확률
+		[Export] public float CritMultiplier { get; set; } = 2.0f;   // 2배 크리트 데미지
+
 		// ─── 기본 스탯 ─────────────────────────────────────────────
 		[Export] public float MoveSpeed { get; set; } = 200.0f;
 		[Export] public int   MaxHealth { get; set; } = 100;

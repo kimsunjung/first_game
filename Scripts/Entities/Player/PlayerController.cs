@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FirstGame.Data;
 using FirstGame.Core;
 using FirstGame.Core.Interfaces;
+using FirstGame.UI;
 
 namespace FirstGame.Entities.Player
 {
@@ -31,6 +32,11 @@ namespace FirstGame.Entities.Player
 		private float _dashTimer = 0f;
 		private const float DashSpeedMultiplier = 2.5f;
 
+		// 카메라 쉐이크
+		private Camera2D _camera;
+		private float _shakeIntensity = 0f;
+		private float _shakeTimer = 0f;
+
 		[Export] public float Acceleration { get; set; } = 800.0f;
 		[Export] public float Friction { get; set; } = 1000.0f;
 
@@ -40,6 +46,10 @@ namespace FirstGame.Entities.Player
 			if (IsDead) return;
 			Stats.CurrentHealth -= damage;
 			AudioManager.Instance?.PlaySFX("player_hit.wav");
+			SpawnFloatingLabel(GlobalPosition, damage, false, true);
+			// 큰 피해 시 화면 흔들림 (최대 HP의 20% 이상)
+			if (damage >= Stats.MaxHealth * 0.2f)
+				TriggerCameraShake(5f, 0.3f);
 			PlayHitAnimation();
 			if (Stats.CurrentHealth <= 0) Die();
 		}
@@ -68,11 +78,11 @@ namespace FirstGame.Entities.Player
 
 			Stats.OnLevelUp += OnLevelUpHandler;
 
-			var camera = GetNodeOrNull<Camera2D>("Camera2D");
-			if (camera != null)
+			_camera = GetNodeOrNull<Camera2D>("Camera2D");
+			if (_camera != null)
 			{
-				camera.LimitLeft = 0; camera.LimitTop = 0;
-				camera.LimitRight = 1280; camera.LimitBottom = 960;
+				_camera.LimitLeft = 0; _camera.LimitTop = 0;
+				_camera.LimitRight = 1280; _camera.LimitBottom = 960;
 			}
 
 			CollisionMask |= 4;
@@ -83,6 +93,7 @@ namespace FirstGame.Entities.Player
 				var data = SaveManager.PendingLoadData;
 				GlobalPosition = new Vector2(data.PlayerPosX, data.PlayerPosY);
 				Stats.SetLevelFromSave(data.PlayerLevel, data.PlayerExp);
+				Stats.SetStatPointsFromSave(data.StatPoints, data.StrPoints, data.ConPoints, data.IntPoints);
 				Stats.MaxHealth = data.PlayerMaxHealth;
 				Stats.CurrentHealth = data.PlayerHealth;
 				Stats.CurrentMp = data.PlayerMp;
@@ -163,6 +174,7 @@ namespace FirstGame.Entities.Player
 			RegenMp(delta);
 			UpdateSkillCooldowns(delta);
 			UpdateDash(delta);
+			UpdateCameraShake(delta);
 		}
 
 		private void RegenMp(double delta)
@@ -269,9 +281,12 @@ namespace FirstGame.Entities.Player
 			}
 			if (target != null)
 			{
+				bool fbCrit = GD.Randf() < Stats.CritRate;
 				int dmg = Stats.BaseDamage * (skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2);
+				if (fbCrit) dmg = (int)(dmg * Stats.CritMultiplier);
 				target.TakeDamage(dmg);
-				GD.Print($"파이어볼트 명중! ({dmg} 데미지)");
+				TriggerCameraShake(7f, 0.3f);
+				GD.Print($"파이어볼트 명중! ({dmg} 데미지{(fbCrit ? " CRIT!" : "")})");
 			}
 		}
 
@@ -305,6 +320,7 @@ namespace FirstGame.Entities.Player
 			AudioManager.Instance?.PlaySFX("player_attack.wav");
 
 			int damage = Stats.BaseDamage;
+			bool isCrit = GD.Randf() < Stats.CritRate;
 			int multiplier = 1;
 			if (_powerStrikeActive)
 			{
@@ -314,7 +330,9 @@ namespace FirstGame.Entities.Player
 				multiplier = ps != null ? ps.BonusDamageMultiplier : 2;
 				damage *= multiplier;
 				_powerStrikeActive = false;
+				TriggerCameraShake(6f, 0.25f);
 			}
+			if (isCrit) damage = (int)(damage * Stats.CritMultiplier);
 
 			PlayAttackAnimation();
 
@@ -330,6 +348,8 @@ namespace FirstGame.Entities.Player
 						if (_facingDirection.Dot(dirToEnemy) > 0.7f)
 						{
 							damageableEnemy.TakeDamage(damage);
+							// 플로팅 데미지는 EnemyController.TakeDamage에서 처리
+							if (isCrit) TriggerCameraShake(4f, 0.2f);
 						}
 					}
 				}
@@ -469,6 +489,45 @@ namespace FirstGame.Entities.Player
 				_isAnimLocked = false;
 				UpdateAnimation();
 			}
+		}
+
+		// ─── 플로팅 데미지 ────────────────────────────────────────
+		private static readonly PackedScene FloatingLabelScene =
+			GD.Load<PackedScene>("res://Scenes/UI/floating_label.tscn");
+
+		public static void SpawnFloatingLabel(Vector2 worldPos, int damage, bool isCrit, bool isPlayerDamage = false)
+		{
+			if (FloatingLabelScene == null) return;
+			var scene = Engine.GetMainLoop() as SceneTree;
+			if (scene == null) return;
+			var label = FloatingLabelScene.Instantiate<FloatingLabel>();
+			label.GlobalPosition = worldPos + new Vector2(0, -20);
+			scene.CurrentScene.AddChild(label);
+			label.Init(damage, isCrit, isPlayerDamage);
+		}
+
+		// ─── 화면 흔들림 ──────────────────────────────────────────
+		public void TriggerCameraShake(float intensity, float duration)
+		{
+			_shakeIntensity = intensity;
+			_shakeTimer = duration;
+		}
+
+		private void UpdateCameraShake(double delta)
+		{
+			if (_shakeTimer <= 0f || _camera == null) return;
+			_shakeTimer -= (float)delta;
+			if (_shakeTimer <= 0f)
+			{
+				_shakeTimer = 0f;
+				_camera.Offset = Vector2.Zero;
+				return;
+			}
+			float ratio = _shakeTimer; // 시간이 지남에 따라 약해짐
+			_camera.Offset = new Vector2(
+				(float)GD.RandRange(-_shakeIntensity, _shakeIntensity) * ratio,
+				(float)GD.RandRange(-_shakeIntensity, _shakeIntensity) * ratio
+			);
 		}
 	}
 }

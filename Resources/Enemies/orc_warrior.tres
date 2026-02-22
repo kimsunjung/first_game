@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1")
+EnemyTypeName = "Orc"
 MaxHealth = 100
 MoveSpeed = 70.0
 DetectionRange = 220.0
