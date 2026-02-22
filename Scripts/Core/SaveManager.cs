@@ -124,6 +124,21 @@ namespace FirstGame.Core
             tree.ReloadCurrentScene();
         }
 
+        /// <summary>씬 전환 시 사용. 파일에서 읽어 PendingLoadData에 넣되, 씬 리로드는 하지 않음.</summary>
+        public static void LoadIntoPending(string slot = null)
+        {
+            if (slot == null)
+            {
+                if (HasSave(ManualSaveSlot)) slot = ManualSaveSlot;
+                else if (HasSave(AutoSaveSlot)) slot = AutoSaveSlot;
+                else return;
+            }
+            string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
+            if (!File.Exists(path)) return;
+            string json = File.ReadAllText(path);
+            PendingLoadData = JsonSerializer.Deserialize<SaveData>(json);
+        }
+
         public static bool HasSave(string slot = AutoSaveSlot)
         {
             string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");

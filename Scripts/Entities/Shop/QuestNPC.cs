@@ -22,10 +22,9 @@ namespace FirstGame.Entities.Shop
 		public override void _UnhandledInput(InputEvent @event)
 		{
 			if (!_playerInRange) return;
-			if (@event is InputEventKey k && k.Pressed && !k.Echo)
+			if (@event.IsActionPressed("interact") && !@event.IsEcho())
 			{
-				if (k.Keycode == Key.E || k.PhysicalKeycode == Key.E)
-					TryInteract();
+				TryInteract();
 			}
 		}
 

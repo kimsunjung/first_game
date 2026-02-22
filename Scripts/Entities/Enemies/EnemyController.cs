@@ -229,17 +229,33 @@ namespace FirstGame.Entities.Enemies
 				player.GainExp(Stats.ExperienceReward);
 			}
 
-			// 아이템 드롭
+			// 아이템 드롭 (물리 드랍)
 			if (Stats.PossibleDrops != null && Stats.PossibleDrops.Length > 0)
 			{
 				if (GD.Randf() <= Stats.DropChance)
 				{
 					int index = (int)(GD.Randi() % Stats.PossibleDrops.Length);
 					var droppedItem = Stats.PossibleDrops[index];
-					var players2 = GetTree().GetNodesInGroup("Player");
-					if (players2.Count > 0 && players2[0] is PlayerController player2)
+
+					// FieldItem 프리팹 로드 (경로는 프로젝트 트리에 맞게 설정해야 함)
+					// 지금은 임시로 Load 사용. 향후 EnemySpawner나 GameManager 등을 통해 캐싱 권장
+					var fieldItemPrefab = GD.Load<PackedScene>("res://Scenes/Objects/field_item.tscn");
+					if (fieldItemPrefab != null)
 					{
-						player2.Inventory.AddItem(droppedItem);
+						var fieldItem = fieldItemPrefab.Instantiate<FirstGame.Objects.FieldItem>();
+						fieldItem.Item = droppedItem;
+						fieldItem.Quantity = 1;
+						
+						// 부모 노드(필드)에 추가 (몬스터가 지워지더라도 아이템은 남아야 하므로 GetParent)
+						GetParent().AddChild(fieldItem);
+						
+						// 물리 드랍 연출: 랜덤한 방향으로 통통 튀게 던짐
+						Vector2 dropDir = new Vector2((float)GD.RandRange(-1, 1), -1).Normalized();
+						fieldItem.Drop(GlobalPosition, dropDir, (float)GD.RandRange(200, 400));
+					}
+					else
+					{
+						GD.PrintErr("EnemyController: field_item.tscn을 찾을 수 없습니다.");
 					}
 				}
 			}

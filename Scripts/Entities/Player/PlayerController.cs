@@ -1,4 +1,4 @@
-using Godot;
+﻿using Godot;
 using System;
 using System.Collections.Generic;
 using FirstGame.Data;
@@ -91,7 +91,18 @@ namespace FirstGame.Entities.Player
 			if (SaveManager.PendingLoadData != null)
 			{
 				var data = SaveManager.PendingLoadData;
-				GlobalPosition = new Vector2(data.PlayerPosX, data.PlayerPosY);
+				
+				// 포탈을 통한 씬 이동이 우선 순위
+				if (SceneManager.Instance != null && SceneManager.Instance.NextSpawnPosition.HasValue)
+				{
+					GlobalPosition = SceneManager.Instance.NextSpawnPosition.Value;
+					SceneManager.Instance.NextSpawnPosition = null;
+				}
+				else
+				{
+					GlobalPosition = new Vector2(data.PlayerPosX, data.PlayerPosY);
+				}
+
 				Stats.SetLevelFromSave(data.PlayerLevel, data.PlayerExp);
 				Stats.SetStatPointsFromSave(data.StatPoints, data.StrPoints, data.ConPoints, data.IntPoints);
 				Stats.MaxHealth = data.PlayerMaxHealth;
@@ -148,6 +159,13 @@ namespace FirstGame.Entities.Player
 			else if (!SaveManager.HasSave())
 			{
 				SaveManager.SaveGame();
+			}
+
+			// 포탈 전환 시 목표 위치로 재설정
+			if (SceneManager.Instance?.NextSpawnPosition != null)
+			{
+				GlobalPosition = SceneManager.Instance.NextSpawnPosition.Value;
+				SceneManager.Instance.NextSpawnPosition = null;
 			}
 
 			IsDead = false;

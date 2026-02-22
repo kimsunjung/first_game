@@ -17,11 +17,21 @@ namespace FirstGame.Data
 		Crush   // 타격 (해머, 철퇴)
 	}
 
+	public enum ItemRarity
+	{
+		Common,   // 흰색 (일반)
+		Uncommon, // 초록색 (고급)
+		Rare,     // 파란색 (희귀)
+		Epic,     // 보라색 (영웅)
+		Legendary // 노란색 (전설)
+	}
+
 	[GlobalClass]
 	public partial class ItemData : Resource
 	{
 		[Export] public string ItemName { get; set; } = "";
 		[Export(PropertyHint.MultilineText)] public string Description { get; set; } = "";
+		[Export] public ItemRarity Rarity { get; set; } = ItemRarity.Common;
 		[Export] public Texture2D Icon { get; set; }
 		[Export] public int Price { get; set; } = 0;
 		[Export] public int SellPrice { get; set; } = 0;

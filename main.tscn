@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://yg4knovaqju6"]
 
+[ext_resource type="PackedScene" uid="uid://cx4r8sg7n1jm" path="res://Scenes/Objects/portal.tscn" id="27_portal"]
+
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="1_0xm2m"]
-[ext_resource type="PackedScene" uid="uid://dfkl23jkladf" path="res://Scenes/Maps/field.tscn" id="1_kek77"]
+[ext_resource type="PackedScene" uid="uid://dfkl23jkladf" path="res://Scenes/Maps/act1_field_1.tscn" id="1_kek77"]
 [ext_resource type="PackedScene" uid="uid://ycuqlv4685cv" path="res://Scenes/Characters/player.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://c8qj0y5x4k3l" path="res://Scenes/UI/hud.tscn" id="3_hud"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="4_spawner"]
@@ -70,3 +72,8 @@ position = Vector2(144, 192)
 AvailableQuests = Array[Resource]([ExtResource("25_q1"), ExtResource("26_q2")])
 
 [node name="QuestUI" parent="." instance=ExtResource("23_questui")]
+
+[node name="PortalToTown" parent="." instance=ExtResource("27_portal")]
+position = Vector2(460, 192)
+TargetScenePath = "res://Scenes/Maps/act1_town.tscn"
+TargetSpawnPosition = Vector2(900, 400)

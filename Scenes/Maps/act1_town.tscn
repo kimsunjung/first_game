@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://bvq3mf9xp2kn"]
+
+[ext_resource type="PackedScene" uid="uid://ycuqlv4685cv" path="res://Scenes/Characters/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://c8qj0y5x4k3l" path="res://Scenes/UI/hud.tscn" id="2_hud"]
+[ext_resource type="PackedScene" uid="uid://c5v8q2m1n0qa" path="res://Scenes/UI/inventory_ui.tscn" id="3_invUI"]
+[ext_resource type="PackedScene" uid="uid://b8x4y205w4v0" path="res://Scenes/Objects/save_point.tscn" id="4_savepoint"]
+[ext_resource type="PackedScene" uid="uid://d4k8m2w7v3p1" path="res://Scenes/Objects/shop_npc.tscn" id="5_shopNPC"]
+[ext_resource type="PackedScene" uid="uid://d5q7n4yar2s1" path="res://Scenes/UI/shop_ui.tscn" id="6_shopUI"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/skill_window.tscn" id="7_skillwin"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/skill_shop_ui.tscn" id="8_skillshopUI"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/skill_shop_npc.tscn" id="9_skillNPC"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/character_window.tscn" id="10_charwin"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/quest_npc.tscn" id="11_questnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/quest_ui.tscn" id="12_questui"]
+[ext_resource type="PackedScene" uid="uid://cx4r8sg7n1jm" path="res://Scenes/Objects/portal.tscn" id="13_portal"]
+[ext_resource type="Resource" path="res://Resources/Quests/quest_kill_orc.tres" id="14_q1"]
+[ext_resource type="Resource" path="res://Resources/Quests/quest_kill_skeleton.tres" id="15_q2"]
+
+[node name="ActTown" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(640, 400)
+
+[node name="HUD" parent="." instance=ExtResource("2_hud")]
+
+[node name="InventoryUI" parent="." instance=ExtResource("3_invUI")]
+
+[node name="SavePoint" parent="." instance=ExtResource("4_savepoint")]
+position = Vector2(200, 250)
+
+[node name="ShopNPC" parent="." instance=ExtResource("5_shopNPC")]
+position = Vector2(380, 250)
+
+[node name="ShopUI" parent="." instance=ExtResource("6_shopUI")]
+
+[node name="SkillWindow" parent="." instance=ExtResource("7_skillwin")]
+
+[node name="SkillShopUI" parent="." instance=ExtResource("8_skillshopUI")]
+
+[node name="SkillShopNPC" parent="." instance=ExtResource("9_skillNPC")]
+position = Vector2(540, 250)
+
+[node name="CharacterWindow" parent="." instance=ExtResource("10_charwin")]
+
+[node name="QuestNPC" parent="." instance=ExtResource("11_questnpc")]
+position = Vector2(700, 250)
+AvailableQuests = Array[Resource]([ExtResource("14_q1"), ExtResource("15_q2")])
+
+[node name="QuestUI" parent="." instance=ExtResource("12_questui")]
+
+[node name="PortalToField" parent="." instance=ExtResource("13_portal")]
+position = Vector2(900, 250)
+TargetScenePath = "res://main.tscn"
+TargetSpawnPosition = Vector2(500, 180)
