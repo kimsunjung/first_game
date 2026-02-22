@@ -1,4 +1,4 @@
-using Godot;
+﻿using Godot;
 using System.Collections.Generic;
 using FirstGame.Data;
 using FirstGame.Core;
@@ -23,6 +23,7 @@ namespace FirstGame.Entities.Enemies
 		private float _spawnTimer = 0f;
 		private HashSet<Vector2I> _obstacleTiles = new();
 		private HashSet<Vector2I> _groundTiles = new();
+		private Vector2 _fieldOffset = Vector2.Zero;
 
 		public override void _Ready()
 		{
@@ -33,9 +34,10 @@ namespace FirstGame.Entities.Enemies
 					GD.PrintErr("EnemySpawner: Failed to load enemy scene");
 			}
 
-			var field = GetParent()?.GetNodeOrNull("Field");
+			var field = GetParent()?.GetNodeOrNull<Node2D>("Field");
 			if (field != null)
 			{
+				_fieldOffset = field.GlobalPosition;
 				var obstacleLayer = field.GetNodeOrNull<TileMapLayer>("ObstacleLayer");
 				var groundLayer = field.GetNodeOrNull<TileMapLayer>("GroundLayer");
 
@@ -104,9 +106,10 @@ namespace FirstGame.Entities.Enemies
 
 		private bool IsPositionBlocked(Vector2 worldPos)
 		{
+			var localPos = worldPos - _fieldOffset;
 			var tilePos = new Vector2I(
-				Mathf.FloorToInt(worldPos.X / TileSize),
-				Mathf.FloorToInt(worldPos.Y / TileSize)
+				Mathf.FloorToInt(localPos.X / TileSize),
+				Mathf.FloorToInt(localPos.Y / TileSize)
 			);
 
 			if (_groundTiles.Count > 0 && !_groundTiles.Contains(tilePos))

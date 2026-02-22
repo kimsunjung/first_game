@@ -60,4 +60,4 @@ modulate = Color(1.0, 0.8, 0.2, 1.0)
 [node name="SkillShopCloseButton" type="Button" parent="PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "닫기 (E)"
+text = "닫기 (ESC)"

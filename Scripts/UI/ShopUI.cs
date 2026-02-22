@@ -60,8 +60,8 @@ namespace FirstGame.UI
                 return;
             }
 
-            // E키 또는 Escape로 상점 닫기
-            if (Visible && (Input.IsActionJustPressed("interact") || Input.IsActionJustPressed("ui_cancel")))
+            // ESC로 상점 닫기
+            if (Visible && Input.IsActionJustPressed("ui_cancel"))
             {
                 CloseShop();
             }

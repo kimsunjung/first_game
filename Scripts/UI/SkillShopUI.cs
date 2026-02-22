@@ -33,7 +33,7 @@ namespace FirstGame.UI
 		public override void _Process(double delta)
 		{
 			if (_justOpened) { _justOpened = false; return; }
-			if (Visible && (Input.IsActionJustPressed("interact") || Input.IsActionJustPressed("ui_cancel")))
+			if (Visible && Input.IsActionJustPressed("ui_cancel"))
 				CloseShop();
 		}
 

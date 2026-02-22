@@ -81,8 +81,8 @@ namespace FirstGame.Entities.Player
 			_camera = GetNodeOrNull<Camera2D>("Camera2D");
 			if (_camera != null)
 			{
-				_camera.LimitLeft = 0; _camera.LimitTop = 0;
-				_camera.LimitRight = 1280; _camera.LimitBottom = 960;
+				_camera.LimitLeft = -71; _camera.LimitTop = 114;
+				_camera.LimitRight = 1209; _camera.LimitBottom = 1074;
 			}
 
 			CollisionMask |= 4;
