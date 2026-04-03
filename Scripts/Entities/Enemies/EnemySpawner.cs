@@ -171,6 +171,7 @@ namespace FirstGame.Entities.Enemies
 		private void TrySpawnBoss()
 		{
 			if (EnemyScene == null) return;
+			if (GameManager.Instance?.IsBossDefeated(BossStatVariant.EnemyTypeName) == true) return;
 			_bossAlive = true;
 			var boss = EnemyScene.Instantiate<EnemyController>();
 			boss.Stats = (EnemyStats)BossStatVariant.Duplicate();
@@ -178,6 +179,7 @@ namespace FirstGame.Entities.Enemies
 			boss.GlobalPosition = GlobalPosition + new Vector2(0, -150);
 			boss.Scale = new Vector2(2.0f, 2.0f);
 			boss.AddToGroup("Boss");
+			boss.AddToGroup("Enemy");
 			GetParent().AddChild(boss);
 			EventManager.TriggerBossSpawned(BossStatVariant.MaxHealth, BossStatVariant.EnemyTypeName);
 			GD.Print($"보스 등장! {BossStatVariant.EnemyTypeName}");

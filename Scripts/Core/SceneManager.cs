@@ -30,8 +30,8 @@ namespace FirstGame.Core
 
 		public void ChangeScene(string scenePath, Vector2 spawnPosition)
 		{
-			SaveManager.SaveGame();
-			SaveManager.LoadIntoPending();
+			Engine.TimeScale = 1.0;
+			SaveManager.SaveAndSetPending();
 			NextSpawnPosition = spawnPosition;
 			GetTree().ChangeSceneToFile(scenePath);
 		}

@@ -70,10 +70,16 @@ namespace FirstGame.Data
                 var existing = Slots.Find(s => s.Item.ResourcePath == item.ResourcePath);
                 if (existing != null)
                 {
-                    existing.Quantity = Math.Min(existing.Quantity + amount, item.MaxStack);
-                    OnInventoryChanged?.Invoke();
-                    OnItemPickedUp?.Invoke(item);
-                    return true;
+                    int space = item.MaxStack - existing.Quantity;
+                    if (space > 0)
+                    {
+                        int toAdd = Math.Min(amount, space);
+                        existing.Quantity += toAdd;
+                        amount -= toAdd;
+                        OnInventoryChanged?.Invoke();
+                        OnItemPickedUp?.Invoke(item);
+                        if (amount <= 0) return true;
+                    }
                 }
             }
 

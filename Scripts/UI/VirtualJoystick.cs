@@ -32,20 +32,39 @@ namespace FirstGame.UI
                     {
                         _touchIndex = touch.Index;
                         SetThumb(localPos);
+                        GetViewport().SetInputAsHandled();
                     }
                 }
                 else if (!touch.Pressed && touch.Index == _touchIndex)
                 {
-                    _touchIndex = -1;
-                    _thumbOffset = Vector2.Zero;
-                    VirtualInput.JoystickDirection = Vector2.Zero;
-                    QueueRedraw();
+                    ResetJoystick();
+                    GetViewport().SetInputAsHandled();
                 }
             }
             else if (@event is InputEventScreenDrag drag && drag.Index == _touchIndex)
             {
+                if (!GetViewportRect().HasPoint(drag.Position))
+                {
+                    ResetJoystick();
+                    return;
+                }
                 SetThumb(drag.Position - GlobalPosition);
+                GetViewport().SetInputAsHandled();
             }
+        }
+
+        public override void _Notification(int what)
+        {
+            if (what == NotificationApplicationFocusOut)
+                ResetJoystick();
+        }
+
+        private void ResetJoystick()
+        {
+            _touchIndex = -1;
+            _thumbOffset = Vector2.Zero;
+            VirtualInput.JoystickDirection = Vector2.Zero;
+            QueueRedraw();
         }
 
         private void SetThumb(Vector2 localPos)

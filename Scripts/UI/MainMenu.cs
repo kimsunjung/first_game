@@ -64,7 +64,7 @@ namespace FirstGame.UI
 		private void StartNewGame()
 		{
 			SaveManager.PendingLoadData = null;
-			GetTree().ChangeSceneToFile("res://Scenes/Maps/arena.tscn");
+			GetTree().ChangeSceneToFile("res://Scenes/Maps/town.tscn");
 		}
 
 		private void OnContinuePressed()

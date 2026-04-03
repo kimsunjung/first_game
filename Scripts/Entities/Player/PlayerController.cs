@@ -96,10 +96,7 @@ namespace FirstGame.Entities.Player
 				if (SaveManager.PendingLoadData != null)
 					LoadFromSaveData(SaveManager.PendingLoadData);
 			}
-			else
-			{
-				SaveManager.SaveGame();
-			}
+			// 신규 게임: GameManager 등록 후 아래에서 저장
 
 			IsDead = false;
 
@@ -114,6 +111,10 @@ namespace FirstGame.Entities.Player
 
 			if (GameManager.Instance != null)
 				GameManager.Instance.Player = this;
+
+			// GameManager 등록 후 저장 (등록 전 호출 시 Player가 null이라 저장 안 됨)
+			if (SaveManager.PendingLoadData == null && !SaveManager.HasSave())
+				SaveManager.SaveGame();
 
 		}
 
@@ -197,6 +198,7 @@ namespace FirstGame.Entities.Player
 			Stats.SetLevelFromSave(data.PlayerLevel, data.PlayerExp);
 			Stats.SetStatPointsFromSave(data.StatPoints, data.StrPoints, data.ConPoints, data.IntPoints);
 			Stats.MaxHealth = data.PlayerMaxHealth;
+			GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses ?? new());
 			Stats.CurrentHealth = data.PlayerHealth;
 			Stats.CurrentMp = data.PlayerMp;
 			GameManager.Instance.PlayerGold = data.PlayerGold;
