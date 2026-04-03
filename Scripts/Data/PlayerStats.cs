@@ -119,6 +119,14 @@ namespace FirstGame.Data
 			_intPoints = intel;
 		}
 
+		/// <summary>로드 시 SetStatPointsFromSave 후 호출. STR/CON/INT 보너스를 스탯에 재적용한다.</summary>
+		public void ApplyStatPointBonuses()
+		{
+			BaseDamage += _strPoints * StrDamageBonus;
+			MaxHealth += _conPoints * ConHealthBonus;
+			MaxMp += _intPoints * IntMpBonus;
+		}
+
 		// ─── 스킬 시스템 ─────────────────────────────────────────────
 		private readonly List<SkillData> _learnedSkills = new();
 		public IReadOnlyList<SkillData> LearnedSkills => _learnedSkills;

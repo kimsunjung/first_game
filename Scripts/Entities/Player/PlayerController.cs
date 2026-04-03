@@ -195,12 +195,12 @@ namespace FirstGame.Entities.Player
 		{
 			GlobalPosition = new Vector2(data.PlayerPosX, data.PlayerPosY);
 
+			// 스탯 재계산: 레벨 → STR/CON/INT → 장비(RestoreEquipment) 순서로 결정론적 재계산
+			// data.PlayerMaxHealth 직접 신뢰 금지: RestoreEquipment가 장비 보너스를 더하므로 이중 카운팅 발생
 			Stats.SetLevelFromSave(data.PlayerLevel, data.PlayerExp);
 			Stats.SetStatPointsFromSave(data.StatPoints, data.StrPoints, data.ConPoints, data.IntPoints);
-			Stats.MaxHealth = data.PlayerMaxHealth;
+			Stats.ApplyStatPointBonuses();
 			GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses ?? new());
-			Stats.CurrentHealth = data.PlayerHealth;
-			Stats.CurrentMp = data.PlayerMp;
 			GameManager.Instance.PlayerGold = data.PlayerGold;
 
 			// 인벤토리 복원
@@ -222,6 +222,10 @@ namespace FirstGame.Entities.Player
 				loadedAccessory = GD.Load<ItemData>(data.EquippedAccessoryPath);
 			Inventory.RestoreEquipment(loadedWeapon, loadedArmor, Stats, loadedAccessory,
 				data.EquippedWeaponEnhancement, data.EquippedArmorEnhancement, data.EquippedAccessoryEnhancement);
+
+			// 장비 보너스 적용 후 현재 HP/MP 복원 (MaxHealth/MaxMp가 확정된 뒤에 설정)
+			Stats.CurrentHealth = Mathf.Min(data.PlayerHealth, Stats.MaxHealth);
+			Stats.CurrentMp = Mathf.Min(data.PlayerMp, Stats.MaxMp);
 
 			if (data.QuickSlotPaths != null)
 			{
