@@ -1,0 +1,95 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://ycuqlv4685cv" path="res://Scenes/Characters/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://c8qj0y5x4k3l" path="res://Scenes/UI/hud.tscn" id="2_hud"]
+[ext_resource type="PackedScene" uid="uid://c5v8q2m1n0qa" path="res://Scenes/UI/inventory_ui.tscn" id="3_invUI"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/skill_window.tscn" id="4_skillwin"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/character_window.tscn" id="5_charwin"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/boss_health_bar.tscn" id="6_bosshp"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/settings_ui.tscn" id="7_settings"]
+[ext_resource type="PackedScene" uid="uid://d4k8m2w7v3p1" path="res://Scenes/Objects/shop_npc.tscn" id="8_shop"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/shop_ui.tscn" id="9_shopUI"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/skill_shop_npc.tscn" id="10_skillnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/skill_shop_ui.tscn" id="11_skillshopUI"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/blacksmith_npc.tscn" id="12_smith"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/enhance_ui.tscn" id="13_enhanceUI"]
+[ext_resource type="PackedScene" uid="uid://b8x4y2z5w4v0" path="res://Scenes/Objects/save_point.tscn" id="14_save"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="15_portal"]
+
+[sub_resource type="RectangleShape2D" id="wall_top"]
+size = Vector2(1280, 16)
+
+[sub_resource type="RectangleShape2D" id="wall_bottom"]
+size = Vector2(1280, 16)
+
+[sub_resource type="RectangleShape2D" id="wall_left"]
+size = Vector2(16, 720)
+
+[sub_resource type="RectangleShape2D" id="wall_right"]
+size = Vector2(16, 720)
+
+[node name="Town" type="Node2D"]
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.55, 0.45, 0.33, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(200, 360)
+
+[node name="HUD" parent="." instance=ExtResource("2_hud")]
+
+[node name="InventoryUI" parent="." instance=ExtResource("3_invUI")]
+
+[node name="SkillWindow" parent="." instance=ExtResource("4_skillwin")]
+
+[node name="CharacterWindow" parent="." instance=ExtResource("5_charwin")]
+
+[node name="BossHealthBar" parent="." instance=ExtResource("6_bosshp")]
+
+[node name="SettingsUI" parent="." instance=ExtResource("7_settings")]
+
+[node name="ShopNPC" parent="." instance=ExtResource("8_shop")]
+position = Vector2(380, 120)
+
+[node name="ShopUI" parent="ShopNPC" instance=ExtResource("9_shopUI")]
+
+[node name="SkillShopNPC" parent="." instance=ExtResource("10_skillnpc")]
+position = Vector2(520, 120)
+
+[node name="SkillShopUI" parent="SkillShopNPC" instance=ExtResource("11_skillshopUI")]
+
+[node name="BlacksmithNPC" parent="." instance=ExtResource("12_smith")]
+position = Vector2(660, 120)
+
+[node name="EnhanceUI" parent="BlacksmithNPC" instance=ExtResource("13_enhanceUI")]
+
+[node name="SavePoint" parent="." instance=ExtResource("14_save")]
+position = Vector2(200, 120)
+
+[node name="PortalToField1" parent="." instance=ExtResource("15_portal")]
+position = Vector2(1220, 360)
+TargetScenePath = "res://Scenes/Maps/field_1.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+
+[node name="Walls" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="TopWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(640, -8)
+shape = SubResource("wall_top")
+
+[node name="BottomWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(640, 728)
+shape = SubResource("wall_bottom")
+
+[node name="LeftWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(-8, 360)
+shape = SubResource("wall_left")
+
+[node name="RightWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(1288, 360)
+shape = SubResource("wall_right")

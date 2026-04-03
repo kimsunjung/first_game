@@ -102,8 +102,11 @@ namespace FirstGame.Core
             var tree = (SceneTree)Engine.GetMainLoop();
             tree.Paused = false;
 
-            // 마을(허브) 씬으로 이동
-            tree.ChangeSceneToFile("res://Scenes/Maps/town.tscn");
+            // 저장된 씬으로 이동 (없으면 마을로)
+            string targetScene = PendingLoadData?.CurrentScene;
+            if (string.IsNullOrEmpty(targetScene))
+                targetScene = "res://Scenes/Maps/town.tscn";
+            tree.ChangeSceneToFile(targetScene);
         }
 
         /// <summary>씬 전환 시 사용. 파일에서 읽어 PendingLoadData에 넣되, 씬 리로드는 하지 않음.</summary>
@@ -139,7 +142,7 @@ namespace FirstGame.Core
             {
                 // v1→v2: 월드 상태 필드 초기화
                 if (string.IsNullOrEmpty(data.CurrentScene))
-                    data.CurrentScene = "res://Scenes/Maps/grassland.tscn";
+                    data.CurrentScene = "res://Scenes/Maps/town.tscn";
                 if (data.DayTime == 0f)
                     data.DayTime = 0.3f;
                 data.DefeatedBosses ??= new();
