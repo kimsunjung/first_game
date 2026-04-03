@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1_es"]
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="2_hip"]
 [ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="3_mp"]
+[ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="4_core"]
 
 [resource]
 script = ExtResource("1_es")
@@ -15,7 +16,7 @@ ExperienceReward = 200
 EnemyTypeName = "Boss"
 IsBoss = true
 SpriteAtlasCoords = Vector2i(9, 7)
-PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp")])
+PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core")])
 DropChance = 1.0
 MaxHealth = 500
 CurrentHealth = 500

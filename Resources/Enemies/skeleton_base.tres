@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
+[ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="3_bone"]
 
 [resource]
 script = ExtResource("1")
@@ -12,6 +13,6 @@ ExperienceReward = 18
 Behavior = 2
 EnemyTypeName = "Skeleton"
 SpriteAtlasCoords = Vector2i(9, 8)
-PossibleDrops = Array[Resource]([ExtResource("2_hp")])
+PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_bone")])
 DropChance = 0.25
 MaxHealth = 40

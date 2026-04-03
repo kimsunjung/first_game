@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
 [ext_resource type="Resource" uid="uid://lq1ay338edtn" path="res://Resources/Items/hi_potion.tres" id="3_hip"]
+[ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="4_bone"]
 
 [resource]
 script = ExtResource("1")
@@ -15,6 +16,6 @@ Behavior = 1
 PreferredRange = 180.0
 EnemyTypeName = "Skeleton"
 SpriteAtlasCoords = Vector2i(6, 8)
-PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_hip")])
+PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_hip"), ExtResource("4_bone")])
 DropChance = 0.55
 MaxHealth = 45

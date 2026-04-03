@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
+[ext_resource type="Resource" path="res://Resources/Items/material_wood.tres" id="3_wood"]
 
 [resource]
 script = ExtResource("1")
@@ -11,6 +12,6 @@ BaseDamage = 3
 ExperienceReward = 20
 Behavior = 2
 SpriteAtlasCoords = Vector2i(10, 8)
-PossibleDrops = Array[Resource]([ExtResource("2_hp")])
+PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_wood")])
 DropChance = 0.3
 MaxHealth = 60
