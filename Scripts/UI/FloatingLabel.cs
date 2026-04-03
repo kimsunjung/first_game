@@ -1,4 +1,5 @@
 using Godot;
+using FirstGame.Core;
 
 namespace FirstGame.UI
 {
@@ -6,7 +7,11 @@ namespace FirstGame.UI
 	{
 		public void Init(int damage, bool isCrit, bool isPlayerDamage = false)
 		{
+			Visible = true;
+
 			var label = GetNode<Label>("Label");
+			label.Modulate = new Color(label.Modulate, 1f); // 알파 복원
+
 			if (isCrit)
 			{
 				label.Text = $"CRIT! {damage}";
@@ -33,7 +38,12 @@ namespace FirstGame.UI
 				 .SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Quad);
 			tween.TweenProperty(label, "modulate:a", 0.0f, 0.8f)
 				 .SetDelay(0.3f);
-			tween.Chain().TweenCallback(Callable.From(QueueFree));
+			tween.Chain().TweenCallback(Callable.From(ReturnToPool));
+		}
+
+		private void ReturnToPool()
+		{
+			UIEffectManager.ReleaseFloatingLabel(this);
 		}
 	}
 }

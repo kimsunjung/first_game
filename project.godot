@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="first_game"
-run/main_scene="uid://yg4knovaqju6"
+run/main_scene="res://Scenes/UI/main_menu.tscn"
 config/features=PackedStringArray("4.6", "C#", "Mobile")
 config/icon="res://icon.svg"
 
@@ -23,11 +23,19 @@ SceneManager="*res://Scripts/Core/SceneManager.cs"
 
 [display]
 
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/window_width_override=1280
+window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 
 [dotnet]
 
 project/assembly_name="first_game"
+
+[editor]
+
+movie_writer/movie_file="D:/개인/개인프로젝트/first-game/play_movie/test.avi"
 
 [input]
 
@@ -78,5 +86,6 @@ character_window={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"

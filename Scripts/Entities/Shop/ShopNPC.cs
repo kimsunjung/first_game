@@ -1,61 +1,28 @@
 using Godot;
+using FirstGame.Core;
 using FirstGame.Data;
 using FirstGame.UI;
 
 namespace FirstGame.Entities.Shop
 {
-    public partial class ShopNPC : Area2D
+    public partial class ShopNPC : BaseInteractable
     {
-        [Export] public ItemData[] ShopItems { get; set; }  // 판매 물건 목록
+        [Export] public ItemData[] ShopItems { get; set; }
         [Export] public string ShopName { get; set; } = "상점";
 
-        private bool _playerInRange = false;
-        private Label _promptLabel;
-
-        public override void _Ready()
+        protected override void OnInteract()
         {
-            BodyEntered += OnBodyEntered;
-            BodyExited += OnBodyExited;
+            // 다른 UI가 이미 열려있으면 무시
+            if (UIPauseManager.IsPaused) return;
 
-            _promptLabel = GetNode<Label>("PromptLabel");
-            _promptLabel.Visible = false;
-        }
-
-        public override void _Process(double delta)
-        {
-            if (_playerInRange && Input.IsActionJustPressed("interact"))
+            var shopUI = GetParent().GetNodeOrNull<ShopUI>("ShopUI");
+            if (shopUI != null)
             {
-                // 게임이 이미 일시정지 상태면 무시 (게임오버, 인벤토리, 상점 이미 열림)
-                if (GetTree().Paused) return;
-
-                // 씬 구조에 맞춰 ShopUI 찾기 (Main/ShopUI)
-                var shopUI = GetTree().Root.GetNodeOrNull<ShopUI>("Main/ShopUI");
-                if (shopUI != null)
-                {
-                    shopUI.OpenShop(ShopItems, ShopName);
-                }
-                else
-                {
-                    GD.PrintErr("ShopNPC: Main/ShopUI node not found!");
-                }
+                shopUI.OpenShop(ShopItems, ShopName);
             }
-        }
-
-        private void OnBodyEntered(Node2D body)
-        {
-            if (body.IsInGroup("Player"))
+            else
             {
-                _playerInRange = true;
-                _promptLabel.Visible = true;
-            }
-        }
-
-        private void OnBodyExited(Node2D body)
-        {
-            if (body.IsInGroup("Player"))
-            {
-                _playerInRange = false;
-                _promptLabel.Visible = false;
+                GD.PrintErr("ShopNPC: ShopUI node not found!");
             }
         }
     }

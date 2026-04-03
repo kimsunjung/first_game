@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://d4k8m2w7v3p1"]
 
 [ext_resource type="Script" path="res://Scripts/Entities/Shop/ShopNPC.cs" id="1_shop"]
+[ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0105.png" id="16_npc_tex"]
 [ext_resource type="Resource" path="res://Resources/Items/health_potion.tres" id="2_potion"]
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hipotion"]
 [ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="4_megapotion"]
@@ -11,6 +12,10 @@
 [ext_resource type="Resource" path="res://Resources/Items/iron_armor.tres" id="9_armor"]
 [ext_resource type="Resource" path="res://Resources/Items/leather_armor.tres" id="10_leather"]
 [ext_resource type="Resource" path="res://Resources/Items/steel_armor.tres" id="11_steel"]
+[ext_resource type="Resource" path="res://Resources/Items/iron_ring.tres" id="12_ring"]
+[ext_resource type="Resource" path="res://Resources/Items/wolf_necklace.tres" id="13_wolf"]
+[ext_resource type="Resource" path="res://Resources/Items/guardian_amulet.tres" id="14_amulet"]
+[ext_resource type="Resource" path="res://Resources/Items/shadow_ring.tres" id="15_shadow"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_shop"]
 radius = 80.0
@@ -19,12 +24,18 @@ radius = 80.0
 collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_shop")
-ShopItems = Array[Resource]([ExtResource("2_potion"), ExtResource("3_hipotion"), ExtResource("4_megapotion"), ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel")])
+ShopItems = Array[Resource]([ExtResource("2_potion"), ExtResource("3_hipotion"), ExtResource("4_megapotion"), ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow")])
 ShopName = "상점"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_shop")
 debug_color = Color(0.8, 0.6, 0.2, 0.42)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(1.5, 1.5)
+modulate = Color(1, 0.85, 0.3, 1)
+texture = ExtResource("16_npc_tex")
 
 [node name="ShopIcon" type="Label" parent="."]
 anchors_preset = 8
@@ -32,13 +43,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -30.0
-offset_top = -15.0
-offset_right = 30.0
-offset_bottom = 15.0
+offset_left = -20.0
+offset_top = -22.0
+offset_right = 20.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 8
 text = "[SHOP]"
 horizontal_alignment = 1
 
@@ -49,12 +60,12 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -70.0
-offset_top = 40.0
-offset_right = 70.0
-offset_bottom = 63.0
+offset_left = -40.0
+offset_top = 14.0
+offset_right = 40.0
+offset_bottom = 28.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 14
-text = "Press E to Shop"
+theme_override_font_sizes/font_size = 8
+text = "E - 상점"
 horizontal_alignment = 1

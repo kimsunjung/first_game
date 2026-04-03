@@ -17,7 +17,6 @@ namespace FirstGame.Entities.Enemies
 
 		// 보스 스폰 카운터 (씬 재로드 시 초기화됨)
 		private int _killCount = 0;
-		private const int BossSpawnKillThreshold = 10;
 		private bool _bossAlive = false;
 
 		private float _spawnTimer = 0f;
@@ -34,27 +33,54 @@ namespace FirstGame.Entities.Enemies
 					GD.PrintErr("EnemySpawner: Failed to load enemy scene");
 			}
 
-			var field = GetParent()?.GetNodeOrNull<Node2D>("Field");
+			// "Field" 노드 또는 TileMapLayer를 가진 아무 노드에서 타일 데이터 로드
+			var parent = GetParent();
+			Node2D field = parent?.GetNodeOrNull<Node2D>("Field");
+			TileMapLayer obstacleLayer = null;
+			TileMapLayer groundLayer = null;
+
 			if (field != null)
 			{
 				_fieldOffset = field.GlobalPosition;
-				var obstacleLayer = field.GetNodeOrNull<TileMapLayer>("ObstacleLayer");
-				var groundLayer = field.GetNodeOrNull<TileMapLayer>("GroundLayer");
-
-				if (obstacleLayer != null)
+				obstacleLayer = field.GetNodeOrNull<TileMapLayer>("ObstacleLayer");
+				groundLayer = field.GetNodeOrNull<TileMapLayer>("GroundLayer");
+			}
+			else if (parent != null)
+			{
+				// "Field" 노드가 없으면 부모에서 직접 TileMapLayer 탐색
+				foreach (var child in parent.GetChildren())
 				{
-					foreach (var cell in obstacleLayer.GetUsedCells())
-						_obstacleTiles.Add(cell);
-					GD.Print($"EnemySpawner: 장애물 타일 {_obstacleTiles.Count}개 로드");
-				}
-
-				if (groundLayer != null)
-				{
-					foreach (var cell in groundLayer.GetUsedCells())
-						_groundTiles.Add(cell);
-					GD.Print($"EnemySpawner: 바닥 타일 {_groundTiles.Count}개 로드");
+					if (child is Node2D n2d)
+					{
+						var ol = n2d.GetNodeOrNull<TileMapLayer>("ObstacleLayer");
+						var gl = n2d.GetNodeOrNull<TileMapLayer>("GroundLayer");
+						if (ol != null || gl != null)
+						{
+							_fieldOffset = n2d.GlobalPosition;
+							obstacleLayer = ol;
+							groundLayer = gl;
+							break;
+						}
+					}
 				}
 			}
+
+			if (obstacleLayer != null)
+			{
+				foreach (var cell in obstacleLayer.GetUsedCells())
+					_obstacleTiles.Add(cell);
+			}
+			if (groundLayer != null)
+			{
+				foreach (var cell in groundLayer.GetUsedCells())
+					_groundTiles.Add(cell);
+			}
+
+			GD.Print($"[EnemySpawner] 초기화 완료 - 씬: {GetTree().CurrentScene?.Name}, " +
+					 $"EnemyScene: {(EnemyScene != null ? "OK" : "NULL")}, " +
+					 $"StatVariants: {StatVariants?.Length ?? 0}종, " +
+					 $"MaxEnemies: {MaxEnemies}, " +
+					 $"바닥타일: {_groundTiles.Count}, 장애물타일: {_obstacleTiles.Count}");
 
 			EventManager.OnEnemyKilled += OnEnemyKilledHandler;
 			EventManager.OnBossDied += OnBossDiedHandler;
@@ -99,6 +125,7 @@ namespace FirstGame.Entities.Enemies
 				}
 
 				enemy.GlobalPosition = spawnPos;
+				enemy.AddToGroup("Enemy");
 				GetParent().AddChild(enemy);
 				return;
 			}
@@ -130,7 +157,7 @@ namespace FirstGame.Entities.Enemies
 		private void OnEnemyKilledHandler()
 		{
 			_killCount++;
-			if (!_bossAlive && BossStatVariant != null && _killCount % BossSpawnKillThreshold == 0)
+			if (!_bossAlive && BossStatVariant != null && _killCount % BalanceData.Enemy.BossKillThreshold == 0)
 			{
 				TrySpawnBoss();
 			}

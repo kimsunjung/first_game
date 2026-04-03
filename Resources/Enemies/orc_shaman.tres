@@ -1,22 +1,17 @@
-[gd_resource type="Resource" script_class="EnemyStats" format=3]
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://dqy4libw5ilpg"]
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
+[ext_resource type="Resource" uid="uid://lq1ay338edtn" path="res://Resources/Items/hi_potion.tres" id="3_hip"]
 
 [resource]
 script = ExtResource("1")
-EnemyTypeName = "Orc"
-MaxHealth = 70
 MoveSpeed = 75.0
 DetectionRange = 300.0
-AttackRange = 80.0
-BaseDamage = 10
-AttackCooldown = 1.5
+BaseDamage = 4
+AttackCooldown = 2.5
 ExperienceReward = 40
-AnimBasePath = "res://Resources/Tilesets/Pixel Crawler - Free Pack/Entities/Mobs/Orc Crew/Orc - Shaman/"
-AnimIdleFile = "Idle/Idle-Sheet_padded.png"
-AnimIdleFrames = 4
-AnimRunFile = "Run/Run-Sheet.png"
-AnimRunFrames = 6
-AnimDeathFile = "Death/Death-Sheet.png"
-AnimDeathFrames = 6
-DropChance = 0.5
+Behavior = 1
+SpriteAtlasCoords = Vector2i(11, 7)
+PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_hip")])
+MaxHealth = 70

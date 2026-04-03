@@ -1,7 +1,7 @@
 using Godot;
 using FirstGame.Data;
 using FirstGame.Core;
-using FirstGame.Entities.Player;
+using FirstGame.Core.Interfaces;
 
 namespace FirstGame.UI
 {
@@ -21,11 +21,10 @@ namespace FirstGame.UI
         private Button _confirmBuyButton;
         private Label _totalPriceLabel;
 
-        private PlayerController _player;
+        private IPlayer _player;
         private Inventory _inventory;
         private ItemData[] _shopItems;
         private ItemData _selectedBuyItem;
-        private bool _justOpened = false;
 
         public override void _Ready()
         {
@@ -51,19 +50,13 @@ namespace FirstGame.UI
             Visible = false;
         }
 
-        public override void _Process(double delta)
+        public override void _UnhandledInput(InputEvent @event)
         {
-            // 열린 직후 같은 프레임의 E키 입력 무시 (Ignore E key on the same frame shop opened)
-            if (_justOpened)
-            {
-                _justOpened = false;
-                return;
-            }
-
-            // ESC로 상점 닫기
-            if (Visible && Input.IsActionJustPressed("ui_cancel"))
+            if (!Visible) return;
+            if (@event.IsActionPressed("ui_cancel") && !@event.IsEcho())
             {
                 CloseShop();
+                GetViewport().SetInputAsHandled();
             }
         }
 
@@ -74,16 +67,15 @@ namespace FirstGame.UI
             _shopItems = shopItems;
 
             // 플레이어 연결
-            var players = GetTree().GetNodesInGroup("Player");
-            if (players.Count > 0 && players[0] is PlayerController player)
+            var player = GameManager.Instance?.Player;
+            if (player != null)
             {
                 _player = player;
                 _inventory = player.Inventory;
             }
             else return;
             Visible = true;
-            GetTree().Paused = true;
-            _justOpened = true;
+            UIPauseManager.RequestPause();
             _quantityPanel.Visible = false;
 
             RefreshBuyTab();
@@ -94,8 +86,9 @@ namespace FirstGame.UI
         public void CloseShop()
         {
             Visible = false;
-            GetTree().Paused = false;
+            UIPauseManager.ReleasePause();
             _quantityPanel.Visible = false;
+            _selectedBuyItem = null;
         }
 
         // --- 구매 탭 ---
@@ -200,6 +193,7 @@ namespace FirstGame.UI
                 // 장착 중인 장비는 판매 불가 → 목록에서 제외
                 if (slot.Item == _inventory.EquippedWeapon) continue;
                 if (slot.Item == _inventory.EquippedArmor) continue;
+                if (slot.Item == _inventory.EquippedAccessory) continue;
 
                 int slotIndex = i;  // 클로저용 캡처
                 var panel = CreateSellPanel(slot, slotIndex);
@@ -213,7 +207,7 @@ namespace FirstGame.UI
             var slot = _inventory.Slots[slotIndex];
 
             // 장착 중인 장비 이중 체크
-            if (slot.Item == _inventory.EquippedWeapon || slot.Item == _inventory.EquippedArmor)
+            if (slot.Item == _inventory.EquippedWeapon || slot.Item == _inventory.EquippedArmor || slot.Item == _inventory.EquippedAccessory)
             {
                 ShowMessage("장착 중인 장비는 판매할 수 없습니다!");
                 return;
@@ -236,7 +230,7 @@ namespace FirstGame.UI
         private PanelContainer CreateItemPanel(ItemData item, bool isBuyMode)
         {
             var panel = new PanelContainer();
-            panel.CustomMinimumSize = new Vector2(280, 64);
+            panel.CustomMinimumSize = new Vector2(260, 36);
 
             var hbox = new HBoxContainer();
             panel.AddChild(hbox);
@@ -246,7 +240,7 @@ namespace FirstGame.UI
             {
                 var icon = new TextureRect();
                 icon.Texture = item.Icon;
-                icon.CustomMinimumSize = new Vector2(48, 48);
+                icon.CustomMinimumSize = new Vector2(24, 24);
                 icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
                 icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
                 hbox.AddChild(icon);
@@ -261,7 +255,7 @@ namespace FirstGame.UI
 
             var priceLabel = new Label();
             priceLabel.Text = $"{item.Price}G";
-            priceLabel.AddThemeFontSizeOverride("font_size", 12);
+            priceLabel.AddThemeFontSizeOverride("font_size", 11);
             vbox.AddChild(priceLabel);
             hbox.AddChild(vbox);
 
@@ -277,7 +271,7 @@ namespace FirstGame.UI
         private PanelContainer CreateSellPanel(InventorySlot slot, int slotIndex)
         {
             var panel = new PanelContainer();
-            panel.CustomMinimumSize = new Vector2(280, 64);
+            panel.CustomMinimumSize = new Vector2(260, 36);
 
             var hbox = new HBoxContainer();
             panel.AddChild(hbox);
@@ -287,7 +281,7 @@ namespace FirstGame.UI
             {
                 var icon = new TextureRect();
                 icon.Texture = slot.Item.Icon;
-                icon.CustomMinimumSize = new Vector2(48, 48);
+                icon.CustomMinimumSize = new Vector2(24, 24);
                 icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
                 icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
                 hbox.AddChild(icon);
@@ -302,7 +296,7 @@ namespace FirstGame.UI
 
             var priceLabel = new Label();
             priceLabel.Text = $"판매가: {slot.Item.SellPrice}G";
-            priceLabel.AddThemeFontSizeOverride("font_size", 12);
+            priceLabel.AddThemeFontSizeOverride("font_size", 11);
             vbox.AddChild(priceLabel);
             hbox.AddChild(vbox);
 
@@ -318,6 +312,17 @@ namespace FirstGame.UI
         private void UpdateGoldDisplay()
         {
             _goldLabel.Text = $"보유 골드: {GameManager.Instance.PlayerGold}G";
+        }
+
+        public override void _ExitTree()
+        {
+            // 상점이 열린 채로 씬 전환 시 일시정지 카운터 해제
+            if (Visible)
+                UIPauseManager.ReleasePause();
+
+            if (_closeButton != null) _closeButton.Pressed -= CloseShop;
+            if (_confirmBuyButton != null) _confirmBuyButton.Pressed -= OnConfirmBuy;
+            if (_quantitySpinBox != null) _quantitySpinBox.ValueChanged -= OnQuantityChanged;
         }
 
         private async void ShowMessage(string text)

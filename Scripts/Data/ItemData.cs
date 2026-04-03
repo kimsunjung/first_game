@@ -7,7 +7,9 @@ namespace FirstGame.Data
 		Consumable, // 포션 등 소비 아이템
 		Weapon,     // 무기
 		Armor,      // 방어구
-		SkillBook   // 스킬북 (사용 시 스킬 습득)
+		SkillBook,  // 스킬북 (사용 시 스킬 습득)
+		Material,   // 재료 (통나무, 광석 등 — 크래프팅용)
+		Accessory   // 악세서리 (반지, 목걸이 등)
 	}
 
 	public enum WeaponAttackType
@@ -47,6 +49,7 @@ namespace FirstGame.Data
 		[ExportGroup("Equipment Bonuses")]
 		[Export] public int BonusDamage { get; set; } = 0;
 		[Export] public int BonusMaxHealth { get; set; } = 0;
+		[Export] public int BonusDefense { get; set; } = 0;
 		[Export] public float BonusMoveSpeed { get; set; } = 0f;
 		[Export] public WeaponAttackType AttackType { get; set; } = WeaponAttackType.Slice;
 

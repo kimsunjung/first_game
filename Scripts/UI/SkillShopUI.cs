@@ -1,7 +1,7 @@
 using Godot;
 using FirstGame.Data;
 using FirstGame.Core;
-using FirstGame.Entities.Player;
+using FirstGame.Core.Interfaces;
 
 namespace FirstGame.UI
 {
@@ -15,8 +15,7 @@ namespace FirstGame.UI
 		private Label _messageLabel;
 		private Button _closeButton;
 
-		private PlayerController _player;
-		private bool _justOpened = false;
+		private IPlayer _player;
 
 		public override void _Ready()
 		{
@@ -30,22 +29,24 @@ namespace FirstGame.UI
 			Visible = false;
 		}
 
-		public override void _Process(double delta)
+		public override void _UnhandledInput(InputEvent @event)
 		{
-			if (_justOpened) { _justOpened = false; return; }
-			if (Visible && Input.IsActionJustPressed("ui_cancel"))
+			if (!Visible) return;
+			if (@event.IsActionPressed("ui_cancel") && !@event.IsEcho())
+			{
 				CloseShop();
+				GetViewport().SetInputAsHandled();
+			}
 		}
 
 		public void OpenShop()
 		{
-			var players = GetTree().GetNodesInGroup("Player");
-			if (players.Count == 0 || players[0] is not PlayerController player) return;
+			var player = GameManager.Instance?.Player;
+			if (player == null) return;
 			_player = player;
 
 			Visible = true;
-			GetTree().Paused = true;
-			_justOpened = true;
+			UIPauseManager.RequestPause();
 			RefreshList();
 			UpdateGold();
 		}
@@ -53,7 +54,14 @@ namespace FirstGame.UI
 		public void CloseShop()
 		{
 			Visible = false;
-			GetTree().Paused = false;
+			UIPauseManager.ReleasePause();
+		}
+
+		public override void _ExitTree()
+		{
+			if (Visible)
+				UIPauseManager.ReleasePause();
+			if (_closeButton != null) _closeButton.Pressed -= CloseShop;
 		}
 
 		private void RefreshList()
@@ -69,7 +77,7 @@ namespace FirstGame.UI
 				var skill = item.LearnedSkill;
 
 				var panel = new PanelContainer();
-				panel.CustomMinimumSize = new Vector2(360, 80);
+				panel.CustomMinimumSize = new Vector2(260, 40);
 
 				var hbox = new HBoxContainer();
 				panel.AddChild(hbox);
@@ -79,7 +87,7 @@ namespace FirstGame.UI
 				{
 					var icon = new TextureRect();
 					icon.Texture = skill.Icon;
-					icon.CustomMinimumSize = new Vector2(48, 48);
+					icon.CustomMinimumSize = new Vector2(24, 24);
 					icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
 					hbox.AddChild(icon);
 				}
@@ -89,18 +97,20 @@ namespace FirstGame.UI
 				vbox.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
 
 				var nameLabel = new Label();
-				nameLabel.Text = $"{skill.SkillName}  (Lv.{skill.RequiredLevel} 이상)";
-				nameLabel.AddThemeFontSizeOverride("font_size", 14);
+				nameLabel.Text = $"{skill.SkillName}";
+				nameLabel.AddThemeFontSizeOverride("font_size", 12);
+				nameLabel.ClipText = true;
 				vbox.AddChild(nameLabel);
 
 				var descLabel = new Label();
 				descLabel.Text = $"{skill.Description}  MP:{skill.MpCost}  쿨:{skill.Cooldown}s";
-				descLabel.AddThemeFontSizeOverride("font_size", 11);
+				descLabel.AddThemeFontSizeOverride("font_size", 10);
+				descLabel.ClipText = true;
 				vbox.AddChild(descLabel);
 
 				var priceLabel = new Label();
-				priceLabel.Text = $"가격: {item.Price}G";
-				priceLabel.AddThemeFontSizeOverride("font_size", 12);
+				priceLabel.Text = $"{item.Price}G";
+				priceLabel.AddThemeFontSizeOverride("font_size", 11);
 				vbox.AddChild(priceLabel);
 
 				hbox.AddChild(vbox);

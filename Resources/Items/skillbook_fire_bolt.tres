@@ -1,12 +1,18 @@
-[gd_resource type="Resource" script_class="ItemData" format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ncn0aj6e1xu4"]
 
 [ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
 [ext_resource type="Resource" path="res://Resources/Skills/fire_bolt.tres" id="2"]
+[ext_resource type="Texture2D" uid="uid://cxowroudgql1b" path="res://Resources/Kenney/Tilemap/tilemap_packed.png" id="3_icon"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("3_icon")
+region = Rect2(96, 128, 16, 16)
 
 [resource]
 script = ExtResource("1")
 ItemName = "스킬북: 파이어볼트"
 Description = "파이어볼트 스킬을 배웁니다 (Lv.8 이상)"
+Icon = SubResource("AtlasTexture_icon")
 Price = 600
 SellPrice = 300
 Type = 3

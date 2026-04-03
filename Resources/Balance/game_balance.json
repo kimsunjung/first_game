@@ -1,0 +1,45 @@
+{
+  "enhancement": {
+    "maxLevel": 10,
+    "successRates": [1.0, 1.0, 1.0, 0.7, 0.7, 0.7, 0.5, 0.5, 0.5, 0.3],
+    "costBase": 100,
+    "noPenaltyMaxLevel": 5,
+    "downgradeMaxLevel": 8,
+    "destroyMinLevel": 9
+  },
+  "combat": {
+    "reviveDelaySec": 3.0,
+    "revivePosX": 320,
+    "revivePosY": 200,
+    "playerKnockback": 60,
+    "enemyKnockback": 80,
+    "autoAttackInterval": 0.5,
+    "attackRangeRatio": 0.85
+  },
+  "regen": {
+    "hpPerSec": 1.0,
+    "mpPerSec": 2.0,
+    "hpDelayAfterHit": 5.0
+  },
+  "enemy": {
+    "goldMultiplier": 5,
+    "bossKillThreshold": 10
+  },
+  "spawner": {
+    "maxEnemies": 5,
+    "spawnInterval": 3.0,
+    "spawnRadius": 300
+  },
+  "progression": {
+    "maxLevel": 50,
+    "expBase": 100.0,
+    "expExponent": 1.5,
+    "lvHpBonus": 10,
+    "lvAtkBonus": 2,
+    "lvMpBonus": 5,
+    "lvStatPoints": 3,
+    "strAtkBonus": 2,
+    "conHpBonus": 5,
+    "intMpBonus": 3
+  }
+}

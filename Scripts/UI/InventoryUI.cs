@@ -1,23 +1,30 @@
 using Godot;
+using FirstGame.Core;
+using FirstGame.Core.Interfaces;
 using FirstGame.Data;
-using FirstGame.Entities.Player;
 
 namespace FirstGame.UI
 {
     public partial class InventoryUI : CanvasLayer
     {
+        private enum FilterMode { All, Equipment, Consumable, Material }
+
         private GridContainer _grid;
         private Label _itemInfoLabel;
         private Button _useButton;
         private Button _unequipWeaponButton;
         private Button _unequipArmorButton;
+        private Button _unequipAccessoryButton;
         private Label _weaponLabel;
         private Label _armorLabel;
+        private Label _accessoryLabel;
 
         private Inventory _inventory;
-        private PlayerController _player;
+        private IPlayer _player;
         private int _selectedSlot = -1;
-        private int _hoveredSlotIndex = -1; // 마우스 오버된 슬롯 추적 (Track hovered slot)
+        private int _hoveredSlotIndex = -1;
+        private FilterMode _filterMode = FilterMode.All;
+        private Button[] _filterButtons;
 
         public override void _Ready()
         {
@@ -26,19 +33,22 @@ namespace FirstGame.UI
             _useButton = GetNode<Button>("%UseButton");
             _unequipWeaponButton = GetNode<Button>("%UnequipWeaponButton");
             _unequipArmorButton = GetNode<Button>("%UnequipArmorButton");
+            _unequipAccessoryButton = GetNode<Button>("%UnequipAccessoryButton");
             _weaponLabel = GetNode<Label>("%WeaponLabel");
             _armorLabel = GetNode<Label>("%ArmorLabel");
+            _accessoryLabel = GetNode<Label>("%AccessoryLabel");
 
             _useButton.Pressed += OnUsePressed;
             _unequipWeaponButton.Pressed += OnUnequipWeaponPressed;
             _unequipArmorButton.Pressed += OnUnequipArmorPressed;
+            _unequipAccessoryButton.Pressed += OnUnequipAccessoryPressed;
 
+            CreateFilterButtons();
             Visible = false;
 
-            // Player 연결 (Connect Player)
-            // HUD와 마찬가지로 플레이어보다 늦게 준비될 수 있음. (Might be ready after player)
-            var players = GetTree().GetNodesInGroup("Player");
-            if (players.Count > 0 && players[0] is PlayerController player)
+            // Player 연결
+            var player = GameManager.Instance?.Player;
+            if (player != null)
             {
                 _player = player;
                 _inventory = player.Inventory;
@@ -58,11 +68,14 @@ namespace FirstGame.UI
                 if (_player != null && _player.IsDead) return;
 
                 // 다른 UI가 일시정지를 걸었으면 인벤토리 열기 차단 (상점, 게임오버 등)
-                if (GetTree().Paused && !Visible) return;
+                if (UIPauseManager.IsPaused && !Visible) return;
 
                 GD.Print("InventoryUI: I key pressed (Toggle)");
                 Visible = !Visible;
-                GetTree().Paused = Visible; // 인벤토리 열면 일시정지 (Pause when open)
+                if (Visible)
+                    UIPauseManager.RequestPause();
+                else
+                    UIPauseManager.ReleasePause();
                 if (Visible) 
                 {
                     GD.Print("InventoryUI: Opened");
@@ -104,32 +117,114 @@ namespace FirstGame.UI
              }
         }
 
+        private void CreateFilterButtons()
+        {
+            // 타이틀 HBox 찾기 (VBox의 첫 번째 자식)
+            var vbox = _grid.GetParent();
+            var titleHBox = vbox.GetChild(0) as HBoxContainer;
+            if (titleHBox == null) return;
+
+            var filterBox = new HBoxContainer();
+            filterBox.AddThemeConstantOverride("separation", 2);
+
+            string[] labels = { "전체", "장비", "소모", "재료" };
+            FilterMode[] modes = { FilterMode.All, FilterMode.Equipment, FilterMode.Consumable, FilterMode.Material };
+            _filterButtons = new Button[labels.Length];
+
+            for (int i = 0; i < labels.Length; i++)
+            {
+                var btn = new Button();
+                btn.Text = labels[i];
+                btn.AddThemeFontSizeOverride("font_size", 10);
+                btn.CustomMinimumSize = new Vector2(0, 26);
+                var mode = modes[i];
+                btn.Pressed += () => SetFilter(mode);
+                filterBox.AddChild(btn);
+                _filterButtons[i] = btn;
+            }
+
+            titleHBox.AddChild(filterBox);
+            UpdateFilterButtonStyles();
+        }
+
+        private void SetFilter(FilterMode mode)
+        {
+            _filterMode = mode;
+            UpdateFilterButtonStyles();
+            RefreshGrid();
+        }
+
+        private void UpdateFilterButtonStyles()
+        {
+            if (_filterButtons == null) return;
+            FilterMode[] modes = { FilterMode.All, FilterMode.Equipment, FilterMode.Consumable, FilterMode.Material };
+            for (int i = 0; i < _filterButtons.Length; i++)
+            {
+                _filterButtons[i].Modulate = modes[i] == _filterMode
+                    ? new Color(1, 1, 0.5f)
+                    : new Color(0.7f, 0.7f, 0.7f);
+            }
+        }
+
+        private bool PassesFilter(ItemData item)
+        {
+            return _filterMode switch
+            {
+                FilterMode.Equipment => item.Type is ItemType.Weapon or ItemType.Armor or ItemType.Accessory or ItemType.SkillBook,
+                FilterMode.Consumable => item.Type == ItemType.Consumable,
+                FilterMode.Material => item.Type == ItemType.Material,
+                _ => true
+            };
+        }
+
         private void RefreshGrid()
         {
-            // 기존 슬롯 UI 제거 (Remove existing slots)
+            // 기존 슬롯 UI 제거
             foreach (Node child in _grid.GetChildren())
                 child.QueueFree();
 
-            // 슬롯 생성 (20칸) (Create 20 slots)
+            // 필터 적용된 슬롯 목록
+            var filtered = new System.Collections.Generic.List<(int origIdx, InventorySlot slot)>();
+            for (int idx = 0; idx < _inventory.Slots.Count; idx++)
+            {
+                if (PassesFilter(_inventory.Slots[idx].Item))
+                    filtered.Add((idx, _inventory.Slots[idx]));
+            }
+
+            // 슬롯 생성 (20칸)
             for (int i = 0; i < Inventory.MaxSlots; i++)
             {
                 var slotPanel = new PanelContainer();
-                slotPanel.CustomMinimumSize = new Vector2(64, 64);
+                slotPanel.CustomMinimumSize = new Vector2(44, 44);
 
                 var vbox = new VBoxContainer();
                 slotPanel.AddChild(vbox);
 
-                if (i < _inventory.Slots.Count)
+                if (i < filtered.Count)
                 {
-                    var slot = _inventory.Slots[i];
+                    var (origIdx, slot) = filtered[i];
+
+                    // 등급별 테두리 색상 (Rarity border color)
+                    if (slot.Item.Rarity != ItemRarity.Common)
+                    {
+                        var style = new StyleBoxFlat();
+                        style.BgColor = new Color(0.15f, 0.15f, 0.15f, 0.8f);
+                        style.BorderColor = GetRarityColor(slot.Item.Rarity);
+                        style.SetBorderWidthAll(2);
+                        style.SetCornerRadiusAll(3);
+                        slotPanel.AddThemeStyleboxOverride("panel", style);
+                    }
 
                     // 아이콘 또는 이름 (Icon or Name)
                     if (slot.Item.Icon != null)
                     {
                         var icon = new TextureRect();
                         icon.Texture = slot.Item.Icon;
-                        icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
+                        icon.CustomMinimumSize = new Vector2(32, 32);
+                        icon.ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize;
                         icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+                        icon.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+                        icon.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
                         vbox.AddChild(icon);
                     }
                     else
@@ -138,6 +233,7 @@ namespace FirstGame.UI
                         nameLabel.Text = slot.Item.ItemName;
                         nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
                         nameLabel.AddThemeFontSizeOverride("font_size", 10);
+                        nameLabel.AddThemeColorOverride("font_color", GetRarityColor(slot.Item.Rarity));
                         vbox.AddChild(nameLabel);
                     }
 
@@ -147,25 +243,36 @@ namespace FirstGame.UI
                         var qtyLabel = new Label();
                         qtyLabel.Text = $"x{slot.Quantity}";
                         qtyLabel.HorizontalAlignment = HorizontalAlignment.Right;
-                        qtyLabel.AddThemeFontSizeOverride("font_size", 11);
+                        qtyLabel.AddThemeFontSizeOverride("font_size", 9);
                         vbox.AddChild(qtyLabel);
                     }
 
-                    // 클릭 이벤트 (Click Event)
-                    int slotIndex = i; // 클로저용 캡처 (Capture for closure)
+                    // 강화 수치 표시
+                    if (slot.EnhancementLevel > 0)
+                    {
+                        var enhLabel = new Label();
+                        enhLabel.Text = $"+{slot.EnhancementLevel}";
+                        enhLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        enhLabel.AddThemeFontSizeOverride("font_size", 9);
+                        enhLabel.AddThemeColorOverride("font_color", new Color(0.2f, 1f, 0.6f));
+                        vbox.AddChild(enhLabel);
+                    }
+
+                    // 클릭 이벤트 — 원본 인덱스 사용
+                    int capturedOrigIdx = origIdx;
                     slotPanel.GuiInput += (inputEvent) =>
                     {
                         if (inputEvent is InputEventMouseButton mb && mb.Pressed && mb.ButtonIndex == MouseButton.Left)
                         {
-                            SelectSlot(slotIndex);
+                            SelectSlot(capturedOrigIdx);
                         }
                     };
 
-                    // 마우스 오버 추적 (Track mouse hover for quick slot assignment)
-                    slotPanel.MouseEntered += () => _hoveredSlotIndex = slotIndex;
+                    // 마우스 오버 추적 — 원본 인덱스 사용
+                    slotPanel.MouseEntered += () => _hoveredSlotIndex = capturedOrigIdx;
                     slotPanel.MouseExited += () =>
                     {
-                        if (_hoveredSlotIndex == slotIndex) _hoveredSlotIndex = -1;
+                        if (_hoveredSlotIndex == capturedOrigIdx) _hoveredSlotIndex = -1;
                     };
                 }
 
@@ -183,45 +290,117 @@ namespace FirstGame.UI
             if (index < 0 || index >= _inventory.Slots.Count) return;
             _selectedSlot = index;
             var slot = _inventory.Slots[index];
+            var item = slot.Item;
 
-            _itemInfoLabel.Text = $"{slot.Item.ItemName}\n{slot.Item.Description}";
+            int enhLevel = slot.EnhancementLevel;
+            string info = $"{Inventory.GetEnhancedName(item, enhLevel)}";
+            if (item.Rarity != ItemRarity.Common)
+                info += $" [{item.Rarity}]";
+            info += $"\n{item.Description}";
+
+            // 강화 보너스 포함 장비 비교
+            var (slotDmg, _, slotDef) = Inventory.GetEnhancementBonuses(item, enhLevel);
+            if (item.Type == ItemType.Weapon && item.BonusDamage > 0)
+            {
+                int totalDmg = item.BonusDamage + slotDmg;
+                var (eqDmg, _, _) = Inventory.GetEnhancementBonuses(_inventory.EquippedWeapon, _inventory.EquippedWeaponEnhancement);
+                int currentDmg = (_inventory.EquippedWeapon?.BonusDamage ?? 0) + eqDmg;
+                int diff = totalDmg - currentDmg;
+                string sign = diff >= 0 ? "+" : "";
+                info += $"\n공격력: +{totalDmg} (현재 대비 {sign}{diff})";
+            }
+            else if (item.Type == ItemType.Armor && item.BonusMaxHealth > 0)
+            {
+                int currentHp = _inventory.EquippedArmor?.BonusMaxHealth ?? 0;
+                int diff = item.BonusMaxHealth - currentHp;
+                string sign = diff >= 0 ? "+" : "";
+                info += $"\nHP: +{item.BonusMaxHealth} (현재 대비 {sign}{diff})";
+                if (slotDef > 0 || _inventory.EquippedArmorEnhancement > 0)
+                {
+                    var (_, _, eqDef) = Inventory.GetEnhancementBonuses(_inventory.EquippedArmor, _inventory.EquippedArmorEnhancement);
+                    int defDiff = slotDef - eqDef;
+                    string defSign = defDiff >= 0 ? "+" : "";
+                    info += $"\n방어력: +{slotDef} (현재 대비 {defSign}{defDiff})";
+                }
+            }
+            else if (item.Type == ItemType.Accessory)
+            {
+                var (eqAccDmg, _, eqAccDef) = Inventory.GetEnhancementBonuses(_inventory.EquippedAccessory, _inventory.EquippedAccessoryEnhancement);
+                int currentDef = (_inventory.EquippedAccessory?.BonusDefense ?? 0) + eqAccDef;
+                int totalDef = item.BonusDefense + slotDef;
+                int diff = totalDef - currentDef;
+                string sign = diff >= 0 ? "+" : "";
+                info += $"\n방어력: +{totalDef} (현재 대비 {sign}{diff})";
+            }
+
+            _itemInfoLabel.Text = info;
             _useButton.Visible = true;
-            _useButton.Text = slot.Item.Type == ItemType.Consumable ? "사용 (Use)" : "장착 (Equip)";
+            _useButton.Text = item.Type == ItemType.Consumable ? "사용"
+                : item.Type == ItemType.Material ? "사용 불가" : "장착";
         }
 
         private void RefreshEquipment()
         {
             _weaponLabel.Text = _inventory.EquippedWeapon != null
-                ? $"무기: {_inventory.EquippedWeapon.ItemName} (+{_inventory.EquippedWeapon.BonusDamage} DMG)"
-                : "무기: 없음 (Weapon: None)";
+                ? $"무기: {Inventory.GetEnhancedName(_inventory.EquippedWeapon, _inventory.EquippedWeaponEnhancement)}"
+                : "무기: 없음";
             _armorLabel.Text = _inventory.EquippedArmor != null
-                ? $"방어구: {_inventory.EquippedArmor.ItemName} (+{_inventory.EquippedArmor.BonusMaxHealth} HP)"
-                : "방어구: 없음 (Armor: None)";
+                ? $"방어구: {Inventory.GetEnhancedName(_inventory.EquippedArmor, _inventory.EquippedArmorEnhancement)}"
+                : "방어구: 없음";
+            _accessoryLabel.Text = _inventory.EquippedAccessory != null
+                ? $"악세: {Inventory.GetEnhancedName(_inventory.EquippedAccessory, _inventory.EquippedAccessoryEnhancement)}"
+                : "악세: 없음";
         }
 
         private void OnUsePressed()
         {
             if (_selectedSlot >= 0)
-                _inventory.UseItem(_selectedSlot, _player);
+                _inventory.UseItem(_selectedSlot, _player.Stats);
         }
 
         private void OnUnequipWeaponPressed()
         {
-            _inventory.UnequipWeapon(_player);
+            _inventory.UnequipWeapon(_player.Stats);
         }
 
         private void OnUnequipArmorPressed()
         {
-            _inventory.UnequipArmor(_player);
+            _inventory.UnequipArmor(_player.Stats);
+        }
+
+        private void OnUnequipAccessoryPressed()
+        {
+            _inventory.UnequipAccessory(_player.Stats);
+        }
+
+        private static Color GetRarityColor(ItemRarity rarity)
+        {
+            return rarity switch
+            {
+                ItemRarity.Uncommon => new Color(0.2f, 0.8f, 0.2f),   // 초록
+                ItemRarity.Rare => new Color(0.3f, 0.5f, 1.0f),       // 파랑
+                ItemRarity.Epic => new Color(0.7f, 0.3f, 0.9f),       // 보라
+                ItemRarity.Legendary => new Color(1.0f, 0.8f, 0.0f),  // 노랑
+                _ => new Color(1, 1, 1)                                // 흰색 (Common)
+            };
         }
 
         public override void _ExitTree()
         {
+            // 인벤토리가 열린 채로 씬 전환 시 일시정지 카운터 해제
+            if (Visible)
+                UIPauseManager.ReleasePause();
+
             if (_inventory != null)
             {
                 _inventory.OnInventoryChanged -= RefreshGrid;
                 _inventory.OnEquipmentChanged -= RefreshEquipment;
             }
+
+            if (_useButton != null) _useButton.Pressed -= OnUsePressed;
+            if (_unequipWeaponButton != null) _unequipWeaponButton.Pressed -= OnUnequipWeaponPressed;
+            if (_unequipArmorButton != null) _unequipArmorButton.Pressed -= OnUnequipArmorPressed;
+            if (_unequipAccessoryButton != null) _unequipAccessoryButton.Pressed -= OnUnequipAccessoryPressed;
         }
     }
 }

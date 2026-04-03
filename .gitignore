@@ -18,6 +18,10 @@ CLAUDE.md
 # Scripts
 generate_sounds.py
 
+# Temp
+.tmp.driveupload/
+.idx/
+
 # OS
 Thumbs.db
 Desktop.ini

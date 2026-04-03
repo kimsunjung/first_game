@@ -1,7 +1,7 @@
 using Godot;
 using System;
 using FirstGame.Core;
-using FirstGame.Entities.Player;
+using FirstGame.Core.Interfaces;
 using FirstGame.Data;
 
 namespace FirstGame.UI
@@ -11,7 +11,7 @@ namespace FirstGame.UI
 		private ProgressBar _healthBar;
 		private Label _healthLabel;
 		private Label _goldLabel;
-		private PlayerController _player;
+		private IPlayer _player;
 
 		private Control _gameOverPanel;
 		private Button _restartButton;
@@ -25,9 +25,11 @@ namespace FirstGame.UI
 
 		// MP / 레벨 / EXP (없을 수 있으므로 null-safe)
 		private ProgressBar _mpBar;
+		private Label _mpLabel;
 		private Label _levelLabel;
 		private ProgressBar _expBar;
 		private Label _levelUpLabel;
+
 
 		public override void _Ready()
 		{
@@ -53,6 +55,7 @@ namespace FirstGame.UI
 
 			// null-safe: 씬에 노드가 없어도 크래시 없음
 			_mpBar = GetNodeOrNull<ProgressBar>("%MpBar");
+			_mpLabel = GetNodeOrNull<Label>("%MpLabel");
 			_levelLabel = GetNodeOrNull<Label>("%LevelLabel");
 			_expBar = GetNodeOrNull<ProgressBar>("%ExpBar");
 			_levelUpLabel = GetNodeOrNull<Label>("%LevelUpLabel");
@@ -63,11 +66,14 @@ namespace FirstGame.UI
 			EventManager.OnLevelUp += ShowLevelUp;
 			SaveManager.OnGameSaved += ShowSaveNotification;
 
-			GameManager.Instance.OnGoldChanged += UpdateGoldDisplay;
-			UpdateGoldDisplay(GameManager.Instance.PlayerGold);
+			if (GameManager.Instance != null)
+			{
+				GameManager.Instance.OnGoldChanged += UpdateGoldDisplay;
+				UpdateGoldDisplay(GameManager.Instance.PlayerGold);
+			}
 
-			var players = GetTree().GetNodesInGroup("Player");
-			if (players.Count > 0 && players[0] is PlayerController player)
+			var player = GameManager.Instance?.Player;
+			if (player != null)
 			{
 				_player = player;
 				_player.Stats.OnHealthChanged += UpdateHealthDisplay;
@@ -91,7 +97,7 @@ namespace FirstGame.UI
 			if (GameManager.Instance != null)
 				GameManager.Instance.OnGoldChanged -= UpdateGoldDisplay;
 
-			if (_player != null && IsInstanceValid(_player))
+			if (_player is GodotObject playerObj && IsInstanceValid(playerObj))
 			{
 				_player.Stats.OnHealthChanged -= UpdateHealthDisplay;
 				_player.Stats.OnMpChanged -= UpdateMpDisplay;
@@ -112,9 +118,9 @@ namespace FirstGame.UI
 
 		private void ShowGameOver()
 		{
-			AudioManager.Instance?.PlaySFX("game_over.wav");
+			AudioManager.Instance?.PlaySFX("player_death.wav");
 			_gameOverPanel.Visible = true;
-			GetTree().Paused = true;
+			UIPauseManager.RequestPause();
 		}
 
 		private async void ShowSaveNotification()
@@ -146,6 +152,8 @@ namespace FirstGame.UI
 
 		private void OnRestartPressed()
 		{
+			_gameOverPanel.Visible = false;
+			UIPauseManager.Reset();
 			SaveManager.LoadGame();
 		}
 
@@ -161,10 +169,8 @@ namespace FirstGame.UI
 			if (_mpBar == null) return;
 			_mpBar.MaxValue = maxMp;
 			_mpBar.Value = currentMp;
-			// MpLabel이 있으면 "50/50" 형식으로 표시
-			var mpLabel = GetNodeOrNull<Label>("%MpLabel");
-			if (mpLabel != null)
-				mpLabel.Text = $"{currentMp}/{maxMp}";
+			if (_mpLabel != null)
+				_mpLabel.Text = $"{currentMp}/{maxMp}";
 		}
 
 		private void UpdateLevelDisplay(int level)

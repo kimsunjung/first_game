@@ -1,0 +1,131 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/EnhanceUI.cs" id="1_enhUI"]
+
+[node name="EnhanceUI" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_enhUI")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+texture_filter = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -170.0
+offset_right = 200.0
+offset_bottom = 170.0
+grow_horizontal = 2
+grow_vertical = 2
+custom_minimum_size = Vector2(400, 340)
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="TitleRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="EnhanceTitleLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/TitleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "대장장이"
+
+[node name="EnhanceCloseButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/TitleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "닫기 (ESC)"
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="BodyRow" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
+
+[node name="EquipListTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/LeftPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "장비 목록"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
+
+[node name="EquipGrid" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/LeftPanel/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 1
+
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow"]
+layout_mode = 2
+
+[node name="DetailPanel" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.2
+custom_minimum_size = Vector2(0, 80)
+
+[node name="ItemNameLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/DetailPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "아이템 이름"
+
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/DetailPanel"]
+layout_mode = 2
+
+[node name="CurrentStatsLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/DetailPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "현재: ATK +0"
+
+[node name="NextStatsLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/DetailPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "→ +1: ATK +2"
+
+[node name="SuccessRateLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/DetailPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "성공률: 100%"
+
+[node name="CostLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/DetailPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "비용: 100G"
+
+[node name="EnhanceButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/BodyRow/DetailPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "강화하기"
+
+[node name="EnhanceMessageLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1

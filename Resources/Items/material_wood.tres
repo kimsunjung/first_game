@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cg2gnu2yqhbvv"]
+
+[ext_resource type="Texture2D" uid="uid://cxowroudgql1b" path="res://Resources/Kenney/Tilemap/tilemap_packed.png" id="1_res"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1_v7ot3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wood"]
+atlas = ExtResource("1_res")
+region = Rect2(48, 16, 16, 16)
+
+[resource]
+script = ExtResource("1_v7ot3")
+ItemName = "통나무"
+Description = "나무에서 얻은 목재. 크래프팅 재료."
+Icon = SubResource("AtlasTexture_wood")
+Type = 4
+metadata/_custom_type_script = "uid://ct0iyxsd1s7up"

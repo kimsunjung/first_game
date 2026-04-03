@@ -1,6 +1,7 @@
 using Godot;
+using FirstGame.Core;
+using FirstGame.Core.Interfaces;
 using FirstGame.Data;
-using FirstGame.Entities.Player;
 
 namespace FirstGame.UI
 {
@@ -8,7 +9,7 @@ namespace FirstGame.UI
 	public partial class SkillWindow : CanvasLayer
 	{
 		private VBoxContainer _slotContainer;
-		private PlayerController _player;
+		private IPlayer _player;
 
 		private static readonly string[] SlotKeys = { "Q", "W", "E", "R" };
 
@@ -17,9 +18,8 @@ namespace FirstGame.UI
 			_slotContainer = GetNode<VBoxContainer>("%SkillSlotContainer");
 			Visible = false;
 
-			var players = GetTree().GetNodesInGroup("Player");
-			if (players.Count > 0 && players[0] is PlayerController p)
-				_player = p;
+			var pc = GameManager.Instance?.Player;
+			if (pc != null) _player = pc;
 		}
 
 		public override void _UnhandledInput(InputEvent @event)
@@ -47,7 +47,7 @@ namespace FirstGame.UI
 			for (int i = 0; i < 4; i++)
 			{
 				var panel = new PanelContainer();
-				panel.CustomMinimumSize = new Vector2(340, 70);
+				panel.CustomMinimumSize = new Vector2(260, 48);
 
 				var hbox = new HBoxContainer();
 				panel.AddChild(hbox);
@@ -55,8 +55,8 @@ namespace FirstGame.UI
 				// 키 바인딩 레이블
 				var keyLabel = new Label();
 				keyLabel.Text = SlotKeys[i];
-				keyLabel.CustomMinimumSize = new Vector2(30, 0);
-				keyLabel.AddThemeFontSizeOverride("font_size", 18);
+				keyLabel.CustomMinimumSize = new Vector2(20, 0);
+				keyLabel.AddThemeFontSizeOverride("font_size", 12);
 				keyLabel.AddThemeColorOverride("font_color", new Color(1f, 0.8f, 0.2f));
 				keyLabel.VerticalAlignment = VerticalAlignment.Center;
 				hbox.AddChild(keyLabel);
@@ -70,7 +70,7 @@ namespace FirstGame.UI
 					{
 						var icon = new TextureRect();
 						icon.Texture = skill.Icon;
-						icon.CustomMinimumSize = new Vector2(48, 48);
+						icon.CustomMinimumSize = new Vector2(24, 24);
 						icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
 						hbox.AddChild(icon);
 					}
@@ -80,12 +80,14 @@ namespace FirstGame.UI
 
 					var nameLabel = new Label();
 					nameLabel.Text = skill.SkillName;
-					nameLabel.AddThemeFontSizeOverride("font_size", 14);
+					nameLabel.AddThemeFontSizeOverride("font_size", 12);
+					nameLabel.ClipText = true;
 					vbox.AddChild(nameLabel);
 
 					var infoLabel = new Label();
-					infoLabel.Text = $"{skill.Description}  |  MP: {skill.MpCost}  쿨다운: {skill.Cooldown}s";
-					infoLabel.AddThemeFontSizeOverride("font_size", 11);
+					infoLabel.Text = $"{skill.Description}";
+					infoLabel.AddThemeFontSizeOverride("font_size", 10);
+					infoLabel.ClipText = true;
 					vbox.AddChild(infoLabel);
 
 					hbox.AddChild(vbox);

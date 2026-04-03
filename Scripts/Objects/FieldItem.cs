@@ -1,7 +1,7 @@
 using Godot;
 using System;
 using FirstGame.Data;
-using FirstGame.Entities.Player;
+using FirstGame.Core.Interfaces;
 
 namespace FirstGame.Objects
 {
@@ -23,6 +23,7 @@ namespace FirstGame.Objects
 		private float _groundY;
 		private bool _isLanded = false;
 		private int _bounceCount = 0;
+		private bool _canCollect = true; // 드롭 직후 수집 방지용
 
 		public override void _Ready()
 		{
@@ -30,13 +31,14 @@ namespace FirstGame.Objects
 			if (_sprite != null && Item != null)
 			{
 				_sprite.Texture = Item.Icon;
-			}
-
-			// 파티클 (옵션)
-			var cpuParticles = GetNodeOrNull<CpuParticles2D>("RarityParticles");
-			if (cpuParticles != null && Item != null)
-			{
-				SetRarityColor(cpuParticles);
+				// 아이콘 크기에 관계없이 필드에서 16x16 픽셀로 표시
+				float targetSize = 16.0f;
+				float maxDim = Mathf.Max(Item.Icon.GetWidth(), Item.Icon.GetHeight());
+				if (maxDim > 0)
+				{
+					float s = targetSize / maxDim;
+					_sprite.Scale = new Vector2(s, s);
+				}
 			}
 
 			BodyEntered += OnBodyEntered;
@@ -54,21 +56,13 @@ namespace FirstGame.Objects
 			_isLanded = false;
 			_bounceCount = 0;
 			_groundY = startPos.Y + (float)GD.RandRange(0, 20); // 초기 Y 위치 기준 약간 아래
-		}
 
-		private void SetRarityColor(CpuParticles2D particles)
-		{
-			if (Item == null) return;
-			
-			switch (Item.Rarity)
+			// 드롭 후 0.5초간 수집 불가 (통통 튀는 연출이 보이도록)
+			_canCollect = false;
+			GetTree().CreateTimer(0.5).Timeout += () =>
 			{
-				case ItemRarity.Common: particles.Color = Colors.White; break;
-				case ItemRarity.Uncommon: particles.Color = Colors.LightGreen; break;
-				case ItemRarity.Rare: particles.Color = Colors.DodgerBlue; break;
-				case ItemRarity.Epic: particles.Color = Colors.Purple; break;
-				case ItemRarity.Legendary: particles.Color = Colors.Gold; break;
-				default: particles.Color = Colors.White; break;
-			}
+				if (IsInstanceValid(this)) _canCollect = true;
+			};
 		}
 
 		public override void _Process(double delta)
@@ -82,7 +76,7 @@ namespace FirstGame.Objects
 
 				if (GlobalPosition.DistanceTo(_magnetTarget.GlobalPosition) < 20.0f)
 				{
-					CollectItem((PlayerController)_magnetTarget);
+					CollectItem(_magnetTarget as IItemCollector);
 				}
 				return;
 			}
@@ -119,28 +113,32 @@ namespace FirstGame.Objects
 
 		private void OnBodyEntered(Node2D body)
 		{
-			if (_isMagnetized) return;
-			
-			if (body.IsInGroup("Player") && body is PlayerController player)
+			if (_isMagnetized || !_canCollect) return;
+
+			if (body.IsInGroup("Player") && body is IItemCollector)
 			{
-				// 자석 모드 온
 				_isMagnetized = true;
-				_magnetTarget = player;
+				_magnetTarget = body;
 			}
 		}
 
-		private void CollectItem(PlayerController player)
+		private void CollectItem(IItemCollector collector)
 		{
-			if (Item == null) 
+			if (Item == null)
 			{
 				QueueFree();
 				return;
 			}
 
-			bool added = player.Inventory.AddItem(Item, Quantity);
+			if (collector == null)
+			{
+				QueueFree();
+				return;
+			}
+
+			bool added = collector.CollectItem(Item, Quantity);
 			if (added)
 			{
-				// 사운드 재생
 				FirstGame.Core.AudioManager.Instance?.PlaySFX("pickup.wav");
 				QueueFree();
 			}
@@ -150,7 +148,7 @@ namespace FirstGame.Objects
 				_isMagnetized = false;
 				_magnetTarget = null;
 				_magnetSpeed = 400.0f;
-				
+
 				// 살짝 튕겨내는 연출
 				Drop(GlobalPosition, new Vector2((float)GD.RandRange(-1, 1), -1), 150f);
 			}

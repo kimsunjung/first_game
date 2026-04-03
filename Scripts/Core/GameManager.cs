@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using FirstGame.Core.Interfaces;
 
 namespace FirstGame.Core
 {
@@ -20,6 +22,26 @@ namespace FirstGame.Core
 			}
 		}
 
+		// 플레이어 참조 (Player reference — set by PlayerController)
+		public IPlayer Player { get; set; }
+
+		// 활성 적 캐시 (Active enemy cache — avoids GetNodesInGroup every frame)
+		private readonly List<Node2D> _activeEnemies = new();
+		public IReadOnlyList<Node2D> ActiveEnemies => _activeEnemies;
+		public void RegisterEnemy(Node2D enemy) => _activeEnemies.Add(enemy);
+		public void UnregisterEnemy(Node2D enemy) => _activeEnemies.Remove(enemy);
+
+		// 처치한 보스 목록
+		private readonly HashSet<string> _defeatedBosses = new();
+		public IReadOnlyCollection<string> DefeatedBosses => _defeatedBosses;
+		public void RecordBossDefeat(string bossId) => _defeatedBosses.Add(bossId);
+		public bool IsBossDefeated(string bossId) => _defeatedBosses.Contains(bossId);
+		public void RestoreDefeatedBosses(List<string> bosses)
+		{
+			_defeatedBosses.Clear();
+			foreach (var b in bosses) _defeatedBosses.Add(b);
+		}
+
 		// UI 업데이트용 이벤트 (Event for UI updates)
 		public event Action<int> OnGoldChanged;
 
@@ -28,8 +50,7 @@ namespace FirstGame.Core
 			if (Instance == null)
 			{
 				Instance = this;
-				// 옵션: 씬 로드 시 유지 (Optional: Make this persist across scene loads)
-				// ProcessMode = ProcessModeEnum.Always; 
+				BalanceData.Load();
 				GD.Print("게임 매니저 초기화됨 (GameManager Initialized)");
 			}
 			else

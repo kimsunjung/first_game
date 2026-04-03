@@ -15,8 +15,9 @@ namespace FirstGame.Data
 		[Export] public float CritMultiplier { get; set; } = 2.0f;   // 2배 크리트 데미지
 
 		// ─── 기본 스탯 ─────────────────────────────────────────────
-		[Export] public float MoveSpeed { get; set; } = 200.0f;
+		public virtual float MoveSpeed { get; set; } = 120.0f;
 		[Export] public int   MaxHealth { get; set; } = 100;
+		[Export] public int   Defense { get; set; } = 0;
 
 		private int _currentHealth = 100;
 		[Export]

@@ -92,7 +92,19 @@ namespace FirstGame.Core
 
         public void StopBGM()
         {
-            _bgmPlayer.Stop();
+            _bgmPlayer?.Stop();
+        }
+
+        public void SetBgmVolume(float volume)
+        {
+            BgmVolume = Mathf.Clamp(volume, 0f, 1f);
+            if (_bgmPlayer != null)
+                _bgmPlayer.VolumeDb = Mathf.LinearToDb(BgmVolume);
+        }
+
+        public void SetSfxVolume(float volume)
+        {
+            SfxVolume = Mathf.Clamp(volume, 0f, 1f);
         }
 
         private AudioStream LoadAudio(string path)

@@ -1,22 +1,20 @@
-[gd_resource type="Resource" script_class="EnemyStats" format=3]
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://e360qqlbtjgf"]
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
+[ext_resource type="Resource" uid="uid://lq1ay338edtn" path="res://Resources/Items/hi_potion.tres" id="3_hip"]
 
 [resource]
 script = ExtResource("1")
-EnemyTypeName = "Skeleton"
-MaxHealth = 45
 MoveSpeed = 65.0
 DetectionRange = 350.0
-AttackRange = 80.0
-BaseDamage = 20
-AttackCooldown = 1.8
+BaseDamage = 6
+AttackCooldown = 3.0
 ExperienceReward = 45
-AnimBasePath = "res://Resources/Tilesets/Pixel Crawler - Free Pack/Entities/Mobs/Skeleton Crew/Skeleton - Mage/"
-AnimIdleFile = "Idle/Idle-Sheet_padded.png"
-AnimIdleFrames = 4
-AnimRunFile = "Run/Run-Sheet.png"
-AnimRunFrames = 6
-AnimDeathFile = "Death/Death-Sheet.png"
-AnimDeathFrames = 6
+Behavior = 1
+PreferredRange = 180.0
+EnemyTypeName = "Skeleton"
+SpriteAtlasCoords = Vector2i(6, 8)
+PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_hip")])
 DropChance = 0.55
+MaxHealth = 45

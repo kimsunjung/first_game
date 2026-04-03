@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://vw8ly8itfmkd"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" uid="uid://cxowroudgql1b" path="res://Resources/Kenney/Tilemap/tilemap_packed.png" id="2_icon"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_icon")
+region = Rect2(144, 112, 16, 16)
+
+[resource]
+script = ExtResource("1")
+ItemName = "Iron Ring"
+Description = "단단한 철 반지. 방어력 +2"
+Icon = SubResource("AtlasTexture_icon")
+Price = 80
+SellPrice = 40
+Type = 5
+IsStackable = false
+MaxStack = 1
+BonusDefense = 2
