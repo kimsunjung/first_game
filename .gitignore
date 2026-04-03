@@ -1,6 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+*.uid
 
 # Mono/.NET
 bin/
@@ -17,6 +18,17 @@ CLAUDE.md
 
 # Scripts
 generate_sounds.py
+generate_preview.js
+
+# Docs / planning (not part of game build)
+DOCS_FOR_SHARE/
+GAME_DESIGN/
+PLAN_DOC/
+MEMORY.md
+GEMINI.md
+mobile-game-doc-sync/
+mobile-game-doc-sync.skill
+play_movie/
 
 # Temp
 .tmp.driveupload/
