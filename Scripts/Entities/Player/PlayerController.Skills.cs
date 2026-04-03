@@ -39,6 +39,9 @@ namespace FirstGame.Entities.Player
 			AudioManager.Instance?.PlaySFX("skill_activate.wav");
 		}
 
+		// 모바일 스킬 버튼에서 직접 호출
+		public void TriggerSkill(int slot) => UseSkillSlot(slot);
+
 		// ISkillTarget 메서드 (Strategy에서 호출)
 		public void SetPowerStrikeActive(bool active) => _powerStrikeActive = active;
 		public void ActivateDash(float duration)

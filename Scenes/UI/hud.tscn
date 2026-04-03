@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c8qj0y5x4k3l"]
 
 [ext_resource type="Script" uid="uid://bnuyljy7753of" path="res://Scripts/UI/HUD.cs" id="1_hudSc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/mobile_controls.tscn" id="2_mc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot"]
 content_margin_left = 4.0
@@ -331,3 +332,5 @@ offset_bottom = 23.0
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="MobileControls" parent="." instance=ExtResource("2_mc")]

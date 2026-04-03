@@ -1,5 +1,6 @@
 using Godot;
 using FirstGame.Core;
+using FirstGame.UI;
 
 namespace FirstGame.Entities.Player
 {
@@ -14,8 +15,10 @@ namespace FirstGame.Entities.Player
 				return;
 			}
 
-			// 수동 입력
+			// 수동 입력 (키보드 + 가상 조이스틱)
 			Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+			if (inputDir == Vector2.Zero)
+				inputDir = VirtualInput.JoystickDirection;
 
 			if (inputDir != Vector2.Zero)
 			{
