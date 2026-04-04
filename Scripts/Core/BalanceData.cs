@@ -73,6 +73,20 @@ namespace FirstGame.Core
 					rates[i] = (float)arr[i].GetDouble();
 				b.SuccessRates = rates;
 			}
+			if (el.TryGetProperty("enhanceMaterials", out var mats))
+			{
+				var matList = new EnhanceMaterialReq[mats.GetArrayLength()];
+				for (int i = 0; i < matList.Length; i++)
+				{
+					var m = mats[i];
+					matList[i] = new EnhanceMaterialReq
+					{
+						ItemPath = m.TryGetProperty("itemPath", out var p) ? p.GetString() : "",
+						Quantity = m.TryGetProperty("quantity", out var q) ? q.GetInt32() : 1
+					};
+				}
+				b.MaterialReqs = matList;
+			}
 			return b;
 		}
 
@@ -130,6 +144,13 @@ namespace FirstGame.Core
 		public int NoPenaltyMaxLevel { get; set; } = 5;
 		public int DowngradeMaxLevel { get; set; } = 8;
 		public int DestroyMinLevel { get; set; } = 9;
+		public EnhanceMaterialReq[] MaterialReqs { get; set; } = Array.Empty<EnhanceMaterialReq>();
+	}
+
+	public struct EnhanceMaterialReq
+	{
+		public string ItemPath { get; set; }
+		public int Quantity { get; set; }
 	}
 
 	public class CombatBalance

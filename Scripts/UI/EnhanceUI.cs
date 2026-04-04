@@ -237,13 +237,25 @@ namespace FirstGame.UI
 				: "실패 시: 아이템 파괴!";
 			_successRateLabel.Text += $"  ({penalty})";
 
-			// 비용
-			_costLabel.Text = $"비용: {cost}G (보유: {GameManager.Instance.PlayerGold}G)";
-			bool canAfford = GameManager.Instance.PlayerGold >= cost;
+			// 비용 (골드 + 재료)
+			var matReq = GetMaterialReq(currentLevel);
+			bool canAffordGold = GameManager.Instance.PlayerGold >= cost;
+			bool canAffordMat = matReq == null || _inventory.HasItems(matReq.Value.Item, matReq.Value.Quantity);
+			bool canAfford = canAffordGold && canAffordMat;
+
+			if (matReq != null)
+			{
+				int held = _inventory.CountItem(matReq.Value.Item);
+				_costLabel.Text = $"비용: {cost}G + {matReq.Value.Item.ItemName} x{matReq.Value.Quantity} (보유: {held}개)\n골드: {GameManager.Instance.PlayerGold}G";
+			}
+			else
+			{
+				_costLabel.Text = $"비용: {cost}G (보유: {GameManager.Instance.PlayerGold}G)";
+			}
 			_costLabel.Modulate = canAfford ? Colors.White : new Color(1f, 0.4f, 0.4f);
 
 			_enhanceButton.Disabled = !canAfford;
-			_enhanceButton.Text = canAfford ? "강화하기" : "골드 부족";
+			_enhanceButton.Text = !canAffordMat ? "재료 부족" : (!canAffordGold ? "골드 부족" : "강화하기");
 		}
 
 		private void OnEnhancePressed()
@@ -302,8 +314,18 @@ namespace FirstGame.UI
 				return;
 			}
 
-			// 골드 차감
+			var matReq = GetMaterialReq(currentLevel);
+			if (matReq != null && !_inventory.HasItems(matReq.Value.Item, matReq.Value.Quantity))
+			{
+				ShowMessage($"{matReq.Value.Item.ItemName}이(가) 부족합니다!");
+				AudioManager.Instance?.PlaySFX("shop_fail.wav");
+				return;
+			}
+
+			// 골드 및 재료 차감
 			GameManager.Instance.PlayerGold -= cost;
+			if (matReq != null)
+				_inventory.ConsumeItems(matReq.Value.Item, matReq.Value.Quantity);
 
 			// 확률 판정
 			float rate = GetSuccessRate(currentLevel);
@@ -431,6 +453,23 @@ namespace FirstGame.UI
 				default:
 					return null;
 			}
+		}
+
+		private struct MaterialReqResult
+		{
+			public ItemData Item;
+			public int Quantity;
+		}
+
+		private static MaterialReqResult? GetMaterialReq(int currentLevel)
+		{
+			var reqs = BalanceData.Enhancement.MaterialReqs;
+			if (reqs == null || currentLevel >= reqs.Length) return null;
+			var req = reqs[currentLevel];
+			if (string.IsNullOrEmpty(req.ItemPath)) return null;
+			var item = GD.Load<ItemData>(req.ItemPath);
+			if (item == null) return null;
+			return new MaterialReqResult { Item = item, Quantity = req.Quantity };
 		}
 
 		private static int GetCost(int currentLevel) => BalanceData.Enhancement.CostBase * (currentLevel + 1);

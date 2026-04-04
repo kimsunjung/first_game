@@ -5,7 +5,19 @@
     "costBase": 100,
     "noPenaltyMaxLevel": 5,
     "downgradeMaxLevel": 8,
-    "destroyMinLevel": 9
+    "destroyMinLevel": 9,
+    "enhanceMaterials": [
+      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 1},
+      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 1},
+      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 2},
+      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 2},
+      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 3},
+      {"itemPath": "res://Resources/Items/bone_dust.tres", "quantity": 1},
+      {"itemPath": "res://Resources/Items/bone_dust.tres", "quantity": 2},
+      {"itemPath": "res://Resources/Items/bone_dust.tres", "quantity": 2},
+      {"itemPath": "res://Resources/Items/boss_core.tres", "quantity": 1},
+      {"itemPath": "res://Resources/Items/boss_core.tres", "quantity": 1}
+    ]
   },
   "combat": {
     "reviveDelaySec": 3.0,
