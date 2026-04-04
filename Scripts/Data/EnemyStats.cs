@@ -36,6 +36,28 @@ namespace FirstGame.Data
 		// ─── 드롭 테이블 ─────────────────────────────────────────────
 		[ExportGroup("Drop Table")]
 		[Export] public ItemData[] PossibleDrops { get; set; }
+		[Export] public float[] DropWeights { get; set; }  // PossibleDrops와 같은 길이. 미설정 시 균등 확률
 		[Export] public float DropChance { get; set; } = 0.5f;
+
+		/// <summary>가중치 기반 랜덤 드랍 인덱스 반환. DropWeights 미설정 시 균등 선택.</summary>
+		public int PickDropIndex()
+		{
+			if (PossibleDrops == null || PossibleDrops.Length == 0) return -1;
+			if (DropWeights == null || DropWeights.Length != PossibleDrops.Length)
+				return (int)(GD.Randi() % (uint)PossibleDrops.Length);
+
+			float total = 0f;
+			foreach (var w in DropWeights) total += w;
+			if (total <= 0f) return (int)(GD.Randi() % (uint)PossibleDrops.Length);
+
+			float roll = (float)GD.RandRange(0.0, total);
+			float cumulative = 0f;
+			for (int i = 0; i < DropWeights.Length; i++)
+			{
+				cumulative += DropWeights[i];
+				if (roll < cumulative) return i;
+			}
+			return PossibleDrops.Length - 1;
+		}
 	}
 }

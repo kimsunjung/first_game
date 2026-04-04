@@ -15,5 +15,6 @@ ExperienceReward = 40
 Behavior = 1
 SpriteAtlasCoords = Vector2i(11, 7)
 PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_hip"), ExtResource("4_leather")])
+DropWeights = PackedFloat32Array(0.35, 0.2, 0.45)
 DropChance = 0.45
 MaxHealth = 70

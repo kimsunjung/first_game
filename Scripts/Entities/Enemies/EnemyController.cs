@@ -450,8 +450,8 @@ namespace FirstGame.Entities.Enemies
 					}
 					else if (GD.Randf() <= Stats.DropChance)
 					{
-						// 일반 적: PossibleDrops 중 랜덤 1개
-						int index = (int)(GD.Randi() % Stats.PossibleDrops.Length);
+						// 일반 적: 가중치 기반 랜덤 1개 드랍
+						int index = Stats.PickDropIndex();
 						var droppedItem = Stats.PossibleDrops[index];
 						var fieldItem = fieldItemPrefab.Instantiate<FirstGame.Objects.FieldItem>();
 						fieldItem.Item = droppedItem;
