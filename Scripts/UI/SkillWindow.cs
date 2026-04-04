@@ -22,16 +22,20 @@ namespace FirstGame.UI
 			if (pc != null) _player = pc;
 		}
 
+		/// <summary>모바일 버튼에서 직접 호출</summary>
+		public void Toggle()
+		{
+			Visible = !Visible;
+			if (Visible) Refresh();
+		}
+
 		public override void _UnhandledInput(InputEvent @event)
 		{
 			if (@event is InputEventKey k && k.Pressed && !k.Echo)
 			{
 				var key = k.Keycode != Key.None ? k.Keycode : k.PhysicalKeycode;
 				if (key == Key.Tab)
-				{
-					Visible = !Visible;
-					if (Visible) Refresh();
-				}
+					Toggle();
 			}
 		}
 

@@ -63,18 +63,20 @@ namespace FirstGame.UI
 			RefreshDisplay();
 		}
 
+		/// <summary>모바일 버튼에서 직접 호출</summary>
+		public void Toggle()
+		{
+			if (UIPauseManager.IsPaused && !Visible) return;
+			Visible = !Visible;
+			if (Visible) RefreshDisplay();
+		}
+
 		public override void _UnhandledInput(InputEvent @event)
 		{
 			if (@event is InputEventKey k && k.Pressed && !k.Echo)
 			{
 				if (k.Keycode == Key.C || k.PhysicalKeycode == Key.C)
-				{
-					// 다른 UI가 일시정지를 걸었으면 열기 차단
-					if (UIPauseManager.IsPaused && !Visible) return;
-
-					Visible = !Visible;
-					if (Visible) RefreshDisplay();
-				}
+					Toggle();
 			}
 		}
 

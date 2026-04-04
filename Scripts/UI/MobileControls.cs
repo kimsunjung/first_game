@@ -4,7 +4,7 @@ using FirstGame.Entities.Player;
 namespace FirstGame.UI
 {
     /// <summary>
-    /// 모바일 터치 버튼 (공격/스킬/상호작용) 처리.
+    /// 모바일 터치 버튼 (공격/스킬/상호작용/메뉴) 처리.
     /// VirtualJoystick은 별도 Control 노드에서 처리.
     /// </summary>
     public partial class MobileControls : Control
@@ -12,13 +12,16 @@ namespace FirstGame.UI
         private Button _attackButton;
         private Button[] _skillButtons = new Button[4];
         private Button _interactButton;
+        private Button _inventoryButton;
+        private Button _characterButton;
+        private Button _skillWindowButton;
 
         // 스킬 버튼 위에 표시할 쿨타임 레이블 (프로그래밍 방식으로 생성)
         private Label[] _cooldownLabels = new Label[4];
 
-        private static readonly Color ColorReady   = Colors.White;
+        private static readonly Color ColorReady    = Colors.White;
         private static readonly Color ColorCooldown = new Color(0.5f, 0.5f, 0.5f, 0.8f);
-        private static readonly Color ColorNoMp    = new Color(0.4f, 0.6f, 1.0f, 0.8f);
+        private static readonly Color ColorNoMp     = new Color(0.4f, 0.6f, 1.0f, 0.8f);
 
         public override void _Ready()
         {
@@ -27,7 +30,10 @@ namespace FirstGame.UI
             _attackButton = GetNodeOrNull<Button>("AttackButton");
             for (int i = 0; i < 4; i++)
                 _skillButtons[i] = GetNodeOrNull<Button>($"SkillButton{i + 1}");
-            _interactButton = GetNodeOrNull<Button>("InteractButton");
+            _interactButton    = GetNodeOrNull<Button>("InteractButton");
+            _inventoryButton   = GetNodeOrNull<Button>("InventoryButton");
+            _characterButton   = GetNodeOrNull<Button>("CharacterButton");
+            _skillWindowButton = GetNodeOrNull<Button>("SkillWindowButton");
 
             _attackButton?.Connect("pressed", Callable.From(OnAttackPressed));
             for (int i = 0; i < 4; i++)
@@ -49,6 +55,9 @@ namespace FirstGame.UI
                 }
             }
             _interactButton?.Connect("pressed", Callable.From(OnInteractPressed));
+            _inventoryButton?.Connect("pressed", Callable.From(OnInventoryPressed));
+            _characterButton?.Connect("pressed", Callable.From(OnCharacterPressed));
+            _skillWindowButton?.Connect("pressed", Callable.From(OnSkillWindowPressed));
         }
 
         public override void _Process(double delta)
@@ -94,6 +103,9 @@ namespace FirstGame.UI
         private PlayerController GetPlayer()
             => GetTree().GetFirstNodeInGroup("Player") as PlayerController;
 
+        private T FindWindow<T>(string nodeName) where T : CanvasLayer
+            => GetTree().CurrentScene?.GetNodeOrNull<T>(nodeName);
+
         private void OnAttackPressed()
             => GetPlayer()?.Attack();
 
@@ -102,5 +114,14 @@ namespace FirstGame.UI
             var ev = new InputEventAction { Action = "interact", Pressed = true };
             Input.ParseInputEvent(ev);
         }
+
+        private void OnInventoryPressed()
+            => FindWindow<InventoryUI>("InventoryUI")?.Toggle();
+
+        private void OnCharacterPressed()
+            => FindWindow<CharacterWindow>("CharacterWindow")?.Toggle();
+
+        private void OnSkillWindowPressed()
+            => FindWindow<SkillWindow>("SkillWindow")?.Toggle();
     }
 }

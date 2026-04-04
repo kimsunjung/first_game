@@ -385,6 +385,16 @@ namespace FirstGame.UI
             };
         }
 
+        /// <summary>모바일 버튼에서 직접 호출</summary>
+        public void Toggle()
+        {
+            if (_player != null && _player.IsDead) return;
+            if (UIPauseManager.IsPaused && !Visible) return;
+            Visible = !Visible;
+            if (Visible) { UIPauseManager.RequestPause(); RefreshGrid(); }
+            else UIPauseManager.ReleasePause();
+        }
+
         public override void _ExitTree()
         {
             // 인벤토리가 열린 채로 씬 전환 시 일시정지 카운터 해제
