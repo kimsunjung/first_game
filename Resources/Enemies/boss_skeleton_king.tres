@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://dp4rst6uvw7xy"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1_es"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="2_hip"]
+[ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="3_mp"]
+[ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="4_core"]
+
+[resource]
+script = ExtResource("1_es")
+MoveSpeed = 70.0
+DetectionRange = 300.0
+AttackRange = 45.0
+BaseDamage = 15
+AttackCooldown = 2.0
+ExperienceReward = 300
+GoldReward = 300
+EnemyTypeName = "SkeletonKing"
+IsBoss = true
+SpriteAtlasCoords = Vector2i(8, 8)
+PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core")])
+DropChance = 1.0
+MaxHealth = 600
+CurrentHealth = 600

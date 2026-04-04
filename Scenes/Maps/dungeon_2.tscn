@@ -11,9 +11,10 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
-[ext_resource type="Resource" uid="uid://cr0uxb4estgbh" path="res://Resources/Enemies/orc_basic.tres" id="12_orc1"]
-[ext_resource type="Resource" uid="uid://baxcmhcdjq873" path="res://Resources/Enemies/orc_warrior.tres" id="13_orc2"]
-[ext_resource type="Resource" path="res://Resources/Enemies/orc_rogue.tres" id="14_orc3"]
+[ext_resource type="Resource" uid="uid://gd8yrg2pfw6j" path="res://Resources/Enemies/skeleton_warrior.tres" id="12_skel2"]
+[ext_resource type="Resource" uid="uid://e360qqlbtjgf" path="res://Resources/Enemies/skeleton_mage.tres" id="13_skel3"]
+[ext_resource type="Resource" uid="uid://cs85xqwqiwm3i" path="res://Resources/Enemies/skeleton_rogue.tres" id="14_skel4"]
+[ext_resource type="Resource" uid="uid://dp4rst6uvw7xy" path="res://Resources/Enemies/boss_skeleton_king.tres" id="15_boss"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -27,13 +28,13 @@ size = Vector2(16, 720)
 [sub_resource type="RectangleShape2D" id="wall_right"]
 size = Vector2(16, 720)
 
-[node name="Field1" type="Node2D"]
+[node name="Dungeon2" type="Node2D"]
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -10
 offset_right = 1280.0
 offset_bottom = 720.0
-color = Color(0.16, 0.29, 0.10, 1)
+color = Color(0.06, 0.06, 0.14, 1)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(80, 360)
@@ -53,29 +54,20 @@ position = Vector2(80, 360)
 [node name="SavePoint" parent="." instance=ExtResource("8_save")]
 position = Vector2(200, 200)
 
-[node name="PortalToTown" parent="." instance=ExtResource("9_portal")]
+[node name="PortalToField2" parent="." instance=ExtResource("9_portal")]
 position = Vector2(50, 360)
-TargetScenePath = "res://Scenes/Maps/town.tscn"
+TargetScenePath = "res://Scenes/Maps/field_2.tscn"
 TargetSpawnPosition = Vector2(1150, 360)
 
-[node name="PortalToDungeon1" parent="." instance=ExtResource("9_portal")]
-position = Vector2(1220, 360)
-TargetScenePath = "res://Scenes/Maps/dungeon_1.tscn"
-TargetSpawnPosition = Vector2(80, 360)
-
-[node name="PortalToField2" parent="." instance=ExtResource("9_portal")]
-position = Vector2(640, 695)
-TargetScenePath = "res://Scenes/Maps/field_2.tscn"
-TargetSpawnPosition = Vector2(640, 50)
-
 [node name="EnemySpawner" type="Node2D" parent="."]
-position = Vector2(640, 360)
+position = Vector2(700, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/orc_basic.tres")]([ExtResource("12_orc1"), ExtResource("13_orc2"), ExtResource("14_orc3")])
-SpawnInterval = 3.0
-MaxEnemies = 5
-SpawnRadius = 280.0
+StatVariants = Array[Resource("res://Resources/Enemies/skeleton_warrior.tres")]([ExtResource("12_skel2"), ExtResource("13_skel3"), ExtResource("14_skel4")])
+SpawnInterval = 4.5
+MaxEnemies = 4
+SpawnRadius = 250.0
+BossStatVariant = ExtResource("15_boss")
 
 [node name="Walls" type="StaticBody2D" parent="."]
 collision_layer = 4
