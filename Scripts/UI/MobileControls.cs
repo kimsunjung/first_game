@@ -13,6 +13,13 @@ namespace FirstGame.UI
         private Button[] _skillButtons = new Button[4];
         private Button _interactButton;
 
+        // 스킬 버튼 위에 표시할 쿨타임 레이블 (프로그래밍 방식으로 생성)
+        private Label[] _cooldownLabels = new Label[4];
+
+        private static readonly Color ColorReady   = Colors.White;
+        private static readonly Color ColorCooldown = new Color(0.5f, 0.5f, 0.5f, 0.8f);
+        private static readonly Color ColorNoMp    = new Color(0.4f, 0.6f, 1.0f, 0.8f);
+
         public override void _Ready()
         {
             MouseFilter = MouseFilterEnum.Ignore;
@@ -27,8 +34,61 @@ namespace FirstGame.UI
             {
                 int slot = i;
                 _skillButtons[i]?.Connect("pressed", Callable.From(() => GetPlayer()?.TriggerSkill(slot)));
+
+                // 쿨타임 오버레이 레이블 생성
+                if (_skillButtons[i] != null)
+                {
+                    var label = new Label();
+                    label.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+                    label.HorizontalAlignment = HorizontalAlignment.Center;
+                    label.VerticalAlignment = VerticalAlignment.Center;
+                    label.AddThemeFontSizeOverride("font_size", 14);
+                    label.Text = "";
+                    _skillButtons[i].AddChild(label);
+                    _cooldownLabels[i] = label;
+                }
             }
             _interactButton?.Connect("pressed", Callable.From(OnInteractPressed));
+        }
+
+        public override void _Process(double delta)
+        {
+            var player = GetPlayer();
+            if (player == null) return;
+
+            for (int i = 0; i < 4; i++)
+            {
+                var btn = _skillButtons[i];
+                var lbl = _cooldownLabels[i];
+                if (btn == null || lbl == null) continue;
+
+                if (!player.HasSkillInSlot(i))
+                {
+                    btn.Modulate = ColorReady;
+                    lbl.Text = "";
+                    continue;
+                }
+
+                float remaining = player.GetSkillCooldownRemaining(i);
+                int mpCost = player.GetSkillMpCost(i);
+                bool hasMp = player.Stats.CurrentMp >= mpCost;
+
+                if (remaining > 0f)
+                {
+                    btn.Modulate = ColorCooldown;
+                    lbl.Text = remaining > 9.9f ? $"{remaining:F0}" : $"{remaining:F1}";
+                }
+                else if (!hasMp)
+                {
+                    btn.Modulate = ColorNoMp;
+                    lbl.Text = $"MP\n{mpCost}";
+                }
+                else
+                {
+                    btn.Modulate = ColorReady;
+                    lbl.Text = "";
+                }
+            }
         }
 
         private PlayerController GetPlayer()

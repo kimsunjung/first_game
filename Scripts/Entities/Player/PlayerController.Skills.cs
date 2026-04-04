@@ -42,6 +42,21 @@ namespace FirstGame.Entities.Player
 		// 모바일 스킬 버튼에서 직접 호출
 		public void TriggerSkill(int slot) => UseSkillSlot(slot);
 
+		// 모바일 UI용 쿨타임/MP 정보 조회
+		public float GetSkillCooldownRemaining(int slot)
+			=> slot < _skillCooldowns.Length ? _skillCooldowns[slot] : 0f;
+		public float GetSkillMaxCooldown(int slot)
+		{
+			var skills = Stats.LearnedSkills;
+			return slot < skills.Count ? skills[slot].Cooldown : 0f;
+		}
+		public int GetSkillMpCost(int slot)
+		{
+			var skills = Stats.LearnedSkills;
+			return slot < skills.Count ? skills[slot].MpCost : 0;
+		}
+		public bool HasSkillInSlot(int slot) => slot < Stats.LearnedSkills.Count;
+
 		// ISkillTarget 메서드 (Strategy에서 호출)
 		public void SetPowerStrikeActive(bool active) => _powerStrikeActive = active;
 		public void ActivateDash(float duration)
