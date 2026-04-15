@@ -209,8 +209,8 @@
 ## 6. 문서 해석 주의사항
 - 예전 계획 문서 일부에는 `main.tscn` 중심 설명이 남아 있다.
 - 현재 실제 구조는 `Scenes/Maps/*` 분리 구조다.
-- 맵 관련 의사결정은 `PLAN_DOC/map-art-priority-plan.md`와 `PLAN_DOC/town-layout-sketch.md`를 우선 본다.
+- 맵 관련 의사결정은 `PLAN_DOC/5-map-art-priority-plan.md`와 `PLAN_DOC/6-town-layout-sketch.md`를 우선 본다.
 - 아트 방향과 에셋 판단은 아래 문서를 우선 본다.
-  - `PLAN_DOC/art-direction-guide.md`
-  - `PLAN_DOC/asset-purchase-guide.md`
-  - `PLAN_DOC/asset-shortlist-2026-04-15.md`
+  - `PLAN_DOC/8-art-direction-guide.md`
+  - `PLAN_DOC/9-asset-purchase-guide.md`
+  - `PLAN_DOC/10-asset-shortlist-2026-04-15.md`

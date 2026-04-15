@@ -162,7 +162,7 @@
 핵심 작업:
 - `RPG Asset Pack`과 `RPG Townsfolk Pack` 기준으로 허브 마을 구성
 - `SavePoint`, 상점가, 출구, 중앙 광장 재디자인
-- `town-layout-sketch.md`, `town-tile-placement-order.md` 기준으로 작업
+- `6-town-layout-sketch.md`, `7-town-tile-placement-order.md` 기준으로 작업
 
 완료 기준:
 - 마을 허브가 실제 게임 공간처럼 보임
@@ -229,7 +229,7 @@
 가장 먼저 할 일:
 1. `RPG UI Pack` 확인
 2. `player.tscn`에 맞는 주인공 후보 선택
-3. `player-first-replacement-checklist.md` 기준으로 1차 교체 테스트
+3. `4-player-first-replacement-checklist.md` 기준으로 1차 교체 테스트
 
 ---
 

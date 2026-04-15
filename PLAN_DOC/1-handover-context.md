@@ -20,18 +20,18 @@
 
 ### 추가한 문서
 - `README.md`
-- `art-direction-guide.md`
-- `asset-purchase-guide.md`
-- `asset-shortlist-2026-04-15.md`
-- `map-art-priority-plan.md`
-- `town-layout-sketch.md`
-- `franuka-full-migration-plan.md`
-- `player-first-replacement-checklist.md`
-- `town-tile-placement-order.md`
-- `handover-context.md`
+- `8-art-direction-guide.md`
+- `9-asset-purchase-guide.md`
+- `10-asset-shortlist-2026-04-15.md`
+- `5-map-art-priority-plan.md`
+- `6-town-layout-sketch.md`
+- `3-franuka-full-migration-plan.md`
+- `4-player-first-replacement-checklist.md`
+- `7-town-tile-placement-order.md`
+- `1-handover-context.md`
 
 ### 갱신한 문서
-- `source-code-reference.md`
+- `2-source-code-reference.md`
 - `combat-loop-plan.md`
 - `item-inventory-plan.md`
 - `save-load-system-plan.md`
@@ -82,7 +82,7 @@
 - 카메라 줌과 실제 체감 크기
 
 이 다섯 가지 문제가 `player.tscn`에서 가장 먼저 드러난다.
-그래서 `player-first-replacement-checklist.md`가 실제 전환의 첫 관문이다.
+그래서 `4-player-first-replacement-checklist.md`가 실제 전환의 첫 관문이다.
 
 ---
 
@@ -92,23 +92,23 @@
 - `field_1`은 첫 전투 필드라 구조적 완성도가 중요하다.
 
 관련 문서:
-- `map-art-priority-plan.md`
-- `town-layout-sketch.md`
-- `town-tile-placement-order.md`
+- `5-map-art-priority-plan.md`
+- `6-town-layout-sketch.md`
+- `7-town-tile-placement-order.md`
 
 ---
 
 ## 6. 다른 세션에서 먼저 읽을 문서
 새 세션이나 다른 PC에서 시작할 때는 아래 순서로 보면 된다.
 
-1. `PLAN_DOC/handover-context.md`
+1. `PLAN_DOC/1-handover-context.md`
 2. `PLAN_DOC/README.md`
-3. `PLAN_DOC/source-code-reference.md`
-4. `PLAN_DOC/franuka-full-migration-plan.md`
-5. `PLAN_DOC/player-first-replacement-checklist.md`
-6. `PLAN_DOC/map-art-priority-plan.md`
-7. `PLAN_DOC/town-layout-sketch.md`
-8. `PLAN_DOC/town-tile-placement-order.md`
+3. `PLAN_DOC/2-source-code-reference.md`
+4. `PLAN_DOC/3-franuka-full-migration-plan.md`
+5. `PLAN_DOC/4-player-first-replacement-checklist.md`
+6. `PLAN_DOC/5-map-art-priority-plan.md`
+7. `PLAN_DOC/6-town-layout-sketch.md`
+8. `PLAN_DOC/7-town-tile-placement-order.md`
 
 ---
 
