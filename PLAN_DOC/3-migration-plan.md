@@ -4,15 +4,22 @@
 - 현재 `first_game` 프로젝트를 `Franuka` 에셋 계열로 단계적으로 교체하는 계획을 정리한다.
 - 무리하게 전체를 한 번에 바꾸지 않고, 실패 비용이 낮은 순서로 진행한다.
 
-작성일: 2026-04-15
+작성일: 2026-04-21 (최종 업데이트)
+
+## 구매 결정 요약
+- **대상**: `Complete Fantasy RPG Bundle` ($39.99)
+- **시점**: PC 변경 후 (2026-05월경 맥북 Air M5 전환 시)
+- **이유**: 낱개 합산 대비 할인, 단일 작가 일관성, 8개 팩이 프로젝트 전 영역 커버
+- **팩 매핑**: `6-asset-inventory.md` 참고
 
 ---
 
 ## 1. 현재 전제
 - 현재 프로젝트는 `Godot 4.6 + C# + 2D 탑다운 + 모바일` 구조다.
 - 씬 구조는 `Scenes/Maps/*`로 분리되어 있다.
-- 현재 월드와 캐릭터 리소스는 `Pixel Crawler`, `Kenney` 계열이 일부 섞여 있다.
-- 문서 기준으로 `Franuka` 계열로의 풀 교체를 검토 중이다.
+- 현재 월드와 캐릭터 리소스는 `Pixel Crawler`, `Kenney` 계열이 섞여 있다.
+- `field_1.tscn`은 MapGenerator로 타일 기반 전환됨 (타일셋 자체는 차후 Franuka로 교체 예정).
+- `Franuka` 계열로의 풀 교체는 **확정**되었고, 번들 구매만 대기 중이다.
 
 ---
 
@@ -78,24 +85,29 @@
 
 ## 5. 단계별 계획
 
-### Phase 0. 구매 및 자산 정리
-- `Franuka` 번들 다운로드
-- 팩별 원본 폴더 구조 보존
-- 프로젝트 내부엔 아래처럼 별도 루트로 가져온다.
+### Phase 0. PC 전환 후 구매 및 자산 정리
+체크리스트:
+- [ ] 맥북 Air M5 환경 세팅 (Godot 4.6 + .NET 8)
+- [ ] `Complete Fantasy RPG Bundle` 구매 ($39.99, itch.io)
+- [ ] 번들 다운로드 + 팩별 원본 폴더 구조 보존
+- [ ] 프로젝트 내부에 아래 구조로 임포트
 
-예시:
-- `Resources/Franuka/Heroes/`
-- `Resources/Franuka/Monsters/`
-- `Resources/Franuka/Townsfolk/`
-- `Resources/Franuka/Tiles/`
-- `Resources/Franuka/Dungeon/`
-- `Resources/Franuka/Interior/`
-- `Resources/Franuka/UI/`
-- `Resources/Franuka/Icons/`
+```
+Resources/Franuka/
+├── UI/
+├── Icons/
+├── Heroes/
+├── Monsters/
+├── Townsfolk/
+├── Tiles/
+├── Dungeon/
+└── Interior/
+```
 
 중요:
 - 기존 `Pixel Crawler`, `Kenney` 리소스는 바로 삭제하지 않는다.
-- 최소 한 사이클 테스트가 끝날 때까지 보존한다.
+- Phase 7까지 완료 + 플레이 테스트 통과 시점까지 보존.
+- 라이선스 파일(license.txt / README)도 함께 보관 (상업 출시 시 크레딧 표기용).
 
 ### Phase 1. UI 교체
 대상:
@@ -225,11 +237,13 @@
 
 ---
 
-## 9. 권장 첫 실행
-가장 먼저 할 일:
-1. `RPG UI Pack` 확인
-2. `player.tscn`에 맞는 주인공 후보 선택
-3. `4-player-first-replacement-checklist.md` 기준으로 1차 교체 테스트
+## 9. PC 전환 직후 권장 첫 실행
+순서:
+1. Godot 4.6 프로젝트 오픈 확인
+2. 번들 임포트 후 `Resources/Franuka/UI/`에서 `RPG UI Pack` 파일 확인
+3. `hud.tscn`의 체력/마나바 프레임 먼저 1개만 교체 → 실행 테스트
+4. 통과하면 인벤토리/상점 UI 확장
+5. UI Phase 완료 후 `4-player-checklist.md` 기준으로 `player.tscn` 1차 교체
 
 ---
 

@@ -4,7 +4,7 @@
 - 현재 `first_game` 리포의 실제 구조를 빠르게 찾기 위한 참조 문서다.
 - 예전 문서에 남아 있는 `main.tscn` 중심 설명 대신, 현재 맵 분리 구조를 기준으로 정리한다.
 
-작성일: 2026-04-15
+작성일: 2026-04-21
 
 ---
 
@@ -55,6 +55,8 @@
   - 플레이어, 적, 상점 NPC, 세이브 포인트
 - `Scripts/Objects`
   - 포털, 필드 아이템
+- `Scripts/Maps`
+  - `MapGenerator.cs` (필드 맵 런타임 타일 생성기)
 - `Scripts/UI`
   - HUD, 인벤토리, 상점, 설정, 스킬창
 
@@ -134,6 +136,7 @@
 ### `Scenes/Maps/field_1.tscn`
 - 첫 야외 필드
 - 적 스포너 포함
+- **MapGenerator** 로 런타임 타일 생성 (잔디 + 흙 패치 + 호수 + 나무 + 테두리 벽)
 - `town.tscn`, `dungeon_1.tscn`, `field_2.tscn`으로 이어지는 포털 포함
 
 ### `Scenes/Maps/field_2.tscn`
@@ -170,8 +173,9 @@
 - `Resources/Kenney/...`
 
 참고:
-- `Resources/Tilesets/field_tileset.tres`와 `kenney_tileset.tres`는 리포에 존재하지만, 현재 맵 씬들이 직접 참조하는 구조는 아니다.
-- 현재 `Scenes/Maps/*`는 여전히 `ColorRect` 기반 플레이스홀더 비중이 높고, 타일맵 전환은 별도 작업 항목이다.
+- `Resources/Tilesets/field_tileset.tres`는 `field_1.tscn`의 MapGenerator가 참조한다.
+- `town.tscn`, `field_2.tscn`, `dungeon_1/2.tscn`은 여전히 `ColorRect` 기반 플레이스홀더 상태다.
+- 맵 비주얼의 Franuka 전환은 `3-migration-plan.md`의 Phase 5~7 참고.
 
 ---
 
@@ -207,10 +211,11 @@
 ---
 
 ## 6. 문서 해석 주의사항
-- 예전 계획 문서 일부에는 `main.tscn` 중심 설명이 남아 있다.
+- 예전 계획 문서 일부에는 `main.tscn` 중심 설명이 남아 있다 (archive 참조).
 - 현재 실제 구조는 `Scenes/Maps/*` 분리 구조다.
-- 맵 관련 의사결정은 `PLAN_DOC/5-map-art-priority-plan.md`와 `PLAN_DOC/6-town-layout-sketch.md`를 우선 본다.
+- 맵 관련 의사결정은 `PLAN_DOC/5-town-plan.md`를 우선 본다.
 - 아트 방향과 에셋 판단은 아래 문서를 우선 본다.
-  - `PLAN_DOC/8-art-direction-guide.md`
-  - `PLAN_DOC/9-asset-purchase-guide.md`
-  - `PLAN_DOC/10-asset-shortlist-2026-04-15.md`
+  - `PLAN_DOC/1-current-state.md` (확정된 방향)
+  - `PLAN_DOC/3-migration-plan.md` (단계별 플랜)
+  - `PLAN_DOC/6-asset-inventory.md` (Franuka 번들 매핑)
+- 과거 대안 경로 (Pixel Crawler 유지, 무료 UI 먼저 등)는 `archive/` 참조.
