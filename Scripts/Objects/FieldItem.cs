@@ -28,7 +28,7 @@ namespace FirstGame.Objects
 		public override void _Ready()
 		{
 			_sprite = GetNodeOrNull<Sprite2D>("Sprite2D");
-			if (_sprite != null && Item != null)
+			if (_sprite != null && Item?.Icon != null)
 			{
 				_sprite.Texture = Item.Icon;
 				// 아이콘 크기에 관계없이 필드에서 16x16 픽셀로 표시
@@ -144,13 +144,17 @@ namespace FirstGame.Objects
 			}
 			else
 			{
-				// 가방이 꽉 찼으면 다시 바닥에 떨어짐
+				// 가방이 꽉 찼으면 살짝 튕겨내고 2초 쿨다운
+				// 재드랍으로 플레이어 Area2D를 벗어나게 하여 이후 BodyEntered 재발동 보장
 				_isMagnetized = false;
 				_magnetTarget = null;
 				_magnetSpeed = 400.0f;
-
-				// 살짝 튕겨내는 연출
-				Drop(GlobalPosition, new Vector2((float)GD.RandRange(-1, 1), -1), 150f);
+				_canCollect = false;
+				Drop(GlobalPosition, new Vector2((float)GD.RandRange(-1, 1), -1), 80f);
+				GetTree().CreateTimer(2.0).Timeout += () =>
+				{
+					if (IsInstanceValid(this)) _canCollect = true;
+				};
 			}
 		}
 	}

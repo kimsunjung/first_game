@@ -32,6 +32,8 @@ namespace FirstGame.Core
 		{
 			Engine.TimeScale = 1.0;
 			SaveManager.SaveAndSetPending();
+			// 저장 시점에는 출발 씬이 CurrentScene이므로, 목적지 씬으로 덮어씀
+			SaveManager.OverrideCurrentScene(scenePath, spawnPosition);
 			NextSpawnPosition = spawnPosition;
 			GetTree().ChangeSceneToFile(scenePath);
 		}

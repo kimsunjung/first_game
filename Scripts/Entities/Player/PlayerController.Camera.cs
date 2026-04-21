@@ -31,14 +31,30 @@ namespace FirstGame.Entities.Player
 		}
 
 		// ─── 카메라 경계 자동 감지 ──────────────────────────────────
+		// Background ColorRect 크기를 기준으로 경계 설정.
+		// TileMap 기반은 _Ready() 호출 순서(Player < MapGenerator) 때문에
+		// 항상 타일이 비어있어 LimitBottom=2000으로 떨어지는 버그가 있음.
 		private void ApplyCameraBounds()
 		{
 			if (_camera == null) return;
 
-			// 씬에서 TileMapLayer를 찾아 경계 자동 계산
 			var scene = GetTree().CurrentScene;
-			TileMapLayer tileMap = FindTileMapLayer(scene);
 
+			// Background ColorRect(씬 배경)로 경계 결정 — 가장 신뢰할 수 있는 소스
+			var bg = scene.GetNodeOrNull<ColorRect>("Background");
+			if (bg != null)
+			{
+				var size = bg.GetRect().Size;
+				_camera.LimitLeft   = 0;
+				_camera.LimitTop    = 0;
+				_camera.LimitRight  = (int)size.X;
+				_camera.LimitBottom = (int)size.Y;
+				GD.Print($"[Camera] Background 경계: {size.X}x{size.Y}");
+				return;
+			}
+
+			// Background 없는 씬(예: 일부 던전) → TileMap 기반으로 대체
+			TileMapLayer tileMap = FindTileMapLayer(scene);
 			if (tileMap != null)
 			{
 				var used = tileMap.GetUsedRect();
@@ -46,32 +62,23 @@ namespace FirstGame.Entities.Player
 				var ts = tileMap.TileSet;
 				if (ts != null) tileSize = ts.TileSize.X;
 
-				// 빈 TileMapLayer (타일 없음) → 넓은 기본값 사용
-				if (used.Size.X <= 0 || used.Size.Y <= 0)
+				if (used.Size.X > 0 && used.Size.Y > 0)
 				{
-					_camera.LimitLeft = -500;
-					_camera.LimitTop = -500;
-					_camera.LimitRight = 2000;
-					_camera.LimitBottom = 2000;
-					GD.Print("[Camera] TileMap 비어있음 → 기본 경계 사용");
-				}
-				else
-				{
-					_camera.LimitLeft = (int)(used.Position.X * tileSize + tileMap.GlobalPosition.X);
-					_camera.LimitTop = (int)(used.Position.Y * tileSize + tileMap.GlobalPosition.Y);
-					_camera.LimitRight = (int)((used.Position.X + used.Size.X) * tileSize + tileMap.GlobalPosition.X);
+					_camera.LimitLeft   = (int)(used.Position.X * tileSize + tileMap.GlobalPosition.X);
+					_camera.LimitTop    = (int)(used.Position.Y * tileSize + tileMap.GlobalPosition.Y);
+					_camera.LimitRight  = (int)((used.Position.X + used.Size.X) * tileSize + tileMap.GlobalPosition.X);
 					_camera.LimitBottom = (int)((used.Position.Y + used.Size.Y) * tileSize + tileMap.GlobalPosition.Y);
-					GD.Print($"[Camera] TileMap 경계 적용: L={_camera.LimitLeft} T={_camera.LimitTop} R={_camera.LimitRight} B={_camera.LimitBottom}");
+					GD.Print($"[Camera] TileMap 경계: L={_camera.LimitLeft} T={_camera.LimitTop} R={_camera.LimitRight} B={_camera.LimitBottom}");
+					return;
 				}
 			}
-			else
-			{
-				// TileMap이 없으면 넓은 기본값
-				_camera.LimitLeft = -500;
-				_camera.LimitTop = -500;
-				_camera.LimitRight = 2000;
-				_camera.LimitBottom = 2000;
-			}
+
+			// 최후 폴백: 1280×720 고정
+			_camera.LimitLeft   = 0;
+			_camera.LimitTop    = 0;
+			_camera.LimitRight  = 1280;
+			_camera.LimitBottom = 720;
+			GD.Print("[Camera] 폴백 경계: 1280x720");
 		}
 
 		private TileMapLayer FindTileMapLayer(Node root)

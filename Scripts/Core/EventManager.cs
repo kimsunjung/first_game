@@ -6,17 +6,11 @@ namespace FirstGame.Core
 	public static class EventManager
 	{
 		public static event Action OnPlayerDeath;
-		public static event Action OnPlayerRevived;
 		public static event Action<int> OnLevelUp; // (새 레벨)
 
 		public static void TriggerPlayerDeath()
 		{
 			OnPlayerDeath?.Invoke();
-		}
-
-		public static void TriggerPlayerRevived()
-		{
-			OnPlayerRevived?.Invoke();
 		}
 
 		public static void TriggerLevelUp(int newLevel)
@@ -63,7 +57,6 @@ namespace FirstGame.Core
 		public static void ResetAll()
 		{
 			OnPlayerDeath = null;
-			OnPlayerRevived = null;
 			OnLevelUp = null;
 			OnBossSpawned = null;
 			OnBossHealthChanged = null;

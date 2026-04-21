@@ -97,9 +97,10 @@ namespace FirstGame.UI
 			if (_atkLabel != null) _atkLabel.Text = $"ATK: {s.BaseDamage}";
 			if (_defLabel != null) _defLabel.Text = $"DEF: {s.Defense}";
 			if (_spLabel != null) _spLabel.Text = $"SP: {s.StatPoints}";
-			if (_strLabel != null) _strLabel.Text = $"STR:{s.StrPoints} (+{s.StrPoints*2}공)";
-			if (_conLabel != null) _conLabel.Text = $"CON:{s.ConPoints} (+{s.ConPoints*5}HP)";
-			if (_intLabel != null) _intLabel.Text = $"INT:{s.IntPoints} (+{s.IntPoints*3}MP)";
+			var prog = BalanceData.Progression;
+			if (_strLabel != null) _strLabel.Text = $"STR:{s.StrPoints} (+{s.StrPoints * prog.StrAtkBonus}공)";
+			if (_conLabel != null) _conLabel.Text = $"CON:{s.ConPoints} (+{s.ConPoints * prog.ConHpBonus}HP)";
+			if (_intLabel != null) _intLabel.Text = $"INT:{s.IntPoints} (+{s.IntPoints * prog.IntMpBonus}MP)";
 			bool hasSp = s.StatPoints > 0;
 			if (_strBtn != null) _strBtn.Disabled = !hasSp;
 			if (_conBtn != null) _conBtn.Disabled = !hasSp;

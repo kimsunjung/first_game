@@ -33,7 +33,15 @@ namespace FirstGame.Entities.Enemies
 					GD.PrintErr("EnemySpawner: Failed to load enemy scene");
 			}
 
-			// "Field" 노드 또는 TileMapLayer를 가진 아무 노드에서 타일 데이터 로드
+			EventManager.OnEnemyKilled += OnEnemyKilledHandler;
+			EventManager.OnBossDied += OnBossDiedHandler;
+
+			// 타일 캐시는 모든 _Ready() 완료 후 실행 (MapGenerator가 먼저 타일 생성하도록)
+			CallDeferred(nameof(InitTileCache));
+		}
+
+		private void InitTileCache()
+		{
 			var parent = GetParent();
 			Node2D field = parent?.GetNodeOrNull<Node2D>("Field");
 			TileMapLayer obstacleLayer = null;
@@ -47,7 +55,6 @@ namespace FirstGame.Entities.Enemies
 			}
 			else if (parent != null)
 			{
-				// "Field" 노드가 없으면 부모에서 직접 TileMapLayer 탐색
 				foreach (var child in parent.GetChildren())
 				{
 					if (child is Node2D n2d)
@@ -66,24 +73,16 @@ namespace FirstGame.Entities.Enemies
 			}
 
 			if (obstacleLayer != null)
-			{
 				foreach (var cell in obstacleLayer.GetUsedCells())
 					_obstacleTiles.Add(cell);
-			}
+
 			if (groundLayer != null)
-			{
 				foreach (var cell in groundLayer.GetUsedCells())
 					_groundTiles.Add(cell);
-			}
 
 			GD.Print($"[EnemySpawner] 초기화 완료 - 씬: {GetTree().CurrentScene?.Name}, " +
-					 $"EnemyScene: {(EnemyScene != null ? "OK" : "NULL")}, " +
-					 $"StatVariants: {StatVariants?.Length ?? 0}종, " +
-					 $"MaxEnemies: {MaxEnemies}, " +
+					 $"StatVariants: {StatVariants?.Length ?? 0}종, MaxEnemies: {MaxEnemies}, " +
 					 $"바닥타일: {_groundTiles.Count}, 장애물타일: {_obstacleTiles.Count}");
-
-			EventManager.OnEnemyKilled += OnEnemyKilledHandler;
-			EventManager.OnBossDied += OnBossDiedHandler;
 		}
 
 		public override void _PhysicsProcess(double delta)

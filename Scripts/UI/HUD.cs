@@ -72,24 +72,29 @@ namespace FirstGame.UI
 				UpdateGoldDisplay(GameManager.Instance.PlayerGold);
 			}
 
-			var player = GameManager.Instance?.Player;
-			if (player != null)
-			{
-				_player = player;
-				_player.Stats.OnHealthChanged += UpdateHealthDisplay;
-				_player.Stats.OnMpChanged += UpdateMpDisplay;
-				_player.Stats.OnLevelUp += UpdateLevelDisplay;
-				_player.Stats.OnExpChanged += UpdateExpDisplay;
-				_player.Inventory.OnItemPickedUp += ShowItemPickup;
-				_player.Inventory.OnQuickSlotChanged += UpdateQuickSlotDisplay;
-				_player.Inventory.OnInventoryChanged += UpdateQuickSlotDisplay;
+			// 씬 트리 _Ready 순서 보장을 위해 플레이어 바인딩은 지연 실행
+			CallDeferred(nameof(BindPlayer));
+		}
 
-				UpdateHealthDisplay(_player.Stats.CurrentHealth, _player.Stats.MaxHealth);
-				UpdateMpDisplay(_player.Stats.CurrentMp, _player.Stats.MaxMp);
-				UpdateLevelDisplay(_player.Stats.Level);
-				UpdateExpDisplay(_player.Stats.Exp, _player.Stats.ExpToNextLevel);
-				UpdateQuickSlotDisplay();
-			}
+		private void BindPlayer()
+		{
+			var player = GameManager.Instance?.Player;
+			if (player == null) return;
+
+			_player = player;
+			_player.Stats.OnHealthChanged += UpdateHealthDisplay;
+			_player.Stats.OnMpChanged += UpdateMpDisplay;
+			_player.Stats.OnLevelUp += UpdateLevelDisplay;
+			_player.Stats.OnExpChanged += UpdateExpDisplay;
+			_player.Inventory.OnItemPickedUp += ShowItemPickup;
+			_player.Inventory.OnQuickSlotChanged += UpdateQuickSlotDisplay;
+			_player.Inventory.OnInventoryChanged += UpdateQuickSlotDisplay;
+
+			UpdateHealthDisplay(_player.Stats.CurrentHealth, _player.Stats.MaxHealth);
+			UpdateMpDisplay(_player.Stats.CurrentMp, _player.Stats.MaxMp);
+			UpdateLevelDisplay(_player.Stats.Level);
+			UpdateExpDisplay(_player.Stats.Exp, _player.Stats.ExpToNextLevel);
+			UpdateQuickSlotDisplay();
 		}
 
 		public override void _ExitTree()

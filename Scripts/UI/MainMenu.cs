@@ -63,6 +63,7 @@ namespace FirstGame.UI
 
 		private void StartNewGame()
 		{
+			GameManager.Instance?.ResetForNewGame();
 			SaveManager.PendingLoadData = null;
 			GetTree().ChangeSceneToFile("res://Scenes/Maps/town.tscn");
 		}

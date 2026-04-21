@@ -92,12 +92,8 @@ namespace FirstGame.Core
 
 		private static CombatBalance ParseCombat(JsonElement el) => new()
 		{
-			ReviveDelaySec = GetFloat(el, "reviveDelaySec", 3.0f),
-			RevivePosX = GetFloat(el, "revivePosX", 320f),
-			RevivePosY = GetFloat(el, "revivePosY", 200f),
 			PlayerKnockback = GetFloat(el, "playerKnockback", 60f),
 			EnemyKnockback = GetFloat(el, "enemyKnockback", 80f),
-			AutoAttackInterval = GetFloat(el, "autoAttackInterval", 0.5f),
 			AttackRangeRatio = GetFloat(el, "attackRangeRatio", 0.85f)
 		};
 
@@ -155,12 +151,8 @@ namespace FirstGame.Core
 
 	public class CombatBalance
 	{
-		public float ReviveDelaySec { get; set; } = 3.0f;
-		public float RevivePosX { get; set; } = 320f;
-		public float RevivePosY { get; set; } = 200f;
 		public float PlayerKnockback { get; set; } = 60f;
 		public float EnemyKnockback { get; set; } = 80f;
-		public float AutoAttackInterval { get; set; } = 0.5f;
 		public float AttackRangeRatio { get; set; } = 0.85f;
 	}
 

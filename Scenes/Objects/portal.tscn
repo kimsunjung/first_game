@@ -20,5 +20,5 @@ color = Color(0.2, 0.5, 1.0, 0.7)
 
 [node name="PromptLabel" type="Label" parent="."]
 position = Vector2(-25, -35)
-text = "E: 이동"
+text = "[F] 이동"
 theme_override_font_sizes/font_size = 10

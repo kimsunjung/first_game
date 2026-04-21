@@ -327,6 +327,12 @@ namespace FirstGame.UI
 			if (matReq != null)
 				_inventory.ConsumeItems(matReq.Value.Item, matReq.Value.Quantity);
 
+			// 재료 소비로 슬롯이 밀렸을 수 있으므로 인벤토리 아이템 인덱스 재탐색
+			// 아이템 참조 + 강화 레벨로 동일 리소스 중복 슬롯 구분
+			if (_targetKind == TargetKind.Inventory)
+				_targetSlotIndex = _inventory.Slots.FindIndex(s =>
+					ReferenceEquals(s.Item, item) && s.EnhancementLevel == currentLevel);
+
 			// 확률 판정
 			float rate = GetSuccessRate(currentLevel);
 			bool success = _rng.NextDouble() < rate;

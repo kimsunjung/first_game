@@ -26,13 +26,20 @@ namespace FirstGame.Entities.Player
 				float speed = Stats.MoveSpeed * (_dashActive ? DashSpeedMultiplier : 1.0f);
 				Velocity = Velocity.MoveToward(inputDir * speed, Acceleration * (float)delta);
 				_facingDirection = inputDir;
+				// 이동 시 UI 포커스 해제 (방향키가 슬롯 포커스에 영향주는 것 방지)
+				GetViewport().GuiReleaseFocus();
 			}
 			else
 			{
 				Velocity = Velocity.MoveToward(Vector2.Zero, Friction * (float)delta);
 			}
 
-			if (Input.IsActionJustPressed("attack")) Attack();
+			if (Input.IsActionJustPressed("attack"))
+			{
+				// 공격 시 UI 포커스 해제 (Space가 포커스된 버튼 클릭하는 것 방지)
+				GetViewport().GuiReleaseFocus();
+				Attack();
+			}
 		}
 
 		private bool IsMoving() => Velocity.Length() > 20f;

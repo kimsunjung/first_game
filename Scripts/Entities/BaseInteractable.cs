@@ -16,7 +16,12 @@ namespace FirstGame.Entities
 			BodyEntered += OnBodyEntered;
 			BodyExited += OnBodyExited;
 			_promptLabel = GetNodeOrNull<Label>("PromptLabel");
-			if (_promptLabel != null) _promptLabel.Visible = false;
+			if (_promptLabel != null)
+			{
+				if (string.IsNullOrEmpty(_promptLabel.Text))
+					_promptLabel.Text = "[F] 상호작용";
+				_promptLabel.Visible = false;
+			}
 			OnReady();
 		}
 

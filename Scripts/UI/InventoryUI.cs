@@ -46,6 +46,9 @@ namespace FirstGame.UI
             CreateFilterButtons();
             Visible = false;
 
+            // 트리 일시정지 중에도 키보드 토글 작동하도록
+            ProcessMode = ProcessModeEnum.Always;
+
             // Player 연결
             var player = GameManager.Instance?.Player;
             if (player != null)

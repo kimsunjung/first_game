@@ -44,6 +44,9 @@ namespace FirstGame.UI
 			foreach (Node child in _slotContainer.GetChildren())
 				child.QueueFree();
 
+			// _Ready 시점에 미등록된 경우 재시도
+			if (_player == null)
+				_player = GameManager.Instance?.Player;
 			if (_player == null) return;
 
 			var learned = _player.Stats.LearnedSkills;

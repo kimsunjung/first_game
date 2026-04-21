@@ -42,6 +42,14 @@ namespace FirstGame.Core
 			foreach (var b in bosses) _defeatedBosses.Add(b);
 		}
 
+		public void ResetForNewGame()
+		{
+			PlayerGold = 0;
+			_defeatedBosses.Clear();
+			_activeEnemies.Clear();
+			EventManager.ResetAll();
+		}
+
 		// UI 업데이트용 이벤트 (Event for UI updates)
 		public event Action<int> OnGoldChanged;
 

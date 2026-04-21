@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemData" format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bk2cmijhwqmin"]
 
 [ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
 [ext_resource type="Texture2D" uid="uid://cxowroudgql1b" path="res://Resources/Kenney/Tilemap/tilemap_packed.png" id="2_icon"]
@@ -13,5 +13,3 @@ ItemName = "오크 가죽"
 Description = "오크에서 얻은 가죽. 중급 장비 제작 재료."
 Icon = SubResource("AtlasTexture_icon")
 Type = 4
-IsStackable = true
-MaxStack = 99

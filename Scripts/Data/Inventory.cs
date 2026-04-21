@@ -163,7 +163,7 @@ namespace FirstGame.Data
                 EquippedArmorEnhancement = enhLevel;
                 var (_, _, def) = GetEnhancementBonuses(item, enhLevel);
                 target.ModifyMaxHealth(item.BonusMaxHealth);
-                target.ModifyDefense(def);
+                target.ModifyDefense(item.BonusDefense + def);
                 RemoveItem(slotIndex, 1);
             }
             else if (item.Type == ItemType.Accessory)
@@ -218,7 +218,7 @@ namespace FirstGame.Data
 
             var (_, _, def) = GetEnhancementBonuses(EquippedArmor, EquippedArmorEnhancement);
             target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
-            target.ModifyDefense(-def);
+            target.ModifyDefense(-(EquippedArmor.BonusDefense + def));
             bool added = AddItem(EquippedArmor, 1, EquippedArmorEnhancement);
             if (!added) return false;
 
@@ -368,7 +368,7 @@ namespace FirstGame.Data
                 case ItemType.Armor when EquippedArmor != null:
                     var (_, _, aDef) = GetEnhancementBonuses(EquippedArmor, EquippedArmorEnhancement);
                     target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
-                    target.ModifyDefense(-aDef);
+                    target.ModifyDefense(-(EquippedArmor.BonusDefense + aDef));
                     EquippedArmor = null;
                     EquippedArmorEnhancement = 0;
                     break;
@@ -402,7 +402,7 @@ namespace FirstGame.Data
                 EquippedArmorEnhancement = armorEnhance;
                 var (_, _, def) = GetEnhancementBonuses(armor, armorEnhance);
                 target.ModifyMaxHealth(armor.BonusMaxHealth);
-                target.ModifyDefense(def);
+                target.ModifyDefense(armor.BonusDefense + def);
             }
             if (accessory != null)
             {

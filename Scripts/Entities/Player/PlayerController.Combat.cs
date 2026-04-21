@@ -111,8 +111,8 @@ namespace FirstGame.Entities.Player
 				}
 			}
 
-			// 히트스톱: 적중 시 잠깐 프리즈
-			if (hitAny)
+			// 히트스톱: 적중 시 잠깐 프리즈 (이미 히트스탑 중이면 중복 타이머 생성 방지)
+			if (hitAny && Engine.TimeScale > 0.1)
 			{
 				float stopDuration = isCrit ? 0.08f : 0.05f;
 				Engine.TimeScale = 0.05;

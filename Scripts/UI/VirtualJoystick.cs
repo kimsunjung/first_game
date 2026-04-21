@@ -55,7 +55,7 @@ namespace FirstGame.UI
 
         public override void _Notification(int what)
         {
-            if (what == NotificationApplicationFocusOut)
+            if (what == NotificationApplicationFocusOut || what == NotificationPredelete)
                 ResetJoystick();
         }
 

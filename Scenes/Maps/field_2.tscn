@@ -14,6 +14,8 @@
 [ext_resource type="Resource" uid="uid://bj1japjwlh264" path="res://Resources/Enemies/skeleton_base.tres" id="12_skel1"]
 [ext_resource type="Resource" uid="uid://gd8yrg2pfw6j" path="res://Resources/Enemies/skeleton_warrior.tres" id="13_skel2"]
 [ext_resource type="Resource" uid="uid://cs85xqwqiwm3i" path="res://Resources/Enemies/skeleton_rogue.tres" id="14_skel3"]
+[ext_resource type="Script" uid="uid://dmf0bg8r5ncbd" path="res://Scripts/Maps/MapGenerator.cs" id="15_5m0au"]
+[ext_resource type="TileSet" uid="uid://qg8y8romnyuy" path="res://Resources/Tilesets/field_tileset.tres" id="16_tileset"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -33,7 +35,7 @@ size = Vector2(16, 720)
 z_index = -10
 offset_right = 1280.0
 offset_bottom = 720.0
-color = Color(0.12, 0.10, 0.18, 1)
+color = Color(0.10, 0.16, 0.08, 1)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(640, 50)
@@ -56,7 +58,7 @@ position = Vector2(200, 200)
 [node name="PortalToField1" parent="." instance=ExtResource("9_portal")]
 position = Vector2(640, 25)
 TargetScenePath = "res://Scenes/Maps/field_1.tscn"
-TargetSpawnPosition = Vector2(640, 690)
+TargetSpawnPosition = Vector2(640, 640)
 
 [node name="PortalToDungeon2" parent="." instance=ExtResource("9_portal")]
 position = Vector2(1220, 360)
@@ -91,3 +93,15 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
+
+[node name="MapGenerator" type="Node2D" parent="."]
+script = ExtResource("15_5m0au")
+PortalPixelPositions = Array[Vector2i]([Vector2i(640, 25), Vector2i(1220, 360)])
+
+[node name="GroundLayer" type="TileMapLayer" parent="MapGenerator"]
+z_index = -1
+tile_set = ExtResource("16_tileset")
+
+[node name="ObstacleLayer" type="TileMapLayer" parent="MapGenerator"]
+z_index = 0
+tile_set = ExtResource("16_tileset")

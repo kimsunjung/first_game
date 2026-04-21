@@ -62,6 +62,25 @@ namespace FirstGame.Core
             if (data != null) PendingLoadData = data;
         }
 
+        /// <summary>씬 전환 후 CurrentScene과 스폰 위치를 목적지 기준으로 덮어씀 (메모리 + 파일)</summary>
+        public static void OverrideCurrentScene(string scenePath, Godot.Vector2 spawnPosition, string slot = AutoSaveSlot)
+        {
+            if (PendingLoadData == null) return;
+            PendingLoadData.CurrentScene = scenePath;
+            PendingLoadData.PlayerPosX = spawnPosition.X;
+            PendingLoadData.PlayerPosY = spawnPosition.Y;
+            try
+            {
+                string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
+                if (!File.Exists(path)) return;
+                File.WriteAllText(path, JsonSerializer.Serialize(PendingLoadData, new JsonSerializerOptions { WriteIndented = true }));
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"SaveManager: CurrentScene 업데이트 실패 - {e.Message}");
+            }
+        }
+
         public static void LoadGame(string slot = null)
         {
             if (slot == null)
