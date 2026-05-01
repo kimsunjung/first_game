@@ -1,18 +1,15 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b0foicwjbsl6p"]
 
 [ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
-[ext_resource type="Texture2D" uid="uid://cxowroudgql1b" path="res://Resources/Kenney/Tilemap/tilemap_packed.png" id="2_icon"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/shadow_ring.png" id="2_icon"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("2_icon")
-region = Rect2(176, 112, 16, 16)
 
 [resource]
 script = ExtResource("1")
 ItemName = "Shadow Ring"
 Description = "그림자의 반지. 방어력 +4, 공격력 +5"
 Rarity = 3
-Icon = SubResource("AtlasTexture_icon")
+Icon = ExtResource("2_icon")
 Price = 600
 SellPrice = 300
 Type = 5

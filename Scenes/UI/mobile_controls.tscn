@@ -2,6 +2,11 @@
 
 [ext_resource type="Script" path="res://Scripts/UI/MobileControls.cs" id="1_mc"]
 [ext_resource type="Script" path="res://Scripts/UI/VirtualJoystick.cs" id="2_vj"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/UI/attack.png" id="3_attack"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/UI/interact.png" id="4_interact"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/UI/inventory.png" id="5_inventory"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/UI/character_status.png" id="6_character"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/UI/skill_window.png" id="7_skill"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
 bg_color = Color(0.1, 0.1, 0.15, 0.55)
@@ -74,7 +79,9 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_atk")
 theme_override_font_sizes/font_size = 16
-text = "공격"
+tooltip_text = "공격"
+icon = ExtResource("3_attack")
+expand_icon = true
 
 [node name="SkillButton1" type="Button" parent="."]
 anchor_left = 1.0
@@ -154,7 +161,9 @@ grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_font_sizes/font_size = 13
-text = "상호작용"
+tooltip_text = "상호작용"
+icon = ExtResource("4_interact")
+expand_icon = true
 
 [node name="InventoryButton" type="Button" parent="."]
 anchor_left = 1.0
@@ -170,7 +179,9 @@ grow_vertical = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_font_sizes/font_size = 13
-text = "가방"
+tooltip_text = "가방"
+icon = ExtResource("5_inventory")
+expand_icon = true
 
 [node name="CharacterButton" type="Button" parent="."]
 anchor_left = 1.0
@@ -186,7 +197,9 @@ grow_vertical = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_font_sizes/font_size = 13
-text = "캐릭"
+tooltip_text = "캐릭터"
+icon = ExtResource("6_character")
+expand_icon = true
 
 [node name="SkillWindowButton" type="Button" parent="."]
 anchor_left = 1.0
@@ -202,4 +215,6 @@ grow_vertical = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_font_sizes/font_size = 13
-text = "스킬"
+tooltip_text = "스킬"
+icon = ExtResource("7_skill")
+expand_icon = true

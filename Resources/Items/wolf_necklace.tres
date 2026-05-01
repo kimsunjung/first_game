@@ -1,18 +1,15 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cr5usrj6wuwg3"]
 
 [ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
-[ext_resource type="Texture2D" uid="uid://cxowroudgql1b" path="res://Resources/Kenney/Tilemap/tilemap_packed.png" id="2_icon"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/wolf_necklace.png" id="2_icon"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("2_icon")
-region = Rect2(176, 112, 16, 16)
 
 [resource]
 script = ExtResource("1")
 ItemName = "Wolf Fang Necklace"
 Description = "늑대 이빨 목걸이. 방어력 +3, 공격력 +2"
 Rarity = 1
-Icon = SubResource("AtlasTexture_icon")
+Icon = ExtResource("2_icon")
 Price = 200
 SellPrice = 100
 Type = 5

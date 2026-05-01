@@ -1,11 +1,13 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
 [ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/heal_self.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1")
 SkillName = "힐"
 Description = "HP 50 회복"
+Icon = ExtResource("2_icon")
 Type = 1
 MpCost = 20
 Cooldown = 8.0

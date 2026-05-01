@@ -19,6 +19,8 @@ namespace FirstGame.UI
         // 스킬 버튼 위에 표시할 쿨타임 레이블 (프로그래밍 방식으로 생성)
         private Label[] _cooldownLabels = new Label[4];
 
+        private static readonly string[] SlotKeys = { "Q", "W", "E", "R" };
+
         private static readonly Color ColorReady    = Colors.White;
         private static readonly Color ColorCooldown = new Color(0.5f, 0.5f, 0.5f, 0.8f);
         private static readonly Color ColorNoMp     = new Color(0.4f, 0.6f, 1.0f, 0.8f);
@@ -44,6 +46,8 @@ namespace FirstGame.UI
                 // 쿨타임 오버레이 레이블 생성
                 if (_skillButtons[i] != null)
                 {
+                    _skillButtons[i].ExpandIcon = true;
+
                     var label = new Label();
                     label.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
                     label.HorizontalAlignment = HorizontalAlignment.Center;
@@ -73,10 +77,16 @@ namespace FirstGame.UI
 
                 if (!player.HasSkillInSlot(i))
                 {
+                    btn.Icon = null;
+                    btn.Text = SlotKeys[i];
                     btn.Modulate = ColorReady;
                     lbl.Text = "";
                     continue;
                 }
+
+                var skill = player.Stats.LearnedSkills[i];
+                btn.Icon = skill.Icon;
+                btn.Text = skill.Icon != null ? "" : SlotKeys[i];
 
                 float remaining = player.GetSkillCooldownRemaining(i);
                 int mpCost = player.GetSkillMpCost(i);

@@ -26,6 +26,17 @@ namespace FirstGame.UI
         private FilterMode _filterMode = FilterMode.All;
         private Button[] _filterButtons;
 
+        private const int SlotSize = 48;
+        private const int IconSize = 32;
+
+        private static readonly string[] FilterIconPaths =
+        {
+            "res://Resources/Generated/GPT/Icons/UI/all_items_filter.png",
+            "res://Resources/Generated/GPT/Icons/UI/equipment_filter.png",
+            "res://Resources/Generated/GPT/Icons/UI/consumable_filter.png",
+            "res://Resources/Generated/GPT/Icons/UI/material_filter.png",
+        };
+
         public override void _Ready()
         {
             _grid = GetNode<GridContainer>("%ItemGrid");
@@ -137,9 +148,12 @@ namespace FirstGame.UI
             for (int i = 0; i < labels.Length; i++)
             {
                 var btn = new Button();
-                btn.Text = labels[i];
+                btn.Text = "";
+                btn.TooltipText = labels[i];
+                btn.Icon = GD.Load<Texture2D>(FilterIconPaths[i]);
+                btn.ExpandIcon = true;
                 btn.AddThemeFontSizeOverride("font_size", 10);
-                btn.CustomMinimumSize = new Vector2(0, 26);
+                btn.CustomMinimumSize = new Vector2(30, 26);
                 var mode = modes[i];
                 btn.Pressed += () => SetFilter(mode);
                 filterBox.AddChild(btn);
@@ -153,6 +167,7 @@ namespace FirstGame.UI
         private void SetFilter(FilterMode mode)
         {
             _filterMode = mode;
+            ClearSelection();
             UpdateFilterButtonStyles();
             RefreshGrid();
         }
@@ -188,42 +203,44 @@ namespace FirstGame.UI
 
             // 필터 적용된 슬롯 목록
             var filtered = new System.Collections.Generic.List<(int origIdx, InventorySlot slot)>();
+            bool selectedVisible = false;
             for (int idx = 0; idx < _inventory.Slots.Count; idx++)
             {
                 if (PassesFilter(_inventory.Slots[idx].Item))
+                {
                     filtered.Add((idx, _inventory.Slots[idx]));
+                    if (idx == _selectedSlot)
+                        selectedVisible = true;
+                }
             }
+
+            if (_selectedSlot >= 0 && !selectedVisible)
+                ClearSelection();
 
             // 슬롯 생성 (20칸)
             for (int i = 0; i < Inventory.MaxSlots; i++)
             {
                 var slotPanel = new PanelContainer();
-                slotPanel.CustomMinimumSize = new Vector2(44, 44);
+                slotPanel.CustomMinimumSize = new Vector2(SlotSize, SlotSize);
+                slotPanel.AddThemeStyleboxOverride("panel", CreateSlotStyle(false, false, Colors.White));
 
                 var vbox = new VBoxContainer();
+                vbox.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+                vbox.Alignment = BoxContainer.AlignmentMode.Center;
                 slotPanel.AddChild(vbox);
 
                 if (i < filtered.Count)
                 {
                     var (origIdx, slot) = filtered[i];
-
-                    // 등급별 테두리 색상 (Rarity border color)
-                    if (slot.Item.Rarity != ItemRarity.Common)
-                    {
-                        var style = new StyleBoxFlat();
-                        style.BgColor = new Color(0.15f, 0.15f, 0.15f, 0.8f);
-                        style.BorderColor = GetRarityColor(slot.Item.Rarity);
-                        style.SetBorderWidthAll(2);
-                        style.SetCornerRadiusAll(3);
-                        slotPanel.AddThemeStyleboxOverride("panel", style);
-                    }
+                    bool isSelected = origIdx == _selectedSlot;
+                    slotPanel.AddThemeStyleboxOverride("panel", CreateSlotStyle(true, isSelected, GetRarityColor(slot.Item.Rarity)));
 
                     // 아이콘 또는 이름 (Icon or Name)
                     if (slot.Item.Icon != null)
                     {
                         var icon = new TextureRect();
                         icon.Texture = slot.Item.Icon;
-                        icon.CustomMinimumSize = new Vector2(32, 32);
+                        icon.CustomMinimumSize = new Vector2(IconSize, IconSize);
                         icon.ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize;
                         icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
                         icon.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
@@ -247,6 +264,7 @@ namespace FirstGame.UI
                         qtyLabel.Text = $"x{slot.Quantity}";
                         qtyLabel.HorizontalAlignment = HorizontalAlignment.Right;
                         qtyLabel.AddThemeFontSizeOverride("font_size", 9);
+                        qtyLabel.AddThemeColorOverride("font_color", new Color(0.95f, 0.9f, 0.7f));
                         vbox.AddChild(qtyLabel);
                     }
 
@@ -281,11 +299,6 @@ namespace FirstGame.UI
 
                 _grid.AddChild(slotPanel);
             }
-
-            // 선택 초기화 (Reset Selection)
-            _selectedSlot = -1;
-            _itemInfoLabel.Text = "아이템을 선택하세요 (Select an item)";
-            _useButton.Visible = false;
         }
 
         private void SelectSlot(int index)
@@ -340,6 +353,14 @@ namespace FirstGame.UI
             _useButton.Visible = true;
             _useButton.Text = item.Type == ItemType.Consumable ? "사용"
                 : item.Type == ItemType.Material ? "사용 불가" : "장착";
+            RefreshGrid();
+        }
+
+        private void ClearSelection()
+        {
+            _selectedSlot = -1;
+            _itemInfoLabel.Text = "아이템을 선택하세요";
+            _useButton.Visible = false;
         }
 
         private void RefreshEquipment()
@@ -386,6 +407,26 @@ namespace FirstGame.UI
                 ItemRarity.Legendary => new Color(1.0f, 0.8f, 0.0f),  // 노랑
                 _ => new Color(1, 1, 1)                                // 흰색 (Common)
             };
+        }
+
+        private static StyleBoxFlat CreateSlotStyle(bool occupied, bool selected, Color rarityColor)
+        {
+            var style = new StyleBoxFlat();
+            style.BgColor = occupied
+                ? new Color(0.13f, 0.13f, 0.15f, 0.92f)
+                : new Color(0.055f, 0.055f, 0.07f, 0.72f);
+            style.BorderColor = selected
+                ? new Color(1.0f, 0.82f, 0.28f, 1.0f)
+                : (occupied && rarityColor != Colors.White
+                    ? rarityColor
+                    : new Color(0.28f, 0.26f, 0.22f, 0.95f));
+            style.SetBorderWidthAll(selected ? 3 : 1);
+            style.SetCornerRadiusAll(3);
+            style.ContentMarginLeft = 4;
+            style.ContentMarginTop = 4;
+            style.ContentMarginRight = 4;
+            style.ContentMarginBottom = 4;
+            return style;
         }
 
         /// <summary>모바일 버튼에서 직접 호출</summary>

@@ -1,17 +1,14 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://drlw6v3qjyxd2"]
 
 [ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
-[ext_resource type="Texture2D" uid="uid://cxowroudgql1b" path="res://Resources/Kenney/Tilemap/tilemap_packed.png" id="2_icon"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/wooden_shield.png" id="2_icon"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("2_icon")
-region = Rect2(80, 160, 16, 16)
 
 [resource]
 script = ExtResource("1")
 ItemName = "나무 방패"
 Description = "통나무로 엮은 방패. 최대 HP +20"
-Icon = SubResource("AtlasTexture_icon")
+Icon = ExtResource("2_icon")
 Price = 50
 SellPrice = 25
 Type = 2
