@@ -2,6 +2,22 @@
 
 [ext_resource type="Script" path="res://Scripts/UI/SkillWindow.cs" id="1_skillwindow"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_window"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.07, 0.075, 0.09, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.52, 0.45, 0.3, 0.95)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="SkillWindow" type="CanvasLayer"]
 process_mode = 3
 script = ExtResource("1_skillwindow")
@@ -14,31 +30,42 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -150.0
-offset_top = -140.0
+offset_top = -165.0
 offset_right = 150.0
-offset_bottom = 140.0
+offset_bottom = 165.0
 grow_horizontal = 2
 grow_vertical = 2
-custom_minimum_size = Vector2(300, 280)
+custom_minimum_size = Vector2(300, 330)
+theme_override_styles/panel = SubResource("StyleBoxFlat_window")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
 
-[node name="TitleLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_constants/separation = 6
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
 text = "스킬창  [Tab]"
 horizontal_alignment = 1
 
-[node name="HintLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+[node name="HintLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 10
 text = "Q / W / E / R 키로 사용"
 horizontal_alignment = 1
 modulate = Color(0.7, 0.7, 0.7, 1.0)
 
-[node name="SkillSlotContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SkillSlotContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 5
