@@ -9,10 +9,10 @@
 ---
 
 ## 현재 결정 (요약)
-- **비주얼 방향**: `Franuka Complete Fantasy RPG Bundle` ($39.99) 풀 교체
-- **구매 시점**: PC 변경 후 (2026-05월경 맥북 Air M5 전환 시)
-- **실행 순서**: `UI → Player → Enemy → NPC → Town → Field_1 → Dungeon`
-- **자세한 내용**: `1-current-state.md`
+- **비주얼 방향**: GPT 이미지 파이프라인으로 아이콘/UI/단일 오브젝트를 보강한다.
+- **Franuka 구매 판단**: 타일셋 또는 4방향 캐릭터/몬스터 애니메이션을 본격 교체할 때 재검토한다.
+- **실행 순서**: `모바일 베이스라인 검증 → 상호작용 프롬프트 → UI 폴리싱 → 코드 위생/테스트`
+- **자세한 내용**: `1-current-state.md`, `mobile-checklist.md`
 
 ---
 
@@ -22,7 +22,7 @@
 
 ---
 
-## 활성 문서 (6개)
+## 활성 문서 (7개)
 
 ### 방향과 현황
 - [`1-current-state.md`](./1-current-state.md)
@@ -31,6 +31,8 @@
   - 씬/스크립트/리소스 파일 위치 맵
 
 ### 실행 플랜
+- [`mobile-checklist.md`](./mobile-checklist.md)
+  - 모바일 실기기/해상도 QA + 핵심 루프 회귀 체크리스트
 - [`3-migration-plan.md`](./3-migration-plan.md)
   - Franuka 풀 교체 Phase 0~7 단계별 플랜
 - [`4-player-checklist.md`](./4-player-checklist.md)
@@ -80,6 +82,7 @@
 ## 읽는 순서 추천
 1. `1-current-state.md` — 5분 요약
 2. `2-source-code-reference.md` — 코드 위치 빠르게 훑기
-3. `3-migration-plan.md` — 앞으로 할 일 큰 그림
-4. `6-asset-inventory.md` — 구매 후 어디에 쓸지
-5. 실제 작업 진입 시점에 `4-player-checklist.md` / `5-town-plan.md`
+3. `mobile-checklist.md` — 모바일 기준 회귀 검증 항목
+4. `3-migration-plan.md` — 앞으로 할 일 큰 그림
+5. `6-asset-inventory.md` — 구매 후 어디에 쓸지
+6. 실제 작업 진입 시점에 `4-player-checklist.md` / `5-town-plan.md`

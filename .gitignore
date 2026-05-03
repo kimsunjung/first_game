@@ -10,9 +10,13 @@ obj/
 # IDE
 .vs/
 .vscode/
+.idea/
+.claude/
 *.user
 *.suo
 
+# Backup files
+*.old
 
 # Scripts
 generate_sounds.py
