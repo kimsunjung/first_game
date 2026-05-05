@@ -5,7 +5,7 @@ using FirstGame.Data;
 
 namespace FirstGame.UI
 {
-    public partial class InventoryUI : CanvasLayer
+    public partial class InventoryUI : BaseUIWindow
     {
         private enum FilterMode { All, Equipment, Consumable, Material }
 
@@ -37,7 +37,7 @@ namespace FirstGame.UI
             "res://Resources/Generated/GPT/Icons/UI/material_filter.png",
         };
 
-        public override void _Ready()
+        protected override void OnReadyInternal()
         {
             _grid = GetNode<GridContainer>("%ItemGrid");
             _itemInfoLabel = GetNode<Label>("%ItemInfoLabel");
@@ -55,10 +55,6 @@ namespace FirstGame.UI
             _unequipAccessoryButton.Pressed += OnUnequipAccessoryPressed;
 
             CreateFilterButtons();
-            Visible = false;
-
-            // 트리 일시정지 중에도 키보드 토글 작동하도록
-            ProcessMode = ProcessModeEnum.Always;
 
             // Player 연결
             var player = GameManager.Instance?.Player;
@@ -73,33 +69,13 @@ namespace FirstGame.UI
             }
         }
 
+        protected override bool CanOpen() => _player == null || !_player.IsDead;
+        protected override void OnOpened() => RefreshGrid();
+
         public override void _Process(double delta)
         {
-            // I키로 토글 (Toggle with I key)
             if (Input.IsActionJustPressed("inventory"))
-            {
-                // 플레이어 사망 시 인벤토리 열기 차단
-                if (_player != null && _player.IsDead) return;
-
-                // 다른 UI가 일시정지를 걸었으면 인벤토리 열기 차단 (상점, 게임오버 등)
-                if (UIPauseManager.IsPaused && !Visible) return;
-
-                GD.Print("InventoryUI: I key pressed (Toggle)");
-                Visible = !Visible;
-                if (Visible)
-                    UIPauseManager.RequestPause();
-                else
-                    UIPauseManager.ReleasePause();
-                if (Visible) 
-                {
-                    GD.Print("InventoryUI: Opened");
-                    RefreshGrid();
-                }
-                else
-                {
-                    GD.Print("InventoryUI: Closed");
-                }
-            }
+                Toggle();
         }
         
         public override void _Input(InputEvent @event)
@@ -429,22 +405,8 @@ namespace FirstGame.UI
             return style;
         }
 
-        /// <summary>모바일 버튼에서 직접 호출</summary>
-        public void Toggle()
+        protected override void OnExitTreeInternal()
         {
-            if (_player != null && _player.IsDead) return;
-            if (UIPauseManager.IsPaused && !Visible) return;
-            Visible = !Visible;
-            if (Visible) { UIPauseManager.RequestPause(); RefreshGrid(); }
-            else UIPauseManager.ReleasePause();
-        }
-
-        public override void _ExitTree()
-        {
-            // 인벤토리가 열린 채로 씬 전환 시 일시정지 카운터 해제
-            if (Visible)
-                UIPauseManager.ReleasePause();
-
             if (_inventory != null)
             {
                 _inventory.OnInventoryChanged -= RefreshGrid;

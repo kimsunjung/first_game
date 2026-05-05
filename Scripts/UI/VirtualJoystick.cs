@@ -7,9 +7,9 @@ namespace FirstGame.UI
     /// </summary>
     public partial class VirtualJoystick : Control
     {
-        private const float OuterRadius = 80f;
-        private const float ThumbRadius = 30f;
-        private const float ActivationRadius = 120f;
+        private const float OuterRadius = 70f;
+        private const float ThumbRadius = 25f;
+        private const float ActivationRadius = 100f;
 
         private int _touchIndex = -1;
         private Vector2 _thumbOffset = Vector2.Zero;

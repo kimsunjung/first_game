@@ -234,24 +234,25 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -133.5
-offset_top = -60.0
-offset_right = 133.5
+offset_left = -95.0
+offset_top = -55.0
+offset_right = 95.0
+offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_constants/separation = 25
+theme_override_constants/separation = 10
 
 [node name="SlotPanel1" type="Panel" parent="HBoxContainer2" unique_id=1660012360]
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon1" type="TextureRect" parent="HBoxContainer2/SlotPanel1" unique_id=595257225]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = -2.0
-offset_right = 40.0
-offset_bottom = 38.0
+offset_top = 2.0
+offset_right = 36.0
+offset_bottom = 36.0
 
 [node name="QuickSlotQty1" type="Label" parent="HBoxContainer2/SlotPanel1" unique_id=1414275913]
 unique_name_in_owner = true
@@ -265,16 +266,16 @@ offset_right = 40.0
 offset_bottom = 23.0
 
 [node name="SlotPanel2" type="Panel" parent="HBoxContainer2" unique_id=237627158]
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon2" type="TextureRect" parent="HBoxContainer2/SlotPanel2" unique_id=1699834880]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = -2.0
-offset_right = 40.0
-offset_bottom = 38.0
+offset_top = 2.0
+offset_right = 36.0
+offset_bottom = 36.0
 
 [node name="QuickSlotQty2" type="Label" parent="HBoxContainer2/SlotPanel2" unique_id=1719469486]
 unique_name_in_owner = true
@@ -288,16 +289,16 @@ offset_right = 40.0
 offset_bottom = 23.0
 
 [node name="SlotPanel3" type="Panel" parent="HBoxContainer2" unique_id=1537310084]
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon3" type="TextureRect" parent="HBoxContainer2/SlotPanel3" unique_id=2056567742]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = -2.0
-offset_right = 40.0
-offset_bottom = 38.0
+offset_top = 2.0
+offset_right = 36.0
+offset_bottom = 36.0
 
 [node name="QuickSlotQty3" type="Label" parent="HBoxContainer2/SlotPanel3" unique_id=142322851]
 unique_name_in_owner = true
@@ -311,16 +312,16 @@ offset_right = 40.0
 offset_bottom = 23.0
 
 [node name="SlotPanel4" type="Panel" parent="HBoxContainer2" unique_id=273812523]
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon4" type="TextureRect" parent="HBoxContainer2/SlotPanel4" unique_id=2072424525]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = -2.0
-offset_right = 40.0
-offset_bottom = 38.0
+offset_top = 2.0
+offset_right = 36.0
+offset_bottom = 36.0
 
 [node name="QuickSlotQty4" type="Label" parent="HBoxContainer2/SlotPanel4" unique_id=1300678252]
 unique_name_in_owner = true

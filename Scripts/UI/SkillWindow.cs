@@ -6,7 +6,7 @@ using FirstGame.Data;
 namespace FirstGame.UI
 {
 	// 스킬창: Tab 키로 열고 닫기, 습득한 스킬 목록 표시
-	public partial class SkillWindow : CanvasLayer
+	public partial class SkillWindow : BaseUIWindow
 	{
 		private VBoxContainer _slotContainer;
 		private IPlayer _player;
@@ -16,21 +16,15 @@ namespace FirstGame.UI
 		private const int SlotHeight = 56;
 		private const int IconSize = 34;
 
-		public override void _Ready()
+		protected override void OnReadyInternal()
 		{
 			_slotContainer = GetNode<VBoxContainer>("%SkillSlotContainer");
-			Visible = false;
 
 			var pc = GameManager.Instance?.Player;
 			if (pc != null) _player = pc;
 		}
 
-		/// <summary>모바일 버튼에서 직접 호출</summary>
-		public void Toggle()
-		{
-			Visible = !Visible;
-			if (Visible) Refresh();
-		}
+		protected override void OnOpened() => Refresh();
 
 		public override void _UnhandledInput(InputEvent @event)
 		{

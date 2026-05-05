@@ -5,7 +5,7 @@ using FirstGame.Data;
 
 namespace FirstGame.UI
 {
-	public partial class CharacterWindow : CanvasLayer
+	public partial class CharacterWindow : BaseUIWindow
 	{
 		private Label _levelLabel;
 		private Label _hpLabel;
@@ -22,11 +22,8 @@ namespace FirstGame.UI
 
 		private IPlayer _player;
 
-		public override void _Ready()
+		protected override void OnReadyInternal()
 		{
-			Visible = false;
-			ProcessMode = ProcessModeEnum.Always;
-
 			_levelLabel = GetNodeOrNull<Label>("%LevelInfo");
 			_hpLabel = GetNodeOrNull<Label>("%HpInfo");
 			_mpLabel = GetNodeOrNull<Label>("%MpInfo");
@@ -52,23 +49,17 @@ namespace FirstGame.UI
 			}
 		}
 
-		public override void _ExitTree()
+		protected override void OnExitTreeInternal()
 		{
 			if (_player is GodotObject playerObj && IsInstanceValid(playerObj))
 				_player.Stats.OnStatPointsChanged -= OnStatPointsChanged;
 		}
 
+		protected override void OnOpened() => RefreshDisplay();
+
 		private void OnStatPointsChanged(int _)
 		{
 			RefreshDisplay();
-		}
-
-		/// <summary>모바일 버튼에서 직접 호출</summary>
-		public void Toggle()
-		{
-			if (UIPauseManager.IsPaused && !Visible) return;
-			Visible = !Visible;
-			if (Visible) RefreshDisplay();
 		}
 
 		public override void _UnhandledInput(InputEvent @event)

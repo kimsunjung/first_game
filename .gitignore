@@ -18,6 +18,10 @@ obj/
 # Backup files
 *.old
 
+# Build artifacts
+*.apk
+*.aab
+
 # Scripts
 generate_sounds.py
 generate_preview.js

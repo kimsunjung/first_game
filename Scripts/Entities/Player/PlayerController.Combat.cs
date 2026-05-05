@@ -57,6 +57,7 @@ namespace FirstGame.Entities.Player
 		// ─── 공격 ───────────────────────────────────────────────────
 		public void Attack()
 		{
+			if (IsDead || _isAnimLocked) return;
 			AudioManager.Instance?.PlaySFX("player_attack.wav");
 
 			int damage = Stats.BaseDamage;

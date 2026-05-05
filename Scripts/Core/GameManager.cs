@@ -74,5 +74,14 @@ namespace FirstGame.Core
 				Instance = null;
 			}
 		}
+
+		// 모바일 뒤로가기 버튼 처리: 열린 UI 창이 있으면 닫고, 없으면 무시 (즉시 종료 방지)
+		public override void _Notification(int what)
+		{
+			if (what == NotificationWMGoBackRequest)
+			{
+				FirstGame.UI.WindowManager.CloseTop();
+			}
+		}
 	}
 }
