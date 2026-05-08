@@ -91,6 +91,21 @@ namespace FirstGame.Entities.Enemies
 				// 따라서 빈 GroundLayer 셀도 이동/스폰 가능한 바닥으로 취급해야 한다.
 				_emptyGroundIsWalkable = true;
 			}
+			else
+			{
+				// MapGenerator가 없는 단순 ColorRect 배경 맵(town/dungeon)에서도
+				// 화면 밖(벽 너머)으로 스폰되지 않도록 Background ColorRect를 경계로 사용.
+				var bg = parent?.GetNodeOrNull<ColorRect>("Background");
+				if (bg != null && bg.Size.X > 0 && bg.Size.Y > 0)
+				{
+					int w = Mathf.FloorToInt(bg.Size.X / TileSize);
+					int h = Mathf.FloorToInt(bg.Size.Y / TileSize);
+					_hasMapBounds = true;
+					_mapBoundsCells = new Rect2I(0, 0, w, h);
+					_emptyGroundIsWalkable = true;
+					_fieldOffset = bg.GlobalPosition;
+				}
+			}
 
 			if (obstacleLayer != null)
 				foreach (var cell in obstacleLayer.GetUsedCells())
