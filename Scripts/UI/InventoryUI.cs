@@ -18,6 +18,8 @@ namespace FirstGame.UI
         private Label _weaponLabel;
         private Label _armorLabel;
         private Label _accessoryLabel;
+        private VBoxContainer _quickSlotPanel;
+        private Button[] _quickSlotButtons;
 
         private Inventory _inventory;
         private IPlayer _player;
@@ -55,9 +57,63 @@ namespace FirstGame.UI
             _unequipAccessoryButton.Pressed += OnUnequipAccessoryPressed;
 
             CreateFilterButtons();
+            CreateQuickSlotRow();
 
             // Player 연결: _Ready 시점에 GameManager.Player가 아직 null일 수 있어 지연 바인딩도 지원
             TryBindPlayer();
+        }
+
+        private void CreateQuickSlotRow()
+        {
+            // _useButton 다음에 "퀵슬롯 등록: [1][2][3][4]" 패널을 동적 생성.
+            // consumable 선택 시에만 보이고, 다른 아이템에서는 숨김.
+            var useParent = _useButton.GetParent();
+            if (useParent == null) return;
+
+            _quickSlotPanel = new VBoxContainer();
+            _quickSlotPanel.AddThemeConstantOverride("separation", 2);
+            _quickSlotPanel.Visible = false;
+
+            var prompt = new Label
+            {
+                Text = "퀵슬롯 등록",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            prompt.AddThemeFontSizeOverride("font_size", 11);
+            _quickSlotPanel.AddChild(prompt);
+
+            var row = new HBoxContainer();
+            row.AddThemeConstantOverride("separation", 4);
+            row.Alignment = BoxContainer.AlignmentMode.Center;
+
+            _quickSlotButtons = new Button[4];
+            for (int i = 0; i < 4; i++)
+            {
+                int idx = i;
+                var btn = new Button
+                {
+                    Text = (i + 1).ToString(),
+                    CustomMinimumSize = new Vector2(36, 36)
+                };
+                btn.AddThemeFontSizeOverride("font_size", 14);
+                btn.Pressed += () => OnQuickSlotPressed(idx);
+                row.AddChild(btn);
+                _quickSlotButtons[i] = btn;
+            }
+            _quickSlotPanel.AddChild(row);
+
+            useParent.AddChild(_quickSlotPanel);
+            useParent.MoveChild(_quickSlotPanel, _useButton.GetIndex() + 1);
+        }
+
+        private void OnQuickSlotPressed(int slotIdx)
+        {
+            if (_selectedSlot < 0 || _selectedSlot >= _inventory.Slots.Count) return;
+            var item = _inventory.Slots[_selectedSlot].Item;
+            if (item == null || item.Type != ItemType.Consumable) return;
+
+            _inventory.AssignQuickSlot(slotIdx, item);
+            // 등록 후 패널은 유지 — 다른 슬롯으로 즉시 변경 가능
         }
 
         private void TryBindPlayer()
@@ -340,6 +396,8 @@ namespace FirstGame.UI
             _useButton.Visible = true;
             _useButton.Text = item.Type == ItemType.Consumable ? "사용"
                 : item.Type == ItemType.Material ? "사용 불가" : "장착";
+            if (_quickSlotPanel != null)
+                _quickSlotPanel.Visible = item.Type == ItemType.Consumable;
             RefreshGrid();
         }
 
@@ -348,6 +406,7 @@ namespace FirstGame.UI
             _selectedSlot = -1;
             _itemInfoLabel.Text = "아이템을 선택하세요";
             _useButton.Visible = false;
+            if (_quickSlotPanel != null) _quickSlotPanel.Visible = false;
         }
 
         private void RefreshEquipment()
