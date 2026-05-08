@@ -58,7 +58,34 @@ namespace FirstGame.Entities.Player
 		public bool HasSkillInSlot(int slot) => slot < Stats.LearnedSkills.Count;
 
 		// ISkillTarget 메서드 (Strategy에서 호출)
-		public void SetPowerStrikeActive(bool active) => _powerStrikeActive = active;
+		private Tween _powerStrikeTween;
+		public void SetPowerStrikeActive(bool active)
+		{
+			_powerStrikeActive = active;
+			UpdatePowerStrikeVisual();
+		}
+
+		private void UpdatePowerStrikeVisual()
+		{
+			if (_animSprite == null) return;
+
+			if (_powerStrikeTween != null && _powerStrikeTween.IsValid())
+				_powerStrikeTween.Kill();
+
+			if (_powerStrikeActive)
+			{
+				// 황금색 펄스 — 강화된 공격 준비 상태를 시각화
+				_powerStrikeTween = CreateTween().SetLoops();
+				_powerStrikeTween.TweenProperty(_animSprite, "modulate",
+					new Color(1.4f, 1.3f, 0.5f, 1f), 0.25f);
+				_powerStrikeTween.TweenProperty(_animSprite, "modulate",
+					Colors.White, 0.25f);
+			}
+			else
+			{
+				_animSprite.Modulate = Colors.White;
+			}
+		}
 		public void ActivateDash(float duration)
 		{
 			_dashActive = true;
