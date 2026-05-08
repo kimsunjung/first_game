@@ -11,7 +11,7 @@ namespace FirstGame.Data
 
 	public class SaveData
 	{
-		public const int LatestVersion = 3;
+		public const int LatestVersion = 4;
 		public int Version { get; set; } = LatestVersion;
 
 		public float PlayerPosX { get; set; }
@@ -52,5 +52,14 @@ namespace FirstGame.Data
 		public int EquippedArmorEnhancement { get; set; } = 0;
 		public int EquippedAccessoryEnhancement { get; set; } = 0;
 		public List<string> OpenedChests { get; set; } = new();
+
+		// ─── v4: 부위별 장비 슬롯 (모자/신발/목걸이/반지×2/팔찌) ─
+		// 누락 시 빈 문자열로 로드되어 자동 마이그레이션됨.
+		public string EquippedHelmetPath { get; set; } = "";
+		public string EquippedBootsPath { get; set; } = "";
+		public string EquippedNecklacePath { get; set; } = "";
+		public string EquippedRing1Path { get; set; } = "";
+		public string EquippedRing2Path { get; set; } = "";
+		public string EquippedBraceletPath { get; set; } = "";
 	}
 }

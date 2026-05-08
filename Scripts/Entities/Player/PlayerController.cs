@@ -223,6 +223,14 @@ namespace FirstGame.Entities.Player
 			Inventory.RestoreEquipment(loadedWeapon, loadedArmor, Stats, loadedAccessory,
 				data.EquippedWeaponEnhancement, data.EquippedArmorEnhancement, data.EquippedAccessoryEnhancement);
 
+			// 신규 부위별 슬롯 복원 (v4) — 빈 path는 무시됨
+			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Helmet, data.EquippedHelmetPath, Stats);
+			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Boots, data.EquippedBootsPath, Stats);
+			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Necklace, data.EquippedNecklacePath, Stats);
+			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Ring1, data.EquippedRing1Path, Stats);
+			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Ring2, data.EquippedRing2Path, Stats);
+			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Bracelet, data.EquippedBraceletPath, Stats);
+
 			// 장비 보너스 적용 후 현재 HP/MP 복원 (MaxHealth/MaxMp가 확정된 뒤에 설정)
 			Stats.CurrentHealth = Mathf.Min(data.PlayerHealth, Stats.MaxHealth);
 			Stats.CurrentMp = Mathf.Min(data.PlayerMp, Stats.MaxMp);

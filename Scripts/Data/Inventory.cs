@@ -325,6 +325,18 @@ namespace FirstGame.Data
             if (item.BonusCritRate != 0f) target.ModifyCritRate(sign * item.BonusCritRate);
         }
 
+        /// <summary>세이브에서 신규 부위별 슬롯 복원. 빈 path는 무시.</summary>
+        public void RestoreExtraSlot(ExtraSlot slot, string itemPath, IEquipTarget target)
+        {
+            if (string.IsNullOrEmpty(itemPath)) return;
+            var item = GD.Load<ItemData>(itemPath);
+            if (item == null) return;
+
+            SetExtraSlot(slot, item);
+            ApplyItemBonuses(item, target, +1);
+            OnEquipmentChanged?.Invoke();
+        }
+
         public bool UnequipExtra(ExtraSlot slot, IEquipTarget target)
         {
             var item = GetExtraSlot(slot);

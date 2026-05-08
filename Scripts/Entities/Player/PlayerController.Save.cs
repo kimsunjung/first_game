@@ -53,6 +53,14 @@ namespace FirstGame.Entities.Player
 			data.EquippedArmorEnhancement = Inventory.EquippedArmorEnhancement;
 			data.EquippedAccessoryEnhancement = Inventory.EquippedAccessoryEnhancement;
 
+			// 신규 부위별 슬롯 (v4)
+			data.EquippedHelmetPath = Inventory.EquippedHelmet?.ResourcePath ?? "";
+			data.EquippedBootsPath = Inventory.EquippedBoots?.ResourcePath ?? "";
+			data.EquippedNecklacePath = Inventory.EquippedNecklace?.ResourcePath ?? "";
+			data.EquippedRing1Path = Inventory.EquippedRing1?.ResourcePath ?? "";
+			data.EquippedRing2Path = Inventory.EquippedRing2?.ResourcePath ?? "";
+			data.EquippedBraceletPath = Inventory.EquippedBracelet?.ResourcePath ?? "";
+
 			// 퀵슬롯
 			data.QuickSlotPaths = new List<string>();
 			foreach (var item in Inventory.QuickSlots)
