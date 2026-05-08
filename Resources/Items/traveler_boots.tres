@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemboots003"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "여행자의 부츠"
+Description = "오랜 여행자의 부츠. 방어력 +2, 이동속도 +12"
+Rarity = 2
+Price = 500
+SellPrice = 250
+Type = 7
+IsStackable = false
+MaxStack = 1
+BonusDefense = 2
+BonusMoveSpeed = 12.0

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itembrace003"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "룬 팔찌"
+Description = "고대 룬이 새겨진 팔찌. 공격력 +3, 치명타 +10%"
+Rarity = 2
+Price = 500
+SellPrice = 250
+Type = 10
+IsStackable = false
+MaxStack = 1
+BonusDamage = 3
+BonusCritRate = 0.10

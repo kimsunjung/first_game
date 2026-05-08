@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemhelmet002"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "강철 투구"
+Description = "단단한 강철 투구. HP +12, 방어력 +3"
+Rarity = 1
+Price = 220
+SellPrice = 110
+Type = 6
+IsStackable = false
+MaxStack = 1
+BonusMaxHealth = 12
+BonusDefense = 3

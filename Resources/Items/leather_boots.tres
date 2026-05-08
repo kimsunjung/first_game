@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemboots001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "가죽 부츠"
+Description = "발걸음이 가벼워진다. 방어력 +1, 이동속도 +5"
+Rarity = 0
+Price = 80
+SellPrice = 40
+Type = 7
+IsStackable = false
+MaxStack = 1
+BonusDefense = 1
+BonusMoveSpeed = 5.0

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemhelmet003"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "마법사 모자"
+Description = "마력이 깃든 모자. MP +20, 방어력 +2"
+Rarity = 2
+Price = 500
+SellPrice = 250
+Type = 6
+IsStackable = false
+MaxStack = 1
+BonusDefense = 2
+BonusMaxMp = 20

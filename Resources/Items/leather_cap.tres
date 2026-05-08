@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemhelmet001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "가죽 모자"
+Description = "낡은 가죽 모자. HP +5, 방어력 +1"
+Rarity = 0
+Price = 80
+SellPrice = 40
+Type = 6
+IsStackable = false
+MaxStack = 1
+BonusMaxHealth = 5
+BonusDefense = 1
