@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Entities/Shop/ShopNPC.cs" id="1_shop"]
 [ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0105.png" id="16_npc_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/npc_dialogue.png" id="prompt_icon"]
 [ext_resource type="Resource" path="res://Resources/Items/health_potion.tres" id="2_potion"]
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hipotion"]
 [ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="4_megapotion"]
@@ -24,6 +25,7 @@ radius = 80.0
 collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_shop")
+PromptIcon = ExtResource("prompt_icon")
 ShopItems = Array[Resource]([ExtResource("2_potion"), ExtResource("3_hipotion"), ExtResource("4_megapotion"), ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow")])
 ShopName = "상점"
 

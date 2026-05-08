@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Entities/Shop/SkillShopNPC.cs" id="1_skillnpc"]
 [ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0105.png" id="2_npc_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/quest.png" id="prompt_icon"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_skillshop"]
 radius = 80.0
@@ -10,6 +11,7 @@ radius = 80.0
 collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_skillnpc")
+PromptIcon = ExtResource("prompt_icon")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_skillshop")

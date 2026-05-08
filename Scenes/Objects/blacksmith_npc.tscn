@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Entities/Shop/BlacksmithNPC.cs" id="1_smith"]
 [ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0105.png" id="2_npc_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/npc_dialogue.png" id="prompt_icon"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_smith"]
 radius = 80.0
@@ -10,6 +11,7 @@ radius = 80.0
 collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_smith")
+PromptIcon = ExtResource("prompt_icon")
 SmithName = "대장장이"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

@@ -1,4 +1,5 @@
 using Godot;
+using FirstGame.Entities;
 using FirstGame.Entities.Player;
 
 namespace FirstGame.UI
@@ -62,6 +63,30 @@ namespace FirstGame.UI
             _inventoryButton?.Connect("pressed", Callable.From(OnInventoryPressed));
             _characterButton?.Connect("pressed", Callable.From(OnCharacterPressed));
             _skillWindowButton?.Connect("pressed", Callable.From(OnSkillWindowPressed));
+
+            // 상호작용 버튼은 가까운 인터랙터블이 있을 때만 표시
+            BaseInteractable.CurrentChanged += OnInteractableChanged;
+            UpdateInteractButton(BaseInteractable.Current);
+        }
+
+        public override void _ExitTree()
+        {
+            BaseInteractable.CurrentChanged -= OnInteractableChanged;
+        }
+
+        private void OnInteractableChanged(BaseInteractable target) => UpdateInteractButton(target);
+
+        private void UpdateInteractButton(BaseInteractable target)
+        {
+            if (_interactButton == null) return;
+            if (target == null)
+            {
+                _interactButton.Visible = false;
+                return;
+            }
+            _interactButton.Visible = true;
+            if (target.PromptIcon != null)
+                _interactButton.Icon = target.PromptIcon;
         }
 
         public override void _Process(double delta)
