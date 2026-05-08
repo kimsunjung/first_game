@@ -106,6 +106,26 @@ namespace FirstGame.UI
 					vbox.AddChild(infoLabel);
 
 					hbox.AddChild(vbox);
+
+					// 슬롯 위치 변경 버튼 (위/아래로 swap) — 모바일 친화 수동 등록
+					int slotIdx = i;
+					var moveBox = new VBoxContainer();
+					moveBox.AddThemeConstantOverride("separation", 1);
+					moveBox.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+
+					var upBtn = new Button { Text = "▲", CustomMinimumSize = new Vector2(28, 22) };
+					upBtn.AddThemeFontSizeOverride("font_size", 11);
+					upBtn.Disabled = slotIdx == 0;
+					upBtn.Pressed += () => OnSwapSlot(slotIdx, slotIdx - 1);
+					moveBox.AddChild(upBtn);
+
+					var downBtn = new Button { Text = "▼", CustomMinimumSize = new Vector2(28, 22) };
+					downBtn.AddThemeFontSizeOverride("font_size", 11);
+					downBtn.Disabled = slotIdx >= learned.Count - 1 || slotIdx >= 3;
+					downBtn.Pressed += () => OnSwapSlot(slotIdx, slotIdx + 1);
+					moveBox.AddChild(downBtn);
+
+					hbox.AddChild(moveBox);
 				}
 				else
 				{
@@ -129,6 +149,13 @@ namespace FirstGame.UI
 				hint.HorizontalAlignment = HorizontalAlignment.Center;
 				_slotContainer.AddChild(hint);
 			}
+		}
+
+		private void OnSwapSlot(int from, int to)
+		{
+			if (_player?.Stats == null) return;
+			if (_player.Stats.SwapSkillSlots(from, to))
+				Refresh();
 		}
 
 		private static StyleBoxFlat CreateSlotStyle(bool hasSkill)

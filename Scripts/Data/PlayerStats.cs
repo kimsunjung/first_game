@@ -158,5 +158,16 @@ namespace FirstGame.Data
 			if (skills != null)
 				_learnedSkills.AddRange(skills);
 		}
+
+		/// <summary>스킬 슬롯 위치 교체 — Q/W/E/R 슬롯 순서를 사용자가 수동으로 재배치할 때 사용.</summary>
+		public bool SwapSkillSlots(int indexA, int indexB)
+		{
+			if (indexA == indexB) return false;
+			if (indexA < 0 || indexB < 0) return false;
+			if (indexA >= _learnedSkills.Count || indexB >= _learnedSkills.Count) return false;
+
+			(_learnedSkills[indexA], _learnedSkills[indexB]) = (_learnedSkills[indexB], _learnedSkills[indexA]);
+			return true;
+		}
 	}
 }
