@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FirstGame.Data;
 using FirstGame.Core;
+using FirstGame.Maps;
 
 namespace FirstGame.Entities.Enemies
 {
@@ -12,6 +13,9 @@ namespace FirstGame.Entities.Enemies
 		[Export] public float SpawnInterval { get; set; } = 3.0f;
 		[Export] public int MaxEnemies { get; set; } = 5;
 		[Export] public float SpawnRadius { get; set; } = 300.0f;
+		[Export] public bool SpawnAroundPlayer { get; set; } = true;
+		[Export] public float MinSpawnDistance { get; set; } = 120.0f;
+		[Export] public int SpawnEdgePaddingTiles { get; set; } = 4;
 		[Export] public int TileSize { get; set; } = 16;
 		[Export] public EnemyStats BossStatVariant { get; set; }
 
@@ -23,6 +27,10 @@ namespace FirstGame.Entities.Enemies
 		private HashSet<Vector2I> _obstacleTiles = new();
 		private HashSet<Vector2I> _groundTiles = new();
 		private Vector2 _fieldOffset = Vector2.Zero;
+		private Rect2I _mapBoundsCells = new(Vector2I.Zero, Vector2I.Zero);
+		private bool _hasMapBounds = false;
+		private bool _emptyGroundIsWalkable = false;
+		private int _failedSpawnLogs = 0;
 
 		public override void _Ready()
 		{
@@ -44,6 +52,7 @@ namespace FirstGame.Entities.Enemies
 		{
 			var parent = GetParent();
 			Node2D field = parent?.GetNodeOrNull<Node2D>("Field");
+			MapGenerator mapGenerator = null;
 			TileMapLayer obstacleLayer = null;
 			TileMapLayer groundLayer = null;
 
@@ -52,6 +61,7 @@ namespace FirstGame.Entities.Enemies
 				_fieldOffset = field.GlobalPosition;
 				obstacleLayer = field.GetNodeOrNull<TileMapLayer>("ObstacleLayer");
 				groundLayer = field.GetNodeOrNull<TileMapLayer>("GroundLayer");
+				mapGenerator = field as MapGenerator;
 			}
 			else if (parent != null)
 			{
@@ -66,10 +76,20 @@ namespace FirstGame.Entities.Enemies
 							_fieldOffset = n2d.GlobalPosition;
 							obstacleLayer = ol;
 							groundLayer = gl;
+							mapGenerator = n2d as MapGenerator;
 							break;
 						}
 					}
 				}
+			}
+
+			if (mapGenerator != null)
+			{
+				_hasMapBounds = true;
+				_mapBoundsCells = new Rect2I(0, 0, mapGenerator.MapWidth, mapGenerator.MapHeight);
+				// MapGenerator는 잔디를 TileMap 셀로 찍지 않고 Background ColorRect로 표현한다.
+				// 따라서 빈 GroundLayer 셀도 이동/스폰 가능한 바닥으로 취급해야 한다.
+				_emptyGroundIsWalkable = true;
 			}
 
 			if (obstacleLayer != null)
@@ -82,7 +102,8 @@ namespace FirstGame.Entities.Enemies
 
 			GD.Print($"[EnemySpawner] 초기화 완료 - 씬: {GetTree().CurrentScene?.Name}, " +
 					 $"StatVariants: {StatVariants?.Length ?? 0}종, MaxEnemies: {MaxEnemies}, " +
-					 $"바닥타일: {_groundTiles.Count}, 장애물타일: {_obstacleTiles.Count}");
+					 $"바닥타일: {_groundTiles.Count}, 장애물타일: {_obstacleTiles.Count}, " +
+					 $"플레이어주변스폰: {SpawnAroundPlayer}");
 		}
 
 		public override void _PhysicsProcess(double delta)
@@ -103,14 +124,11 @@ namespace FirstGame.Entities.Enemies
 			int currentCount = GetTree().GetNodesInGroup("Enemy").Count;
 			if (currentCount >= MaxEnemies) return;
 
-			const int maxAttempts = 10;
+			const int maxAttempts = 30;
+			var spawnCenter = GetSpawnCenter();
 			for (int i = 0; i < maxAttempts; i++)
 			{
-				var randomOffset = new Vector2(
-					(float)GD.RandRange(-SpawnRadius, SpawnRadius),
-					(float)GD.RandRange(-SpawnRadius, SpawnRadius)
-				);
-				var spawnPos = GlobalPosition + randomOffset;
+				var spawnPos = spawnCenter + GetRandomSpawnOffset();
 
 				if (IsPositionBlocked(spawnPos)) continue;
 
@@ -128,6 +146,33 @@ namespace FirstGame.Entities.Enemies
 				GetParent().AddChild(enemy);
 				return;
 			}
+
+			if (_failedSpawnLogs < 3)
+			{
+				_failedSpawnLogs++;
+				GD.Print($"[EnemySpawner] 스폰 실패: {maxAttempts}회 모두 차단됨. center={spawnCenter}, " +
+						 $"ground={_groundTiles.Count}, obstacle={_obstacleTiles.Count}, emptyGroundWalkable={_emptyGroundIsWalkable}");
+			}
+		}
+
+		private Vector2 GetSpawnCenter()
+		{
+			if (SpawnAroundPlayer)
+			{
+				var player = GetTree().GetFirstNodeInGroup("Player") as Node2D;
+				if (player != null)
+					return player.GlobalPosition;
+			}
+
+			return GlobalPosition;
+		}
+
+		private Vector2 GetRandomSpawnOffset()
+		{
+			float minDistance = Mathf.Clamp(MinSpawnDistance, 0f, SpawnRadius);
+			float angle = (float)GD.RandRange(0.0, Mathf.Tau);
+			float distance = (float)GD.RandRange(minDistance, SpawnRadius);
+			return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
 		}
 
 		private bool IsPositionBlocked(Vector2 worldPos)
@@ -138,13 +183,25 @@ namespace FirstGame.Entities.Enemies
 				Mathf.FloorToInt(localPos.Y / TileSize)
 			);
 
-			if (_groundTiles.Count > 0 && !_groundTiles.Contains(tilePos))
+			if (_hasMapBounds && !IsInsideMapBounds(tilePos))
+				return true;
+
+			if (_groundTiles.Count > 0 && !_emptyGroundIsWalkable && !_groundTiles.Contains(tilePos))
 				return true;
 
 			if (_obstacleTiles.Contains(tilePos))
 				return true;
 
 			return false;
+		}
+
+		private bool IsInsideMapBounds(Vector2I tilePos)
+		{
+			int padding = Mathf.Max(0, SpawnEdgePaddingTiles);
+			return tilePos.X >= _mapBoundsCells.Position.X + padding
+				&& tilePos.Y >= _mapBoundsCells.Position.Y + padding
+				&& tilePos.X < _mapBoundsCells.Position.X + _mapBoundsCells.Size.X - padding
+				&& tilePos.Y < _mapBoundsCells.Position.Y + _mapBoundsCells.Size.Y - padding;
 		}
 
 		public override void _ExitTree()

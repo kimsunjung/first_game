@@ -15,7 +15,7 @@ namespace FirstGame.Entities.Shop
             // 다른 UI가 이미 열려있으면 무시
             if (UIPauseManager.IsPaused) return;
 
-            var shopUI = GetParent().GetNodeOrNull<ShopUI>("ShopUI");
+            var shopUI = GetNodeOrNull<ShopUI>("ShopUI");
             if (shopUI != null)
             {
                 shopUI.OpenShop(ShopItems, ShopName);

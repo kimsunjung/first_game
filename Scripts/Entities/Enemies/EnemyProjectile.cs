@@ -16,7 +16,7 @@ namespace FirstGame.Entities.Enemies
 		public override void _Ready()
 		{
 			CollisionLayer = 0;
-			CollisionMask = 1; // 플레이어 레이어
+			CollisionMask = 1 | 4; // 플레이어 + 벽/장애물 레이어
 			Monitoring = true;
 
 			var shape = new CollisionShape2D();
@@ -78,11 +78,11 @@ namespace FirstGame.Entities.Enemies
 			if (body is IDamageable target)
 			{
 				target.TakeDamage(Damage);
-
-				// 히트 이펙트
-				SpawnHitEffect();
-				QueueFree();
 			}
+
+			// 플레이어든 벽이든 무언가에 맞으면 투사체는 소멸
+			SpawnHitEffect();
+			QueueFree();
 		}
 
 		private void SpawnHitEffect()

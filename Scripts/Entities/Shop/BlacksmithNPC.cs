@@ -12,7 +12,7 @@ namespace FirstGame.Entities.Shop
 		{
 			if (UIPauseManager.IsPaused) return;
 
-			var enhanceUI = GetParent().GetNodeOrNull<EnhanceUI>("EnhanceUI");
+			var enhanceUI = GetNodeOrNull<EnhanceUI>("EnhanceUI");
 			if (enhanceUI != null)
 			{
 				enhanceUI.OpenEnhance(SmithName);

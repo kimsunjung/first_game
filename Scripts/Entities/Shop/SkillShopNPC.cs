@@ -11,7 +11,7 @@ namespace FirstGame.Entities.Shop
 		{
 			if (UIPauseManager.IsPaused) return;
 
-			var skillShopUI = GetParent().GetNodeOrNull<SkillShopUI>("SkillShopUI");
+			var skillShopUI = GetNodeOrNull<SkillShopUI>("SkillShopUI");
 			if (skillShopUI != null)
 				skillShopUI.OpenShop();
 			else
