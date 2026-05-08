@@ -37,6 +37,13 @@ namespace FirstGame.Data
 			else if (CurrentHealth > MaxHealth) CurrentHealth = MaxHealth;
 		}
 		public void ModifyDefense(int delta) => Defense += delta;
+		public void ModifyMaxMp(int delta)
+		{
+			MaxMp += delta;
+			if (delta > 0) CurrentMp += delta;
+			else if (CurrentMp > MaxMp) CurrentMp = MaxMp;
+		}
+		public void ModifyCritRate(float delta) => CritRate += delta;
 		public void Heal(int amount) => CurrentHealth = Math.Min(CurrentHealth + amount, MaxHealth);
 
 		// ─── 레벨/경험치 ─────────────────────────────────────────────

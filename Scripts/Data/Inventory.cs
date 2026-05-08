@@ -23,11 +23,19 @@ namespace FirstGame.Data
         public ItemData EquippedWeapon { get; private set; }
         public ItemData EquippedArmor { get; private set; }
         public ItemData EquippedAccessory { get; private set; }
+        // 신규 부위별 슬롯 (반지 2개)
+        public ItemData EquippedHelmet { get; internal set; }
+        public ItemData EquippedBoots { get; internal set; }
+        public ItemData EquippedNecklace { get; internal set; }
+        public ItemData EquippedRing1 { get; internal set; }
+        public ItemData EquippedRing2 { get; internal set; }
+        public ItemData EquippedBracelet { get; internal set; }
 
         // 장착된 장비의 강화 수치
         public int EquippedWeaponEnhancement { get; private set; } = 0;
         public int EquippedArmorEnhancement { get; private set; } = 0;
         public int EquippedAccessoryEnhancement { get; private set; } = 0;
+        // 신규 슬롯은 강화 미지원 — 항상 0 유지 (이후 단계에서 확장)
 
         // ─── 강화 헬퍼 ────────────────────────────────────────────
         public static (int damage, int health, int defense) GetEnhancementBonuses(ItemData item, int level)
@@ -114,7 +122,7 @@ namespace FirstGame.Data
                 AudioManager.Instance?.PlaySFX("potion_use.wav");
                 RemoveItem(slotIndex, 1);
             }
-            else if (slot.Item.Type == ItemType.Weapon || slot.Item.Type == ItemType.Armor || slot.Item.Type == ItemType.Accessory)
+            else if (slot.Item.Type.IsEquipment() && slot.Item.Type != ItemType.SkillBook)
             {
                 EquipItem(slotIndex, target);
             }
@@ -179,6 +187,19 @@ namespace FirstGame.Data
                 target.ModifyDefense(item.BonusDefense + defBonus);
                 if (item.BonusDamage > 0) target.ModifyBaseDamage(item.BonusDamage + dmgBonus);
                 if (item.BonusMaxHealth > 0) target.ModifyMaxHealth(item.BonusMaxHealth);
+                RemoveItem(slotIndex, 1);
+            }
+            else if (IsExtraEquipType(item.Type))
+            {
+                // 신규 부위별 슬롯 (모자/신발/목걸이/반지/팔찌). 강화는 미적용.
+                var slotKey = ResolveExtraSlot(item.Type);
+                var prev = GetExtraSlot(slotKey);
+                if (prev != null)
+                {
+                    if (!UnequipExtra(slotKey, target)) return;
+                }
+                SetExtraSlot(slotKey, item);
+                ApplyItemBonuses(item, target, +1);
                 RemoveItem(slotIndex, 1);
             }
 
@@ -246,6 +267,79 @@ namespace FirstGame.Data
 
             EquippedAccessory = null;
             EquippedAccessoryEnhancement = 0;
+            OnEquipmentChanged?.Invoke();
+            return true;
+        }
+
+        // --- 신규 부위별 장비 슬롯 헬퍼 ---
+
+        /// <summary>모자/신발/목걸이/반지/팔찌처럼 강화 미지원 신규 부위인지.</summary>
+        public static bool IsExtraEquipType(ItemType t) =>
+            t == ItemType.Helmet || t == ItemType.Boots || t == ItemType.Necklace ||
+            t == ItemType.Ring || t == ItemType.Bracelet;
+
+        public enum ExtraSlot { Helmet, Boots, Necklace, Ring1, Ring2, Bracelet }
+
+        /// <summary>아이템 타입을 어떤 부위 슬롯에 둘지 결정. 반지는 빈 슬롯 우선.</summary>
+        private ExtraSlot ResolveExtraSlot(ItemType t) => t switch
+        {
+            ItemType.Helmet => ExtraSlot.Helmet,
+            ItemType.Boots => ExtraSlot.Boots,
+            ItemType.Necklace => ExtraSlot.Necklace,
+            ItemType.Bracelet => ExtraSlot.Bracelet,
+            ItemType.Ring => EquippedRing1 == null ? ExtraSlot.Ring1 : ExtraSlot.Ring2,
+            _ => ExtraSlot.Helmet
+        };
+
+        public ItemData GetExtraSlot(ExtraSlot s) => s switch
+        {
+            ExtraSlot.Helmet => EquippedHelmet,
+            ExtraSlot.Boots => EquippedBoots,
+            ExtraSlot.Necklace => EquippedNecklace,
+            ExtraSlot.Ring1 => EquippedRing1,
+            ExtraSlot.Ring2 => EquippedRing2,
+            ExtraSlot.Bracelet => EquippedBracelet,
+            _ => null
+        };
+
+        private void SetExtraSlot(ExtraSlot s, ItemData item)
+        {
+            switch (s)
+            {
+                case ExtraSlot.Helmet: EquippedHelmet = item; break;
+                case ExtraSlot.Boots: EquippedBoots = item; break;
+                case ExtraSlot.Necklace: EquippedNecklace = item; break;
+                case ExtraSlot.Ring1: EquippedRing1 = item; break;
+                case ExtraSlot.Ring2: EquippedRing2 = item; break;
+                case ExtraSlot.Bracelet: EquippedBracelet = item; break;
+            }
+        }
+
+        /// <summary>장비 보너스 일괄 적용 (sign=+1 장착, -1 해제).</summary>
+        private static void ApplyItemBonuses(ItemData item, IEquipTarget target, int sign)
+        {
+            if (item.BonusDamage != 0) target.ModifyBaseDamage(sign * item.BonusDamage);
+            if (item.BonusMaxHealth != 0) target.ModifyMaxHealth(sign * item.BonusMaxHealth);
+            if (item.BonusDefense != 0) target.ModifyDefense(sign * item.BonusDefense);
+            if (item.BonusMaxMp != 0) target.ModifyMaxMp(sign * item.BonusMaxMp);
+            if (item.BonusCritRate != 0f) target.ModifyCritRate(sign * item.BonusCritRate);
+        }
+
+        public bool UnequipExtra(ExtraSlot slot, IEquipTarget target)
+        {
+            var item = GetExtraSlot(slot);
+            if (item == null) return false;
+            if (Slots.Count >= MaxSlots)
+            {
+                GD.Print("가방이 꽉 차서 장비를 해제할 수 없습니다!");
+                return false;
+            }
+
+            ApplyItemBonuses(item, target, -1);
+            bool added = AddItem(item, 1, 0);
+            if (!added) return false;
+
+            SetExtraSlot(slot, null);
             OnEquipmentChanged?.Invoke();
             return true;
         }

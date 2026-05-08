@@ -11,6 +11,8 @@ namespace FirstGame.Core.Interfaces
 		void ModifyBaseDamage(int delta);
 		void ModifyMaxHealth(int delta);
 		void ModifyDefense(int delta);
+		void ModifyMaxMp(int delta);
+		void ModifyCritRate(float delta);
 		void Heal(int amount);
 		bool LearnSkill(SkillData skill);
 	}
