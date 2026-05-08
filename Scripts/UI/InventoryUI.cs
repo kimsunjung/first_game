@@ -56,20 +56,31 @@ namespace FirstGame.UI
 
             CreateFilterButtons();
 
-            // Player 연결
-            var player = GameManager.Instance?.Player;
-            if (player != null)
-            {
-                _player = player;
-                _inventory = player.Inventory;
-                _inventory.OnInventoryChanged += RefreshGrid;
-                _inventory.OnEquipmentChanged += RefreshEquipment;
-                RefreshGrid();
-                RefreshEquipment();
-            }
+            // Player 연결: _Ready 시점에 GameManager.Player가 아직 null일 수 있어 지연 바인딩도 지원
+            TryBindPlayer();
         }
 
-        protected override bool CanOpen() => _player == null || !_player.IsDead;
+        private void TryBindPlayer()
+        {
+            if (_player != null) return; // 이미 바인딩됨
+            var player = GameManager.Instance?.Player;
+            if (player == null || player.Inventory == null) return;
+
+            _player = player;
+            _inventory = player.Inventory;
+            _inventory.OnInventoryChanged += RefreshGrid;
+            _inventory.OnEquipmentChanged += RefreshEquipment;
+            RefreshGrid();
+            RefreshEquipment();
+        }
+
+        protected override bool CanOpen()
+        {
+            if (_player == null) TryBindPlayer();
+            // 플레이어/인벤토리 미바인딩 시 열기 차단 (RefreshGrid에서 NPE 방지)
+            if (_player == null || _inventory == null) return false;
+            return !_player.IsDead;
+        }
         protected override void OnOpened() => RefreshGrid();
 
         public override void _Process(double delta)
