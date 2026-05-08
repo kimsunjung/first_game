@@ -106,15 +106,16 @@ theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 modulate = Color(0.4, 0.6, 1.0, 1.0)
 
-[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=410222344]
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1133256834]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "Gold: 0"
+vertical_alignment = 1
+
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=410222344]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="LevelRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=111111103]
 layout_mode = 2
