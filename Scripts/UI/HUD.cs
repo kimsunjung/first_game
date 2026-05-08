@@ -29,6 +29,7 @@ namespace FirstGame.UI
 		private Label _levelLabel;
 		private ProgressBar _expBar;
 		private Label _levelUpLabel;
+		private Label _questLabel;
 
 
 		public override void _Ready()
@@ -60,11 +61,15 @@ namespace FirstGame.UI
 			_expBar = GetNodeOrNull<ProgressBar>("%ExpBar");
 			_levelUpLabel = GetNodeOrNull<Label>("%LevelUpLabel");
 			if (_levelUpLabel != null) _levelUpLabel.Visible = false;
+			_questLabel = GetNodeOrNull<Label>("%QuestLabel");
 
 			_restartButton.Pressed += OnRestartPressed;
 			EventManager.OnPlayerDeath += ShowGameOver;
 			EventManager.OnLevelUp += ShowLevelUp;
 			SaveManager.OnGameSaved += ShowSaveNotification;
+			if (GameManager.Instance != null)
+				GameManager.Instance.QuestManager.OnQuestStateChanged += UpdateQuestDisplay;
+			UpdateQuestDisplay();
 
 			if (GameManager.Instance != null)
 			{
@@ -119,6 +124,30 @@ namespace FirstGame.UI
 			EventManager.OnPlayerDeath -= ShowGameOver;
 			EventManager.OnLevelUp -= ShowLevelUp;
 			SaveManager.OnGameSaved -= ShowSaveNotification;
+			if (GameManager.Instance != null)
+				GameManager.Instance.QuestManager.OnQuestStateChanged -= UpdateQuestDisplay;
+		}
+
+		private void UpdateQuestDisplay()
+		{
+			if (_questLabel == null) return;
+			var qm = GameManager.Instance?.QuestManager;
+			if (qm == null || !qm.HasActiveQuest)
+			{
+				_questLabel.Visible = false;
+				return;
+			}
+			var q = qm.ActiveQuest;
+			string objective = q.Type switch
+			{
+				QuestType.Kill => $"{q.TargetEnemyType} 처치",
+				QuestType.Gather => $"{q.TargetItem?.ItemName ?? "?"} 수집",
+				QuestType.Deliver => $"{q.TargetNpcId} 만나기",
+				QuestType.Explore => $"{q.TargetScene} 도달",
+				_ => ""
+			};
+			_questLabel.Text = $"[퀘스트] {q.QuestTitle} — {objective} {qm.Progress}/{q.TargetCount}";
+			_questLabel.Visible = true;
 		}
 
 		private void ShowGameOver()
