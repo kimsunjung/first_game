@@ -17,6 +17,12 @@
 [ext_resource type="Resource" path="res://Resources/Items/wolf_necklace.tres" id="13_wolf"]
 [ext_resource type="Resource" path="res://Resources/Items/guardian_amulet.tres" id="14_amulet"]
 [ext_resource type="Resource" path="res://Resources/Items/shadow_ring.tres" id="15_shadow"]
+[ext_resource type="Resource" uid="uid://itemhelmet001" path="res://Resources/Items/leather_cap.tres" id="17_lcap"]
+[ext_resource type="Resource" uid="uid://itemhelmet002" path="res://Resources/Items/iron_helm.tres" id="18_ihelm"]
+[ext_resource type="Resource" uid="uid://itemboots001" path="res://Resources/Items/leather_boots.tres" id="19_lboots"]
+[ext_resource type="Resource" uid="uid://itemboots002" path="res://Resources/Items/iron_boots.tres" id="20_iboots"]
+[ext_resource type="Resource" uid="uid://itembrace001" path="res://Resources/Items/bronze_bracelet.tres" id="21_bbrace"]
+[ext_resource type="Resource" uid="uid://itembrace002" path="res://Resources/Items/silver_bracelet.tres" id="22_sbrace"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_shop"]
 radius = 80.0
@@ -26,7 +32,7 @@ collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_shop")
 PromptIcon = ExtResource("prompt_icon")
-ShopItems = Array[Resource]([ExtResource("2_potion"), ExtResource("3_hipotion"), ExtResource("4_megapotion"), ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow")])
+ShopItems = Array[Resource]([ExtResource("2_potion"), ExtResource("3_hipotion"), ExtResource("4_megapotion"), ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow"), ExtResource("17_lcap"), ExtResource("18_ihelm"), ExtResource("19_lboots"), ExtResource("20_iboots"), ExtResource("21_bbrace"), ExtResource("22_sbrace")])
 ShopName = "상점"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

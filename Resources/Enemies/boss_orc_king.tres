@@ -4,6 +4,8 @@
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="2_hip"]
 [ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="3_mp"]
 [ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="4_core"]
+[ext_resource type="Resource" uid="uid://itemboots001" path="res://Resources/Items/leather_boots.tres" id="5_lb"]
+[ext_resource type="Resource" uid="uid://itembrace001" path="res://Resources/Items/bronze_bracelet.tres" id="6_bb"]
 
 [resource]
 script = ExtResource("1_es")
@@ -16,7 +18,8 @@ ExperienceReward = 200
 EnemyTypeName = "Boss"
 IsBoss = true
 SpriteAtlasCoords = Vector2i(9, 7)
-PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core")])
+PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core"), ExtResource("5_lb"), ExtResource("6_bb")])
+DropWeights = PackedFloat32Array(0.25, 0.15, 0.30, 0.15, 0.15)
 DropChance = 1.0
 MaxHealth = 500
 CurrentHealth = 500
