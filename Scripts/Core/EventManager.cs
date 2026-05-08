@@ -43,6 +43,13 @@ namespace FirstGame.Core
 			OnEnemyKilled?.Invoke();
 		}
 
+		// 퀘스트 진행도용 — 어떤 적이 죽었는지 식별 가능
+		public static event Action<string> OnEnemyKilledTyped;
+		public static void TriggerEnemyKilledTyped(string enemyTypeName)
+		{
+			OnEnemyKilledTyped?.Invoke(enemyTypeName);
+		}
+
 		// 경험치 지급 이벤트
 		public static event Action<int> OnExpGained;
 		public static void TriggerExpGained(int amount)
@@ -62,6 +69,7 @@ namespace FirstGame.Core
 			OnBossHealthChanged = null;
 			OnBossDied = null;
 			OnEnemyKilled = null;
+			OnEnemyKilledTyped = null;
 			OnExpGained = null;
 		}
 	}

@@ -31,6 +31,9 @@ namespace FirstGame.Core
 		public void RegisterEnemy(Node2D enemy) => _activeEnemies.Add(enemy);
 		public void UnregisterEnemy(Node2D enemy) => _activeEnemies.Remove(enemy);
 
+		// 메인 퀘스트 매니저 (1개씩만 진행)
+		public QuestManager QuestManager { get; } = new();
+
 		// 처치한 보스 목록
 		private readonly HashSet<string> _defeatedBosses = new();
 		public IReadOnlyCollection<string> DefeatedBosses => _defeatedBosses;
@@ -47,6 +50,7 @@ namespace FirstGame.Core
 			PlayerGold = 0;
 			_defeatedBosses.Clear();
 			_activeEnemies.Clear();
+			QuestManager.RestoreFromSave("", 0, null);
 			EventManager.ResetAll();
 		}
 

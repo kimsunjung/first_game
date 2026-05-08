@@ -84,6 +84,8 @@ namespace FirstGame.Entities.Player
 
 			CollisionMask |= 4;
 			Inventory = new Inventory();
+			Inventory.OnItemPickedUp += item =>
+				GameManager.Instance?.QuestManager.NotifyItemAcquired(item, this);
 
 			if (SaveManager.PendingLoadData != null)
 			{

@@ -418,6 +418,7 @@ namespace FirstGame.Entities.Enemies
 			AudioManager.Instance?.PlaySFX("enemy_death.wav");
 
 			EventManager.TriggerEnemyKilled();
+			EventManager.TriggerEnemyKilledTyped(Stats.EnemyTypeName);
 			if (Stats.IsBoss)
 			{
 				EventManager.TriggerBossDied();
