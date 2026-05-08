@@ -233,6 +233,10 @@ namespace FirstGame.Entities.Player
 			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Ring2, data.EquippedRing2Path, Stats);
 			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Bracelet, data.EquippedBraceletPath, Stats);
 
+			// 퀘스트 복원
+			GameManager.Instance?.QuestManager.RestoreFromSave(
+				data.CurrentQuestPath, data.QuestKillProgress, data.CompletedQuestIds);
+
 			// 장비 보너스 적용 후 현재 HP/MP 복원 (MaxHealth/MaxMp가 확정된 뒤에 설정)
 			Stats.CurrentHealth = Mathf.Min(data.PlayerHealth, Stats.MaxHealth);
 			Stats.CurrentMp = Mathf.Min(data.PlayerMp, Stats.MaxMp);

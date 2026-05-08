@@ -61,6 +61,15 @@ namespace FirstGame.Entities.Player
 			data.EquippedRing2Path = Inventory.EquippedRing2?.ResourcePath ?? "";
 			data.EquippedBraceletPath = Inventory.EquippedBracelet?.ResourcePath ?? "";
 
+			// 퀘스트 상태
+			var qm = GameManager.Instance?.QuestManager;
+			if (qm != null)
+			{
+				data.CurrentQuestPath = qm.ActiveQuestPath;
+				data.QuestKillProgress = qm.Progress;
+				data.CompletedQuestIds = new List<string>(qm.CompletedQuestIds);
+			}
+
 			// 퀵슬롯
 			data.QuickSlotPaths = new List<string>();
 			foreach (var item in Inventory.QuickSlots)
