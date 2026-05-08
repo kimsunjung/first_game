@@ -9,7 +9,7 @@ namespace FirstGame.UI
 		private Button _continueBtn;
 		private Button _settingsBtn;
 		private Button _quitBtn;
-		private CanvasLayer _settingsUI;
+		private SettingsUI _settingsUI;
 		private PanelContainer _confirmPanel;
 		private Button _confirmYes;
 		private Button _confirmNo;
@@ -20,7 +20,7 @@ namespace FirstGame.UI
 			_continueBtn = GetNode<Button>("%ContinueBtn");
 			_settingsBtn = GetNode<Button>("%SettingsBtn");
 			_quitBtn = GetNode<Button>("%QuitBtn");
-			_settingsUI = GetNodeOrNull<CanvasLayer>("SettingsUI");
+			_settingsUI = GetNodeOrNull<SettingsUI>("SettingsUI");
 			_confirmPanel = GetNode<PanelContainer>("%ConfirmPanel");
 			_confirmYes = GetNode<Button>("%ConfirmYes");
 			_confirmNo = GetNode<Button>("%ConfirmNo");
@@ -75,8 +75,7 @@ namespace FirstGame.UI
 
 		private void OnSettingsPressed()
 		{
-			if (_settingsUI != null)
-				_settingsUI.Visible = !_settingsUI.Visible;
+			_settingsUI?.Toggle();
 		}
 
 		public override void _ExitTree()

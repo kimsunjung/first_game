@@ -64,6 +64,7 @@ namespace FirstGame.UI
 
 		public override void _UnhandledInput(InputEvent @event)
 		{
+			base._UnhandledInput(@event); // ui_cancel(Esc/뒤로가기) 처리
 			if (@event is InputEventKey k && k.Pressed && !k.Echo)
 			{
 				if (k.Keycode == Key.C || k.PhysicalKeycode == Key.C)

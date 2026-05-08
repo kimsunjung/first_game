@@ -76,15 +76,10 @@ namespace FirstGame.Core
 		}
 
 		// 모바일 뒤로가기 버튼 처리: 열린 UI 창이 있으면 닫고, 없으면 무시 (즉시 종료 방지)
-		// BaseUIWindow 그룹에 없는 모달(Shop/SkillShop/Enhance/Settings)은 ui_cancel 액션으로 폴백
 		public override void _Notification(int what)
 		{
 			if (what == NotificationWMGoBackRequest)
-			{
-				if (FirstGame.UI.WindowManager.CloseTop()) return;
-				// 폴백: ui_cancel 합성 → 자체 입력 처리하는 모달들이 스스로 닫음
-				Input.ParseInputEvent(new InputEventAction { Action = "ui_cancel", Pressed = true });
-			}
+				FirstGame.UI.WindowManager.CloseTop();
 		}
 	}
 }

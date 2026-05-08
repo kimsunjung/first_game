@@ -25,6 +25,17 @@ namespace FirstGame.UI
 			OnExitTreeInternal();
 		}
 
+		/// <summary>ui_cancel(Esc/뒤로가기) 처리 — 보이는 상태면 닫기. 자식이 더 필요하면 오버라이드 후 base 호출.</summary>
+		public override void _UnhandledInput(InputEvent @event)
+		{
+			if (!Visible) return;
+			if (@event.IsActionPressed("ui_cancel") && !@event.IsEcho())
+			{
+				Close();
+				GetViewport().SetInputAsHandled();
+			}
+		}
+
 		public virtual void Toggle()
 		{
 			if (Visible) Close();

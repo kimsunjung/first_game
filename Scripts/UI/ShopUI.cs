@@ -5,7 +5,7 @@ using FirstGame.Core.Interfaces;
 
 namespace FirstGame.UI
 {
-    public partial class ShopUI : CanvasLayer
+    public partial class ShopUI : BaseUIWindow
     {
         private TabContainer _tabContainer;
         private GridContainer _buyGrid;
@@ -26,7 +26,7 @@ namespace FirstGame.UI
         private ItemData[] _shopItems;
         private ItemData _selectedBuyItem;
 
-        public override void _Ready()
+        protected override void OnReadyInternal()
         {
             _tabContainer = GetNode<TabContainer>("%TabContainer");
             _buyGrid = GetNode<GridContainer>("%BuyGrid");
@@ -41,52 +41,39 @@ namespace FirstGame.UI
             _confirmBuyButton = GetNode<Button>("%ConfirmBuyButton");
             _totalPriceLabel = GetNode<Label>("%TotalPriceLabel");
 
-            _closeButton.Pressed += CloseShop;
+            _closeButton.Pressed += Close;
             _confirmBuyButton.Pressed += OnConfirmBuy;
             _quantitySpinBox.ValueChanged += OnQuantityChanged;
 
             _messageLabel.Visible = false;
             _quantityPanel.Visible = false;
-            Visible = false;
         }
 
-        public override void _UnhandledInput(InputEvent @event)
-        {
-            if (!Visible) return;
-            if (@event.IsActionPressed("ui_cancel") && !@event.IsEcho())
-            {
-                CloseShop();
-                GetViewport().SetInputAsHandled();
-            }
-        }
-
-        // --- 상점 열기/닫기 ---
+        // --- 상점 진입점 (NPC 상호작용에서 호출) ---
 
         public void OpenShop(ItemData[] shopItems, string shopName)
         {
-            _shopItems = shopItems;
-
-            // 플레이어 연결
             var player = GameManager.Instance?.Player;
-            if (player != null)
-            {
-                _player = player;
-                _inventory = player.Inventory;
-            }
-            else return;
-            Visible = true;
-            UIPauseManager.RequestPause();
-            _quantityPanel.Visible = false;
+            if (player == null) return;
 
+            _shopItems = shopItems;
+            _player = player;
+            _inventory = player.Inventory;
+
+            if (Visible) OnOpened(); // 이미 열린 상태면 내용만 갱신
+            else Open();
+        }
+
+        protected override void OnOpened()
+        {
+            _quantityPanel.Visible = false;
             RefreshBuyTab();
             RefreshSellTab();
             UpdateGoldDisplay();
         }
 
-        public void CloseShop()
+        protected override void OnClosed()
         {
-            Visible = false;
-            UIPauseManager.ReleasePause();
             _quantityPanel.Visible = false;
             _selectedBuyItem = null;
         }
@@ -314,13 +301,9 @@ namespace FirstGame.UI
             _goldLabel.Text = $"보유 골드: {GameManager.Instance.PlayerGold}G";
         }
 
-        public override void _ExitTree()
+        protected override void OnExitTreeInternal()
         {
-            // 상점이 열린 채로 씬 전환 시 일시정지 카운터 해제
-            if (Visible)
-                UIPauseManager.ReleasePause();
-
-            if (_closeButton != null) _closeButton.Pressed -= CloseShop;
+            if (_closeButton != null) _closeButton.Pressed -= Close;
             if (_confirmBuyButton != null) _confirmBuyButton.Pressed -= OnConfirmBuy;
             if (_quantitySpinBox != null) _quantitySpinBox.ValueChanged -= OnQuantityChanged;
         }

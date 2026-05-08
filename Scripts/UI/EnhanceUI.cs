@@ -7,7 +7,7 @@ using FirstGame.Core.Interfaces;
 
 namespace FirstGame.UI
 {
-	public partial class EnhanceUI : CanvasLayer
+	public partial class EnhanceUI : BaseUIWindow
 	{
 		private static int MaxEnhancement => BalanceData.Enhancement.MaxLevel;
 		private static float[] SuccessRates => BalanceData.Enhancement.SuccessRates;
@@ -46,7 +46,7 @@ namespace FirstGame.UI
 			public int Level;
 		}
 
-		public override void _Ready()
+		protected override void OnReadyInternal()
 		{
 			_titleLabel = GetNode<Label>("%EnhanceTitleLabel");
 			_equipGrid = GetNode<GridContainer>("%EquipGrid");
@@ -60,23 +60,14 @@ namespace FirstGame.UI
 			_messageLabel = GetNode<Label>("%EnhanceMessageLabel");
 			_closeButton = GetNode<Button>("%EnhanceCloseButton");
 
-			_closeButton.Pressed += CloseEnhance;
+			_closeButton.Pressed += Close;
 			_enhanceButton.Pressed += OnEnhancePressed;
 
 			_messageLabel.Visible = false;
 			_detailPanel.Visible = false;
-			Visible = false;
 		}
 
-		public override void _UnhandledInput(InputEvent @event)
-		{
-			if (!Visible) return;
-			if (@event.IsActionPressed("ui_cancel") && !@event.IsEcho())
-			{
-				CloseEnhance();
-				GetViewport().SetInputAsHandled();
-			}
-		}
+		// --- 강화 진입점 (대장간 NPC에서 호출) ---
 
 		public void OpenEnhance(string smithName)
 		{
@@ -86,21 +77,17 @@ namespace FirstGame.UI
 			_player = player;
 			_inventory = player.Inventory;
 			_hasSelection = false;
-
 			_titleLabel.Text = smithName;
-			_detailPanel.Visible = false;
-			_messageLabel.Visible = false;
 
-			Visible = true;
-			UIPauseManager.RequestPause();
-
-			RefreshEquipList();
+			if (Visible) OnOpened();
+			else Open();
 		}
 
-		public void CloseEnhance()
+		protected override void OnOpened()
 		{
-			Visible = false;
-			UIPauseManager.ReleasePause();
+			_detailPanel.Visible = false;
+			_messageLabel.Visible = false;
+			RefreshEquipList();
 		}
 
 		private void RefreshEquipList()
@@ -498,12 +485,9 @@ namespace FirstGame.UI
 			};
 		}
 
-		public override void _ExitTree()
+		protected override void OnExitTreeInternal()
 		{
-			if (Visible)
-				UIPauseManager.ReleasePause();
-
-			if (_closeButton != null) _closeButton.Pressed -= CloseEnhance;
+			if (_closeButton != null) _closeButton.Pressed -= Close;
 			if (_enhanceButton != null) _enhanceButton.Pressed -= OnEnhancePressed;
 		}
 

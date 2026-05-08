@@ -6,7 +6,7 @@ using FirstGame.Core.Interfaces;
 namespace FirstGame.UI
 {
 	// 스킬 상점: 스킬북 아이템을 판매 (인벤토리에 추가 → 직접 사용해서 스킬 습득)
-	public partial class SkillShopUI : CanvasLayer
+	public partial class SkillShopUI : BaseUIWindow
 	{
 		[Export] public ItemData[] SkillBooks { get; set; }
 
@@ -17,27 +17,18 @@ namespace FirstGame.UI
 
 		private IPlayer _player;
 
-		public override void _Ready()
+		protected override void OnReadyInternal()
 		{
 			_skillList = GetNode<VBoxContainer>("%SkillList");
 			_goldLabel = GetNode<Label>("%SkillShopGoldLabel");
 			_messageLabel = GetNode<Label>("%SkillShopMessageLabel");
 			_closeButton = GetNode<Button>("%SkillShopCloseButton");
 
-			_closeButton.Pressed += CloseShop;
+			_closeButton.Pressed += Close;
 			_messageLabel.Visible = false;
-			Visible = false;
 		}
 
-		public override void _UnhandledInput(InputEvent @event)
-		{
-			if (!Visible) return;
-			if (@event.IsActionPressed("ui_cancel") && !@event.IsEcho())
-			{
-				CloseShop();
-				GetViewport().SetInputAsHandled();
-			}
-		}
+		// --- 스킬 상점 진입점 (NPC 상호작용에서 호출) ---
 
 		public void OpenShop()
 		{
@@ -45,23 +36,19 @@ namespace FirstGame.UI
 			if (player == null) return;
 			_player = player;
 
-			Visible = true;
-			UIPauseManager.RequestPause();
+			if (Visible) OnOpened();
+			else Open();
+		}
+
+		protected override void OnOpened()
+		{
 			RefreshList();
 			UpdateGold();
 		}
 
-		public void CloseShop()
+		protected override void OnExitTreeInternal()
 		{
-			Visible = false;
-			UIPauseManager.ReleasePause();
-		}
-
-		public override void _ExitTree()
-		{
-			if (Visible)
-				UIPauseManager.ReleasePause();
-			if (_closeButton != null) _closeButton.Pressed -= CloseShop;
+			if (_closeButton != null) _closeButton.Pressed -= Close;
 		}
 
 		private void RefreshList()
