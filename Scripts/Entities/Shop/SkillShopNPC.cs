@@ -11,6 +11,8 @@ namespace FirstGame.Entities.Shop
 		{
 			if (UIPauseManager.IsPaused) return;
 
+			if (TryOpenQuestDialog()) return;
+
 			var skillShopUI = GetNodeOrNull<SkillShopUI>("SkillShopUI");
 			if (skillShopUI != null)
 				skillShopUI.OpenShop();

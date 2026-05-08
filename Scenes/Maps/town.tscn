@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/character_window.tscn" id="5_charwin"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/boss_health_bar.tscn" id="6_bosshp"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/settings_ui.tscn" id="7_settings"]
+[ext_resource type="PackedScene" uid="uid://b3qstdlg2025u" path="res://Scenes/UI/quest_dialog.tscn" id="17_qdlg"]
 [ext_resource type="PackedScene" uid="uid://d4k8m2w7v3p1" path="res://Scenes/Objects/shop_npc.tscn" id="8_shop"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/shop_ui.tscn" id="9_shopUI"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/skill_shop_npc.tscn" id="10_skillnpc"]
@@ -59,23 +60,29 @@ position = Vector2(128, 240)
 
 [node name="SettingsUI" parent="." instance=ExtResource("7_settings")]
 
+[node name="QuestDialog" parent="." instance=ExtResource("17_qdlg")]
+
 [node name="ShopNPC" parent="." instance=ExtResource("8_shop")]
 position = Vector2(240, 96)
+NpcId = "shop"
 
 [node name="ShopUI" parent="ShopNPC" instance=ExtResource("9_shopUI")]
 
 [node name="SkillShopNPC" parent="." instance=ExtResource("10_skillnpc")]
 position = Vector2(336, 96)
+NpcId = "skill_shop"
 
 [node name="SkillShopUI" parent="SkillShopNPC" instance=ExtResource("11_skillshopUI")]
 
 [node name="BlacksmithNPC" parent="." instance=ExtResource("12_smith")]
 position = Vector2(432, 96)
+NpcId = "blacksmith"
 
 [node name="EnhanceUI" parent="BlacksmithNPC" instance=ExtResource("13_enhanceUI")]
 
 [node name="SavePoint" parent="." instance=ExtResource("14_save")]
 position = Vector2(128, 96)
+NpcId = "save_point"
 
 [node name="PortalToField1" parent="." instance=ExtResource("15_portal")]
 position = Vector2(768, 240)

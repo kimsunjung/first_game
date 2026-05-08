@@ -15,6 +15,9 @@ namespace FirstGame.Entities.Shop
             // 다른 UI가 이미 열려있으면 무시
             if (UIPauseManager.IsPaused) return;
 
+            // 퀘스트 부여/진행/완료가 가능하면 다이얼로그 우선
+            if (TryOpenQuestDialog()) return;
+
             var shopUI = GetNodeOrNull<ShopUI>("ShopUI");
             if (shopUI != null)
             {

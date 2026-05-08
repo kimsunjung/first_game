@@ -12,6 +12,8 @@ namespace FirstGame.Entities.Shop
 		{
 			if (UIPauseManager.IsPaused) return;
 
+			if (TryOpenQuestDialog()) return;
+
 			var enhanceUI = GetNodeOrNull<EnhanceUI>("EnhanceUI");
 			if (enhanceUI != null)
 			{

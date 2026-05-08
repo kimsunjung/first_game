@@ -14,6 +14,9 @@ namespace FirstGame.Entities
 	{
 		[Export] public Texture2D PromptIcon { get; set; }
 
+		/// <summary>이 NPC의 식별자. 퀘스트 부여/완료 매칭에 사용. 비워두면 퀘스트 미적용.</summary>
+		[Export] public string NpcId { get; set; } = "";
+
 		protected bool PlayerInRange { get; private set; } = false;
 		private Label _promptLabel;
 		private TextureRect _promptIconRect;
@@ -133,5 +136,33 @@ namespace FirstGame.Entities
 
 		protected virtual void OnPlayerEntered(Node2D player) { }
 		protected virtual void OnPlayerExited(Node2D player) { }
+
+		/// <summary>
+		/// NPC와 관련된 활성 퀘스트가 있거나 부여 가능한 새 퀘스트가 있으면 QuestDialog를 열고 true 반환.
+		/// 그 외에는 false 반환 — NPC 본 UI(상점/스킬샵/대장간)로 fallback.
+		/// </summary>
+		protected bool TryOpenQuestDialog()
+		{
+			if (string.IsNullOrEmpty(NpcId)) return false;
+			var qm = FirstGame.Core.GameManager.Instance?.QuestManager;
+			var player = FirstGame.Core.GameManager.Instance?.Player;
+			if (qm == null || player == null) return false;
+
+			bool relevantActive = qm.HasActiveQuest &&
+				(qm.ActiveQuest.GiverNpcId == NpcId || qm.ActiveQuest.TargetNpcId == NpcId);
+			bool hasNextQuest = !qm.HasActiveQuest && qm.FindNextQuestForNpc(NpcId) != null;
+
+			if (!relevantActive && !hasNextQuest) return false;
+
+			var dialog = GetTree()?.CurrentScene?.GetNodeOrNull<FirstGame.UI.QuestDialog>("QuestDialog");
+			if (dialog == null)
+			{
+				GD.PrintErr("BaseInteractable: QuestDialog 노드 없음 (씬에 추가 필요)");
+				return false;
+			}
+
+			dialog.OpenForNpc(NpcId, player);
+			return true;
+		}
 	}
 }
