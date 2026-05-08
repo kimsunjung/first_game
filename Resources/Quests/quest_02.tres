@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000002"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+QuestId = "main_02_intro_smith"
+QuestTitle = "대장장이에게 인사"
+Description = "마을 대장장이에게 가서 자기 소개를 하고 오라."
+Type = 2
+TargetCount = 1
+TargetNpcId = "blacksmith"
+GiverNpcId = "shop"
+GoldReward = 200
+ExpReward = 30
+RewardItem = ExtResource("2")
+RewardItemQuantity = 3

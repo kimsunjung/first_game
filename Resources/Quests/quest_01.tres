@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+QuestId = "main_01_first_hunt"
+QuestTitle = "첫 사냥"
+Description = "마을 밖 들판의 오크 5마리를 처치하고 돌아오라."
+Type = 0
+TargetCount = 5
+TargetEnemyType = "Orc"
+GiverNpcId = "save_point"
+GoldReward = 100
+ExpReward = 50

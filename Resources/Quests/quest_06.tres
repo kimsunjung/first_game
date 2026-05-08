@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000006"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+QuestId = "main_06_intro_skill_shop"
+QuestTitle = "스킬 상인에게 안내"
+Description = "스킬 상인이 새 책을 들였다고 한다. 만나보고 와라."
+Type = 2
+TargetCount = 1
+TargetNpcId = "skill_shop"
+GiverNpcId = "shop"
+GoldReward = 600
+ExpReward = 150

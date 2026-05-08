@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000007"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="2"]
+[ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="3"]
+
+[resource]
+script = ExtResource("1")
+QuestId = "main_07_bone_dust"
+QuestTitle = "본 더스트 수집"
+Description = "마법 연구를 위해 본 더스트 5개가 필요하다. 스켈레톤에게서 얻을 수 있다."
+Type = 1
+TargetCount = 5
+TargetItem = ExtResource("2")
+GiverNpcId = "skill_shop"
+GoldReward = 700
+ExpReward = 250
+RewardItem = ExtResource("3")
+RewardItemQuantity = 2

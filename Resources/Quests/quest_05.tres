@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000005"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+QuestId = "main_05_skeleton_intro"
+QuestTitle = "해골 정찰"
+Description = "던전에서 스켈레톤이 출몰한다는 소식이다. 5마리를 처치해 위협을 확인하라."
+Type = 0
+TargetCount = 5
+TargetEnemyType = "Skeleton"
+GiverNpcId = "save_point"
+GoldReward = 500
+ExpReward = 200

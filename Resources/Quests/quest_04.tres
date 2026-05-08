@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000004"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://lq1ay338edtn" path="res://Resources/Items/hi_potion.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+QuestId = "main_04_orc_thinning"
+QuestTitle = "오크 토벌"
+Description = "오크 무리가 점점 늘어나고 있다. 10마리를 더 처치하라."
+Type = 0
+TargetCount = 10
+TargetEnemyType = "Orc"
+GiverNpcId = "skill_shop"
+GoldReward = 400
+ExpReward = 150
+RewardItem = ExtResource("2")
+RewardItemQuantity = 3

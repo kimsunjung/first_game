@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000010"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+QuestId = "main_10_skeleton_purge"
+QuestTitle = "해골 군단 소탕"
+Description = "지하의 해골 군단이 활개치고 있다. 20마리를 제거해 마을의 안전을 되찾아라."
+Type = 0
+TargetCount = 20
+TargetEnemyType = "Skeleton"
+GiverNpcId = "shop"
+GoldReward = 2000
+ExpReward = 800

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000009"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+QuestId = "main_09_boss_core"
+QuestTitle = "보스 코어"
+Description = "전설의 보스 코어를 가져와라. 던전 보스를 처치하면 얻을 수 있다."
+Type = 1
+TargetCount = 1
+TargetItem = ExtResource("2")
+GiverNpcId = "save_point"
+GoldReward = 1500
+ExpReward = 500

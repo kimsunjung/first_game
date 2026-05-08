@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000003"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" path="res://Resources/Items/orc_leather.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+QuestId = "main_03_orc_leather"
+QuestTitle = "오크 가죽 수집"
+Description = "강화 재료가 부족하다. 오크 가죽 5개를 가져와라."
+Type = 1
+TargetCount = 5
+TargetItem = ExtResource("2")
+GiverNpcId = "blacksmith"
+GoldReward = 300
+ExpReward = 100
