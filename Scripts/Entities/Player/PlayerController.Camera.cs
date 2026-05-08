@@ -34,9 +34,20 @@ namespace FirstGame.Entities.Player
 		// Background ColorRect 크기를 기준으로 경계 설정.
 		// TileMap 기반은 _Ready() 호출 순서(Player < MapGenerator) 때문에
 		// 항상 타일이 비어있어 LimitBottom=2000으로 떨어지는 버그가 있음.
+		//
+		// HUD safe area: 모바일 HUD가 viewport 상/하단을 차지하므로
+		// 카메라가 맵 경계 너머까지 따라가도록 LimitTop/Bottom에 여유를 더해
+		// 캐릭터가 맵 끝에서도 슬롯/체력바 뒤로 숨지 않게 한다.
+		private const int HudTopReservePixels = 60;     // 상단 버튼/체력바 영역
+		private const int HudBottomReservePixels = 60;  // 하단 슬롯/조이스틱 영역
+
 		private void ApplyCameraBounds()
 		{
 			if (_camera == null) return;
+
+			float zoomY = Mathf.Max(_camera.Zoom.Y, 0.1f);
+			int topReserve = (int)Mathf.Ceil(HudTopReservePixels / zoomY);
+			int bottomReserve = (int)Mathf.Ceil(HudBottomReservePixels / zoomY);
 
 			var scene = GetTree().CurrentScene;
 
@@ -46,10 +57,10 @@ namespace FirstGame.Entities.Player
 			{
 				var size = bg.GetRect().Size;
 				_camera.LimitLeft   = 0;
-				_camera.LimitTop    = 0;
+				_camera.LimitTop    = -topReserve;
 				_camera.LimitRight  = (int)size.X;
-				_camera.LimitBottom = (int)size.Y;
-				GD.Print($"[Camera] Background 경계: {size.X}x{size.Y}");
+				_camera.LimitBottom = (int)size.Y + bottomReserve;
+				GD.Print($"[Camera] Background 경계: {size.X}x{size.Y} (HUD reserve T={topReserve} B={bottomReserve})");
 				return;
 			}
 
@@ -65,9 +76,9 @@ namespace FirstGame.Entities.Player
 				if (used.Size.X > 0 && used.Size.Y > 0)
 				{
 					_camera.LimitLeft   = (int)(used.Position.X * tileSize + tileMap.GlobalPosition.X);
-					_camera.LimitTop    = (int)(used.Position.Y * tileSize + tileMap.GlobalPosition.Y);
+					_camera.LimitTop    = (int)(used.Position.Y * tileSize + tileMap.GlobalPosition.Y) - topReserve;
 					_camera.LimitRight  = (int)((used.Position.X + used.Size.X) * tileSize + tileMap.GlobalPosition.X);
-					_camera.LimitBottom = (int)((used.Position.Y + used.Size.Y) * tileSize + tileMap.GlobalPosition.Y);
+					_camera.LimitBottom = (int)((used.Position.Y + used.Size.Y) * tileSize + tileMap.GlobalPosition.Y) + bottomReserve;
 					GD.Print($"[Camera] TileMap 경계: L={_camera.LimitLeft} T={_camera.LimitTop} R={_camera.LimitRight} B={_camera.LimitBottom}");
 					return;
 				}
@@ -75,9 +86,9 @@ namespace FirstGame.Entities.Player
 
 			// 최후 폴백: 1280×720 고정
 			_camera.LimitLeft   = 0;
-			_camera.LimitTop    = 0;
+			_camera.LimitTop    = -topReserve;
 			_camera.LimitRight  = 1280;
-			_camera.LimitBottom = 720;
+			_camera.LimitBottom = 720 + bottomReserve;
 			GD.Print("[Camera] 폴백 경계: 1280x720");
 		}
 
