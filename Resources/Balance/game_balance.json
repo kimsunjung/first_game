@@ -53,6 +53,14 @@
     "field_2":  { "hpMul": 1.6, "atkMul": 1.4, "expMul": 1.5 },
     "dungeon_2": { "hpMul": 2.0, "atkMul": 1.7, "expMul": 1.8 }
   },
+  "elite": {
+    "spawnChance": 0.10,
+    "hpMul": 2.0,
+    "atkMul": 1.5,
+    "expMul": 2.5,
+    "dropMul": 1.5,
+    "scaleMul": 1.25
+  },
   "progression": {
     "maxLevel": 50,
     "expBase": 100.0,

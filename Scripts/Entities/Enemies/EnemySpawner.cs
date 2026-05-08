@@ -151,15 +151,25 @@ namespace FirstGame.Entities.Enemies
 
 				// StatVariants가 있으면 랜덤으로 하나 선택 + zone 난이도 스케일 적용.
 				// .tres 원본을 보호하기 위해 Duplicate 후 변형.
+				bool isElite = false;
 				if (StatVariants != null && StatVariants.Length > 0)
 				{
 					int idx = (int)(GD.Randi() % (uint)StatVariants.Length);
 					var scaled = (EnemyStats)StatVariants[idx].Duplicate();
 					ApplyZoneScaling(scaled);
+
+					isElite = GD.Randf() < BalanceData.Elite.SpawnChance;
+					if (isElite) ApplyEliteBoost(scaled);
 					enemy.Stats = scaled;
 				}
 
 				enemy.GlobalPosition = spawnPos;
+				if (isElite)
+				{
+					enemy.Scale = new Vector2(BalanceData.Elite.ScaleMultiplier, BalanceData.Elite.ScaleMultiplier);
+					enemy.Modulate = new Color(1.4f, 0.7f, 1.3f, 1f);
+					enemy.AddToGroup("Elite");
+				}
 				enemy.AddToGroup("Enemy");
 				GetParent().AddChild(enemy);
 				return;
@@ -211,6 +221,18 @@ namespace FirstGame.Entities.Enemies
 				return true;
 
 			return false;
+		}
+
+		private static void ApplyEliteBoost(EnemyStats stats)
+		{
+			var b = BalanceData.Elite;
+			stats.MaxHealth = Mathf.Max(1, Mathf.RoundToInt(stats.MaxHealth * b.HpMultiplier));
+			stats.CurrentHealth = stats.MaxHealth;
+			stats.BaseDamage = Mathf.Max(1, Mathf.RoundToInt(stats.BaseDamage * b.AtkMultiplier));
+			stats.ExperienceReward = Mathf.RoundToInt(stats.ExperienceReward * b.ExpMultiplier);
+			stats.DropChance = Mathf.Min(1f, stats.DropChance * b.DropMultiplier);
+			if (!stats.EnemyTypeName.StartsWith("엘리트 "))
+				stats.EnemyTypeName = $"엘리트 {stats.EnemyTypeName}";
 		}
 
 		private void ApplyZoneScaling(EnemyStats stats)

@@ -15,6 +15,7 @@ namespace FirstGame.Core
 		public static SpawnerBalance Spawner { get; private set; } = new();
 		public static ProgressionBalance Progression { get; private set; } = new();
 		public static MovementBalance Movement { get; private set; } = new();
+		public static EliteBalance Elite { get; private set; } = new();
 		public static System.Collections.Generic.Dictionary<string, ZoneBalance> Zones { get; private set; } = new();
 		public static ZoneBalance GetZone(string zoneName)
 			=> !string.IsNullOrEmpty(zoneName) && Zones.TryGetValue(zoneName, out var z) ? z : new ZoneBalance();
@@ -50,6 +51,8 @@ namespace FirstGame.Core
 					Movement = ParseMovement(mov);
 				if (root.TryGetProperty("zones", out var zns))
 					Zones = ParseZones(zns);
+				if (root.TryGetProperty("elite", out var elt))
+					Elite = ParseElite(elt);
 
 				GD.Print("BalanceData: 밸런스 데이터 로드 완료");
 			}
@@ -147,6 +150,16 @@ namespace FirstGame.Core
 			ProjectileSpeedMultiplier = GetFloat(el, "projectileSpeedMultiplier", 0.85f)
 		};
 
+		private static EliteBalance ParseElite(JsonElement el) => new()
+		{
+			SpawnChance = GetFloat(el, "spawnChance", 0.10f),
+			HpMultiplier = GetFloat(el, "hpMul", 2.0f),
+			AtkMultiplier = GetFloat(el, "atkMul", 1.5f),
+			ExpMultiplier = GetFloat(el, "expMul", 2.5f),
+			DropMultiplier = GetFloat(el, "dropMul", 1.5f),
+			ScaleMultiplier = GetFloat(el, "scaleMul", 1.25f)
+		};
+
 		private static ProgressionBalance ParseProgression(JsonElement el) => new()
 		{
 			MaxLevel = GetInt(el, "maxLevel", 50),
@@ -218,6 +231,16 @@ namespace FirstGame.Core
 		public float HpMultiplier { get; set; } = 1.0f;
 		public float AtkMultiplier { get; set; } = 1.0f;
 		public float ExpMultiplier { get; set; } = 1.0f;
+	}
+
+	public class EliteBalance
+	{
+		public float SpawnChance { get; set; } = 0.10f;
+		public float HpMultiplier { get; set; } = 2.0f;
+		public float AtkMultiplier { get; set; } = 1.5f;
+		public float ExpMultiplier { get; set; } = 2.5f;
+		public float DropMultiplier { get; set; } = 1.5f;
+		public float ScaleMultiplier { get; set; } = 1.25f;
 	}
 
 	public class ProgressionBalance
