@@ -43,7 +43,7 @@ namespace FirstGame.Entities.Enemies
 
 		public override void _PhysicsProcess(double delta)
 		{
-			Position += Direction * Speed * (float)delta;
+			Position += Direction * Speed * FirstGame.Core.BalanceData.Movement.ProjectileSpeedMultiplier * (float)delta;
 			_lifetime -= (float)delta;
 
 			// 잔상 효과

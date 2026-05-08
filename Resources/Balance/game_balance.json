@@ -42,6 +42,11 @@
     "spawnInterval": 3.0,
     "spawnRadius": 300
   },
+  "movement": {
+    "playerSpeedMultiplier": 0.85,
+    "enemySpeedMultiplier": 0.85,
+    "projectileSpeedMultiplier": 0.85
+  },
   "progression": {
     "maxLevel": 50,
     "expBase": 100.0,

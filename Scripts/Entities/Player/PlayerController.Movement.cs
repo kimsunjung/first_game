@@ -23,7 +23,7 @@ namespace FirstGame.Entities.Player
 			if (inputDir != Vector2.Zero)
 			{
 				inputDir = inputDir.Normalized();
-				float speed = Stats.MoveSpeed * (_dashActive ? DashSpeedMultiplier : 1.0f);
+				float speed = Stats.MoveSpeed * FirstGame.Core.BalanceData.Movement.PlayerSpeedMultiplier * (_dashActive ? DashSpeedMultiplier : 1.0f);
 				Velocity = Velocity.MoveToward(inputDir * speed, Acceleration * (float)delta);
 				_facingDirection = inputDir;
 				// 이동 시 UI 포커스 해제 (방향키가 슬롯 포커스에 영향주는 것 방지)

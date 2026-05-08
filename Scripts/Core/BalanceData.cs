@@ -14,6 +14,7 @@ namespace FirstGame.Core
 		public static EnemyBalance Enemy { get; private set; } = new();
 		public static SpawnerBalance Spawner { get; private set; } = new();
 		public static ProgressionBalance Progression { get; private set; } = new();
+		public static MovementBalance Movement { get; private set; } = new();
 
 		public static void Load()
 		{
@@ -42,6 +43,8 @@ namespace FirstGame.Core
 					Spawner = ParseSpawner(spn);
 				if (root.TryGetProperty("progression", out var prg))
 					Progression = ParseProgression(prg);
+				if (root.TryGetProperty("movement", out var mov))
+					Movement = ParseMovement(mov);
 
 				GD.Print("BalanceData: 밸런스 데이터 로드 완료");
 			}
@@ -117,6 +120,13 @@ namespace FirstGame.Core
 			SpawnRadius = GetFloat(el, "spawnRadius", 300f)
 		};
 
+		private static MovementBalance ParseMovement(JsonElement el) => new()
+		{
+			PlayerSpeedMultiplier = GetFloat(el, "playerSpeedMultiplier", 0.85f),
+			EnemySpeedMultiplier = GetFloat(el, "enemySpeedMultiplier", 0.85f),
+			ProjectileSpeedMultiplier = GetFloat(el, "projectileSpeedMultiplier", 0.85f)
+		};
+
 		private static ProgressionBalance ParseProgression(JsonElement el) => new()
 		{
 			MaxLevel = GetInt(el, "maxLevel", 50),
@@ -174,6 +184,13 @@ namespace FirstGame.Core
 		public int MaxEnemies { get; set; } = 5;
 		public float SpawnInterval { get; set; } = 3.0f;
 		public float SpawnRadius { get; set; } = 300f;
+	}
+
+	public class MovementBalance
+	{
+		public float PlayerSpeedMultiplier { get; set; } = 0.85f;
+		public float EnemySpeedMultiplier { get; set; } = 0.85f;
+		public float ProjectileSpeedMultiplier { get; set; } = 0.85f;
 	}
 
 	public class ProgressionBalance

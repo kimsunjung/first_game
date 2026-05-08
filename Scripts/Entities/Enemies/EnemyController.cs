@@ -214,14 +214,15 @@ namespace FirstGame.Entities.Enemies
 		private void ExecuteChase(Vector2 direction, float distance)
 		{
 			float stopBuffer = 30.0f;
+			float speed = Stats.MoveSpeed * FirstGame.Core.BalanceData.Movement.EnemySpeedMultiplier;
 			if (distance <= Stats.AttackRange + stopBuffer)
 			{
 				float ratio = Mathf.Max(0.15f, (distance - Stats.AttackRange) / stopBuffer);
-				Velocity = direction * Stats.MoveSpeed * ratio;
+				Velocity = direction * speed * ratio;
 			}
 			else
 			{
-				Velocity = direction * Stats.MoveSpeed;
+				Velocity = direction * speed;
 			}
 			PlayAnim("run");
 		}
@@ -229,7 +230,8 @@ namespace FirstGame.Entities.Enemies
 		private void ExecuteFlee(Vector2 directionToTarget)
 		{
 			// 플레이어 반대 방향으로 도주
-			Velocity = -directionToTarget * Stats.MoveSpeed * 0.9f;
+			float speed = Stats.MoveSpeed * FirstGame.Core.BalanceData.Movement.EnemySpeedMultiplier;
+			Velocity = -directionToTarget * speed * 0.9f;
 			PlayAnim("run");
 		}
 
