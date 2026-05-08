@@ -6,10 +6,24 @@ namespace FirstGame.Data
 	{
 		Consumable, // 포션 등 소비 아이템
 		Weapon,     // 무기
-		Armor,      // 방어구
+		Armor,      // 방어구 (몸통)
 		SkillBook,  // 스킬북 (사용 시 스킬 습득)
-		Material,   // 재료 (통나무, 광석 등 — 크래프팅용)
-		Accessory   // 악세서리 (반지, 목걸이 등)
+		Material,   // 재료
+		Accessory,  // 레거시 — 기존 세이브 호환용. 마이그 시 Necklace로 자동 변환.
+		Helmet,     // 모자 / 투구
+		Boots,      // 신발
+		Necklace,   // 목걸이
+		Ring,       // 반지
+		Bracelet    // 팔찌
+	}
+
+	public static class ItemTypeExtensions
+	{
+		/// <summary>장비(장착 가능) 타입인지.</summary>
+		public static bool IsEquipment(this ItemType t) =>
+			t == ItemType.Weapon || t == ItemType.Armor || t == ItemType.Accessory ||
+			t == ItemType.Helmet || t == ItemType.Boots || t == ItemType.Necklace ||
+			t == ItemType.Ring || t == ItemType.Bracelet || t == ItemType.SkillBook;
 	}
 
 	public enum WeaponAttackType
@@ -51,6 +65,8 @@ namespace FirstGame.Data
 		[Export] public int BonusMaxHealth { get; set; } = 0;
 		[Export] public int BonusDefense { get; set; } = 0;
 		[Export] public float BonusMoveSpeed { get; set; } = 0f;
+		[Export] public int BonusMaxMp { get; set; } = 0;
+		[Export] public float BonusCritRate { get; set; } = 0f;
 		[Export] public WeaponAttackType AttackType { get; set; } = WeaponAttackType.Slice;
 
 		// 스킬북 전용

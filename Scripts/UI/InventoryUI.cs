@@ -231,7 +231,7 @@ namespace FirstGame.UI
         {
             return _filterMode switch
             {
-                FilterMode.Equipment => item.Type is ItemType.Weapon or ItemType.Armor or ItemType.Accessory or ItemType.SkillBook,
+                FilterMode.Equipment => item.Type.IsEquipment(),
                 FilterMode.Consumable => item.Type == ItemType.Consumable,
                 FilterMode.Material => item.Type == ItemType.Material,
                 _ => true
