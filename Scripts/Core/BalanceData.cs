@@ -15,6 +15,9 @@ namespace FirstGame.Core
 		public static SpawnerBalance Spawner { get; private set; } = new();
 		public static ProgressionBalance Progression { get; private set; } = new();
 		public static MovementBalance Movement { get; private set; } = new();
+		public static System.Collections.Generic.Dictionary<string, ZoneBalance> Zones { get; private set; } = new();
+		public static ZoneBalance GetZone(string zoneName)
+			=> !string.IsNullOrEmpty(zoneName) && Zones.TryGetValue(zoneName, out var z) ? z : new ZoneBalance();
 
 		public static void Load()
 		{
@@ -45,6 +48,8 @@ namespace FirstGame.Core
 					Progression = ParseProgression(prg);
 				if (root.TryGetProperty("movement", out var mov))
 					Movement = ParseMovement(mov);
+				if (root.TryGetProperty("zones", out var zns))
+					Zones = ParseZones(zns);
 
 				GD.Print("BalanceData: 밸런스 데이터 로드 완료");
 			}
@@ -120,6 +125,21 @@ namespace FirstGame.Core
 			SpawnRadius = GetFloat(el, "spawnRadius", 300f)
 		};
 
+		private static System.Collections.Generic.Dictionary<string, ZoneBalance> ParseZones(JsonElement el)
+		{
+			var result = new System.Collections.Generic.Dictionary<string, ZoneBalance>();
+			foreach (var prop in el.EnumerateObject())
+			{
+				result[prop.Name] = new ZoneBalance
+				{
+					HpMultiplier = GetFloat(prop.Value, "hpMul", 1.0f),
+					AtkMultiplier = GetFloat(prop.Value, "atkMul", 1.0f),
+					ExpMultiplier = GetFloat(prop.Value, "expMul", 1.0f)
+				};
+			}
+			return result;
+		}
+
 		private static MovementBalance ParseMovement(JsonElement el) => new()
 		{
 			PlayerSpeedMultiplier = GetFloat(el, "playerSpeedMultiplier", 0.85f),
@@ -191,6 +211,13 @@ namespace FirstGame.Core
 		public float PlayerSpeedMultiplier { get; set; } = 0.85f;
 		public float EnemySpeedMultiplier { get; set; } = 0.85f;
 		public float ProjectileSpeedMultiplier { get; set; } = 0.85f;
+	}
+
+	public class ZoneBalance
+	{
+		public float HpMultiplier { get; set; } = 1.0f;
+		public float AtkMultiplier { get; set; } = 1.0f;
+		public float ExpMultiplier { get; set; } = 1.0f;
 	}
 
 	public class ProgressionBalance

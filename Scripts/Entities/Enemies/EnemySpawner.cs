@@ -149,11 +149,14 @@ namespace FirstGame.Entities.Enemies
 
 				var enemy = EnemyScene.Instantiate<EnemyController>();
 
-				// StatVariants가 있으면 랜덤으로 하나 선택
+				// StatVariants가 있으면 랜덤으로 하나 선택 + zone 난이도 스케일 적용.
+				// .tres 원본을 보호하기 위해 Duplicate 후 변형.
 				if (StatVariants != null && StatVariants.Length > 0)
 				{
 					int idx = (int)(GD.Randi() % (uint)StatVariants.Length);
-					enemy.Stats = StatVariants[idx];
+					var scaled = (EnemyStats)StatVariants[idx].Duplicate();
+					ApplyZoneScaling(scaled);
+					enemy.Stats = scaled;
 				}
 
 				enemy.GlobalPosition = spawnPos;
@@ -210,6 +213,27 @@ namespace FirstGame.Entities.Enemies
 			return false;
 		}
 
+		private void ApplyZoneScaling(EnemyStats stats)
+		{
+			var zone = BalanceData.GetZone(GetCurrentZoneName());
+			if (zone.HpMultiplier == 1f && zone.AtkMultiplier == 1f && zone.ExpMultiplier == 1f)
+				return;
+
+			stats.MaxHealth = Mathf.Max(1, Mathf.RoundToInt(stats.MaxHealth * zone.HpMultiplier));
+			stats.CurrentHealth = stats.MaxHealth;
+			stats.BaseDamage = Mathf.Max(1, Mathf.RoundToInt(stats.BaseDamage * zone.AtkMultiplier));
+			stats.ExperienceReward = Mathf.RoundToInt(stats.ExperienceReward * zone.ExpMultiplier);
+		}
+
+		private string GetCurrentZoneName()
+		{
+			var path = GetTree()?.CurrentScene?.SceneFilePath;
+			if (string.IsNullOrEmpty(path)) return "";
+			int lastSlash = path.LastIndexOf('/');
+			string name = lastSlash >= 0 ? path.Substring(lastSlash + 1) : path;
+			return name.EndsWith(".tscn") ? name.Substring(0, name.Length - 5) : name;
+		}
+
 		private bool IsInsideMapBounds(Vector2I tilePos)
 		{
 			int padding = Mathf.Max(0, SpawnEdgePaddingTiles);
@@ -245,7 +269,9 @@ namespace FirstGame.Entities.Enemies
 			if (GameManager.Instance?.IsBossDefeated(BossStatVariant.EnemyTypeName) == true) return;
 			_bossAlive = true;
 			var boss = EnemyScene.Instantiate<EnemyController>();
-			boss.Stats = (EnemyStats)BossStatVariant.Duplicate();
+			var bossStats = (EnemyStats)BossStatVariant.Duplicate();
+			ApplyZoneScaling(bossStats);
+			boss.Stats = bossStats;
 			// 보스는 스포너 근처에 스폰
 			boss.GlobalPosition = GlobalPosition + new Vector2(0, -150);
 			boss.Scale = new Vector2(2.0f, 2.0f);
