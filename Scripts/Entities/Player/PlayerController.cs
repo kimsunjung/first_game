@@ -222,14 +222,33 @@ namespace FirstGame.Entities.Player
 				loadedArmor = GD.Load<ItemData>(data.EquippedArmorPath);
 			if (!string.IsNullOrEmpty(data.EquippedAccessoryPath))
 				loadedAccessory = GD.Load<ItemData>(data.EquippedAccessoryPath);
+
+			// v3→v4 마이그: 구 Accessory 슬롯의 아이템이 이제 Necklace/Ring 카테고리로 분류된 경우
+			// 신규 부위 슬롯으로 자동 이전. (Type 변경된 .tres 대응)
+			string migrateNecklacePath = data.EquippedNecklacePath;
+			string migrateRing1Path = data.EquippedRing1Path;
+			if (loadedAccessory != null)
+			{
+				if (loadedAccessory.Type == ItemType.Necklace && string.IsNullOrEmpty(migrateNecklacePath))
+				{
+					migrateNecklacePath = data.EquippedAccessoryPath;
+					loadedAccessory = null;
+				}
+				else if (loadedAccessory.Type == ItemType.Ring && string.IsNullOrEmpty(migrateRing1Path))
+				{
+					migrateRing1Path = data.EquippedAccessoryPath;
+					loadedAccessory = null;
+				}
+			}
+
 			Inventory.RestoreEquipment(loadedWeapon, loadedArmor, Stats, loadedAccessory,
 				data.EquippedWeaponEnhancement, data.EquippedArmorEnhancement, data.EquippedAccessoryEnhancement);
 
 			// 신규 부위별 슬롯 복원 (v4) — 빈 path는 무시됨
 			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Helmet, data.EquippedHelmetPath, Stats);
 			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Boots, data.EquippedBootsPath, Stats);
-			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Necklace, data.EquippedNecklacePath, Stats);
-			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Ring1, data.EquippedRing1Path, Stats);
+			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Necklace, migrateNecklacePath, Stats);
+			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Ring1, migrateRing1Path, Stats);
 			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Ring2, data.EquippedRing2Path, Stats);
 			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Bracelet, data.EquippedBraceletPath, Stats);
 
