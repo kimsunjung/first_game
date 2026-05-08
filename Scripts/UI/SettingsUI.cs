@@ -47,24 +47,20 @@ namespace FirstGame.UI
 
 		public override void _UnhandledInput(InputEvent @event)
 		{
-			if (@event is InputEventKey k && k.Pressed && !k.Echo)
+			// ui_cancel/Escape은 "닫기 전용". 모바일 뒤로가기 합성 이벤트와의 일관성을 위해 열기는 안 함.
+			// 게임 도중 설정 진입은 메인 메뉴 경유로만 가능.
+			if (!Visible) return;
+
+			bool cancelPressed =
+				(@event is InputEventKey k && k.Pressed && !k.Echo &&
+					(k.Keycode == Key.Escape || k.PhysicalKeycode == Key.Escape))
+				|| @event.IsActionPressed("ui_cancel");
+
+			if (cancelPressed)
 			{
-				if (k.Keycode == Key.Escape || k.PhysicalKeycode == Key.Escape)
-				{
-					// 설정이 열려있으면 닫기
-					if (Visible)
-					{
-						Visible = false;
-						UIPauseManager.ReleasePause();
-						return;
-					}
-
-					// 다른 UI가 일시정지 중이면 무시
-					if (UIPauseManager.IsPaused) return;
-
-					Visible = true;
-					UIPauseManager.RequestPause();
-				}
+				Visible = false;
+				UIPauseManager.ReleasePause();
+				GetViewport().SetInputAsHandled();
 			}
 		}
 
