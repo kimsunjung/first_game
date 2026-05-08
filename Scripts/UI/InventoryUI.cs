@@ -391,6 +391,16 @@ namespace FirstGame.UI
                 string sign = diff >= 0 ? "+" : "";
                 info += $"\n방어력: +{totalDef} (현재 대비 {sign}{diff})";
             }
+            else if (Inventory.IsExtraEquipType(item.Type))
+            {
+                // 신규 부위별 장비: 모든 보너스를 단순 표시 (현재 대비 비교는 없음)
+                if (item.BonusDamage > 0) info += $"\n공격력: +{item.BonusDamage}";
+                if (item.BonusMaxHealth > 0) info += $"\nHP: +{item.BonusMaxHealth}";
+                if (item.BonusDefense > 0) info += $"\n방어력: +{item.BonusDefense}";
+                if (item.BonusMaxMp > 0) info += $"\nMP: +{item.BonusMaxMp}";
+                if (item.BonusCritRate > 0f) info += $"\n치명타: +{item.BonusCritRate * 100f:0.#}%";
+                if (item.BonusMoveSpeed > 0f) info += $"\n이동속도: +{item.BonusMoveSpeed:0.#}";
+            }
 
             _itemInfoLabel.Text = info;
             _useButton.Visible = true;
