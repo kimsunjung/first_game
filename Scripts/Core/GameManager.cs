@@ -79,6 +79,13 @@ namespace FirstGame.Core
 			}
 		}
 
+		// throttle 만료 시점에 dirty save를 자동 flush (RequestAutoSave 후 추가 행동 없이 앱이
+		// 그대로 멈춰도 30초 뒤에는 보존되도록).
+		public override void _Process(double delta)
+		{
+			SaveManager.TickDirty();
+		}
+
 		// 모바일 뒤로가기 버튼 처리: 열린 UI 창이 있으면 닫고, 없으면 종료 확인 다이얼로그.
 		public override void _Notification(int what)
 		{
@@ -104,7 +111,11 @@ namespace FirstGame.Core
 					CancelButtonText = "아니오",
 					ProcessMode = ProcessModeEnum.Always
 				};
-				_exitDialog.Confirmed += () => GetTree().Quit();
+				_exitDialog.Confirmed += () =>
+				{
+					SaveManager.FlushDirtySave(); // 종료 직전 dirty 진행도 보존
+					GetTree().Quit();
+				};
 				_exitDialog.VisibilityChanged += OnExitDialogVisibilityChanged;
 				GetTree().Root.AddChild(_exitDialog);
 			}

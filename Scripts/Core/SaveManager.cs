@@ -17,6 +17,9 @@ namespace FirstGame.Core
 		// 보스 처치/씬 전환/수동 저장은 RequestAutoSave를 우회하므로 즉시 저장됨.
 		private const ulong AutoSaveThrottleMs = 30_000;
 		private static ulong _lastAutoSaveMs = 0;
+		// throttle 내 RequestAutoSave는 dirty 표시만 — 만료 후 TickDirty에서 자동 flush.
+		// 종료 다이얼로그 '예' 직전에도 FlushDirtySave를 호출해 진행 손실을 막는다.
+		private static bool _dirty = false;
 
 		public static SaveData PendingLoadData { get; set; } = null;
 
@@ -52,6 +55,7 @@ namespace FirstGame.Core
 
 				OnGameSaved?.Invoke();
 				_lastAutoSaveMs = Godot.Time.GetTicksMsec();
+				_dirty = false;
 				GD.Print($"게임이 저장되었습니다: {slot}");
 			}
 			catch (Exception e)
@@ -62,18 +66,49 @@ namespace FirstGame.Core
 		}
 
 		/// <summary>
-		/// 빈번하게 호출되는 자동 저장(예: 일반 적 처치). throttle 간격 내면 무시.
+		/// 빈번하게 호출되는 자동 저장(예: 일반 적 처치). throttle 간격 내면 dirty 표시만 — 만료 시
+		/// TickDirty 또는 다음 RequestAutoSave 호출에서 자동 flush.
 		/// 보스 처치/씬 전환/수동 저장은 SaveGame을 직접 호출해 즉시 저장한다.
 		/// </summary>
 		public static void RequestAutoSave(string slot = AutoSaveSlot)
 		{
 			ulong nowMs = Godot.Time.GetTicksMsec();
-			if (_lastAutoSaveMs > 0 && nowMs - _lastAutoSaveMs < AutoSaveThrottleMs) return;
+			if (_lastAutoSaveMs > 0 && nowMs - _lastAutoSaveMs < AutoSaveThrottleMs)
+			{
+				_dirty = true;
+				return;
+			}
 			SaveGame(slot);
 		}
 
-		/// <summary>새 게임 시작 시 throttle 초기화. 다음 RequestAutoSave가 즉시 통과한다.</summary>
-		public static void ResetAutoSaveThrottle() => _lastAutoSaveMs = 0;
+		/// <summary>
+		/// 주기적으로 호출(GameManager._Process). throttle 만료 + dirty면 자동 저장.
+		/// 일반몹 처치 후 아무 행동 없이 앱이 종료되더라도 30초 뒤에는 보존됨.
+		/// </summary>
+		public static void TickDirty(string slot = AutoSaveSlot)
+		{
+			if (!_dirty) return;
+			ulong nowMs = Godot.Time.GetTicksMsec();
+			if (_lastAutoSaveMs == 0 || nowMs - _lastAutoSaveMs >= AutoSaveThrottleMs)
+				SaveGame(slot);
+		}
+
+		/// <summary>
+		/// 종료 직전 호출 — dirty 상태면 throttle 무시하고 즉시 저장.
+		/// 모바일 뒤로가기 종료 다이얼로그 '예' 누르기 직전 진행 손실 차단.
+		/// </summary>
+		public static void FlushDirtySave(string slot = AutoSaveSlot)
+		{
+			if (!_dirty) return;
+			SaveGame(slot);
+		}
+
+		/// <summary>새 게임 시작 시 throttle/dirty 초기화. 다음 RequestAutoSave가 즉시 통과한다.</summary>
+		public static void ResetAutoSaveThrottle()
+		{
+			_lastAutoSaveMs = 0;
+			_dirty = false;
+		}
 
 		/// <summary>씬 전환용: 저장 후 PendingLoadData에 메모리에서 직접 할당</summary>
 		public static void SaveAndSetPending(string slot = AutoSaveSlot)
