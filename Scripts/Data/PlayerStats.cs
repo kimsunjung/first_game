@@ -44,6 +44,7 @@ namespace FirstGame.Data
 			else if (CurrentMp > MaxMp) CurrentMp = MaxMp;
 		}
 		public void ModifyCritRate(float delta) => CritRate += delta;
+		public void ModifyMoveSpeed(float delta) => MoveSpeed += delta;
 		public void Heal(int amount) => CurrentHealth = Math.Min(CurrentHealth + amount, MaxHealth);
 
 		// ─── 레벨/경험치 ─────────────────────────────────────────────

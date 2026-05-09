@@ -323,6 +323,7 @@ namespace FirstGame.Data
             if (item.BonusDefense != 0) target.ModifyDefense(sign * item.BonusDefense);
             if (item.BonusMaxMp != 0) target.ModifyMaxMp(sign * item.BonusMaxMp);
             if (item.BonusCritRate != 0f) target.ModifyCritRate(sign * item.BonusCritRate);
+            if (item.BonusMoveSpeed != 0f) target.ModifyMoveSpeed(sign * item.BonusMoveSpeed);
         }
 
         /// <summary>세이브에서 신규 부위별 슬롯 복원. 빈 path는 무시.</summary>
