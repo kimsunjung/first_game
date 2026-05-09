@@ -87,7 +87,7 @@ namespace FirstGame.Core
 					inv.ConsumeItems(quest.TargetItem, quest.TargetCount);
 					feasibleAfterConsume = inv.CanAddItem(quest.RewardItem, rewardQty);
 					if (!feasibleAfterConsume)
-						inv.AddItem(quest.TargetItem, quest.TargetCount); // 롤백
+						inv.AddItem(quest.TargetItem, quest.TargetCount, fireAcquired: false); // 롤백
 					else
 						gatherPending = false; // 이미 차감됨 — 아래에서 중복 호출 금지
 				}

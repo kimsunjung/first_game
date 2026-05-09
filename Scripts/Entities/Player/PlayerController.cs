@@ -211,7 +211,7 @@ namespace FirstGame.Entities.Player
 				foreach (var savedSlot in data.InventoryItems)
 				{
 					var item = GD.Load<ItemData>(savedSlot.ItemPath);
-					if (item != null) Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel);
+					if (item != null) Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel, fireAcquired: false);
 				}
 			}
 
@@ -233,7 +233,7 @@ namespace FirstGame.Entities.Player
 			{
 				if (data.EquippedAccessoryEnhancement > 0)
 				{
-					if (Inventory.AddItem(loadedAccessory, 1, data.EquippedAccessoryEnhancement))
+					if (Inventory.AddItem(loadedAccessory, 1, data.EquippedAccessoryEnhancement, fireAcquired: false))
 					{
 						GD.Print($"[마이그] 강화 +{data.EquippedAccessoryEnhancement} {loadedAccessory.ItemName} " +
 								 "→ 인벤토리로 반환 (신규 슬롯은 강화 미지원, 재장착 시 강화 수치 손실됨)");

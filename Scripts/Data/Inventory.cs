@@ -71,7 +71,14 @@ namespace FirstGame.Data
 
         // --- 인벤토리 조작 ---
 
-        public bool AddItem(ItemData item, int amount = 1, int enhancementLevel = 0)
+        /// <summary>
+        /// 인벤토리에 아이템 추가.
+        /// </summary>
+        /// <param name="fireAcquired">
+        /// true: 새 획득(필드 픽업/보상/구매)으로 간주해 OnItemPickedUp 발신.
+        /// false: 복원/장착해제/롤백 등 내부 이동이라 픽업 토스트 미발신.
+        /// </param>
+        public bool AddItem(ItemData item, int amount = 1, int enhancementLevel = 0, bool fireAcquired = true)
         {
             if (!CanAddItem(item, amount)) return false;
 
@@ -119,7 +126,7 @@ namespace FirstGame.Data
             }
 
             OnInventoryChanged?.Invoke();
-            OnItemPickedUp?.Invoke(item);
+            if (fireAcquired) OnItemPickedUp?.Invoke(item);
             return true;
         }
 
@@ -277,7 +284,7 @@ namespace FirstGame.Data
 
             var (dmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
             target.ModifyBaseDamage(-(EquippedWeapon.BonusDamage + dmg));
-            bool added = AddItem(EquippedWeapon, 1, EquippedWeaponEnhancement);
+            bool added = AddItem(EquippedWeapon, 1, EquippedWeaponEnhancement, fireAcquired: false);
             if (!added) return false;
 
             EquippedWeapon = null;
@@ -298,7 +305,7 @@ namespace FirstGame.Data
             var (_, _, def) = GetEnhancementBonuses(EquippedArmor, EquippedArmorEnhancement);
             target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
             target.ModifyDefense(-(EquippedArmor.BonusDefense + def));
-            bool added = AddItem(EquippedArmor, 1, EquippedArmorEnhancement);
+            bool added = AddItem(EquippedArmor, 1, EquippedArmorEnhancement, fireAcquired: false);
             if (!added) return false;
 
             EquippedArmor = null;
@@ -320,7 +327,7 @@ namespace FirstGame.Data
             target.ModifyDefense(-(EquippedAccessory.BonusDefense + defBonus));
             if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-(EquippedAccessory.BonusDamage + dmgBonus));
             if (EquippedAccessory.BonusMaxHealth > 0) target.ModifyMaxHealth(-EquippedAccessory.BonusMaxHealth);
-            bool added = AddItem(EquippedAccessory, 1, EquippedAccessoryEnhancement);
+            bool added = AddItem(EquippedAccessory, 1, EquippedAccessoryEnhancement, fireAcquired: false);
             if (!added) return false;
 
             EquippedAccessory = null;
@@ -407,7 +414,7 @@ namespace FirstGame.Data
             }
 
             ApplyItemBonuses(item, target, -1);
-            bool added = AddItem(item, 1, 0);
+            bool added = AddItem(item, 1, 0, fireAcquired: false);
             if (!added) return false;
 
             SetExtraSlot(slot, null);
