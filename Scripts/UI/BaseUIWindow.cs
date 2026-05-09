@@ -11,12 +11,41 @@ namespace FirstGame.UI
 	{
 		public const string GroupName = "ui_window";
 
+		// 창 외부(콘텐츠 패널 영역 밖)를 터치/클릭하면 닫히도록 풀스크린 투명 캡처 영역.
+		// 컨텐츠보다 뒤(자식 인덱스 0)에 두어 컨텐츠 패널이 우선 입력을 가져가게 한다.
+		private ColorRect _dismissArea;
+
 		public override void _Ready()
 		{
 			Visible = false;
 			AddToGroup(GroupName);
 			ProcessMode = ProcessModeEnum.Always;
+			EnsureDismissArea();
 			OnReadyInternal();
+		}
+
+		private void EnsureDismissArea()
+		{
+			_dismissArea = new ColorRect
+			{
+				Name = "DismissArea",
+				Color = new Color(0, 0, 0, 0), // 완전 투명 — 모달 dim 원하면 알파 조정
+				MouseFilter = Control.MouseFilterEnum.Stop
+			};
+			_dismissArea.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+			_dismissArea.GuiInput += OnDismissAreaInput;
+			AddChild(_dismissArea);
+			MoveChild(_dismissArea, 0); // 가장 뒤로 — 컨텐츠가 위에 그려지고 입력 우선 처리됨
+		}
+
+		private void OnDismissAreaInput(InputEvent @event)
+		{
+			bool dismiss =
+				(@event is InputEventMouseButton mb && mb.Pressed && mb.ButtonIndex == MouseButton.Left) ||
+				(@event is InputEventScreenTouch st && st.Pressed);
+			if (!dismiss) return;
+			Close();
+			_dismissArea.AcceptEvent();
 		}
 
 		public override void _ExitTree()
