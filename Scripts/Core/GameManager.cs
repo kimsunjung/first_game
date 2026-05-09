@@ -51,9 +51,7 @@ namespace FirstGame.Core
 			_defeatedBosses.Clear();
 			_activeEnemies.Clear();
 			QuestManager.RestoreFromSave("", 0, null);
-			EventManager.ResetAll();
-			// EventManager.ResetAll()은 QuestManager의 OnEnemyKilledTyped 구독도 제거하므로 복원
-			QuestManager.Resubscribe();
+			EventManager.ResetAll(); // 내부에서 QuestManager.Resubscribe 자동 호출
 		}
 
 		// UI 업데이트용 이벤트 (Event for UI updates)

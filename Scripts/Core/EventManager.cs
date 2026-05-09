@@ -58,8 +58,9 @@ namespace FirstGame.Core
 		}
 
 		/// <summary>
-		/// 씬 전환 시 모든 static 이벤트 초기화.
-		/// dead 참조 누적 방지.
+		/// 씬 전환 시 모든 static 이벤트 초기화. dead 참조 누적 방지.
+		/// 영구 인스턴스(QuestManager 등)의 구독은 즉시 자동 복원하여 호출자가
+		/// 매번 Resubscribe를 기억할 필요 없게 한다.
 		/// </summary>
 		public static void ResetAll()
 		{
@@ -71,6 +72,9 @@ namespace FirstGame.Core
 			OnEnemyKilled = null;
 			OnEnemyKilledTyped = null;
 			OnExpGained = null;
+
+			// QuestManager는 GameManager 영구 인스턴스 — 적 처치 이벤트 구독을 잃지 않도록 복원.
+			GameManager.Instance?.QuestManager?.Resubscribe();
 		}
 	}
 }
