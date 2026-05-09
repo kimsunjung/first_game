@@ -125,6 +125,30 @@ namespace FirstGame.Core
 			return player.Inventory.CountItem(item);
 		}
 
+		/// <summary>
+		/// 해당 NPC가 지금 부여할 수 있는 메인 퀘스트.
+		/// chain 순서를 보장하기 위해 "첫 미완료 퀘스트"가 이 NPC꺼일 때만 반환.
+		/// (선행 퀘스트를 건너뛰고 뒷 퀘스트를 부여하지 않음)
+		/// </summary>
+		public QuestData FindNextQuestForNpc(string npcId)
+		{
+			if (HasActiveQuest) return null;
+			using var dir = DirAccess.Open("res://Resources/Quests/");
+			if (dir == null) return null;
+			var files = dir.GetFiles();
+			System.Array.Sort(files, System.StringComparer.Ordinal);
+			foreach (var f in files)
+			{
+				if (!f.EndsWith(".tres")) continue;
+				var quest = GD.Load<QuestData>($"res://Resources/Quests/{f}");
+				if (quest == null) continue;
+				if (CompletedQuestIds.Contains(quest.QuestId)) continue;
+				// 첫 미완료 퀘스트 발견 — 이 NPC가 부여자면 반환, 아니면 null
+				return quest.GiverNpcId == npcId ? quest : null;
+			}
+			return null;
+		}
+
 		// ─── 세이브 ────────────────────────────────────────────
 		public void RestoreFromSave(string activeQuestPath, int progress, IEnumerable<string> completedIds)
 		{
