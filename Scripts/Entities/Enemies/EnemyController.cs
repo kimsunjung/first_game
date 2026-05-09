@@ -13,6 +13,12 @@ namespace FirstGame.Entities.Enemies
 	{
 		[Export] public EnemyStats Stats { get; set; }
 
+		/// <summary>
+		/// 보스 처치 식별자. 같은 boss .tres를 여러 던전에서 공유할 때 처치 키 충돌을
+		/// 방지하기 위해 EnemySpawner가 스폰 시 주입. 비어있으면 EnemyTypeName fallback.
+		/// </summary>
+		public string BossId { get; set; } = "";
+
 		private Node2D _target;
 		private ProgressBar _healthBar;
 		private AnimatedSprite2D _animSprite;
@@ -422,7 +428,8 @@ namespace FirstGame.Entities.Enemies
 			if (Stats.IsBoss)
 			{
 				EventManager.TriggerBossDied();
-				GameManager.Instance?.RecordBossDefeat(Stats.EnemyTypeName);
+				string bossKey = !string.IsNullOrEmpty(BossId) ? BossId : Stats.EnemyTypeName;
+				GameManager.Instance?.RecordBossDefeat(bossKey);
 			}
 
 			// 골드 보상

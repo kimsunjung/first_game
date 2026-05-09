@@ -19,6 +19,12 @@ namespace FirstGame.Entities.Enemies
 		[Export] public int TileSize { get; set; } = 16;
 		[Export] public EnemyStats BossStatVariant { get; set; }
 
+		/// <summary>
+		/// 이 스포너의 보스 처치 키. 같은 boss_*.tres를 여러 던전이 공유할 때 충돌을 방지.
+		/// 비워두면 BossStatVariant.EnemyTypeName을 사용 (단일 보스 또는 충돌 없는 경우).
+		/// </summary>
+		[Export] public string BossId { get; set; } = "";
+
 		// 보스 스폰 카운터 (씬 재로드 시 초기화됨)
 		private int _killCount = 0;
 		private bool _bossAlive = false;
@@ -285,15 +291,20 @@ namespace FirstGame.Entities.Enemies
 			_bossAlive = false;
 		}
 
+		private string ResolveBossId() =>
+			!string.IsNullOrEmpty(BossId) ? BossId : BossStatVariant?.EnemyTypeName ?? "";
+
 		private void TrySpawnBoss()
 		{
 			if (EnemyScene == null) return;
-			if (GameManager.Instance?.IsBossDefeated(BossStatVariant.EnemyTypeName) == true) return;
+			string bossKey = ResolveBossId();
+			if (GameManager.Instance?.IsBossDefeated(bossKey) == true) return;
 			_bossAlive = true;
 			var boss = EnemyScene.Instantiate<EnemyController>();
 			var bossStats = (EnemyStats)BossStatVariant.Duplicate();
 			ApplyZoneScaling(bossStats);
 			boss.Stats = bossStats;
+			boss.BossId = bossKey;
 			// 보스는 스포너 근처에 스폰
 			boss.GlobalPosition = GlobalPosition + new Vector2(0, -150);
 			boss.Scale = new Vector2(2.0f, 2.0f);
@@ -302,7 +313,7 @@ namespace FirstGame.Entities.Enemies
 			GetParent().AddChild(boss);
 			// zone scaling이 반영된 실제 HP를 UI에 전달
 			EventManager.TriggerBossSpawned(bossStats.MaxHealth, bossStats.EnemyTypeName);
-			GD.Print($"보스 등장! {bossStats.EnemyTypeName} (HP {bossStats.MaxHealth})");
+			GD.Print($"보스 등장! {bossStats.EnemyTypeName} (HP {bossStats.MaxHealth}, BossId={bossKey})");
 		}
 	}
 }

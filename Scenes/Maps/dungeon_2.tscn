@@ -68,6 +68,7 @@ SpawnInterval = 4.5
 MaxEnemies = 4
 SpawnRadius = 250.0
 BossStatVariant = ExtResource("15_boss")
+BossId = "skeleton_king_d2"
 
 [node name="Walls" type="StaticBody2D" parent="."]
 collision_layer = 4
