@@ -38,8 +38,9 @@ namespace FirstGame.Entities.Player
 		// 넉백
 		private Vector2 _knockbackVelocity = Vector2.Zero;
 
-		// 스킬 시스템
-		private readonly float[] _skillCooldowns = new float[4];
+		// 스킬 시스템 — 쿨타임은 SkillType 기준. 슬롯 인덱스에 묶지 않으므로 슬롯 스왑/재배치 시
+		// 쿨타임이 다른 스킬에 잘못 적용되거나 우회되는 일이 없다.
+		private readonly Dictionary<SkillType, float> _skillCooldowns = new();
 		private bool _powerStrikeActive = false;
 		private bool _dashActive = false;
 		private float _dashTimer = 0f;

@@ -11,10 +11,12 @@ namespace FirstGame.Entities.Player
 		// ─── 스킬 쿨다운 ────────────────────────────────────────────
 		private void UpdateSkillCooldowns(double delta)
 		{
-			for (int i = 0; i < _skillCooldowns.Length; i++)
+			// Dictionary는 enumerate 중 수정 불가 — 키 스냅샷 후 갱신
+			var keys = new System.Collections.Generic.List<SkillType>(_skillCooldowns.Keys);
+			foreach (var key in keys)
 			{
-				if (_skillCooldowns[i] > 0f)
-					_skillCooldowns[i] = Mathf.Max(0f, _skillCooldowns[i] - (float)delta);
+				if (_skillCooldowns[key] > 0f)
+					_skillCooldowns[key] = Mathf.Max(0f, _skillCooldowns[key] - (float)delta);
 			}
 		}
 
@@ -24,11 +26,12 @@ namespace FirstGame.Entities.Player
 			if (slot >= skills.Count) { GD.Print($"슬롯 {slot + 1}에 스킬이 없습니다."); return; }
 
 			var skill = skills[slot];
-			if (_skillCooldowns[slot] > 0f) { GD.Print($"{skill.SkillName} 쿨타임: {_skillCooldowns[slot]:F1}s"); return; }
+			float remaining = _skillCooldowns.TryGetValue(skill.Type, out var v) ? v : 0f;
+			if (remaining > 0f) { GD.Print($"{skill.SkillName} 쿨타임: {remaining:F1}s"); return; }
 			if (Stats.CurrentMp < skill.MpCost) { GD.Print("MP 부족!"); return; }
 
 			Stats.CurrentMp -= skill.MpCost;
-			_skillCooldowns[slot] = skill.Cooldown;
+			_skillCooldowns[skill.Type] = skill.Cooldown;
 			ActivateSkill(skill);
 		}
 
@@ -42,9 +45,13 @@ namespace FirstGame.Entities.Player
 		// 모바일 스킬 버튼에서 직접 호출
 		public void TriggerSkill(int slot) => UseSkillSlot(slot);
 
-		// 모바일 UI용 쿨타임/MP 정보 조회
+		// 모바일 UI용 쿨타임/MP 정보 조회 — 슬롯 인덱스를 SkillType으로 변환 후 조회
 		public float GetSkillCooldownRemaining(int slot)
-			=> slot < _skillCooldowns.Length ? _skillCooldowns[slot] : 0f;
+		{
+			var skills = Stats.LearnedSkills;
+			if (slot >= skills.Count) return 0f;
+			return _skillCooldowns.TryGetValue(skills[slot].Type, out var v) ? v : 0f;
+		}
 		public float GetSkillMaxCooldown(int slot)
 		{
 			var skills = Stats.LearnedSkills;
