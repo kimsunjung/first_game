@@ -282,14 +282,13 @@ namespace FirstGame.Entities.Player
 
 			if (data.QuickSlotPaths != null)
 			{
+				var qsItems = new ItemData[4];
 				for (int i = 0; i < data.QuickSlotPaths.Count && i < 4; i++)
 				{
 					if (!string.IsNullOrEmpty(data.QuickSlotPaths[i]))
-					{
-						var qsItem = GD.Load<ItemData>(data.QuickSlotPaths[i]);
-						if (qsItem != null) Inventory.QuickSlots[i] = qsItem;
-					}
+						qsItems[i] = GD.Load<ItemData>(data.QuickSlotPaths[i]);
 				}
+				Inventory.RestoreQuickSlots(qsItems);
 			}
 
 			// 스킬 복원

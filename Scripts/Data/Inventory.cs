@@ -438,7 +438,8 @@ namespace FirstGame.Data
             var item = QuickSlots[quickSlotIndex];
             if (item == null) return;
 
-            int slotIndex = Slots.FindIndex(s => s.Item == item);
+            // ResourcePath 비교 — Resource 캐시가 다른 인스턴스를 반환하더라도 동일 아이템으로 매칭.
+            int slotIndex = Slots.FindIndex(s => IsSameItem(s.Item, item));
             if (slotIndex != -1)
             {
                 UseItem(slotIndex, target);
@@ -447,6 +448,16 @@ namespace FirstGame.Data
             {
                 GD.Print($"{item.ItemName}이(가) 인벤토리에 없습니다!");
             }
+        }
+
+        /// <summary>세이브 복원용 일괄 퀵슬롯 적용. OnQuickSlotChanged 한 번만 발신.</summary>
+        public void RestoreQuickSlots(ItemData[] items)
+        {
+            if (items == null) return;
+            int count = Math.Min(items.Length, QuickSlots.Length);
+            for (int i = 0; i < count; i++)
+                QuickSlots[i] = items[i];
+            OnQuickSlotChanged?.Invoke();
         }
 
         // --- 크래프팅 지원 ---
