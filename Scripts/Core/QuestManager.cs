@@ -25,12 +25,24 @@ namespace FirstGame.Core
 
 		public QuestManager()
 		{
-			EventManager.OnEnemyKilledTyped += HandleEnemyKilled;
+			Resubscribe();
 		}
 
 		public void Dispose()
 		{
 			EventManager.OnEnemyKilledTyped -= HandleEnemyKilled;
+		}
+
+		/// <summary>
+		/// EventManager.ResetAll() 직후 호출해 적 처치 이벤트 구독을 복원.
+		/// QuestManager는 GameManager 영구 인스턴스이므로 새 게임 시작 후에도
+		/// Kill 진행도 추적이 끊기지 않도록 명시적으로 다시 구독한다.
+		/// 중복 등록 방지를 위해 -= 후 += 패턴 사용.
+		/// </summary>
+		public void Resubscribe()
+		{
+			EventManager.OnEnemyKilledTyped -= HandleEnemyKilled;
+			EventManager.OnEnemyKilledTyped += HandleEnemyKilled;
 		}
 
 		/// <summary>해당 NPC가 줄 수 있는 다음 퀘스트 존재 여부 확인용.</summary>
