@@ -216,62 +216,17 @@ namespace FirstGame.Entities.Player
 				}
 			}
 
-			ItemData loadedWeapon = null, loadedArmor = null, loadedAccessory = null;
-			if (!string.IsNullOrEmpty(data.EquippedWeaponPath))
-				loadedWeapon = GD.Load<ItemData>(data.EquippedWeaponPath);
-			if (!string.IsNullOrEmpty(data.EquippedArmorPath))
-				loadedArmor = GD.Load<ItemData>(data.EquippedArmorPath);
-			if (!string.IsNullOrEmpty(data.EquippedAccessoryPath))
-				loadedAccessory = GD.Load<ItemData>(data.EquippedAccessoryPath);
-
-			// v3→v4 마이그: 구 Accessory 슬롯의 아이템이 이제 Necklace/Ring 카테고리로 분류된 경우.
-			// 신규 슬롯은 강화 미지원이므로 강화 +N인 아이템은 인벤토리로 반환해 강화 수치 보존,
-			// 강화 0인 아이템만 신규 슬롯에 자동 장착.
-			string migrateNecklacePath = data.EquippedNecklacePath;
-			string migrateRing1Path = data.EquippedRing1Path;
-			if (loadedAccessory != null &&
-				(loadedAccessory.Type == ItemType.Necklace || loadedAccessory.Type == ItemType.Ring))
+			// 9개 장비 슬롯 + v3→v4 Accessory 재분류 마이그 일괄 처리
+			var report = Inventory.RestoreFromSaveData(data, Stats);
+			if (report.MigratedItem != null)
 			{
-				if (data.EquippedAccessoryEnhancement > 0)
-				{
-					if (Inventory.AddItem(loadedAccessory, 1, data.EquippedAccessoryEnhancement, fireAcquired: false))
-					{
-						GD.Print($"[마이그] 강화 +{data.EquippedAccessoryEnhancement} {loadedAccessory.ItemName} " +
-								 "→ 인벤토리로 반환 (신규 슬롯은 강화 미지원, 재장착 시 강화 수치 손실됨)");
-						loadedAccessory = null;
-					}
-					else
-					{
-						GD.PrintErr($"[마이그] 인벤 가득 — {loadedAccessory.ItemName} 강화 +{data.EquippedAccessoryEnhancement} 손실하며 신규 슬롯에 강제 장착");
-						// fallthrough: 신규 슬롯 자동 장착(강화 손실)
-					}
-				}
-
-				if (loadedAccessory != null)
-				{
-					if (loadedAccessory.Type == ItemType.Necklace && string.IsNullOrEmpty(migrateNecklacePath))
-					{
-						migrateNecklacePath = data.EquippedAccessoryPath;
-						loadedAccessory = null;
-					}
-					else if (loadedAccessory.Type == ItemType.Ring && string.IsNullOrEmpty(migrateRing1Path))
-					{
-						migrateRing1Path = data.EquippedAccessoryPath;
-						loadedAccessory = null;
-					}
-				}
+				if (report.MigratedToInventory)
+					GD.Print($"[마이그] 강화 +{report.MigratedEnhancement} {report.MigratedItem.ItemName} " +
+							 "→ 인벤토리로 반환 (신규 슬롯은 강화 미지원)");
+				else
+					GD.PrintErr($"[마이그] 인벤 가득 — {report.MigratedItem.ItemName} " +
+								$"강화 +{report.MigratedEnhancement} 손실하며 신규 슬롯에 강제 장착");
 			}
-
-			Inventory.RestoreEquipment(loadedWeapon, loadedArmor, Stats, loadedAccessory,
-				data.EquippedWeaponEnhancement, data.EquippedArmorEnhancement, data.EquippedAccessoryEnhancement);
-
-			// 신규 부위별 슬롯 복원 (v4) — 빈 path는 무시됨
-			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Helmet, data.EquippedHelmetPath, Stats);
-			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Boots, data.EquippedBootsPath, Stats);
-			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Necklace, migrateNecklacePath, Stats);
-			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Ring1, migrateRing1Path, Stats);
-			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Ring2, data.EquippedRing2Path, Stats);
-			Inventory.RestoreExtraSlot(Inventory.ExtraSlot.Bracelet, data.EquippedBraceletPath, Stats);
 
 			// 퀘스트 복원
 			GameManager.Instance?.QuestManager.RestoreFromSave(

@@ -567,7 +567,84 @@ namespace FirstGame.Data
             OnEquipmentChanged?.Invoke();
         }
 
-        // 세이브/로드 시 장비 복원
+        /// <summary>
+        /// 세이브 데이터의 모든 장비 슬롯을 일괄 복원하는 단일 진입점.
+        /// Weapon/Armor/Accessory + Helmet/Boots/Necklace/Ring1/Ring2/Bracelet 9개 슬롯과
+        /// v3→v4 Accessory 재분류 마이그까지 한 번에 처리한다.
+        /// </summary>
+        /// <returns>마이그 결과 (호출자가 사용자 알림에 활용 가능)</returns>
+        public EquipmentRestoreReport RestoreFromSaveData(SaveData data, IEquipTarget target)
+        {
+            var report = new EquipmentRestoreReport();
+
+            var loadedWeapon    = LoadItemPath(data.EquippedWeaponPath);
+            var loadedArmor     = LoadItemPath(data.EquippedArmorPath);
+            var loadedAccessory = LoadItemPath(data.EquippedAccessoryPath);
+
+            string migrateNecklacePath = data.EquippedNecklacePath;
+            string migrateRing1Path = data.EquippedRing1Path;
+
+            // v3→v4: 구 Accessory 슬롯 아이템이 Necklace/Ring으로 재분류된 경우.
+            // 신규 슬롯은 강화 미지원 — 강화 +N은 인벤토리로 반환해 보존.
+            if (loadedAccessory != null &&
+                (loadedAccessory.Type == ItemType.Necklace || loadedAccessory.Type == ItemType.Ring))
+            {
+                if (data.EquippedAccessoryEnhancement > 0)
+                {
+                    report.MigratedItem = loadedAccessory;
+                    report.MigratedEnhancement = data.EquippedAccessoryEnhancement;
+                    if (AddItem(loadedAccessory, 1, data.EquippedAccessoryEnhancement, fireAcquired: false))
+                    {
+                        report.MigratedToInventory = true;
+                        loadedAccessory = null;
+                    }
+                    else
+                    {
+                        report.MigratedToInventory = false; // 인벤 가득 — 강화 손실 강제 장착
+                    }
+                }
+
+                if (loadedAccessory != null)
+                {
+                    if (loadedAccessory.Type == ItemType.Necklace && string.IsNullOrEmpty(migrateNecklacePath))
+                    {
+                        migrateNecklacePath = data.EquippedAccessoryPath;
+                        loadedAccessory = null;
+                    }
+                    else if (loadedAccessory.Type == ItemType.Ring && string.IsNullOrEmpty(migrateRing1Path))
+                    {
+                        migrateRing1Path = data.EquippedAccessoryPath;
+                        loadedAccessory = null;
+                    }
+                }
+            }
+
+            RestoreEquipment(loadedWeapon, loadedArmor, target, loadedAccessory,
+                data.EquippedWeaponEnhancement, data.EquippedArmorEnhancement, data.EquippedAccessoryEnhancement);
+
+            RestoreExtraSlot(ExtraSlot.Helmet, data.EquippedHelmetPath, target);
+            RestoreExtraSlot(ExtraSlot.Boots, data.EquippedBootsPath, target);
+            RestoreExtraSlot(ExtraSlot.Necklace, migrateNecklacePath, target);
+            RestoreExtraSlot(ExtraSlot.Ring1, migrateRing1Path, target);
+            RestoreExtraSlot(ExtraSlot.Ring2, data.EquippedRing2Path, target);
+            RestoreExtraSlot(ExtraSlot.Bracelet, data.EquippedBraceletPath, target);
+
+            return report;
+        }
+
+        private static ItemData LoadItemPath(string path)
+            => string.IsNullOrEmpty(path) ? null : GD.Load<ItemData>(path);
+
+        public class EquipmentRestoreReport
+        {
+            /// <summary>v3→v4 마이그로 처리된 강화 Accessory. null이면 마이그 발생 안 함.</summary>
+            public ItemData MigratedItem;
+            public int MigratedEnhancement;
+            /// <summary>true=인벤토리로 안전 반환, false=인벤 가득해 강화 손실하며 신규 슬롯에 강제 장착.</summary>
+            public bool MigratedToInventory;
+        }
+
+        // 세이브/로드 시 장비 복원 (RestoreFromSaveData 내부에서 호출)
         public void RestoreEquipment(ItemData weapon, ItemData armor, IEquipTarget target,
             ItemData accessory = null,
             int weaponEnhance = 0, int armorEnhance = 0, int accessoryEnhance = 0)

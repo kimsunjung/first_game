@@ -196,6 +196,20 @@ namespace FirstGame.Core
 				data.OpenedChests ??= new();
 			}
 
+			if (data.Version < 4)
+			{
+				// v3→v4: 부위별 슬롯(Helmet/Boots/Necklace/Ring1/Ring2/Bracelet) 추가.
+				// 누락 path는 빈 문자열로 자동 초기화 (SaveData 기본값 = "").
+				// 구 Accessory의 Necklace/Ring 재분류 + 강화 +N 보존은
+				// PlayerController.LoadFromSaveData → Inventory.RestoreFromSaveData에서 처리.
+				data.EquippedHelmetPath ??= "";
+				data.EquippedBootsPath ??= "";
+				data.EquippedNecklacePath ??= "";
+				data.EquippedRing1Path ??= "";
+				data.EquippedRing2Path ??= "";
+				data.EquippedBraceletPath ??= "";
+			}
+
 			data.Version = SaveData.LatestVersion;
 			GD.Print($"SaveManager: 세이브 데이터 v{data.Version}으로 마이그레이션 완료");
 		}
