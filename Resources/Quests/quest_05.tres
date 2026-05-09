@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://qst0000000005"]
 
 [ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://itemboots001" path="res://Resources/Items/leather_boots.tres" id="2"]
 
 [resource]
 script = ExtResource("1")
@@ -13,3 +14,5 @@ TargetEnemyType = "Skeleton"
 GiverNpcId = "save_point"
 GoldReward = 500
 ExpReward = 200
+RewardItem = ExtResource("2")
+RewardItemQuantity = 1

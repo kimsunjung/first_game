@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
 [ext_resource type="Resource" path="res://Resources/Items/orc_leather.tres" id="2"]
+[ext_resource type="Resource" path="res://Resources/Items/wooden_club.tres" id="3"]
 
 [resource]
 script = ExtResource("1")
@@ -14,3 +15,5 @@ TargetItem = ExtResource("2")
 GiverNpcId = "blacksmith"
 GoldReward = 300
 ExpReward = 100
+RewardItem = ExtResource("3")
+RewardItemQuantity = 1

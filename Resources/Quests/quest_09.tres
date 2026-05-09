@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
 [ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="2"]
+[ext_resource type="Resource" uid="uid://itembrace002" path="res://Resources/Items/silver_bracelet.tres" id="3"]
 
 [resource]
 script = ExtResource("1")
@@ -14,3 +15,5 @@ TargetItem = ExtResource("2")
 GiverNpcId = "save_point"
 GoldReward = 1500
 ExpReward = 500
+RewardItem = ExtResource("3")
+RewardItemQuantity = 1
