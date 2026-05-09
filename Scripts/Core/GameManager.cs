@@ -81,11 +81,49 @@ namespace FirstGame.Core
 			}
 		}
 
-		// 모바일 뒤로가기 버튼 처리: 열린 UI 창이 있으면 닫고, 없으면 무시 (즉시 종료 방지)
+		// 모바일 뒤로가기 버튼 처리: 열린 UI 창이 있으면 닫고, 없으면 종료 확인 다이얼로그.
 		public override void _Notification(int what)
 		{
 			if (what == NotificationWMGoBackRequest)
-				FirstGame.UI.WindowManager.CloseTop();
+			{
+				if (FirstGame.UI.WindowManager.CloseTop()) return;
+				ShowExitConfirm();
+			}
+		}
+
+		private ConfirmationDialog _exitDialog;
+		private bool _exitDialogPausing = false;
+
+		private void ShowExitConfirm()
+		{
+			if (_exitDialog == null || !IsInstanceValid(_exitDialog))
+			{
+				_exitDialog = new ConfirmationDialog
+				{
+					Title = "종료",
+					DialogText = "게임을 종료하시겠습니까?",
+					OkButtonText = "예",
+					CancelButtonText = "아니오",
+					ProcessMode = ProcessModeEnum.Always
+				};
+				_exitDialog.Confirmed += () => GetTree().Quit();
+				_exitDialog.VisibilityChanged += OnExitDialogVisibilityChanged;
+				GetTree().Root.AddChild(_exitDialog);
+			}
+			if (_exitDialog.Visible) return;
+			_exitDialogPausing = true;
+			UIPauseManager.RequestPause();
+			_exitDialog.PopupCentered();
+		}
+
+		private void OnExitDialogVisibilityChanged()
+		{
+			if (_exitDialog == null || _exitDialog.Visible) return;
+			if (_exitDialogPausing)
+			{
+				_exitDialogPausing = false;
+				UIPauseManager.ReleasePause();
+			}
 		}
 	}
 }

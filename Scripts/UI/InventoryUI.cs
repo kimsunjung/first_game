@@ -12,12 +12,6 @@ namespace FirstGame.UI
         private GridContainer _grid;
         private Label _itemInfoLabel;
         private Button _useButton;
-        private Button _unequipWeaponButton;
-        private Button _unequipArmorButton;
-        private Button _unequipAccessoryButton;
-        private Label _weaponLabel;
-        private Label _armorLabel;
-        private Label _accessoryLabel;
         private VBoxContainer _quickSlotPanel;
         private Button[] _quickSlotButtons;
 
@@ -44,17 +38,8 @@ namespace FirstGame.UI
             _grid = GetNode<GridContainer>("%ItemGrid");
             _itemInfoLabel = GetNode<Label>("%ItemInfoLabel");
             _useButton = GetNode<Button>("%UseButton");
-            _unequipWeaponButton = GetNode<Button>("%UnequipWeaponButton");
-            _unequipArmorButton = GetNode<Button>("%UnequipArmorButton");
-            _unequipAccessoryButton = GetNode<Button>("%UnequipAccessoryButton");
-            _weaponLabel = GetNode<Label>("%WeaponLabel");
-            _armorLabel = GetNode<Label>("%ArmorLabel");
-            _accessoryLabel = GetNode<Label>("%AccessoryLabel");
 
             _useButton.Pressed += OnUsePressed;
-            _unequipWeaponButton.Pressed += OnUnequipWeaponPressed;
-            _unequipArmorButton.Pressed += OnUnequipArmorPressed;
-            _unequipAccessoryButton.Pressed += OnUnequipAccessoryPressed;
 
             CreateFilterButtons();
             CreateQuickSlotRow();
@@ -125,9 +110,7 @@ namespace FirstGame.UI
             _player = player;
             _inventory = player.Inventory;
             _inventory.OnInventoryChanged += RefreshGrid;
-            _inventory.OnEquipmentChanged += RefreshEquipment;
             RefreshGrid();
-            RefreshEquipment();
         }
 
         protected override bool CanOpen()
@@ -419,38 +402,10 @@ namespace FirstGame.UI
             if (_quickSlotPanel != null) _quickSlotPanel.Visible = false;
         }
 
-        private void RefreshEquipment()
-        {
-            _weaponLabel.Text = _inventory.EquippedWeapon != null
-                ? $"무기: {Inventory.GetEnhancedName(_inventory.EquippedWeapon, _inventory.EquippedWeaponEnhancement)}"
-                : "무기: 없음";
-            _armorLabel.Text = _inventory.EquippedArmor != null
-                ? $"방어구: {Inventory.GetEnhancedName(_inventory.EquippedArmor, _inventory.EquippedArmorEnhancement)}"
-                : "방어구: 없음";
-            _accessoryLabel.Text = _inventory.EquippedAccessory != null
-                ? $"악세: {Inventory.GetEnhancedName(_inventory.EquippedAccessory, _inventory.EquippedAccessoryEnhancement)}"
-                : "악세: 없음";
-        }
-
         private void OnUsePressed()
         {
             if (_selectedSlot >= 0)
                 _inventory.UseItem(_selectedSlot, _player.Stats);
-        }
-
-        private void OnUnequipWeaponPressed()
-        {
-            _inventory.UnequipWeapon(_player.Stats);
-        }
-
-        private void OnUnequipArmorPressed()
-        {
-            _inventory.UnequipArmor(_player.Stats);
-        }
-
-        private void OnUnequipAccessoryPressed()
-        {
-            _inventory.UnequipAccessory(_player.Stats);
         }
 
         private static Color GetRarityColor(ItemRarity rarity)
@@ -488,15 +443,9 @@ namespace FirstGame.UI
         protected override void OnExitTreeInternal()
         {
             if (_inventory != null)
-            {
                 _inventory.OnInventoryChanged -= RefreshGrid;
-                _inventory.OnEquipmentChanged -= RefreshEquipment;
-            }
 
             if (_useButton != null) _useButton.Pressed -= OnUsePressed;
-            if (_unequipWeaponButton != null) _unequipWeaponButton.Pressed -= OnUnequipWeaponPressed;
-            if (_unequipArmorButton != null) _unequipArmorButton.Pressed -= OnUnequipArmorPressed;
-            if (_unequipAccessoryButton != null) _unequipAccessoryButton.Pressed -= OnUnequipAccessoryPressed;
         }
     }
 }
