@@ -139,23 +139,21 @@ namespace FirstGame.Core
 
 		/// <summary>
 		/// 해당 NPC가 지금 부여할 수 있는 메인 퀘스트.
-		/// chain 순서를 보장하기 위해 "첫 미완료 퀘스트"가 이 NPC꺼일 때만 반환.
-		/// (선행 퀘스트를 건너뛰고 뒷 퀘스트를 부여하지 않음)
+		/// chain 순서를 보장하기 위해 "manifest 첫 미완료 퀘스트"가 이 NPC꺼일 때만 반환.
+		/// 선행 퀘스트를 건너뛰고 뒷 퀘스트를 부여하지 않음.
 		/// </summary>
 		public QuestData FindNextQuestForNpc(string npcId)
 		{
 			if (HasActiveQuest) return null;
-			using var dir = DirAccess.Open("res://Resources/Quests/");
-			if (dir == null) return null;
-			var files = dir.GetFiles();
-			System.Array.Sort(files, System.StringComparer.Ordinal);
-			foreach (var f in files)
+			// quest_manifest.tres에 명시된 순서로 검색.
+			// (DirAccess + .tres 디렉터리 열거는 Android export의 .remap 처리와 충돌 가능)
+			var manifest = GD.Load<QuestManifest>("res://Resources/Quests/quest_manifest.tres");
+			if (manifest?.MainQuests == null) return null;
+			foreach (var quest in manifest.MainQuests)
 			{
-				if (!f.EndsWith(".tres")) continue;
-				var quest = GD.Load<QuestData>($"res://Resources/Quests/{f}");
 				if (quest == null) continue;
 				if (CompletedQuestIds.Contains(quest.QuestId)) continue;
-				// 첫 미완료 퀘스트 발견 — 이 NPC가 부여자면 반환, 아니면 null
+				// 첫 미완료 퀘스트 — 이 NPC가 부여자면 반환, 아니면 null
 				return quest.GiverNpcId == npcId ? quest : null;
 			}
 			return null;

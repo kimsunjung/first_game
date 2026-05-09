@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="QuestManifest" format=3 uid="uid://qstmanifest001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/QuestManifest.cs" id="1"]
+[ext_resource type="Resource" uid="uid://qst0000000001" path="res://Resources/Quests/quest_01.tres" id="2"]
+[ext_resource type="Resource" uid="uid://qst0000000002" path="res://Resources/Quests/quest_02.tres" id="3"]
+[ext_resource type="Resource" uid="uid://qst0000000003" path="res://Resources/Quests/quest_03.tres" id="4"]
+[ext_resource type="Resource" uid="uid://qst0000000004" path="res://Resources/Quests/quest_04.tres" id="5"]
+[ext_resource type="Resource" uid="uid://qst0000000005" path="res://Resources/Quests/quest_05.tres" id="6"]
+[ext_resource type="Resource" uid="uid://qst0000000006" path="res://Resources/Quests/quest_06.tres" id="7"]
+[ext_resource type="Resource" uid="uid://qst0000000007" path="res://Resources/Quests/quest_07.tres" id="8"]
+[ext_resource type="Resource" uid="uid://qst0000000008" path="res://Resources/Quests/quest_08.tres" id="9"]
+[ext_resource type="Resource" uid="uid://qst0000000009" path="res://Resources/Quests/quest_09.tres" id="10"]
+[ext_resource type="Resource" uid="uid://qst0000000010" path="res://Resources/Quests/quest_10.tres" id="11"]
+
+[resource]
+script = ExtResource("1")
+MainQuests = Array[Resource]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10"), ExtResource("11")])
