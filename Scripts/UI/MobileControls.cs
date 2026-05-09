@@ -20,10 +20,11 @@ namespace FirstGame.UI
         // 스킬 버튼 위에 표시할 쿨타임 레이블 (프로그래밍 방식으로 생성)
         private Label[] _cooldownLabels = new Label[4];
 
-        // 공격 버튼 같은 프레임 중복 트리거 방지. emulate_mouse_from_touch=true 환경에서
+        // 같은 프레임 중복 트리거 방지. emulate_mouse_from_touch=true 환경에서
         // 첫 터치는 Pressed 시그널(MouseButton)로, 두 번째 터치는 ScreenTouch 직접 핸들러로
         // 들어오는데 단일 터치가 양쪽 모두로 보이는 케이스를 차단.
         private ulong _lastAttackFrame = 0;
+        private readonly ulong[] _lastSkillFrame = new ulong[4];
 
         private static readonly string[] SlotKeys = { "Q", "W", "E", "R" };
 
@@ -50,7 +51,10 @@ namespace FirstGame.UI
             for (int i = 0; i < 4; i++)
             {
                 int slot = i;
-                _skillButtons[i]?.Connect("pressed", Callable.From(() => GetPlayer()?.TriggerSkill(slot)));
+                _skillButtons[i]?.Connect("pressed", Callable.From(() => OnSkillPressed(slot)));
+                // 멀티터치 보강 — 조이스틱 누른 채 스킬 버튼 터치(두 번째 터치)도 받도록 ScreenTouch 직접 처리
+                if (_skillButtons[i] != null)
+                    _skillButtons[i].GuiInput += (ev) => OnSkillGuiInput(ev, slot);
 
                 // 쿨타임 오버레이 레이블 생성
                 if (_skillButtons[i] != null)
@@ -166,10 +170,30 @@ namespace FirstGame.UI
             }
         }
 
+        private void OnSkillPressed(int slot)
+        {
+            if (slot < 0 || slot >= _lastSkillFrame.Length) return;
+            ulong frame = Engine.GetProcessFrames();
+            if (_lastSkillFrame[slot] == frame) return;
+            _lastSkillFrame[slot] = frame;
+            GetPlayer()?.TriggerSkill(slot);
+        }
+
+        private void OnSkillGuiInput(InputEvent @event, int slot)
+        {
+            if (@event is InputEventScreenTouch t && t.Pressed)
+            {
+                OnSkillPressed(slot);
+                _skillButtons[slot]?.AcceptEvent();
+            }
+        }
+
         private void OnInteractPressed()
         {
-            var ev = new InputEventAction { Action = "interact", Pressed = true };
-            Input.ParseInputEvent(ev);
+            // pressed=true / pressed=false 한 쌍으로 보내 IsActionPressed("interact")가 stuck되지 않도록.
+            // 현재는 _UnhandledInput 단발 처리지만, 향후 IsActionPressed 기반 로직이 추가되어도 안전.
+            Input.ParseInputEvent(new InputEventAction { Action = "interact", Pressed = true });
+            Input.ParseInputEvent(new InputEventAction { Action = "interact", Pressed = false });
         }
 
         private void OnInventoryPressed()
