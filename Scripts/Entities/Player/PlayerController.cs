@@ -223,21 +223,41 @@ namespace FirstGame.Entities.Player
 			if (!string.IsNullOrEmpty(data.EquippedAccessoryPath))
 				loadedAccessory = GD.Load<ItemData>(data.EquippedAccessoryPath);
 
-			// v3→v4 마이그: 구 Accessory 슬롯의 아이템이 이제 Necklace/Ring 카테고리로 분류된 경우
-			// 신규 부위 슬롯으로 자동 이전. (Type 변경된 .tres 대응)
+			// v3→v4 마이그: 구 Accessory 슬롯의 아이템이 이제 Necklace/Ring 카테고리로 분류된 경우.
+			// 신규 슬롯은 강화 미지원이므로 강화 +N인 아이템은 인벤토리로 반환해 강화 수치 보존,
+			// 강화 0인 아이템만 신규 슬롯에 자동 장착.
 			string migrateNecklacePath = data.EquippedNecklacePath;
 			string migrateRing1Path = data.EquippedRing1Path;
-			if (loadedAccessory != null)
+			if (loadedAccessory != null &&
+				(loadedAccessory.Type == ItemType.Necklace || loadedAccessory.Type == ItemType.Ring))
 			{
-				if (loadedAccessory.Type == ItemType.Necklace && string.IsNullOrEmpty(migrateNecklacePath))
+				if (data.EquippedAccessoryEnhancement > 0)
 				{
-					migrateNecklacePath = data.EquippedAccessoryPath;
-					loadedAccessory = null;
+					if (Inventory.AddItem(loadedAccessory, 1, data.EquippedAccessoryEnhancement))
+					{
+						GD.Print($"[마이그] 강화 +{data.EquippedAccessoryEnhancement} {loadedAccessory.ItemName} " +
+								 "→ 인벤토리로 반환 (신규 슬롯은 강화 미지원, 재장착 시 강화 수치 손실됨)");
+						loadedAccessory = null;
+					}
+					else
+					{
+						GD.PrintErr($"[마이그] 인벤 가득 — {loadedAccessory.ItemName} 강화 +{data.EquippedAccessoryEnhancement} 손실하며 신규 슬롯에 강제 장착");
+						// fallthrough: 신규 슬롯 자동 장착(강화 손실)
+					}
 				}
-				else if (loadedAccessory.Type == ItemType.Ring && string.IsNullOrEmpty(migrateRing1Path))
+
+				if (loadedAccessory != null)
 				{
-					migrateRing1Path = data.EquippedAccessoryPath;
-					loadedAccessory = null;
+					if (loadedAccessory.Type == ItemType.Necklace && string.IsNullOrEmpty(migrateNecklacePath))
+					{
+						migrateNecklacePath = data.EquippedAccessoryPath;
+						loadedAccessory = null;
+					}
+					else if (loadedAccessory.Type == ItemType.Ring && string.IsNullOrEmpty(migrateRing1Path))
+					{
+						migrateRing1Path = data.EquippedAccessoryPath;
+						loadedAccessory = null;
+					}
 				}
 			}
 
