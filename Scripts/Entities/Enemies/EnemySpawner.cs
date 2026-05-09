@@ -300,8 +300,9 @@ namespace FirstGame.Entities.Enemies
 			boss.AddToGroup("Boss");
 			boss.AddToGroup("Enemy");
 			GetParent().AddChild(boss);
-			EventManager.TriggerBossSpawned(BossStatVariant.MaxHealth, BossStatVariant.EnemyTypeName);
-			GD.Print($"보스 등장! {BossStatVariant.EnemyTypeName}");
+			// zone scaling이 반영된 실제 HP를 UI에 전달
+			EventManager.TriggerBossSpawned(bossStats.MaxHealth, bossStats.EnemyTypeName);
+			GD.Print($"보스 등장! {bossStats.EnemyTypeName} (HP {bossStats.MaxHealth})");
 		}
 	}
 }
