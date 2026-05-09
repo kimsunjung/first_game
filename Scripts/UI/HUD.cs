@@ -68,7 +68,10 @@ namespace FirstGame.UI
 			EventManager.OnLevelUp += ShowLevelUp;
 			SaveManager.OnGameSaved += ShowSaveNotification;
 			if (GameManager.Instance != null)
+			{
 				GameManager.Instance.QuestManager.OnQuestStateChanged += UpdateQuestDisplay;
+				GameManager.Instance.QuestManager.OnRewardBlocked += OnQuestRewardBlocked;
+			}
 			UpdateQuestDisplay();
 
 			if (GameManager.Instance != null)
@@ -125,7 +128,19 @@ namespace FirstGame.UI
 			EventManager.OnLevelUp -= ShowLevelUp;
 			SaveManager.OnGameSaved -= ShowSaveNotification;
 			if (GameManager.Instance != null)
+			{
 				GameManager.Instance.QuestManager.OnQuestStateChanged -= UpdateQuestDisplay;
+				GameManager.Instance.QuestManager.OnRewardBlocked -= OnQuestRewardBlocked;
+			}
+		}
+
+		private async void OnQuestRewardBlocked(Data.QuestData quest)
+		{
+			_itemPickupNotification.Text = $"가방 공간 부족 — {quest.QuestTitle} 보류";
+			_itemPickupNotification.Visible = true;
+			await ToSignal(GetTree().CreateTimer(2.5), SceneTreeTimer.SignalName.Timeout);
+			if (IsInstanceValid(this))
+				_itemPickupNotification.Visible = false;
 		}
 
 		private void UpdateQuestDisplay()

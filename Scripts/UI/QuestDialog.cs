@@ -119,8 +119,16 @@ namespace FirstGame.UI
 					Close();
 					break;
 				case DialogMode.ReadyToComplete:
-					qm.CompleteQuest(_player);
-					Close();
+					if (qm.CompleteQuest(_player))
+					{
+						Close();
+					}
+					else
+					{
+						// 인벤 공간 부족 또는 재료 사라짐 — 창 유지하고 사용자에게 안내.
+						_progressLabel.Text = "가방 공간이 부족하거나 재료가 사라졌습니다. 정리 후 다시 시도하세요.";
+						_progressLabel.AddThemeColorOverride("font_color", new Color(1f, 0.5f, 0.4f));
+					}
 					break;
 			}
 		}

@@ -67,54 +67,86 @@ namespace FirstGame.Core
 		/// </summary>
 		public event Action<QuestData> OnRewardBlocked;
 
-		public void CompleteQuest(IPlayer player)
+		/// <summary>
+		/// 활성 퀘스트 완료 처리. 모든 검증/보상/차감이 성공하면 true 반환.
+		/// 인벤 공간 부족 또는 Gather 재료가 사라진 경우 false 반환 — ActiveQuest는 유지되어
+		/// 사용자가 정리 후 다시 시도 가능. UI는 반환값으로 다이얼로그 닫기 여부 결정.
+		/// </summary>
+		public bool CompleteQuest(IPlayer player)
 		{
-			if (!IsActiveQuestComplete || player == null) return;
+			if (!IsActiveQuestComplete || player == null) return false;
 			var quest = ActiveQuest;
 			var inv = player.Inventory;
+
+			// Gather 재검증 — 재료를 판매/소비한 뒤 완료 시도하는 케이스 차단.
+			// Progress는 과거 획득 이벤트 누적이라 현재 인벤 상태와 어긋날 수 있다.
+			if (quest.Type == QuestType.Gather && quest.TargetItem != null)
+			{
+				if (inv == null || !inv.HasItems(quest.TargetItem, quest.TargetCount))
+				{
+					int actual = inv?.CountItem(quest.TargetItem) ?? 0;
+					GD.Print($"[Quest] {quest.QuestTitle} — 재료 부족(현재 {actual}/{quest.TargetCount}). 완료 보류");
+					Progress = actual;
+					OnQuestStateChanged?.Invoke();
+					OnRewardBlocked?.Invoke(quest);
+					return false;
+				}
+			}
 
 			int rewardQty = quest.RewardItem != null ? Math.Max(1, quest.RewardItemQuantity) : 0;
 			bool gatherPending = quest.Type == QuestType.Gather && quest.TargetItem != null && inv != null;
 
-			// 보상 지급/재료 차감을 원자적으로 처리. 인벤이 가득 차면 완료 자체를 보류해
-			// AddItem 실패로 보상이 사라지는 결함을 차단한다.
+			// 보상 인벤 공간 확인. Gather 차감으로 빈 슬롯 생기는 케이스는 destructive 시뮬레이션 후
+			// 실패 시 롤백.
 			if (quest.RewardItem != null && inv != null && !inv.CanAddItem(quest.RewardItem, rewardQty))
 			{
-				// Gather 차감 후 빈 슬롯이 생기면 보상 지급이 가능한지 시뮬레이션.
 				bool feasibleAfterConsume = false;
 				if (gatherPending)
 				{
-					inv.ConsumeItems(quest.TargetItem, quest.TargetCount);
+					if (!inv.ConsumeItems(quest.TargetItem, quest.TargetCount))
+					{
+						GD.PrintErr($"[Quest] ConsumeItems 실패 — {quest.QuestTitle} 보상 보류");
+						OnRewardBlocked?.Invoke(quest);
+						return false;
+					}
 					feasibleAfterConsume = inv.CanAddItem(quest.RewardItem, rewardQty);
 					if (!feasibleAfterConsume)
 						inv.AddItem(quest.TargetItem, quest.TargetCount, fireAcquired: false); // 롤백
 					else
-						gatherPending = false; // 이미 차감됨 — 아래에서 중복 호출 금지
+						gatherPending = false; // 이미 차감됨 — 아래 중복 차감 방지
 				}
 				if (!feasibleAfterConsume)
 				{
 					GD.Print($"[Quest] 인벤토리 공간 부족 — {quest.QuestTitle} 보상 지급 보류 (정리 후 재시도)");
 					OnRewardBlocked?.Invoke(quest);
-					return;
+					return false;
 				}
 			}
 
-			// 보상 지급
+			// Gather 차감 — 반환값 검사 (위 HasItems 통과 후 race로 사라지는 케이스 방어)
+			if (gatherPending)
+			{
+				if (!inv.ConsumeItems(quest.TargetItem, quest.TargetCount))
+				{
+					GD.PrintErr($"[Quest] ConsumeItems 실패(race) — {quest.QuestTitle} 보상 보류");
+					OnRewardBlocked?.Invoke(quest);
+					return false;
+				}
+			}
+
+			// 보상 지급 — 검증 모두 통과 후에만 실행
 			GameManager.Instance.PlayerGold += quest.GoldReward;
 			if (quest.ExpReward > 0)
 				EventManager.TriggerExpGained(quest.ExpReward);
 			if (quest.RewardItem != null && inv != null)
 				inv.AddItem(quest.RewardItem, rewardQty);
 
-			// Gather 차감 (위 시뮬레이션 경로에서 이미 처리됐으면 건너뜀)
-			if (gatherPending)
-				inv.ConsumeItems(quest.TargetItem, quest.TargetCount);
-
 			CompletedQuestIds.Add(quest.QuestId);
 			ActiveQuest = null;
 			Progress = 0;
 			OnQuestStateChanged?.Invoke();
 			GD.Print($"[Quest] 완료: {quest.QuestTitle}");
+			return true;
 		}
 
 		public void NotifyNpcTalked(string npcId, IPlayer player)
