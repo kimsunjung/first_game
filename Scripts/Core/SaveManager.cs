@@ -13,6 +13,11 @@ namespace FirstGame.Core
 		private const string AutoSaveSlot = "autosave";
 		private const string ManualSaveSlot = "manual";
 
+		// 일반 적 처치 같은 빈번한 자동 저장 호출의 throttle 간격(ms).
+		// 보스 처치/씬 전환/수동 저장은 RequestAutoSave를 우회하므로 즉시 저장됨.
+		private const ulong AutoSaveThrottleMs = 30_000;
+		private static ulong _lastAutoSaveMs = 0;
+
 		public static SaveData PendingLoadData { get; set; } = null;
 
 		public static event Action OnGameSaved;
@@ -46,6 +51,7 @@ namespace FirstGame.Core
 				File.WriteAllText(path, json);
 
 				OnGameSaved?.Invoke();
+				_lastAutoSaveMs = Godot.Time.GetTicksMsec();
 				GD.Print($"게임이 저장되었습니다: {slot}");
 			}
 			catch (Exception e)
@@ -54,6 +60,20 @@ namespace FirstGame.Core
 			}
 			return data;
 		}
+
+		/// <summary>
+		/// 빈번하게 호출되는 자동 저장(예: 일반 적 처치). throttle 간격 내면 무시.
+		/// 보스 처치/씬 전환/수동 저장은 SaveGame을 직접 호출해 즉시 저장한다.
+		/// </summary>
+		public static void RequestAutoSave(string slot = AutoSaveSlot)
+		{
+			ulong nowMs = Godot.Time.GetTicksMsec();
+			if (_lastAutoSaveMs > 0 && nowMs - _lastAutoSaveMs < AutoSaveThrottleMs) return;
+			SaveGame(slot);
+		}
+
+		/// <summary>새 게임 시작 시 throttle 초기화. 다음 RequestAutoSave가 즉시 통과한다.</summary>
+		public static void ResetAutoSaveThrottle() => _lastAutoSaveMs = 0;
 
 		/// <summary>씬 전환용: 저장 후 PendingLoadData에 메모리에서 직접 할당</summary>
 		public static void SaveAndSetPending(string slot = AutoSaveSlot)

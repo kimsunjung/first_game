@@ -470,8 +470,11 @@ namespace FirstGame.Entities.Enemies
 				}
 			}
 
-			// 자동 저장
-			SaveManager.SaveGame();
+			// 자동 저장 — 보스 처치는 즉시(보스 키 기록 보호), 일반몹은 throttle
+			if (Stats.IsBoss)
+				SaveManager.SaveGame();
+			else
+				SaveManager.RequestAutoSave();
 
 			// 사망 애니메이션 재생 후 QueueFree
 			if (_animSprite != null)
