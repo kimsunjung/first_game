@@ -73,6 +73,8 @@ namespace FirstGame.Data
 
         public bool AddItem(ItemData item, int amount = 1, int enhancementLevel = 0)
         {
+            // OnItemPickedUp은 호출당 1회만 발사 (HUD 픽업 알림 중복 방지).
+            // 부분 스택 후 새 슬롯으로 떨어지는 케이스에서도 알림 1회.
             if (item.IsStackable)
             {
                 var existing = Slots.Find(s => s.Item.ResourcePath == item.ResourcePath);
@@ -84,14 +86,23 @@ namespace FirstGame.Data
                         int toAdd = Math.Min(amount, space);
                         existing.Quantity += toAdd;
                         amount -= toAdd;
-                        OnInventoryChanged?.Invoke();
-                        OnItemPickedUp?.Invoke(item);
-                        if (amount <= 0) return true;
+                        if (amount <= 0)
+                        {
+                            OnInventoryChanged?.Invoke();
+                            OnItemPickedUp?.Invoke(item);
+                            return true;
+                        }
+                        // 남은 양이 있으면 새 슬롯으로 fallthrough — 알림은 아래에서 한 번만
                     }
                 }
             }
 
-            if (Slots.Count >= MaxSlots) return false;
+            if (Slots.Count >= MaxSlots)
+            {
+                // 부분 스택까지만 들어간 케이스도 변경 알림은 보내야 함
+                OnInventoryChanged?.Invoke();
+                return false;
+            }
 
             Slots.Add(new InventorySlot { Item = item, Quantity = amount, EnhancementLevel = enhancementLevel });
             OnInventoryChanged?.Invoke();
