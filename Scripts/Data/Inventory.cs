@@ -73,41 +73,88 @@ namespace FirstGame.Data
 
         public bool AddItem(ItemData item, int amount = 1, int enhancementLevel = 0)
         {
-            // OnItemPickedUp은 호출당 1회만 발사 (HUD 픽업 알림 중복 방지).
-            // 부분 스택 후 새 슬롯으로 떨어지는 케이스에서도 알림 1회.
+            if (!CanAddItem(item, amount)) return false;
+
             if (item.IsStackable)
             {
-                var existing = Slots.Find(s => s.Item.ResourcePath == item.ResourcePath);
-                if (existing != null)
+                int remaining = amount;
+                int maxStack = Math.Max(1, item.MaxStack);
+
+                foreach (var existing in Slots)
                 {
-                    int space = item.MaxStack - existing.Quantity;
-                    if (space > 0)
+                    if (!IsSameItem(existing.Item, item)) continue;
+
+                    int space = maxStack - existing.Quantity;
+                    if (space <= 0) continue;
+
+                    int toAdd = Math.Min(remaining, space);
+                    existing.Quantity += toAdd;
+                    remaining -= toAdd;
+                    if (remaining <= 0) break;
+                }
+
+                while (remaining > 0)
+                {
+                    int toAdd = Math.Min(remaining, maxStack);
+                    Slots.Add(new InventorySlot
                     {
-                        int toAdd = Math.Min(amount, space);
-                        existing.Quantity += toAdd;
-                        amount -= toAdd;
-                        if (amount <= 0)
-                        {
-                            OnInventoryChanged?.Invoke();
-                            OnItemPickedUp?.Invoke(item);
-                            return true;
-                        }
-                        // 남은 양이 있으면 새 슬롯으로 fallthrough — 알림은 아래에서 한 번만
-                    }
+                        Item = item,
+                        Quantity = toAdd,
+                        EnhancementLevel = enhancementLevel
+                    });
+                    remaining -= toAdd;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < amount; i++)
+                {
+                    Slots.Add(new InventorySlot
+                    {
+                        Item = item,
+                        Quantity = 1,
+                        EnhancementLevel = enhancementLevel
+                    });
                 }
             }
 
-            if (Slots.Count >= MaxSlots)
-            {
-                // 부분 스택까지만 들어간 케이스도 변경 알림은 보내야 함
-                OnInventoryChanged?.Invoke();
-                return false;
-            }
-
-            Slots.Add(new InventorySlot { Item = item, Quantity = amount, EnhancementLevel = enhancementLevel });
             OnInventoryChanged?.Invoke();
             OnItemPickedUp?.Invoke(item);
             return true;
+        }
+
+        public bool CanAddItem(ItemData item, int amount = 1)
+        {
+            if (item == null || amount <= 0) return false;
+
+            if (!item.IsStackable)
+                return Slots.Count + amount <= MaxSlots;
+
+            int remaining = amount;
+            int maxStack = Math.Max(1, item.MaxStack);
+
+            foreach (var slot in Slots)
+            {
+                if (!IsSameItem(slot.Item, item)) continue;
+
+                int space = maxStack - slot.Quantity;
+                if (space <= 0) continue;
+
+                remaining -= Math.Min(remaining, space);
+                if (remaining <= 0) return true;
+            }
+
+            int emptySlots = MaxSlots - Slots.Count;
+            int neededSlots = (remaining + maxStack - 1) / maxStack;
+            return neededSlots <= emptySlots;
+        }
+
+        private static bool IsSameItem(ItemData a, ItemData b)
+        {
+            if (a == null || b == null) return false;
+            if (!string.IsNullOrEmpty(a.ResourcePath) && !string.IsNullOrEmpty(b.ResourcePath))
+                return a.ResourcePath == b.ResourcePath;
+            return ReferenceEquals(a, b);
         }
 
         public void RemoveItem(int slotIndex, int amount = 1)
