@@ -138,8 +138,8 @@ namespace FirstGame.Entities
 		protected virtual void OnPlayerExited(Node2D player) { }
 
 		/// <summary>
-		/// NPC와 관련된 활성 퀘스트가 있거나 부여 가능한 새 퀘스트가 있으면 QuestDialog를 열고 true 반환.
-		/// 그 외에는 false 반환 — NPC 본 UI(상점/스킬샵/대장간)로 fallback.
+		/// NPC가 지금 처리할 퀘스트 액션이 있으면 QuestDialog를 열고 true 반환.
+		/// 단순 진행 중 안내나 Deliver 대상 방문은 NPC 본 UI(상점/스킬샵/대장간)를 막지 않는다.
 		/// </summary>
 		protected bool TryOpenQuestDialog()
 		{
@@ -148,12 +148,35 @@ namespace FirstGame.Entities
 			var player = FirstGame.Core.GameManager.Instance?.Player;
 			if (qm == null || player == null) return false;
 
-			bool relevantActive = qm.HasActiveQuest &&
-				(qm.ActiveQuest.GiverNpcId == NpcId || qm.ActiveQuest.TargetNpcId == NpcId);
+			if (qm.HasActiveQuest)
+			{
+				var quest = qm.ActiveQuest;
+
+				if (quest.Type == FirstGame.Data.QuestType.Deliver && quest.TargetNpcId == NpcId)
+				{
+					bool wasComplete = qm.IsActiveQuestComplete;
+					qm.NotifyNpcTalked(NpcId, player);
+					if (!wasComplete && qm.IsActiveQuestComplete)
+						FirstGame.Core.SaveManager.SaveGame();
+					return false;
+				}
+
+				bool isGiver = quest.GiverNpcId == NpcId;
+				if (!isGiver || !qm.IsActiveQuestComplete)
+					return false;
+
+				return OpenQuestDialog(player);
+			}
+
 			bool hasNextQuest = !qm.HasActiveQuest && qm.FindNextQuestForNpc(NpcId) != null;
 
-			if (!relevantActive && !hasNextQuest) return false;
+			if (!hasNextQuest) return false;
 
+			return OpenQuestDialog(player);
+		}
+
+		private bool OpenQuestDialog(FirstGame.Core.Interfaces.IPlayer player)
+		{
 			var dialog = GetTree()?.CurrentScene?.GetNodeOrNull<FirstGame.UI.QuestDialog>("QuestDialog");
 			if (dialog == null)
 			{

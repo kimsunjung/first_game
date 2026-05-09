@@ -71,6 +71,8 @@ namespace FirstGame.UI
 			{
 				GameManager.Instance.QuestManager.OnQuestStateChanged += UpdateQuestDisplay;
 				GameManager.Instance.QuestManager.OnRewardBlocked += OnQuestRewardBlocked;
+				GameManager.Instance.OnPendingRewardAdded += OnPendingRewardAdded;
+				GameManager.Instance.OnPendingRewardClaimed += OnPendingRewardClaimed;
 			}
 			UpdateQuestDisplay();
 
@@ -131,7 +133,27 @@ namespace FirstGame.UI
 			{
 				GameManager.Instance.QuestManager.OnQuestStateChanged -= UpdateQuestDisplay;
 				GameManager.Instance.QuestManager.OnRewardBlocked -= OnQuestRewardBlocked;
+				GameManager.Instance.OnPendingRewardAdded -= OnPendingRewardAdded;
+				GameManager.Instance.OnPendingRewardClaimed -= OnPendingRewardClaimed;
 			}
+		}
+
+		private async void OnPendingRewardAdded(ItemData item, int qty)
+		{
+			_itemPickupNotification.Text = $"가방 가득 — {item.ItemName} x{qty} 보류함 보관";
+			_itemPickupNotification.Visible = true;
+			await ToSignal(GetTree().CreateTimer(2.5), SceneTreeTimer.SignalName.Timeout);
+			if (IsInstanceValid(this))
+				_itemPickupNotification.Visible = false;
+		}
+
+		private async void OnPendingRewardClaimed(ItemData item, int qty)
+		{
+			_itemPickupNotification.Text = $"보류함 → {item.ItemName} x{qty} 지급";
+			_itemPickupNotification.Visible = true;
+			await ToSignal(GetTree().CreateTimer(2.0), SceneTreeTimer.SignalName.Timeout);
+			if (IsInstanceValid(this))
+				_itemPickupNotification.Visible = false;
 		}
 
 		private async void OnQuestRewardBlocked(Data.QuestData quest)

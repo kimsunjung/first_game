@@ -116,11 +116,16 @@ namespace FirstGame.UI
 			{
 				case DialogMode.Offer:
 					qm.StartQuest(_quest);
+					// 모바일 OS kill 등으로 백그라운드 알림이 닿지 않는 경우에도 진행 보존.
+					// RequestAutoSave는 30초 throttle이 걸려 직전 저장 직후 kill 시 누락 가능 →
+					// 퀘스트 이벤트는 빈번하지 않으므로 즉시 SaveGame 호출.
+					SaveManager.SaveGame();
 					Close();
 					break;
 				case DialogMode.ReadyToComplete:
 					if (qm.CompleteQuest(_player))
 					{
+						SaveManager.SaveGame();
 						Close();
 					}
 					else

@@ -87,6 +87,13 @@ namespace FirstGame.Entities.Player
 			Inventory = new Inventory();
 			Inventory.OnItemPickedUp += item =>
 				GameManager.Instance?.QuestManager.NotifyItemAcquired(item, this);
+			// OnInventoryChanged → TryClaimPendingRewards 구독은 복원 완료 후에 추가한다.
+			// 복원 중 AddItem이 발생시키는 OnInventoryChanged가 pending claim을 트리거하면
+			// 부분 복원 상태에서 SaveGame이 호출돼 저장 파일이 망가질 수 있다.
+
+			// LoadFromSaveData 내부에서 GameManager.PlayerGold 등을 갱신하므로 사전 등록 필요.
+			if (GameManager.Instance != null)
+				GameManager.Instance.Player = this;
 
 			if (SaveManager.PendingLoadData != null)
 			{
@@ -99,7 +106,7 @@ namespace FirstGame.Entities.Player
 				if (SaveManager.PendingLoadData != null)
 					LoadFromSaveData(SaveManager.PendingLoadData);
 			}
-			// 신규 게임: GameManager 등록 후 아래에서 저장
+			// 신규 게임: GameManager 등록은 위에서 완료 → 아래에서 즉시 저장
 
 			IsDead = false;
 
@@ -112,13 +119,13 @@ namespace FirstGame.Entities.Player
 
 			SetupAnimations();
 
-			if (GameManager.Instance != null)
-				GameManager.Instance.Player = this;
-
-			// GameManager 등록 후 저장 (등록 전 호출 시 Player가 null이라 저장 안 됨)
+			// 신규 게임 첫 자동 저장 (Player는 위에서 이미 등록됨)
 			if (SaveManager.PendingLoadData == null && !SaveManager.HasSave())
 				SaveManager.SaveGame();
 
+			// 인벤에 변동 생길 때마다 pending reward 재시도. 복원 중에는 GameManager의
+			// IsRestoringState 가드가 막아주므로 구독 위치는 자유.
+			Inventory.OnInventoryChanged += () => GameManager.Instance?.TryClaimPendingRewards();
 		}
 
 		public override void _ExitTree()
@@ -196,77 +203,94 @@ namespace FirstGame.Entities.Player
 		// ─── 세이브 데이터 로드 ──────────────────────────────────────
 		private void LoadFromSaveData(SaveData data)
 		{
-			GlobalPosition = new Vector2(data.PlayerPosX, data.PlayerPosY);
-
-			// 스탯 재계산: 레벨 → STR/CON/INT → 장비(RestoreEquipment) 순서로 결정론적 재계산
-			// data.PlayerMaxHealth 직접 신뢰 금지: RestoreEquipment가 장비 보너스를 더하므로 이중 카운팅 발생
-			Stats.SetLevelFromSave(data.PlayerLevel, data.PlayerExp);
-			Stats.SetStatPointsFromSave(data.StatPoints, data.StrPoints, data.ConPoints, data.IntPoints);
-			Stats.ApplyStatPointBonuses();
-			GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses ?? new());
-			GameManager.Instance.PlayerGold = data.PlayerGold;
-
-			// 인벤토리 복원
-			if (data.InventoryItems != null)
+			// 전체 복원 구간을 IsRestoringState=true로 감싸 TryClaimPendingRewards가 부분 복원
+			// 상태에서 SaveGame을 호출하지 못하게 한다. 끝나면 1회만 명시 claim.
+			GameManager.Instance?.BeginRestoreState();
+			try
 			{
-				foreach (var savedSlot in data.InventoryItems)
+				GlobalPosition = new Vector2(data.PlayerPosX, data.PlayerPosY);
+
+				// 스탯 재계산: 레벨 → STR/CON/INT → 장비(RestoreEquipment) 순서로 결정론적 재계산
+				// data.PlayerMaxHealth 직접 신뢰 금지: RestoreEquipment가 장비 보너스를 더하므로 이중 카운팅 발생
+				Stats.SetLevelFromSave(data.PlayerLevel, data.PlayerExp);
+				Stats.SetStatPointsFromSave(data.StatPoints, data.StrPoints, data.ConPoints, data.IntPoints);
+				Stats.ApplyStatPointBonuses();
+				GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses ?? new());
+				GameManager.Instance.PlayerGold = data.PlayerGold;
+
+				// 인벤토리 복원
+				if (data.InventoryItems != null)
 				{
-					var item = GD.Load<ItemData>(savedSlot.ItemPath);
-					if (item != null) Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel, fireAcquired: false);
-				}
-			}
-
-			// 9개 장비 슬롯 + v3→v4 Accessory 재분류 마이그 일괄 처리
-			var report = Inventory.RestoreFromSaveData(data, Stats);
-			if (report.MigratedItem != null)
-			{
-				if (report.MigratedToInventory)
-					GD.Print($"[마이그] 강화 +{report.MigratedEnhancement} {report.MigratedItem.ItemName} " +
-							 "→ 인벤토리로 반환 (신규 슬롯은 강화 미지원)");
-				else
-					GD.PrintErr($"[마이그] 인벤 가득 — {report.MigratedItem.ItemName} " +
-								$"강화 +{report.MigratedEnhancement} 손실하며 신규 슬롯에 강제 장착");
-			}
-
-			// 퀘스트 복원
-			GameManager.Instance?.QuestManager.RestoreFromSave(
-				data.CurrentQuestPath, data.QuestKillProgress, data.CompletedQuestIds);
-
-			// 장비 보너스 적용 후 현재 HP/MP 복원 (MaxHealth/MaxMp가 확정된 뒤에 설정)
-			Stats.CurrentHealth = Mathf.Min(data.PlayerHealth, Stats.MaxHealth);
-			Stats.CurrentMp = Mathf.Min(data.PlayerMp, Stats.MaxMp);
-
-			if (data.QuickSlotPaths != null)
-			{
-				var qsItems = new ItemData[4];
-				for (int i = 0; i < data.QuickSlotPaths.Count && i < 4; i++)
-				{
-					if (!string.IsNullOrEmpty(data.QuickSlotPaths[i]))
-						qsItems[i] = GD.Load<ItemData>(data.QuickSlotPaths[i]);
-				}
-				Inventory.RestoreQuickSlots(qsItems);
-			}
-
-			// 스킬 복원
-			if (data.LearnedSkillPaths != null)
-			{
-				var skillsToLoad = new List<SkillData>();
-				foreach (var path in data.LearnedSkillPaths)
-				{
-					if (!string.IsNullOrEmpty(path))
+					foreach (var savedSlot in data.InventoryItems)
 					{
-						var sk = GD.Load<SkillData>(path);
-						if (sk != null) skillsToLoad.Add(sk);
+						var item = GD.Load<ItemData>(savedSlot.ItemPath);
+						if (item != null) Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel, fireAcquired: false);
 					}
 				}
-				Stats.LoadLearnedSkills(skillsToLoad);
+
+				// 9개 장비 슬롯 + v3→v4 Accessory 재분류 마이그 일괄 처리
+				var report = Inventory.RestoreFromSaveData(data, Stats);
+				if (report.MigratedItem != null)
+				{
+					if (report.MigratedToInventory)
+						GD.Print($"[마이그] 강화 +{report.MigratedEnhancement} {report.MigratedItem.ItemName} " +
+								 "→ 인벤토리로 반환 (신규 슬롯은 강화 미지원)");
+					else
+						GD.PrintErr($"[마이그] 인벤 가득 — {report.MigratedItem.ItemName} " +
+									$"강화 +{report.MigratedEnhancement} 손실하며 신규 슬롯에 강제 장착");
+				}
+
+				// 퀘스트 복원
+				GameManager.Instance?.QuestManager.RestoreFromSave(
+					data.CurrentQuestPath, data.QuestKillProgress, data.CompletedQuestIds);
+
+				// 장비 보너스 적용 후 현재 HP/MP 복원 (MaxHealth/MaxMp가 확정된 뒤에 설정)
+				Stats.CurrentHealth = Mathf.Min(data.PlayerHealth, Stats.MaxHealth);
+				Stats.CurrentMp = Mathf.Min(data.PlayerMp, Stats.MaxMp);
+
+				if (data.QuickSlotPaths != null)
+				{
+					var qsItems = new ItemData[4];
+					for (int i = 0; i < data.QuickSlotPaths.Count && i < 4; i++)
+					{
+						if (!string.IsNullOrEmpty(data.QuickSlotPaths[i]))
+							qsItems[i] = GD.Load<ItemData>(data.QuickSlotPaths[i]);
+					}
+					Inventory.RestoreQuickSlots(qsItems);
+				}
+
+				// 스킬 복원
+				if (data.LearnedSkillPaths != null)
+				{
+					var skillsToLoad = new List<SkillData>();
+					foreach (var path in data.LearnedSkillPaths)
+					{
+						if (!string.IsNullOrEmpty(path))
+						{
+							var sk = GD.Load<SkillData>(path);
+							if (sk != null) skillsToLoad.Add(sk);
+						}
+					}
+					Stats.LoadLearnedSkills(skillsToLoad);
+				}
+
+				// 처치한 보스 목록 복원
+				if (data.DefeatedBosses != null && data.DefeatedBosses.Count > 0)
+					GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses);
+
+				// 보류 보상은 복원만 하고 TryClaim은 EndRestoreState 후로 미룬다.
+				GameManager.Instance?.RestorePendingRewards(data.PendingRewardItems);
+
+				SaveManager.PendingLoadData = null;
+			}
+			finally
+			{
+				GameManager.Instance?.EndRestoreState();
 			}
 
-			// 처치한 보스 목록 복원
-			if (data.DefeatedBosses != null && data.DefeatedBosses.Count > 0)
-				GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses);
-
-			SaveManager.PendingLoadData = null;
+			// 모든 복원이 끝난 뒤 단 한 번 claim 시도. 인벤에 자리 있으면 즉시 지급되고
+			// queueMutated 경로에서 SaveGame이 호출돼 stale pending 재지급을 차단한다.
+			GameManager.Instance?.TryClaimPendingRewards();
 		}
 	}
 }

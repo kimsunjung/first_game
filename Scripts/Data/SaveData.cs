@@ -61,5 +61,10 @@ namespace FirstGame.Data
 		public string EquippedRing1Path { get; set; } = "";
 		public string EquippedRing2Path { get; set; } = "";
 		public string EquippedBraceletPath { get; set; } = "";
+
+		// ─── 보류 보상함: 인벤 가득 등으로 즉시 지급 못한 보상(주로 보스 드랍).
+		// 게임 시작 시 자동 재시도 + 사용자 알림. 필드 드랍과 달리 세이브에 영속화되어
+		// 앱 종료/OS kill에도 손실되지 않는다.
+		public List<SavedItemSlot> PendingRewardItems { get; set; } = new();
 	}
 }

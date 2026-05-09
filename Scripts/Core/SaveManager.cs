@@ -34,7 +34,8 @@ namespace FirstGame.Core
 			var data = new SaveData
 			{
 				PlayerGold = GameManager.Instance.PlayerGold,
-				Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+				Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+				PendingRewardItems = new System.Collections.Generic.List<SavedItemSlot>(GameManager.Instance.PendingRewards)
 			};
 
 			// 각 시스템이 자신의 데이터를 기록
@@ -103,6 +104,17 @@ namespace FirstGame.Core
 			SaveGame(slot);
 		}
 
+		/// <summary>
+		/// 종료/백그라운드 진입 등 외부 트리거에서 호출. dirty 여부와 무관하게
+		/// player가 있으면 무조건 저장 — 퀘스트 완료/상점/장비 등 dirty flag 미설정
+		/// 변경도 보존되도록 한다.
+		/// </summary>
+		public static void FlushBeforeExit(string slot = AutoSaveSlot)
+		{
+			if (GameManager.Instance?.Player == null) return;
+			SaveGame(slot);
+		}
+
 		/// <summary>새 게임 시작 시 throttle/dirty 초기화. 다음 RequestAutoSave가 즉시 통과한다.</summary>
 		public static void ResetAutoSaveThrottle()
 		{
@@ -140,9 +152,8 @@ namespace FirstGame.Core
 		{
 			if (slot == null)
 			{
-				if (HasSave(ManualSaveSlot)) slot = ManualSaveSlot;
-				else if (HasSave(AutoSaveSlot)) slot = AutoSaveSlot;
-				else
+				slot = SelectNewerSaveSlot();
+				if (slot == null)
 				{
 					GD.Print("저장된 파일이 없습니다. 새로 시작합니다.");
 					var t = (SceneTree)Engine.GetMainLoop();
@@ -188,9 +199,8 @@ namespace FirstGame.Core
 		{
 			if (slot == null)
 			{
-				if (HasSave(ManualSaveSlot)) slot = ManualSaveSlot;
-				else if (HasSave(AutoSaveSlot)) slot = AutoSaveSlot;
-				else return;
+				slot = SelectNewerSaveSlot();
+				if (slot == null) return;
 			}
 			string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
 			if (!File.Exists(path)) return;
@@ -253,6 +263,28 @@ namespace FirstGame.Core
 		{
 			string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
 			return File.Exists(path);
+		}
+
+		/// <summary>
+		/// manual/autosave 둘 다 있으면 파일 mtime 최신인 쪽을 자동 선택. 둘 중 하나만 있으면
+		/// 그 슬롯, 둘 다 없으면 null. "이어하기"가 항상 가장 최근 진행을 로드하도록.
+		/// FlushBeforeExit가 autosave에만 저장한 후 stale manual save가 우선 로드되는 결함 방지.
+		/// </summary>
+		private static string SelectNewerSaveSlot()
+		{
+			bool hasManual = HasSave(ManualSaveSlot);
+			bool hasAuto = HasSave(AutoSaveSlot);
+			if (hasManual && hasAuto)
+			{
+				string pathManual = ProjectSettings.GlobalizePath(SaveDir + ManualSaveSlot + ".json");
+				string pathAuto = ProjectSettings.GlobalizePath(SaveDir + AutoSaveSlot + ".json");
+				DateTime tManual = File.GetLastWriteTime(pathManual);
+				DateTime tAuto = File.GetLastWriteTime(pathAuto);
+				return tManual >= tAuto ? ManualSaveSlot : AutoSaveSlot;
+			}
+			if (hasManual) return ManualSaveSlot;
+			if (hasAuto) return AutoSaveSlot;
+			return null;
 		}
 	}
 }

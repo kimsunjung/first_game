@@ -75,6 +75,21 @@ namespace FirstGame.Core
 		public bool CompleteQuest(IPlayer player)
 		{
 			if (!IsActiveQuestComplete || player == null) return false;
+
+			// 트랜잭션 격리 — ConsumeItems가 만든 빈 슬롯을 pending reward가 가로채는 race 차단.
+			GameManager.Instance?.SuspendPendingRewardClaims();
+			try
+			{
+				return CompleteQuestInternal(player);
+			}
+			finally
+			{
+				GameManager.Instance?.ResumePendingRewardClaims();
+			}
+		}
+
+		private bool CompleteQuestInternal(IPlayer player)
+		{
 			var quest = ActiveQuest;
 			var inv = player.Inventory;
 

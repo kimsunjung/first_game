@@ -441,11 +441,14 @@ namespace FirstGame.Entities.Enemies
 			{
 				if (Stats.IsBoss)
 				{
+					// 보스 보상은 영속화 보장. 인벤 가득이면 필드 드랍 fallback 대신 PendingRewards에
+					// 보관 — 세이브에 함께 직렬화되어 앱 종료/OS kill에도 손실되지 않는다.
 					var inv = GameManager.Instance?.Player?.Inventory;
 					foreach (var droppedItem in Stats.PossibleDrops)
 					{
 						bool added = inv != null && inv.AddItem(droppedItem, 1);
-						if (!added) SpawnFieldDrop(droppedItem, 60, 150);
+						if (!added)
+							GameManager.Instance?.AddPendingReward(droppedItem, 1);
 					}
 				}
 				else if (GD.Randf() <= Stats.DropChance)

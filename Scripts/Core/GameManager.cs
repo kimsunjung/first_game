@@ -45,11 +45,110 @@ namespace FirstGame.Core
 			foreach (var b in bosses) _defeatedBosses.Add(b);
 		}
 
+		// 보류 보상함 — 인벤 가득 등으로 즉시 지급 못한 보스 드랍을 영속 보관.
+		// 세이브에 함께 직렬화되어 앱 종료/재시작에도 손실되지 않는다.
+		private readonly List<FirstGame.Data.SavedItemSlot> _pendingRewards = new();
+		public IReadOnlyList<FirstGame.Data.SavedItemSlot> PendingRewards => _pendingRewards;
+
+		// AddItem이 동기적으로 OnInventoryChanged를 발생시켜 TryClaimPendingRewards가 자기
+		// 자신을 재진입할 때 같은 보상이 중복 지급되거나 RemoveAt이 throw하는 결함 차단.
+		private bool _claimingPendingRewards = false;
+		// QuestManager.CompleteQuest 같은 트랜잭션 중에는 ConsumeItems가 만든 빈 슬롯을
+		// pending reward가 가로채면 안 됨. Suspend/Resume API로 명시 격리.
+		private int _claimSuspendCount = 0;
+		// 세이브 로드 도중에는 인벤/장비/퀘스트가 부분 복원 상태이므로 pending claim 및
+		// 그로 인한 SaveGame이 실행되면 안 됨. PlayerController.LoadFromSaveData가
+		// BeginRestoreState/EndRestoreState로 전체 복원을 감싸고, 끝나면 1회 TryClaim한다.
+		private bool _isRestoringState = false;
+		public bool IsRestoringState => _isRestoringState;
+		public void BeginRestoreState() => _isRestoringState = true;
+		public void EndRestoreState() => _isRestoringState = false;
+
+		public event Action<FirstGame.Data.ItemData, int> OnPendingRewardAdded; // (item, qty)
+		public event Action<FirstGame.Data.ItemData, int> OnPendingRewardClaimed; // (item, qty)
+
+		public void AddPendingReward(FirstGame.Data.ItemData item, int qty, int enhancement = 0)
+		{
+			if (item == null || qty <= 0) return;
+			_pendingRewards.Add(new FirstGame.Data.SavedItemSlot
+			{
+				ItemPath = item.ResourcePath,
+				Quantity = qty,
+				EnhancementLevel = enhancement
+			});
+			OnPendingRewardAdded?.Invoke(item, qty);
+		}
+
+		public void RestorePendingRewards(List<FirstGame.Data.SavedItemSlot> list)
+		{
+			_pendingRewards.Clear();
+			if (list != null) _pendingRewards.AddRange(list);
+		}
+
+		/// <summary>인벤 트랜잭션(예: QuestManager.CompleteQuest) 동안 보류 보상 클레임 차단.</summary>
+		public void SuspendPendingRewardClaims() => _claimSuspendCount++;
+		public void ResumePendingRewardClaims()
+		{
+			if (_claimSuspendCount > 0) _claimSuspendCount--;
+			if (_claimSuspendCount == 0) TryClaimPendingRewards();
+		}
+
+		/// <summary>인벤이 비어 자리 생긴 시점에 호출. 가능한 보상부터 순서대로 지급.</summary>
+		public void TryClaimPendingRewards()
+		{
+			if (_claimingPendingRewards) return;       // 재진입 차단
+			if (_claimSuspendCount > 0) return;        // 트랜잭션 격리
+			if (_isRestoringState) return;             // 세이브 복원 중 차단
+			if (_pendingRewards.Count == 0) return;
+			var inv = Player?.Inventory;
+			if (inv == null) return;
+
+			_claimingPendingRewards = true;
+			bool queueMutated = false;
+			try
+			{
+				for (int i = _pendingRewards.Count - 1; i >= 0; i--)
+				{
+					var pending = _pendingRewards[i];
+					var item = Godot.GD.Load<FirstGame.Data.ItemData>(pending.ItemPath);
+					if (item == null)
+					{
+						_pendingRewards.RemoveAt(i); // 깨진 path 제거
+						queueMutated = true;
+						continue;
+					}
+					// CanAddItem 사전 확인 후 RemoveAt-먼저 → AddItem 순서.
+					// 재진입 가드 외 추가 안전망: AddItem이 OnInventoryChanged를 발생시켜도
+					// 이 항목은 이미 큐에서 제거된 상태라 같은 보상이 또 보이지 않는다.
+					if (!inv.CanAddItem(item, pending.Quantity)) continue;
+					_pendingRewards.RemoveAt(i);
+					queueMutated = true;
+					if (inv.AddItem(item, pending.Quantity, pending.EnhancementLevel))
+						OnPendingRewardClaimed?.Invoke(item, pending.Quantity);
+					else
+						_pendingRewards.Insert(0, pending); // 매우 드문 race — 큐 끝에 복귀
+				}
+			}
+			finally
+			{
+				_claimingPendingRewards = false;
+			}
+
+			// 보상 지급/깨진 path 제거가 발생했으면 즉시 저장 — 이 호출 후 OS kill 시
+			// 파일에 stale pending이 남아 같은 보상이 재지급되는 결함 차단. 보스 보상이라
+			// 빈번하지 않으므로 throttle 적용 대상 아님.
+			if (queueMutated) SaveManager.SaveGame();
+		}
+
 		public void ResetForNewGame()
 		{
 			PlayerGold = 0;
 			_defeatedBosses.Clear();
 			_activeEnemies.Clear();
+			_pendingRewards.Clear(); // 이전 세션 보류 보상이 새 게임으로 이월되지 않도록
+			_claimSuspendCount = 0;
+			_claimingPendingRewards = false;
+			_isRestoringState = false;
 			QuestManager.RestoreFromSave("", 0, null);
 			EventManager.ResetAll(); // 내부에서 QuestManager.Resubscribe 자동 호출
 		}
@@ -86,13 +185,19 @@ namespace FirstGame.Core
 			SaveManager.TickDirty();
 		}
 
-		// 모바일 뒤로가기 버튼 처리: 열린 UI 창이 있으면 닫고, 없으면 종료 확인 다이얼로그.
+		// 모바일 뒤로가기 / 백그라운드 진입 / 포커스 아웃 알림 처리.
 		public override void _Notification(int what)
 		{
 			if (what == NotificationWMGoBackRequest)
 			{
 				if (FirstGame.UI.WindowManager.CloseTop()) return;
 				ShowExitConfirm();
+			}
+			else if (what == NotificationApplicationPaused
+				|| what == NotificationWMWindowFocusOut)
+			{
+				// 홈 버튼/앱 전환/OS kill 가능성 — 즉시 dirty 무관하게 저장해 진행 손실 차단.
+				SaveManager.FlushBeforeExit();
 			}
 		}
 
@@ -113,7 +218,9 @@ namespace FirstGame.Core
 				};
 				_exitDialog.Confirmed += () =>
 				{
-					SaveManager.FlushDirtySave(); // 종료 직전 dirty 진행도 보존
+					// dirty 여부 무관하게 무조건 저장 — 퀘스트 완료/상점/장비 등 dirty flag
+					// 미설정 변경까지 보존.
+					SaveManager.FlushBeforeExit();
 					GetTree().Quit();
 				};
 				_exitDialog.VisibilityChanged += OnExitDialogVisibilityChanged;
