@@ -32,7 +32,9 @@ namespace FirstGame.UI
 		// 선택된 강화 대상
 		private enum TargetKind { Inventory, EquippedWeapon, EquippedArmor, EquippedAccessory }
 		private TargetKind _targetKind;
-		private int _targetSlotIndex;
+		// InventorySlot 참조로 추적 — 같은 .tres / 같은 강화 레벨이 인벤에 여러 개 있을 때
+		// FindIndex가 잘못된 슬롯을 잡지 않도록 객체 동일성으로 끝까지 추종.
+		private InventorySlot _targetSlot;
 		private bool _hasSelection = false;
 
 		// 강화 가능 엔트리 목록
@@ -41,7 +43,7 @@ namespace FirstGame.UI
 		private struct EnhanceEntry
 		{
 			public TargetKind Kind;
-			public int SlotIndex;  // Inventory일 때만 유효
+			public InventorySlot Slot;  // Inventory일 때만 유효 — 슬롯 직접 참조
 			public ItemData Item;
 			public int Level;
 		}
@@ -121,15 +123,14 @@ namespace FirstGame.UI
 				});
 
 			// 2) 인벤토리 내 장비 아이템
-			for (int i = 0; i < _inventory.Slots.Count; i++)
+			foreach (var slot in _inventory.Slots)
 			{
-				var slot = _inventory.Slots[i];
 				if (slot.Item.Type == ItemType.Weapon || slot.Item.Type == ItemType.Armor || slot.Item.Type == ItemType.Accessory)
 				{
 					_entries.Add(new EnhanceEntry
 					{
 						Kind = TargetKind.Inventory,
-						SlotIndex = i,
+						Slot = slot,
 						Item = slot.Item,
 						Level = slot.EnhancementLevel
 					});
@@ -192,7 +193,7 @@ namespace FirstGame.UI
 		private void SelectEntry(EnhanceEntry entry)
 		{
 			_targetKind = entry.Kind;
-			_targetSlotIndex = entry.SlotIndex;
+			_targetSlot = entry.Slot;
 			_hasSelection = true;
 			_detailPanel.Visible = true;
 
@@ -268,13 +269,13 @@ namespace FirstGame.UI
 					currentLevel = _inventory.EquippedAccessoryEnhancement;
 					break;
 				default: // Inventory
-					if (_targetSlotIndex < 0 || _targetSlotIndex >= _inventory.Slots.Count)
+					if (_targetSlot == null || !_inventory.Slots.Contains(_targetSlot))
 					{
 						ShowMessage("대상 아이템을 찾을 수 없습니다.");
 						return;
 					}
-					item = _inventory.Slots[_targetSlotIndex].Item;
-					currentLevel = _inventory.Slots[_targetSlotIndex].EnhancementLevel;
+					item = _targetSlot.Item;
+					currentLevel = _targetSlot.EnhancementLevel;
 					break;
 			}
 
@@ -314,11 +315,8 @@ namespace FirstGame.UI
 			if (matReq != null)
 				_inventory.ConsumeItems(matReq.Value.Item, matReq.Value.Quantity);
 
-			// 재료 소비로 슬롯이 밀렸을 수 있으므로 인벤토리 아이템 인덱스 재탐색
-			// 아이템 참조 + 강화 레벨로 동일 리소스 중복 슬롯 구분
-			if (_targetKind == TargetKind.Inventory)
-				_targetSlotIndex = _inventory.Slots.FindIndex(s =>
-					ReferenceEquals(s.Item, item) && s.EnhancementLevel == currentLevel);
+			// _targetSlot은 InventorySlot 참조로 직접 추적되므로 재료 차감으로 List 인덱스가
+			// 변하더라도 동일 슬롯을 잃지 않는다 — 추가 재탐색 불필요.
 
 			// 확률 판정
 			float rate = GetSuccessRate(currentLevel);
@@ -395,9 +393,9 @@ namespace FirstGame.UI
 					_inventory.SetEquippedEnhancement(equipType, newLevel, target);
 					break;
 				default:
-					if (_targetSlotIndex >= 0 && _targetSlotIndex < _inventory.Slots.Count)
+					if (_targetSlot != null && _inventory.Slots.Contains(_targetSlot))
 					{
-						_inventory.Slots[_targetSlotIndex].EnhancementLevel = newLevel;
+						_targetSlot.EnhancementLevel = newLevel;
 						_inventory.NotifyChanged();
 					}
 					break;
@@ -421,11 +419,8 @@ namespace FirstGame.UI
 					_inventory.DestroyEquippedItem(ItemType.Accessory, target);
 					break;
 				default:
-					if (_targetSlotIndex >= 0 && _targetSlotIndex < _inventory.Slots.Count)
-					{
-						_inventory.Slots.RemoveAt(_targetSlotIndex);
+					if (_targetSlot != null && _inventory.Slots.Remove(_targetSlot))
 						_inventory.NotifyChanged();
-					}
 					break;
 			}
 		}
@@ -440,9 +435,9 @@ namespace FirstGame.UI
 					return new EnhanceEntry { Kind = TargetKind.EquippedArmor, Item = _inventory.EquippedArmor, Level = _inventory.EquippedArmorEnhancement };
 				case TargetKind.EquippedAccessory when _inventory.EquippedAccessory != null:
 					return new EnhanceEntry { Kind = TargetKind.EquippedAccessory, Item = _inventory.EquippedAccessory, Level = _inventory.EquippedAccessoryEnhancement };
-				case TargetKind.Inventory when _targetSlotIndex >= 0 && _targetSlotIndex < _inventory.Slots.Count:
-					var slot = _inventory.Slots[_targetSlotIndex];
-					return new EnhanceEntry { Kind = TargetKind.Inventory, SlotIndex = _targetSlotIndex, Item = slot.Item, Level = slot.EnhancementLevel };
+				case TargetKind.Inventory when _targetSlot != null && _inventory.Slots.Contains(_targetSlot):
+					var slot = _targetSlot;
+					return new EnhanceEntry { Kind = TargetKind.Inventory, Slot = slot, Item = slot.Item, Level = slot.EnhancementLevel };
 				default:
 					return null;
 			}
