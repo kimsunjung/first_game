@@ -30,7 +30,7 @@ namespace FirstGame.UI
 		private static readonly (EquipKey key, Vector2 pos, string placeholder)[] _slotLayout =
 		{
 			(EquipKey.Helmet,   new Vector2( 68,   4), "모자"),
-			(EquipKey.Necklace, new Vector2( 20,  52), "목"),
+			(EquipKey.Necklace, new Vector2( 20,  52), "목걸이"),
 			(EquipKey.Ring1,    new Vector2(116,  52), "반지"),
 			(EquipKey.Weapon,   new Vector2( 20, 100), "무기"),
 			(EquipKey.Armor,    new Vector2( 68, 100), "방어구"),
