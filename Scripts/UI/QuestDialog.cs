@@ -67,7 +67,9 @@ namespace FirstGame.UI
 			}
 
 			RefreshUi(npcId);
-			Toggle();
+			// Open()을 직접 사용 — Toggle()은 이미 열린 상태에서 재호출 시 닫혀 버려
+			// 같은 NPC에게 빠르게 두 번 말 걸면 다이얼로그가 사라지는 문제가 발생.
+			Open();
 		}
 
 		private void RefreshUi(string npcId)

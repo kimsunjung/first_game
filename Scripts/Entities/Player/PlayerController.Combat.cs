@@ -70,7 +70,8 @@ namespace FirstGame.Entities.Player
 					if (s.Type == SkillType.PowerStrike) { ps = s; break; }
 				multiplier = ps != null ? ps.BonusDamageMultiplier : 2;
 				damage *= multiplier;
-				_powerStrikeActive = false;
+				// 황금 펄스 tween까지 같이 정리 — 직접 대입 시 tween이 살아남아 시각 효과가 남음
+				SetPowerStrikeActive(false);
 				TriggerCameraShake(5f, 0.2f);
 			}
 			if (isCrit) damage = (int)(damage * Stats.CritMultiplier);
