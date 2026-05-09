@@ -20,6 +20,11 @@ namespace FirstGame.UI
         // 스킬 버튼 위에 표시할 쿨타임 레이블 (프로그래밍 방식으로 생성)
         private Label[] _cooldownLabels = new Label[4];
 
+        // 공격 버튼 같은 프레임 중복 트리거 방지. emulate_mouse_from_touch=true 환경에서
+        // 첫 터치는 Pressed 시그널(MouseButton)로, 두 번째 터치는 ScreenTouch 직접 핸들러로
+        // 들어오는데 단일 터치가 양쪽 모두로 보이는 케이스를 차단.
+        private ulong _lastAttackFrame = 0;
+
         private static readonly string[] SlotKeys = { "Q", "W", "E", "R" };
 
         private static readonly Color ColorReady    = Colors.White;
@@ -39,6 +44,9 @@ namespace FirstGame.UI
             _skillWindowButton = GetNodeOrNull<Button>("SkillWindowButton");
 
             _attackButton?.Connect("pressed", Callable.From(OnAttackPressed));
+            // emulate_mouse_from_touch=true에서 두 번째 터치(이동 중 공격)는 마우스 이벤트로
+            // 변환되지 않아 Pressed 시그널이 안 뜬다. ScreenTouch를 직접 받아 보강.
+            if (_attackButton != null) _attackButton.GuiInput += OnAttackGuiInput;
             for (int i = 0; i < 4; i++)
             {
                 int slot = i;
@@ -142,7 +150,21 @@ namespace FirstGame.UI
             => GetTree().CurrentScene?.GetNodeOrNull<T>(nodeName);
 
         private void OnAttackPressed()
-            => GetPlayer()?.Attack();
+        {
+            ulong frame = Engine.GetProcessFrames();
+            if (_lastAttackFrame == frame) return; // 같은 프레임 중복 차단
+            _lastAttackFrame = frame;
+            GetPlayer()?.Attack();
+        }
+
+        private void OnAttackGuiInput(InputEvent @event)
+        {
+            if (@event is InputEventScreenTouch t && t.Pressed)
+            {
+                OnAttackPressed();
+                _attackButton.AcceptEvent();
+            }
+        }
 
         private void OnInteractPressed()
         {
