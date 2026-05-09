@@ -425,12 +425,6 @@ namespace FirstGame.Entities.Enemies
 
 			EventManager.TriggerEnemyKilled();
 			EventManager.TriggerEnemyKilledTyped(Stats.EnemyTypeName);
-			if (Stats.IsBoss)
-			{
-				EventManager.TriggerBossDied();
-				string bossKey = !string.IsNullOrEmpty(BossId) ? BossId : Stats.EnemyTypeName;
-				GameManager.Instance?.RecordBossDefeat(bossKey);
-			}
 
 			// 골드 보상
 			if (GameManager.Instance != null)
@@ -439,45 +433,37 @@ namespace FirstGame.Entities.Enemies
 			// 경험치 지급 (이벤트 방식)
 			EventManager.TriggerExpGained(Stats.ExperienceReward);
 
-			// 아이템 드랍 (물리 드랍)
+			// 아이템 드랍
+			// 보스: 직접 인벤토리에 안전 지급 (앱 종료/재시작 시 드랍 손실 방지).
+			//       인벤이 가득 차면 필드 드랍 fallback.
+			// 일반: 기존대로 필드 드랍 (DropChance 적용).
 			if (Stats.PossibleDrops != null && Stats.PossibleDrops.Length > 0)
 			{
-				var fieldItemPrefab = GD.Load<PackedScene>("res://Scenes/Objects/field_item.tscn");
-				if (fieldItemPrefab != null)
+				if (Stats.IsBoss)
 				{
-					if (Stats.IsBoss)
+					var inv = GameManager.Instance?.Player?.Inventory;
+					foreach (var droppedItem in Stats.PossibleDrops)
 					{
-						// 보스: PossibleDrops 전부 드랍 (보장)
-						foreach (var droppedItem in Stats.PossibleDrops)
-						{
-							var fieldItem = fieldItemPrefab.Instantiate<FirstGame.Objects.FieldItem>();
-							fieldItem.Item = droppedItem;
-							fieldItem.Quantity = 1;
-							GetTree().CurrentScene.AddChild(fieldItem);
-							Vector2 dropDir = new Vector2((float)GD.RandRange(-1, 1), -1).Normalized();
-							fieldItem.Drop(GlobalPosition, dropDir, (float)GD.RandRange(60, 150));
-						}
-					}
-					else if (GD.Randf() <= Stats.DropChance)
-					{
-						// 일반 적: 가중치 기반 랜덤 1개 드랍
-						int index = Stats.PickDropIndex();
-						var droppedItem = Stats.PossibleDrops[index];
-						var fieldItem = fieldItemPrefab.Instantiate<FirstGame.Objects.FieldItem>();
-						fieldItem.Item = droppedItem;
-						fieldItem.Quantity = 1;
-						GetTree().CurrentScene.AddChild(fieldItem);
-						Vector2 dropDir = new Vector2((float)GD.RandRange(-1, 1), -1).Normalized();
-						fieldItem.Drop(GlobalPosition, dropDir, (float)GD.RandRange(50, 120));
+						bool added = inv != null && inv.AddItem(droppedItem, 1);
+						if (!added) SpawnFieldDrop(droppedItem, 60, 150);
 					}
 				}
-				else
+				else if (GD.Randf() <= Stats.DropChance)
 				{
-					GD.PrintErr("EnemyController: field_item.tscn을 찾을 수 없습니다.");
+					int index = Stats.PickDropIndex();
+					SpawnFieldDrop(Stats.PossibleDrops[index], 50, 120);
 				}
 			}
 
-			// 자동 저장 — 보스 처치는 즉시(보스 키 기록 보호), 일반몹은 throttle
+			// 보스 처치 기록 — 보상/드랍 지급 *후*에 기록해 인벤 반영과 보스 키 저장이 한 시점에 영속화됨.
+			if (Stats.IsBoss)
+			{
+				EventManager.TriggerBossDied();
+				string bossKey = !string.IsNullOrEmpty(BossId) ? BossId : Stats.EnemyTypeName;
+				GameManager.Instance?.RecordBossDefeat(bossKey);
+			}
+
+			// 자동 저장 — 보스 처치는 즉시(보상 + 보스 키 함께 영속화), 일반몹은 throttle
 			if (Stats.IsBoss)
 				SaveManager.SaveGame();
 			else
@@ -494,6 +480,22 @@ namespace FirstGame.Entities.Enemies
 			{
 				QueueFree();
 			}
+		}
+
+		private void SpawnFieldDrop(ItemData item, float minForce, float maxForce)
+		{
+			var prefab = GD.Load<PackedScene>("res://Scenes/Objects/field_item.tscn");
+			if (prefab == null)
+			{
+				GD.PrintErr("EnemyController: field_item.tscn을 찾을 수 없습니다.");
+				return;
+			}
+			var fieldItem = prefab.Instantiate<FirstGame.Objects.FieldItem>();
+			fieldItem.Item = item;
+			fieldItem.Quantity = 1;
+			GetTree().CurrentScene.AddChild(fieldItem);
+			Vector2 dropDir = new Vector2((float)GD.RandRange(-1, 1), -1).Normalized();
+			fieldItem.Drop(GlobalPosition, dropDir, (float)GD.RandRange(minForce, maxForce));
 		}
 
 		private void OnAnimationFinished()
