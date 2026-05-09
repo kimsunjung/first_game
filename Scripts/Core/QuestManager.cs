@@ -62,21 +62,53 @@ namespace FirstGame.Core
 			OnQuestStateChanged?.Invoke();
 		}
 
+		/// <summary>
+		/// 인벤 공간 부족 등으로 보상 지급이 불가해 완료가 보류된 경우. UI 토스트로 사용자에게 안내.
+		/// </summary>
+		public event Action<QuestData> OnRewardBlocked;
+
 		public void CompleteQuest(IPlayer player)
 		{
 			if (!IsActiveQuestComplete || player == null) return;
 			var quest = ActiveQuest;
+			var inv = player.Inventory;
+
+			int rewardQty = quest.RewardItem != null ? Math.Max(1, quest.RewardItemQuantity) : 0;
+			bool gatherPending = quest.Type == QuestType.Gather && quest.TargetItem != null && inv != null;
+
+			// 보상 지급/재료 차감을 원자적으로 처리. 인벤이 가득 차면 완료 자체를 보류해
+			// AddItem 실패로 보상이 사라지는 결함을 차단한다.
+			if (quest.RewardItem != null && inv != null && !inv.CanAddItem(quest.RewardItem, rewardQty))
+			{
+				// Gather 차감 후 빈 슬롯이 생기면 보상 지급이 가능한지 시뮬레이션.
+				bool feasibleAfterConsume = false;
+				if (gatherPending)
+				{
+					inv.ConsumeItems(quest.TargetItem, quest.TargetCount);
+					feasibleAfterConsume = inv.CanAddItem(quest.RewardItem, rewardQty);
+					if (!feasibleAfterConsume)
+						inv.AddItem(quest.TargetItem, quest.TargetCount); // 롤백
+					else
+						gatherPending = false; // 이미 차감됨 — 아래에서 중복 호출 금지
+				}
+				if (!feasibleAfterConsume)
+				{
+					GD.Print($"[Quest] 인벤토리 공간 부족 — {quest.QuestTitle} 보상 지급 보류 (정리 후 재시도)");
+					OnRewardBlocked?.Invoke(quest);
+					return;
+				}
+			}
 
 			// 보상 지급
 			GameManager.Instance.PlayerGold += quest.GoldReward;
 			if (quest.ExpReward > 0)
 				EventManager.TriggerExpGained(quest.ExpReward);
-			if (quest.RewardItem != null && player.Inventory != null)
-				player.Inventory.AddItem(quest.RewardItem, Math.Max(1, quest.RewardItemQuantity));
+			if (quest.RewardItem != null && inv != null)
+				inv.AddItem(quest.RewardItem, rewardQty);
 
-			// Gather 퀘스트면 수집 아이템 차감
-			if (quest.Type == QuestType.Gather && quest.TargetItem != null && player.Inventory != null)
-				player.Inventory.ConsumeItems(quest.TargetItem, quest.TargetCount);
+			// Gather 차감 (위 시뮬레이션 경로에서 이미 처리됐으면 건너뜀)
+			if (gatherPending)
+				inv.ConsumeItems(quest.TargetItem, quest.TargetCount);
 
 			CompletedQuestIds.Add(quest.QuestId);
 			ActiveQuest = null;
