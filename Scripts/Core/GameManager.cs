@@ -85,6 +85,23 @@ namespace FirstGame.Core
 			if (list != null) _pendingRewards.AddRange(list);
 		}
 
+		// ─── 절차적 필드맵 seed 보관 (씬 경로 → seed) ─────────────
+		// MapGenerator가 첫 진입 시 RecordFieldSeed로 등록, 같은 씬 재진입 시 GetFieldSeed로 재사용.
+		// SaveData.FieldSeeds로 직렬화되어 다음 세션에도 같은 지형 유지.
+		private readonly Dictionary<string, int> _fieldSeeds = new();
+		public IReadOnlyDictionary<string, int> FieldSeeds => _fieldSeeds;
+		public bool TryGetFieldSeed(string scenePath, out int seed) => _fieldSeeds.TryGetValue(scenePath, out seed);
+		public void RecordFieldSeed(string scenePath, int seed)
+		{
+			if (string.IsNullOrEmpty(scenePath)) return;
+			_fieldSeeds[scenePath] = seed;
+		}
+		public void RestoreFieldSeeds(Dictionary<string, int> map)
+		{
+			_fieldSeeds.Clear();
+			if (map != null) foreach (var kv in map) _fieldSeeds[kv.Key] = kv.Value;
+		}
+
 		/// <summary>인벤 트랜잭션(예: QuestManager.CompleteQuest) 동안 보류 보상 클레임 차단.</summary>
 		public void SuspendPendingRewardClaims() => _claimSuspendCount++;
 		public void ResumePendingRewardClaims()
@@ -146,6 +163,7 @@ namespace FirstGame.Core
 			_defeatedBosses.Clear();
 			_activeEnemies.Clear();
 			_pendingRewards.Clear(); // 이전 세션 보류 보상이 새 게임으로 이월되지 않도록
+			_fieldSeeds.Clear();
 			_claimSuspendCount = 0;
 			_claimingPendingRewards = false;
 			_isRestoringState = false;

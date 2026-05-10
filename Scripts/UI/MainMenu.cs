@@ -100,6 +100,10 @@ namespace FirstGame.UI
 				System.IO.File.Delete(path);
 				GD.Print($"세이브 삭제: {slot}");
 			}
+			// .bak도 함께 삭제 — 미삭제 시 다음 첫 저장 후 본 파일이 깨졌을 때
+			// TryReadSaveFile이 새 게임에 이전 플레이를 부활시킬 수 있음.
+			string bak = path + ".bak";
+			if (System.IO.File.Exists(bak)) System.IO.File.Delete(bak);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using FirstGame.Core;
 
 namespace FirstGame.Maps
 {
@@ -133,7 +134,37 @@ namespace FirstGame.Maps
 				return;
 			}
 
+			// 저장된 seed가 있으면 그대로 사용 — 같은 씬 재진입 시 동일 지형이 보장돼
+			// 저장된 좌표가 장애물 안으로 들어가는 결함 차단. PendingLoadData가 아직
+			// 살아있을 수도 있고(GameManager로 복원 직전), 이미 GameManager에 옮겨졌을
+			// 수도 있어 둘 다 시도.
+			string scenePath = GetTree()?.CurrentScene?.SceneFilePath;
+			int? savedSeed = TryGetSavedSeed(scenePath);
+			if (savedSeed.HasValue && Seed == 0)
+				Seed = savedSeed.Value;
+
 			GenerateMap();
+
+			// 새로 생성된 경우 GameManager에 등록하고 즉시 저장 — RequestAutoSave는
+			// SceneManager.SaveAndSetPending 직후라 throttle에 막혀 dirty 표시만 되므로,
+			// OS kill 시 스폰 위치는 저장됐는데 seed는 빠진 상태가 될 수 있다.
+			// 새 seed 발급은 첫 진입 1회뿐이라 즉시 저장 비용은 무시 가능.
+			if (!savedSeed.HasValue && !string.IsNullOrEmpty(scenePath))
+			{
+				GameManager.Instance?.RecordFieldSeed(scenePath, _usedSeed);
+				SaveManager.SaveGame();
+			}
+		}
+
+		private static int? TryGetSavedSeed(string scenePath)
+		{
+			if (string.IsNullOrEmpty(scenePath)) return null;
+			if (GameManager.Instance != null && GameManager.Instance.TryGetFieldSeed(scenePath, out int s))
+				return s;
+			var pending = SaveManager.PendingLoadData;
+			if (pending?.FieldSeeds != null && pending.FieldSeeds.TryGetValue(scenePath, out int ps))
+				return ps;
+			return null;
 		}
 
 		private void RunGenerate()
@@ -156,7 +187,9 @@ namespace FirstGame.Maps
 
 		public void GenerateMap()
 		{
-			_usedSeed = Seed != 0 ? Seed : (int)(GD.Randi() % 99999);
+			// Seed == 0은 "랜덤 발급" 센티넬 — 발급 결과가 우연히 0이면 다음 진입 시 또
+			// 랜덤이 되므로 1+로 강제해 영속화 보장.
+			_usedSeed = Seed != 0 ? Seed : (int)(GD.Randi() % 99999) + 1;
 			GD.Print($"[MapGenerator] seed={_usedSeed}  크기={MapWidth}×{MapHeight}");
 
 			_groundLayer.Clear();

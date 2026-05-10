@@ -126,6 +126,15 @@ namespace FirstGame.Entities.Player
 			// 인벤에 변동 생길 때마다 pending reward 재시도. 복원 중에는 GameManager의
 			// IsRestoringState 가드가 막아주므로 구독 위치는 자유.
 			Inventory.OnInventoryChanged += () => GameManager.Instance?.TryClaimPendingRewards();
+
+			// 상태 변경 dirty 마킹 — 인벤(상점/획득/소모) + 장비(장착/해제/강화 적용)에만
+			// RequestAutoSave를 건다. 골드 변동에는 의도적으로 걸지 않음 — 상점 트랜잭션은
+			// "골드 차감 → AddItem"처럼 두 단계인데 OnGoldChanged 시점에 즉시 저장되면
+			// 인벤이 반영되기 전 상태가 디스크에 떨어져, 직후 OnInventoryChanged는 throttle에
+			// 막혀 dirty만 남는다. 이 사이에 OS kill 시 골드만 변경된 손상 상태가 된다.
+			// 보스 골드는 EnemyController.Die가 별도로 SaveGame을 호출하므로 손실 없음.
+			Inventory.OnInventoryChanged += () => SaveManager.RequestAutoSave();
+			Inventory.OnEquipmentChanged += () => SaveManager.RequestAutoSave();
 		}
 
 		public override void _ExitTree()
@@ -280,6 +289,10 @@ namespace FirstGame.Entities.Player
 
 				// 보류 보상은 복원만 하고 TryClaim은 EndRestoreState 후로 미룬다.
 				GameManager.Instance?.RestorePendingRewards(data.PendingRewardItems);
+
+				// 절차적 필드맵 seed 복원 — 같은 씬 재진입 시 동일 지형이 보장돼
+				// 저장 좌표가 장애물 안으로 들어가는 결함 차단.
+				GameManager.Instance?.RestoreFieldSeeds(data.FieldSeeds);
 
 				SaveManager.PendingLoadData = null;
 			}

@@ -258,7 +258,25 @@ namespace FirstGame.UI
 		{
 			if (!_hasSelection) return;
 
-			// 현재 대상 찾기
+			// pending reward 클레임 격리 — ConsumeItems가 OnInventoryChanged를 발생시켜
+			// TryClaimPendingRewards가 강화 결과 적용 전에 인벤 빈 자리를 채워 SaveGame이
+			// stale 상태로 떨어지는 결함 차단. finally에서 Resume하며 1회 claim+save.
+			GameManager.Instance?.SuspendPendingRewardClaims();
+			try
+			{
+				DoEnhance();
+			}
+			finally
+			{
+				GameManager.Instance?.ResumePendingRewardClaims();
+			}
+			// 강화 결과(골드/재료/장비 강화 레벨)를 즉시 영속화 — Resume 내부 TryClaim은
+			// 큐가 비어 있으면 SaveGame을 호출하지 않으므로 보정.
+			SaveManager.SaveGame();
+		}
+
+		private void DoEnhance()
+		{
 			ItemData item;
 			int currentLevel;
 

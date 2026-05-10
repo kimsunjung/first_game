@@ -52,7 +52,7 @@ namespace FirstGame.Core
 				{
 					WriteIndented = true
 				});
-				File.WriteAllText(path, json);
+				WriteAtomic(path, json);
 
 				OnGameSaved?.Invoke();
 				_lastAutoSaveMs = Godot.Time.GetTicksMsec();
@@ -64,6 +64,38 @@ namespace FirstGame.Core
 				GD.PrintErr($"SaveManager: 저장 실패 - {e.Message}");
 			}
 			return data;
+		}
+
+		/// <summary>
+		/// tmp 파일에 쓰고 fsync 후 target으로 원자적 교체. 기존 target은 .bak으로 보존.
+		/// 모바일 OS kill / 스토리지 오류로 쓰기 중간에 끊겨도 본 파일이나 .bak 중 하나는 항상 유효.
+		/// </summary>
+		private static void WriteAtomic(string path, string json)
+		{
+			string tmp = path + ".tmp";
+			string bak = path + ".bak";
+
+			// 1) tmp에 쓰고 디스크 동기화
+			using (var fs = new FileStream(tmp, FileMode.Create, System.IO.FileAccess.Write, FileShare.None))
+			using (var sw = new StreamWriter(fs))
+			{
+				sw.Write(json);
+				sw.Flush();
+				fs.Flush(true); // OS 버퍼 → 디스크
+			}
+
+			// 2) target이 이미 있으면 File.Replace로 원자 치환 + .bak 보존
+			if (File.Exists(path))
+			{
+				File.Replace(tmp, path, bak, ignoreMetadataErrors: true);
+			}
+			else
+			{
+				// 첫 저장: stale .bak가 남아 있으면 새 게임 첫 저장 후 본 파일이
+				// 깨졌을 때 TryReadSaveFile이 이전 세이브를 부활시킬 수 있으므로 삭제.
+				if (File.Exists(bak)) File.Delete(bak);
+				File.Move(tmp, path);
+			}
 		}
 
 		/// <summary>
@@ -140,7 +172,7 @@ namespace FirstGame.Core
 			{
 				string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
 				if (!File.Exists(path)) return;
-				File.WriteAllText(path, JsonSerializer.Serialize(PendingLoadData, new JsonSerializerOptions { WriteIndented = true }));
+				WriteAtomic(path, JsonSerializer.Serialize(PendingLoadData, new JsonSerializerOptions { WriteIndented = true }));
 			}
 			catch (Exception e)
 			{
@@ -171,18 +203,7 @@ namespace FirstGame.Core
 				return;
 			}
 
-			try
-			{
-				string json = File.ReadAllText(path);
-				PendingLoadData = JsonSerializer.Deserialize<SaveData>(json);
-				if (PendingLoadData != null)
-					MigrateSaveData(PendingLoadData);
-			}
-			catch (Exception e)
-			{
-				GD.PrintErr($"SaveManager: 로드 실패 - {e.Message}");
-				PendingLoadData = null;
-			}
+			PendingLoadData = TryReadSaveFile(path);
 
 			var tree = (SceneTree)Engine.GetMainLoop();
 			tree.Paused = false;
@@ -204,17 +225,44 @@ namespace FirstGame.Core
 			}
 			string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
 			if (!File.Exists(path)) return;
+			PendingLoadData = TryReadSaveFile(path);
+		}
+
+		/// <summary>본 파일 → 깨졌으면 .bak → 둘 다 실패면 null. 마이그레이션도 여기서 적용.</summary>
+		private static SaveData TryReadSaveFile(string path)
+		{
+			SaveData data = ReadAndParse(path);
+			if (data != null) return data;
+
+			string bak = path + ".bak";
+			if (File.Exists(bak))
+			{
+				GD.PrintErr($"SaveManager: 본 파일 손상 — .bak에서 복구 시도 ({bak})");
+				data = ReadAndParse(bak);
+				if (data != null)
+				{
+					GD.Print("SaveManager: .bak 복구 성공");
+					return data;
+				}
+				GD.PrintErr("SaveManager: .bak도 손상 — 로드 포기");
+			}
+			return null;
+		}
+
+		private static SaveData ReadAndParse(string path)
+		{
 			try
 			{
 				string json = File.ReadAllText(path);
-				PendingLoadData = JsonSerializer.Deserialize<SaveData>(json);
-				if (PendingLoadData != null)
-					MigrateSaveData(PendingLoadData);
+				if (string.IsNullOrWhiteSpace(json)) return null;
+				var data = JsonSerializer.Deserialize<SaveData>(json);
+				if (data != null) MigrateSaveData(data);
+				return data;
 			}
 			catch (Exception e)
 			{
-				GD.PrintErr($"SaveManager: LoadIntoPending 실패 - {e.Message}");
-				PendingLoadData = null;
+				GD.PrintErr($"SaveManager: 파싱 실패 ({path}) - {e.Message}");
+				return null;
 			}
 		}
 
@@ -253,6 +301,13 @@ namespace FirstGame.Core
 				data.EquippedRing1Path ??= "";
 				data.EquippedRing2Path ??= "";
 				data.EquippedBraceletPath ??= "";
+			}
+
+			if (data.Version < 5)
+			{
+				// v4→v5: 절차적 필드맵 seed dictionary 추가. 누락 시 빈 dictionary —
+				// 다음 진입 시 새 seed 발급 후 저장돼 이후 세션부터 일관 유지.
+				data.FieldSeeds ??= new System.Collections.Generic.Dictionary<string, int>();
 			}
 
 			data.Version = SaveData.LatestVersion;

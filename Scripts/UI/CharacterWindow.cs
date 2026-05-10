@@ -235,8 +235,10 @@ namespace FirstGame.UI
 		private void AllocateStat(string stat)
 		{
 			if (_player == null) return;
-			_player.Stats.AllocateStat(stat);
+			if (!_player.Stats.AllocateStat(stat)) return;
 			RefreshDisplay();
+			// 스탯 포인트 분배는 인벤/장비 이벤트와 무관하므로 직접 dirty 마킹.
+			SaveManager.RequestAutoSave();
 		}
 
 		public void RefreshDisplay()

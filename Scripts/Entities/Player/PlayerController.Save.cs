@@ -84,6 +84,15 @@ namespace FirstGame.Entities.Player
 				if (!string.IsNullOrEmpty(skill.ResourcePath))
 					data.LearnedSkillPaths.Add(skill.ResourcePath);
 			}
+
+			// 절차적 필드맵 seed (씬 경로 → seed)
+			var gm = GameManager.Instance;
+			if (gm != null)
+			{
+				data.FieldSeeds = new Dictionary<string, int>();
+				foreach (var kv in gm.FieldSeeds)
+					data.FieldSeeds[kv.Key] = kv.Value;
+			}
 		}
 
 		public void ReadSaveData(SaveData data)

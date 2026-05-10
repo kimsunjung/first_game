@@ -176,12 +176,9 @@ namespace FirstGame.UI
             for (int i = 0; i < _inventory.Slots.Count; i++)
             {
                 var slot = _inventory.Slots[i];
-
-                // 장착 중인 장비는 판매 불가 → 목록에서 제외
-                if (slot.Item == _inventory.EquippedWeapon) continue;
-                if (slot.Item == _inventory.EquippedArmor) continue;
-                if (slot.Item == _inventory.EquippedAccessory) continue;
-
+                // 장착 장비는 인벤에서 이미 빠져 있으므로 별도 필터 불필요. 동일 .tres
+                // 복제품(예: 같은 무기 2개)을 가지고 있을 때 본 비교가 판매 가능한 사본까지
+                // 숨겨버리던 결함 제거.
                 int slotIndex = i;  // 클로저용 캡처
                 var panel = CreateSellPanel(slot, slotIndex);
                 _sellGrid.AddChild(panel);
@@ -192,13 +189,9 @@ namespace FirstGame.UI
         {
             if (slotIndex < 0 || slotIndex >= _inventory.Slots.Count) return;
             var slot = _inventory.Slots[slotIndex];
-
-            // 장착 중인 장비 이중 체크
-            if (slot.Item == _inventory.EquippedWeapon || slot.Item == _inventory.EquippedArmor || slot.Item == _inventory.EquippedAccessory)
-            {
-                ShowMessage("장착 중인 장비는 판매할 수 없습니다!");
-                return;
-            }
+            // 장착 장비는 인벤에서 빠져 있으므로 슬롯에 같은 .tres가 있다는 건 별도 사본.
+            // ItemData 참조 비교는 .tres 공유 자원 특성상 사본도 막아버려 판매 불가 결함을 만든다.
+            // → 슬롯 존재 자체가 "이건 판매 가능한 사본"임을 보장.
 
             int sellPrice = slot.Item.SellPrice;
             string itemName = slot.Item.ItemName;

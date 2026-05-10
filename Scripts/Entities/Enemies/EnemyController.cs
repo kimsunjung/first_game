@@ -29,6 +29,10 @@ namespace FirstGame.Entities.Enemies
 		private bool _isAttacking = false;
 		private bool _isProvoked = false; // Passive 행동: 피격 전까지 비공격
 
+		// 진행 중인 공격 tween 참조 — 사망 시 Kill해 죽은 적이 데미지를 주거나
+		// 투사체를 발사하는 결함 차단. CreateTween()이 반환한 SceneTreeTween을 보관.
+		private Tween _attackTween;
+
 		public override void _Ready()
 		{
 			if (Stats != null)
@@ -278,6 +282,7 @@ namespace FirstGame.Entities.Enemies
 				{
 					_animSprite.Modulate = new Color(1.3f, 0.8f, 0.8f, 1f); // 붉은 톤
 					var tween = CreateTween();
+					_attackTween = tween;
 					tween.TweenProperty(_animSprite, "position",
 						(Vector2)_animSprite.Position - attackDir * 4f, 0.1f);
 
@@ -285,9 +290,10 @@ namespace FirstGame.Entities.Enemies
 					tween.TweenProperty(_animSprite, "position",
 						(Vector2)_animSprite.Position + attackDir * 12f, 0.08f);
 
-					// 3단계: 원위치 복귀
+					// 3단계: 원위치 복귀 — 사망 후 콜백 실행 방지: _isDying 검사 추가.
 					tween.TweenCallback(Callable.From(() =>
 					{
+						if (_isDying) return;
 						if (IsInstanceValid(this) && IsInstanceValid(_target))
 						{
 							((IDamageable)_target).TakeDamage(Stats.BaseDamage);
@@ -325,9 +331,12 @@ namespace FirstGame.Entities.Enemies
 				{
 					_animSprite.Modulate = new Color(0.7f, 0.7f, 1.4f, 1f);
 					var tween = CreateTween();
+					_attackTween = tween;
 					tween.TweenProperty(_animSprite, "scale", new Vector2(1.2f, 0.8f), 0.2f);
+					// 사망 후 투사체 발사 차단: _isDying 검사 추가.
 					tween.TweenCallback(Callable.From(() =>
 					{
+						if (_isDying) return;
 						if (IsInstanceValid(this) && IsInstanceValid(_target))
 						{
 							SpawnProjectile(attackDir);
@@ -421,6 +430,14 @@ namespace FirstGame.Entities.Enemies
 		private void Die()
 		{
 			_isDying = true;
+
+			// 진행 중인 공격 tween 즉시 종료 — IsValid 검사가 통과하는 동안에도
+			// 데미지/투사체 콜백이 발사되지 않도록 차단. 콜백 안 _isDying 검사가
+			// 2차 안전망이지만 Kill로 일찍 끊는 게 우선.
+			if (_attackTween != null && _attackTween.IsValid())
+				_attackTween.Kill();
+			_attackTween = null;
+
 			AudioManager.Instance?.PlaySFX("enemy_death.wav");
 
 			EventManager.TriggerEnemyKilled();

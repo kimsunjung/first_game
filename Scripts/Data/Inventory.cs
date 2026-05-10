@@ -212,65 +212,140 @@ namespace FirstGame.Data
             var item = slot.Item;
             int enhLevel = slot.EnhancementLevel;
 
+            // 기존 장비를 해당 슬롯 자리에 in-place로 되돌려놓음으로써 가방이 꽉 차도
+            // 교체 가능하게 한다. UnequipXxx → AddItem 경로는 빈 슬롯을 요구해서
+            // MaxSlots 도달 시 거부됐음.
             if (item.Type == ItemType.Weapon)
             {
-                if (EquippedWeapon != null)
+                var prevItem = EquippedWeapon;
+                int prevEnh = EquippedWeaponEnhancement;
+                if (prevItem != null)
                 {
-                    if (!UnequipWeapon(target)) return;
+                    var (pdmg, _, _) = GetEnhancementBonuses(prevItem, prevEnh);
+                    target.ModifyBaseDamage(-(prevItem.BonusDamage + pdmg));
+                    slot.Item = prevItem;
+                    slot.Quantity = 1;
+                    slot.EnhancementLevel = prevEnh;
                 }
-
+                else
+                {
+                    Slots.RemoveAt(slotIndex);
+                }
                 EquippedWeapon = item;
                 EquippedWeaponEnhancement = enhLevel;
                 var (dmg, _, _) = GetEnhancementBonuses(item, enhLevel);
                 target.ModifyBaseDamage(item.BonusDamage + dmg);
-                RemoveItem(slotIndex, 1);
             }
             else if (item.Type == ItemType.Armor)
             {
-                if (EquippedArmor != null)
+                var prevItem = EquippedArmor;
+                int prevEnh = EquippedArmorEnhancement;
+                if (prevItem != null)
                 {
-                    if (!UnequipArmor(target)) return;
+                    var (_, _, pdef) = GetEnhancementBonuses(prevItem, prevEnh);
+                    target.ModifyMaxHealth(-prevItem.BonusMaxHealth);
+                    target.ModifyDefense(-(prevItem.BonusDefense + pdef));
+                    slot.Item = prevItem;
+                    slot.Quantity = 1;
+                    slot.EnhancementLevel = prevEnh;
                 }
-
+                else
+                {
+                    Slots.RemoveAt(slotIndex);
+                }
                 EquippedArmor = item;
                 EquippedArmorEnhancement = enhLevel;
                 var (_, _, def) = GetEnhancementBonuses(item, enhLevel);
                 target.ModifyMaxHealth(item.BonusMaxHealth);
                 target.ModifyDefense(item.BonusDefense + def);
-                RemoveItem(slotIndex, 1);
             }
             else if (item.Type == ItemType.Accessory)
             {
-                if (EquippedAccessory != null)
+                var prevItem = EquippedAccessory;
+                int prevEnh = EquippedAccessoryEnhancement;
+                if (prevItem != null)
                 {
-                    if (!UnequipAccessory(target)) return;
+                    var (pdmg, _, pdef) = GetEnhancementBonuses(prevItem, prevEnh);
+                    target.ModifyDefense(-(prevItem.BonusDefense + pdef));
+                    if (prevItem.BonusDamage > 0) target.ModifyBaseDamage(-(prevItem.BonusDamage + pdmg));
+                    if (prevItem.BonusMaxHealth > 0) target.ModifyMaxHealth(-prevItem.BonusMaxHealth);
+                    slot.Item = prevItem;
+                    slot.Quantity = 1;
+                    slot.EnhancementLevel = prevEnh;
                 }
-
+                else
+                {
+                    Slots.RemoveAt(slotIndex);
+                }
                 EquippedAccessory = item;
                 EquippedAccessoryEnhancement = enhLevel;
                 var (dmgBonus, _, defBonus) = GetEnhancementBonuses(item, enhLevel);
                 target.ModifyDefense(item.BonusDefense + defBonus);
                 if (item.BonusDamage > 0) target.ModifyBaseDamage(item.BonusDamage + dmgBonus);
                 if (item.BonusMaxHealth > 0) target.ModifyMaxHealth(item.BonusMaxHealth);
-                RemoveItem(slotIndex, 1);
             }
             else if (IsExtraEquipType(item.Type))
             {
-                // 신규 부위별 슬롯 (모자/신발/목걸이/반지/팔찌). 강화는 미적용.
-                var slotKey = ResolveExtraSlot(item.Type);
-                var prev = GetExtraSlot(slotKey);
-                if (prev != null)
-                {
-                    if (!UnequipExtra(slotKey, target)) return;
-                }
-                SetExtraSlot(slotKey, item);
-                ApplyItemBonuses(item, target, +1);
-                RemoveItem(slotIndex, 1);
+                EquipExtraInternal(slotIndex, item, ResolveExtraSlot(item.Type), target);
+                OnInventoryChanged?.Invoke();
+                OnEquipmentChanged?.Invoke();
+                AudioManager.Instance?.PlaySFX("equip.wav");
+                GD.Print($"{GetEnhancedName(item, enhLevel)} 장착!");
+                return;
             }
 
+            OnInventoryChanged?.Invoke();
             OnEquipmentChanged?.Invoke();
             AudioManager.Instance?.PlaySFX("equip.wav");
             GD.Print($"{GetEnhancedName(item, enhLevel)} 장착!");
+        }
+
+        /// <summary>반지처럼 같은 ItemType이 두 슬롯(Ring1/Ring2)을 가질 때 사용자가
+        /// 어느 슬롯에 장착/교체할지 직접 지정. ResolveExtraSlot이 자동으로 빈 칸을 고르는
+        /// 기본 EquipItem과 달리, 둘 다 차 있어도 지정한 슬롯으로 교체 가능.</summary>
+        public void EquipItemToSlot(int slotIndex, ExtraSlot targetSlot, IEquipTarget target)
+        {
+            if (slotIndex < 0 || slotIndex >= Slots.Count) return;
+            var slot = Slots[slotIndex];
+            var item = slot.Item;
+            if (!IsExtraEquipType(item.Type)) return;
+            // 슬롯 유형이 아이템과 맞는지 검증 (Ring → Ring1/Ring2만 허용 등)
+            if (!IsSlotCompatible(item.Type, targetSlot)) return;
+            EquipExtraInternal(slotIndex, item, targetSlot, target);
+            OnInventoryChanged?.Invoke();
+            OnEquipmentChanged?.Invoke();
+            AudioManager.Instance?.PlaySFX("equip.wav");
+            GD.Print($"{item.ItemName} 장착!");
+        }
+
+        private static bool IsSlotCompatible(ItemType t, ExtraSlot s) => (t, s) switch
+        {
+            (ItemType.Helmet, ExtraSlot.Helmet) => true,
+            (ItemType.Boots, ExtraSlot.Boots) => true,
+            (ItemType.Necklace, ExtraSlot.Necklace) => true,
+            (ItemType.Bracelet, ExtraSlot.Bracelet) => true,
+            (ItemType.Ring, ExtraSlot.Ring1) => true,
+            (ItemType.Ring, ExtraSlot.Ring2) => true,
+            _ => false
+        };
+
+        private void EquipExtraInternal(int slotIndex, ItemData item, ExtraSlot slotKey, IEquipTarget target)
+        {
+            var slot = Slots[slotIndex];
+            var prev = GetExtraSlot(slotKey);
+            if (prev != null)
+            {
+                ApplyItemBonuses(prev, target, -1);
+                slot.Item = prev;
+                slot.Quantity = 1;
+                slot.EnhancementLevel = 0;
+            }
+            else
+            {
+                Slots.RemoveAt(slotIndex);
+            }
+            SetExtraSlot(slotKey, item);
+            ApplyItemBonuses(item, target, +1);
         }
 
         public bool UnequipWeapon(IEquipTarget target)

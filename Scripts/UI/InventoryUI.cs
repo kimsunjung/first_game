@@ -410,8 +410,58 @@ namespace FirstGame.UI
 
         private void OnUsePressed()
         {
-            if (_selectedSlot >= 0)
-                _inventory.UseItem(_selectedSlot, _player.Stats);
+            if (_selectedSlot < 0) return;
+            var slot = _inventory.Slots[_selectedSlot];
+            // 반지는 슬롯이 두 개라 둘 다 차 있으면 어디에 교체할지 사용자가 직접 선택.
+            // 비어 있는 슬롯이 있으면 기본 EquipItem이 자동으로 그 자리로 채워준다.
+            if (slot.Item.Type == ItemType.Ring
+                && _inventory.EquippedRing1 != null
+                && _inventory.EquippedRing2 != null)
+            {
+                ShowRingSlotPicker(_selectedSlot);
+                return;
+            }
+            _inventory.UseItem(_selectedSlot, _player.Stats);
+        }
+
+        private void ShowRingSlotPicker(int invSlotIndex)
+        {
+            // AcceptDialog + 명시적 두 버튼 + 취소 버튼. Esc/뒤로가기로 닫혀도 사이드 이펙트 없음.
+            // ConfirmationDialog의 Canceled 신호는 Esc/창닫기로도 발생해 의도치 않은 교체를
+            // 일으키므로 버튼별 CustomAction을 사용한다.
+            var dialog = new AcceptDialog
+            {
+                Title = "반지 교체",
+                DialogText = "어느 반지 슬롯과 교체하시겠습니까?\n\n"
+                             + $"반지 1: {_inventory.EquippedRing1?.ItemName ?? "(비어있음)"}\n"
+                             + $"반지 2: {_inventory.EquippedRing2?.ItemName ?? "(비어있음)"}",
+                ProcessMode = ProcessModeEnum.Always,
+                Exclusive = true
+            };
+            // 기본 OK 버튼 숨김
+            dialog.GetOkButton().Visible = false;
+            dialog.AddButton("반지 1", true, "ring1");
+            dialog.AddButton("반지 2", true, "ring2");
+            dialog.AddCancelButton("취소");
+
+            dialog.CustomAction += action =>
+            {
+                if (action == "ring1") DoRingSwap(invSlotIndex, Inventory.ExtraSlot.Ring1);
+                else if (action == "ring2") DoRingSwap(invSlotIndex, Inventory.ExtraSlot.Ring2);
+                dialog.Hide();
+            };
+            dialog.VisibilityChanged += () =>
+            {
+                if (!dialog.Visible) dialog.QueueFree();
+            };
+            GetTree().Root.AddChild(dialog);
+            dialog.PopupCentered();
+        }
+
+        private void DoRingSwap(int invSlotIndex, Inventory.ExtraSlot target)
+        {
+            if (invSlotIndex < 0 || invSlotIndex >= _inventory.Slots.Count) return;
+            _inventory.EquipItemToSlot(invSlotIndex, target, _player.Stats);
         }
 
         private static Color GetRarityColor(ItemRarity rarity)
