@@ -24,9 +24,9 @@ namespace FirstGame.Data
 		private static int LevelUpDamageBonus => BalanceData.Progression.LvAtkBonus;
 		private static int LevelUpMpBonus => BalanceData.Progression.LvMpBonus;
 		private static int LevelUpStatPoints => BalanceData.Progression.LvStatPoints;
-		private static int StrDamageBonus => BalanceData.Progression.StrAtkBonus;
-		private static int ConHealthBonus => BalanceData.Progression.ConHpBonus;
-		private static int IntMpBonus => BalanceData.Progression.IntMpBonus;
+		private static float StrDamageBonus => BalanceData.Progression.StrAtkBonus;
+		private static float ConHealthBonus => BalanceData.Progression.ConHpBonus;
+		private static float IntMpBonus => BalanceData.Progression.IntMpBonus;
 
 		// ─── IEquipTarget 구현 ───────────────────────────────────────
 		public void ModifyBaseDamage(int delta) => BaseDamage += delta;
@@ -109,9 +109,23 @@ namespace FirstGame.Data
 			if (_statPoints <= 0) return false;
 			switch (stat.ToUpperInvariant())
 			{
-				case "STR": _strPoints++; BaseDamage += StrDamageBonus; break;
-				case "CON": _conPoints++; MaxHealth += ConHealthBonus; CurrentHealth = Mathf.Min(CurrentHealth + ConHealthBonus, MaxHealth); break;
-				case "INT": _intPoints++; MaxMp += IntMpBonus; CurrentMp = Mathf.Min(CurrentMp + IntMpBonus, MaxMp); break;
+				case "STR":
+					_strPoints++;
+					int atkDelta = Mathf.RoundToInt(_strPoints * StrDamageBonus) - Mathf.RoundToInt((_strPoints - 1) * StrDamageBonus);
+					BaseDamage += atkDelta;
+					break;
+				case "CON":
+					_conPoints++;
+					int hpDelta = Mathf.RoundToInt(_conPoints * ConHealthBonus) - Mathf.RoundToInt((_conPoints - 1) * ConHealthBonus);
+					MaxHealth += hpDelta;
+					CurrentHealth = Mathf.Min(CurrentHealth + hpDelta, MaxHealth);
+					break;
+				case "INT":
+					_intPoints++;
+					int mpDelta = Mathf.RoundToInt(_intPoints * IntMpBonus) - Mathf.RoundToInt((_intPoints - 1) * IntMpBonus);
+					MaxMp += mpDelta;
+					CurrentMp = Mathf.Min(CurrentMp + mpDelta, MaxMp);
+					break;
 				default: return false;
 			}
 			_statPoints--;
@@ -130,9 +144,9 @@ namespace FirstGame.Data
 		/// <summary>로드 시 SetStatPointsFromSave 후 호출. STR/CON/INT 보너스를 스탯에 재적용한다.</summary>
 		public void ApplyStatPointBonuses()
 		{
-			BaseDamage += _strPoints * StrDamageBonus;
-			MaxHealth += _conPoints * ConHealthBonus;
-			MaxMp += _intPoints * IntMpBonus;
+			BaseDamage += Mathf.RoundToInt(_strPoints * StrDamageBonus);
+			MaxHealth += Mathf.RoundToInt(_conPoints * ConHealthBonus);
+			MaxMp += Mathf.RoundToInt(_intPoints * IntMpBonus);
 		}
 
 		// ─── 스킬 시스템 ─────────────────────────────────────────────

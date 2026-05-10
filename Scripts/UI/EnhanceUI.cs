@@ -148,8 +148,10 @@ namespace FirstGame.UI
 		{
 			var panel = new PanelContainer();
 			panel.CustomMinimumSize = new Vector2(260, 36);
+			panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
 			var hbox = new HBoxContainer();
+			hbox.MouseFilter = Control.MouseFilterEnum.Pass;
 			panel.AddChild(hbox);
 
 			// 아이콘
@@ -160,14 +162,17 @@ namespace FirstGame.UI
 				icon.CustomMinimumSize = new Vector2(24, 24);
 				icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
 				icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+				icon.MouseFilter = Control.MouseFilterEnum.Ignore;
 				hbox.AddChild(icon);
 			}
 
 			var vbox = new VBoxContainer();
 			vbox.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			vbox.MouseFilter = Control.MouseFilterEnum.Pass;
 
 			var nameLabel = new Label();
 			nameLabel.Text = Inventory.GetEnhancedName(entry.Item, entry.Level);
+			nameLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
 			vbox.AddChild(nameLabel);
 
 			var tagLabel = new Label();
@@ -176,13 +181,16 @@ namespace FirstGame.UI
 			bool isMax = entry.Level >= MaxEnhancement;
 			tagLabel.Text = isMax ? "최대 강화" : (isEquipped ? "[장착중]" : "[보관중]");
 			tagLabel.Modulate = isMax ? new Color(1f, 0.85f, 0.2f) : (isEquipped ? new Color(0.4f, 0.8f, 1f) : Colors.White);
+			tagLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
 			vbox.AddChild(tagLabel);
 
 			hbox.AddChild(vbox);
 
+			// 선택 버튼 — PASS: 클릭은 처리되면서 드래그가 ScrollContainer까지 전달됨
 			var selectBtn = new Button();
 			selectBtn.Text = "선택";
 			selectBtn.Disabled = isMax;
+			selectBtn.MouseFilter = Control.MouseFilterEnum.Pass;
 			var capturedEntry = entry;
 			selectBtn.Pressed += () => SelectEntry(capturedEntry);
 			hbox.AddChild(selectBtn);

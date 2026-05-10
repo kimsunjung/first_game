@@ -65,8 +65,10 @@ namespace FirstGame.UI
 
 				var panel = new PanelContainer();
 				panel.CustomMinimumSize = new Vector2(260, 40);
+				panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
 				var hbox = new HBoxContainer();
+				hbox.MouseFilter = Control.MouseFilterEnum.Pass;
 				panel.AddChild(hbox);
 
 				// 아이콘
@@ -76,37 +78,43 @@ namespace FirstGame.UI
 					icon.Texture = skill.Icon;
 					icon.CustomMinimumSize = new Vector2(24, 24);
 					icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+					icon.MouseFilter = Control.MouseFilterEnum.Ignore;
 					hbox.AddChild(icon);
 				}
 
 				// 스킬 정보
 				var vbox = new VBoxContainer();
 				vbox.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+				vbox.MouseFilter = Control.MouseFilterEnum.Pass;
 
 				var nameLabel = new Label();
 				nameLabel.Text = $"{skill.SkillName}";
 				nameLabel.AddThemeFontSizeOverride("font_size", 12);
 				nameLabel.ClipText = true;
+				nameLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
 				vbox.AddChild(nameLabel);
 
 				var descLabel = new Label();
 				descLabel.Text = $"{skill.Description}  MP:{skill.MpCost}  쿨:{skill.Cooldown}s";
 				descLabel.AddThemeFontSizeOverride("font_size", 10);
 				descLabel.ClipText = true;
+				descLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
 				vbox.AddChild(descLabel);
 
 				var priceLabel = new Label();
 				priceLabel.Text = $"{item.Price}G";
 				priceLabel.AddThemeFontSizeOverride("font_size", 11);
+				priceLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
 				vbox.AddChild(priceLabel);
 
 				hbox.AddChild(vbox);
 
-				// 구매 버튼
+				// 구매 버튼 — PASS: 클릭은 처리되면서 드래그가 ScrollContainer까지 전달됨
 				var btn = new Button();
 				bool alreadyLearned = _player.Stats.HasSkill(skill.Type);
 				bool levelOk = _player.Stats.Level >= skill.RequiredLevel;
 
+				btn.MouseFilter = Control.MouseFilterEnum.Pass;
 				if (alreadyLearned)
 				{
 					btn.Text = "학습 완료";
@@ -138,13 +146,14 @@ namespace FirstGame.UI
 				ShowMessage("골드가 부족합니다!");
 				return;
 			}
-			bool added = _player.Inventory.AddItem(item, 1);
-			if (!added)
+			if (!_player.Inventory.CanAddItem(item, 1))
 			{
 				ShowMessage("가방이 꽉 찼습니다!");
 				return;
 			}
+			// 골드 먼저 차감 후 AddItem — 역순이면 골드 차감 전 상태가 저장될 수 있음
 			GameManager.Instance.PlayerGold -= price;
+			_player.Inventory.AddItem(item, 1);
 			AudioManager.Instance?.PlaySFX("shop_buy.wav");
 			ShowMessage($"{item.ItemName} 구매! 인벤토리에서 사용하세요.");
 			UpdateGold();

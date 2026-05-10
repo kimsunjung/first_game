@@ -21,5 +21,5 @@ SpriteAtlasCoords = Vector2i(9, 7)
 PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core"), ExtResource("5_lb"), ExtResource("6_bb")])
 DropWeights = PackedFloat32Array(0.25, 0.15, 0.30, 0.15, 0.15)
 DropChance = 1.0
-MaxHealth = 500
-CurrentHealth = 500
+MaxHealth = 850
+CurrentHealth = 850

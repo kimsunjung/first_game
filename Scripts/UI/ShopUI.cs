@@ -147,17 +147,17 @@ namespace FirstGame.UI
                 return;
             }
 
-            // 인벤토리 공간 체크
-            bool canAdd = _inventory.AddItem(item, quantity);
-            if (!canAdd)
+            // 인벤토리 공간 사전 확인
+            if (!_inventory.CanAddItem(item, quantity))
             {
                 ShowMessage("가방이 꽉 찼습니다! (Inventory full!)");
                 AudioManager.Instance?.PlaySFX("shop_fail.wav");
                 return;
             }
 
-            // 구매 성공
+            // 골드 먼저 차감 후 AddItem — 역순이면 골드 차감 전 상태가 저장될 수 있음
             GameManager.Instance.PlayerGold -= totalCost;
+            _inventory.AddItem(item, quantity);
             AudioManager.Instance?.PlaySFX("shop_buy.wav");
             ShowMessage($"{item.ItemName} x{quantity} 구매! (-{totalCost}G)");
             UpdateGoldDisplay();
@@ -218,8 +218,10 @@ namespace FirstGame.UI
         {
             var panel = new PanelContainer();
             panel.CustomMinimumSize = new Vector2(260, 36);
+            panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
             var hbox = new HBoxContainer();
+            hbox.MouseFilter = Control.MouseFilterEnum.Pass;
             panel.AddChild(hbox);
 
             // 아이콘
@@ -230,25 +232,41 @@ namespace FirstGame.UI
                 icon.CustomMinimumSize = new Vector2(24, 24);
                 icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
                 icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+                icon.MouseFilter = Control.MouseFilterEnum.Ignore;
                 hbox.AddChild(icon);
             }
 
-            // 이름 + 가격
+            // 이름 + 스펙 + 가격
             var vbox = new VBoxContainer();
             vbox.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+            vbox.MouseFilter = Control.MouseFilterEnum.Pass;
             var nameLabel = new Label();
             nameLabel.Text = item.ItemName;
+            nameLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
             vbox.AddChild(nameLabel);
+
+            string spec = BuildSpecText(item);
+            if (!string.IsNullOrEmpty(spec))
+            {
+                var specLabel = new Label();
+                specLabel.Text = spec;
+                specLabel.AddThemeFontSizeOverride("font_size", 10);
+                specLabel.AddThemeColorOverride("font_color", new Color(0.7f, 0.9f, 1f));
+                specLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
+                vbox.AddChild(specLabel);
+            }
 
             var priceLabel = new Label();
             priceLabel.Text = $"{item.Price}G";
             priceLabel.AddThemeFontSizeOverride("font_size", 11);
+            priceLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
             vbox.AddChild(priceLabel);
             hbox.AddChild(vbox);
 
-            // 구매 버튼
+            // 구매 버튼 — PASS: 클릭은 그대로 처리되면서 드래그가 ScrollContainer까지 전달됨
             var buyButton = new Button();
             buyButton.Text = "구매";
+            buyButton.MouseFilter = Control.MouseFilterEnum.Pass;
             buyButton.Pressed += () => OnBuyItemSelected(item);
             hbox.AddChild(buyButton);
 
@@ -259,8 +277,10 @@ namespace FirstGame.UI
         {
             var panel = new PanelContainer();
             panel.CustomMinimumSize = new Vector2(260, 36);
+            panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
             var hbox = new HBoxContainer();
+            hbox.MouseFilter = Control.MouseFilterEnum.Pass;
             panel.AddChild(hbox);
 
             // 아이콘
@@ -271,29 +291,45 @@ namespace FirstGame.UI
                 icon.CustomMinimumSize = new Vector2(24, 24);
                 icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
                 icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+                icon.MouseFilter = Control.MouseFilterEnum.Ignore;
                 hbox.AddChild(icon);
             }
 
             // 이름 + 판매가 + 수량
             var vbox = new VBoxContainer();
             vbox.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+            vbox.MouseFilter = Control.MouseFilterEnum.Pass;
             var nameLabel = new Label();
             nameLabel.Text = slot.Quantity > 1 ? $"{slot.Item.ItemName} x{slot.Quantity}" : slot.Item.ItemName;
+            nameLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
             vbox.AddChild(nameLabel);
 
             var priceLabel = new Label();
             priceLabel.Text = $"판매가: {slot.Item.SellPrice}G";
             priceLabel.AddThemeFontSizeOverride("font_size", 11);
+            priceLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
             vbox.AddChild(priceLabel);
             hbox.AddChild(vbox);
 
-            // 판매 버튼
+            // 판매 버튼 — PASS: 클릭은 그대로 처리되면서 드래그가 ScrollContainer까지 전달됨
             var sellButton = new Button();
             sellButton.Text = "판매";
+            sellButton.MouseFilter = Control.MouseFilterEnum.Pass;
             sellButton.Pressed += () => TrySellItem(slotIndex);
             hbox.AddChild(sellButton);
 
             return panel;
+        }
+
+        private static string BuildSpecText(ItemData item)
+        {
+            var parts = new System.Collections.Generic.List<string>();
+            if (item.BonusDamage != 0)      parts.Add($"공격+{item.BonusDamage}");
+            if (item.BonusMaxHealth != 0)   parts.Add($"HP+{item.BonusMaxHealth}");
+            if (item.BonusDefense != 0)     parts.Add($"방어+{item.BonusDefense}");
+            if (item.BonusMoveSpeed != 0)   parts.Add($"이동+{item.BonusMoveSpeed:0}");
+            if (item.BonusCritRate != 0)    parts.Add($"치명+{item.BonusCritRate * 100:0}%");
+            return parts.Count > 0 ? string.Join("  ", parts) : "";
         }
 
         private void UpdateGoldDisplay()

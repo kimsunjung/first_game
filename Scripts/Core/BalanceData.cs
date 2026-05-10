@@ -166,12 +166,12 @@ namespace FirstGame.Core
 			ExpBase = GetFloat(el, "expBase", 100.0f),
 			ExpExponent = GetFloat(el, "expExponent", 1.5f),
 			LvHpBonus = GetInt(el, "lvHpBonus", 10),
-			LvAtkBonus = GetInt(el, "lvAtkBonus", 2),
+			LvAtkBonus = GetInt(el, "lvAtkBonus", 1),
 			LvMpBonus = GetInt(el, "lvMpBonus", 5),
 			LvStatPoints = GetInt(el, "lvStatPoints", 3),
-			StrAtkBonus = GetInt(el, "strAtkBonus", 2),
-			ConHpBonus = GetInt(el, "conHpBonus", 5),
-			IntMpBonus = GetInt(el, "intMpBonus", 3)
+			StrAtkBonus = GetFloat(el, "strAtkBonus", 0.5f),
+			ConHpBonus = GetFloat(el, "conHpBonus", 0.5f),
+			IntMpBonus = GetFloat(el, "intMpBonus", 0.5f)
 		};
 	}
 
@@ -249,11 +249,11 @@ namespace FirstGame.Core
 		public float ExpBase { get; set; } = 100.0f;
 		public float ExpExponent { get; set; } = 1.5f;
 		public int LvHpBonus { get; set; } = 10;
-		public int LvAtkBonus { get; set; } = 2;
+		public int LvAtkBonus { get; set; } = 1;
 		public int LvMpBonus { get; set; } = 5;
 		public int LvStatPoints { get; set; } = 3;
-		public int StrAtkBonus { get; set; } = 2;
-		public int ConHpBonus { get; set; } = 5;
-		public int IntMpBonus { get; set; } = 3;
+		public float StrAtkBonus { get; set; } = 0.5f;
+		public float ConHpBonus { get; set; } = 0.5f;
+		public float IntMpBonus { get; set; } = 0.5f;
 	}
 }

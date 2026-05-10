@@ -15,4 +15,4 @@ EnemyTypeName = "Skeleton"
 SpriteAtlasCoords = Vector2i(9, 8)
 PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_bone")])
 DropChance = 0.25
-MaxHealth = 40
+MaxHealth = 70

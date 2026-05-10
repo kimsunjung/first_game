@@ -105,8 +105,8 @@ namespace FirstGame.Entities.Player
 			tween.Parallel().TweenProperty(_animSprite, "position", Vector2.Zero, 0.08f);
 			tween.TweenCallback(Callable.From(() =>
 			{
-				// 공격 후 짧은 경직
-				GetTree().CreateTimer(0.1).Timeout += () =>
+				// 공격 후 경직 (값을 늘려 공격 속도 조절)
+				GetTree().CreateTimer(0.25).Timeout += () =>
 				{
 					_isAnimLocked = false;
 					UpdateAnimation();

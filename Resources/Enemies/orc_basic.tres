@@ -14,4 +14,4 @@ Behavior = 2
 SpriteAtlasCoords = Vector2i(10, 8)
 PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_wood")])
 DropChance = 0.3
-MaxHealth = 60
+MaxHealth = 100

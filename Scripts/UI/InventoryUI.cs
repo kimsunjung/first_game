@@ -249,10 +249,12 @@ namespace FirstGame.UI
                 var slotPanel = new PanelContainer();
                 slotPanel.CustomMinimumSize = new Vector2(SlotSize, SlotSize);
                 slotPanel.AddThemeStyleboxOverride("panel", CreateSlotStyle(false, false, Colors.White));
+                slotPanel.MouseFilter = Control.MouseFilterEnum.Pass;
 
                 var vbox = new VBoxContainer();
                 vbox.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
                 vbox.Alignment = BoxContainer.AlignmentMode.Center;
+                vbox.MouseFilter = Control.MouseFilterEnum.Pass;
                 slotPanel.AddChild(vbox);
 
                 if (i < filtered.Count)
@@ -271,6 +273,7 @@ namespace FirstGame.UI
                         icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
                         icon.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
                         icon.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+                        icon.MouseFilter = Control.MouseFilterEnum.Ignore;
                         vbox.AddChild(icon);
                     }
                     else
@@ -280,6 +283,7 @@ namespace FirstGame.UI
                         nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
                         nameLabel.AddThemeFontSizeOverride("font_size", 10);
                         nameLabel.AddThemeColorOverride("font_color", GetRarityColor(slot.Item.Rarity));
+                        nameLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
                         vbox.AddChild(nameLabel);
                     }
 
@@ -291,6 +295,7 @@ namespace FirstGame.UI
                         qtyLabel.HorizontalAlignment = HorizontalAlignment.Right;
                         qtyLabel.AddThemeFontSizeOverride("font_size", 9);
                         qtyLabel.AddThemeColorOverride("font_color", new Color(0.95f, 0.9f, 0.7f));
+                        qtyLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
                         vbox.AddChild(qtyLabel);
                     }
 
@@ -302,6 +307,7 @@ namespace FirstGame.UI
                         enhLabel.HorizontalAlignment = HorizontalAlignment.Center;
                         enhLabel.AddThemeFontSizeOverride("font_size", 9);
                         enhLabel.AddThemeColorOverride("font_color", new Color(0.2f, 1f, 0.6f));
+                        enhLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
                         vbox.AddChild(enhLabel);
                     }
 

@@ -44,16 +44,16 @@
   },
   "movement": {
     "playerSpeedMultiplier": 0.85,
-    "enemySpeedMultiplier": 0.85,
+    "enemySpeedMultiplier": 0.65,
     "projectileSpeedMultiplier": 0.85
   },
   "zones": {
     "field_1":  { "hpMul": 1.0, "atkMul": 1.0, "expMul": 1.0 },
-    "dungeon_1": { "hpMul": 1.3, "atkMul": 1.2, "expMul": 1.3 },
-    "field_2":  { "hpMul": 1.6, "atkMul": 1.4, "expMul": 1.5 },
-    "dungeon_2": { "hpMul": 2.0, "atkMul": 1.7, "expMul": 1.8 },
-    "field_3":  { "hpMul": 2.5, "atkMul": 2.0, "expMul": 2.2 },
-    "dungeon_3": { "hpMul": 3.2, "atkMul": 2.4, "expMul": 2.6 }
+    "dungeon_1": { "hpMul": 1.8, "atkMul": 1.5, "expMul": 1.5 },
+    "field_2":  { "hpMul": 2.5, "atkMul": 1.8, "expMul": 2.0 },
+    "dungeon_2": { "hpMul": 3.5, "atkMul": 2.3, "expMul": 3.0 },
+    "field_3":  { "hpMul": 5.0, "atkMul": 3.0, "expMul": 4.5 },
+    "dungeon_3": { "hpMul": 7.0, "atkMul": 4.0, "expMul": 6.5 }
   },
   "elite": {
     "spawnChance": 0.10,
@@ -68,11 +68,11 @@
     "expBase": 100.0,
     "expExponent": 1.5,
     "lvHpBonus": 10,
-    "lvAtkBonus": 2,
+    "lvAtkBonus": 1,
     "lvMpBonus": 5,
     "lvStatPoints": 3,
-    "strAtkBonus": 2,
-    "conHpBonus": 5,
-    "intMpBonus": 3
+    "strAtkBonus": 0.5,
+    "conHpBonus": 3.0,
+    "intMpBonus": 2.0
   }
 }

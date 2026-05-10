@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("1")
-ItemName = "Steel Armor"
+ItemName = "강철 갑옷"
 Description = "튼튼한 강철 방어구. 최대 HP +40"
 Icon = ExtResource("2_icon")
 Price = 300

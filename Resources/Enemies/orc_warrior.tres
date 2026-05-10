@@ -9,6 +9,7 @@ script = ExtResource("1")
 MoveSpeed = 70.0
 DetectionRange = 220.0
 AttackRange = 40.0
+MaxHealth = 170
 BaseDamage = 5
 ExperienceReward = 35
 SpriteAtlasCoords = Vector2i(11, 8)

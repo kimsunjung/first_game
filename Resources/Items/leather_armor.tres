@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("1")
-ItemName = "Leather Armor"
+ItemName = "가죽 갑옷"
 Description = "가벼운 가죽 방어구. 최대 HP +15, 이동속도 +20"
 Icon = ExtResource("2_icon")
 Price = 150
