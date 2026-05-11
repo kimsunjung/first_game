@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TeleportDestinationData" format=3 uid="uid://tpdest006"]
+
+[ext_resource type="Script" path="res://Scripts/Data/TeleportDestinationData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ScenePath = "res://Scenes/Maps/dungeon_3.tscn"
+DisplayName = "던전 3"
+Cost = 1000
+SpawnPosition = Vector2(80, 240)

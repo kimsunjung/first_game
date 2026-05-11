@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/health_potion.tres" id="2_potion"]
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hipotion"]
 [ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="4_megapotion"]
+[ext_resource type="Resource" uid="uid://itemconsume001" path="res://Resources/Items/return_scroll.tres" id="23_rscroll"]
 [ext_resource type="Resource" path="res://Resources/Items/iron_sword.tres" id="5_sword"]
 [ext_resource type="Resource" path="res://Resources/Items/steel_sword.tres" id="6_steelsword"]
 [ext_resource type="Resource" path="res://Resources/Items/battle_axe.tres" id="7_axe"]
@@ -32,7 +33,7 @@ collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_shop")
 PromptIcon = ExtResource("prompt_icon")
-ShopItems = Array[Resource]([ExtResource("2_potion"), ExtResource("3_hipotion"), ExtResource("4_megapotion"), ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow"), ExtResource("17_lcap"), ExtResource("18_ihelm"), ExtResource("19_lboots"), ExtResource("20_iboots"), ExtResource("21_bbrace"), ExtResource("22_sbrace")])
+ShopItems = Array[Resource]([ExtResource("2_potion"), ExtResource("3_hipotion"), ExtResource("4_megapotion"), ExtResource("23_rscroll"), ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow"), ExtResource("17_lcap"), ExtResource("18_ihelm"), ExtResource("19_lboots"), ExtResource("20_iboots"), ExtResource("21_bbrace"), ExtResource("22_sbrace")])
 ShopName = "상점"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

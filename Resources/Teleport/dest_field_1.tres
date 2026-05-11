@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TeleportDestinationData" format=3 uid="uid://tpdest001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/TeleportDestinationData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ScenePath = "res://Scenes/Maps/field_1.tscn"
+DisplayName = "필드 1"
+Cost = 500
+SpawnPosition = Vector2(80, 360)

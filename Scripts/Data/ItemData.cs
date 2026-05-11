@@ -2,6 +2,14 @@ using Godot;
 
 namespace FirstGame.Data
 {
+	/// <summary>Consumable이 어떤 효과를 발휘할지. UseItem 분기가 ReturnToTown bool에 직접 의존하지 않게 분리.</summary>
+	public enum ItemUseEffect
+	{
+		None,         // 효과 없음 (소비 안 됨)
+		Heal,         // HealAmount만큼 HP 회복
+		ReturnToTown  // 즉시 마을 이동
+	}
+
 	public enum ItemType
 	{
 		Consumable, // 포션 등 소비 아이템
@@ -57,6 +65,7 @@ namespace FirstGame.Data
 
 		// 소비 아이템 효과
 		[ExportGroup("Consumable Effects")]
+		[Export] public ItemUseEffect UseEffect { get; set; } = ItemUseEffect.Heal;
 		[Export] public int HealAmount { get; set; } = 0;
 
 		// 장비 보너스

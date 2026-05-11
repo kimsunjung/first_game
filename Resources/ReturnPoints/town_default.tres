@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ReturnPointData" format=3 uid="uid://returnpoint001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ReturnPointData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ScenePath = "res://Scenes/Maps/town.tscn"
+SpawnPosition = Vector2(128, 240)

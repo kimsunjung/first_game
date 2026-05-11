@@ -182,10 +182,65 @@ namespace FirstGame.Data
 
             if (slot.Item.Type == ItemType.Consumable)
             {
-                target.Heal(slot.Item.HealAmount);
-                GD.Print($"{slot.Item.ItemName} 사용! HP +{slot.Item.HealAmount}");
-                AudioManager.Instance?.PlaySFX("potion_use.wav");
-                RemoveItem(slotIndex, 1);
+                switch (slot.Item.UseEffect)
+                {
+                    case ItemUseEffect.ReturnToTown:
+                        // 귀환 주문서 트랜잭션 — 막아야 할 4가지.
+                        // 1) RemoveItem이 OnInventoryChanged → RequestAutoSave를 트리거해 중간 상태가
+                        //    디스크에 박히는 것 → SuspendAutoSave
+                        // 2) RemoveItem이 만든 빈 슬롯을 TryClaimPendingRewards가 가로채 보상으로 채워
+                        //    Teleport 실패 시 AddItem 복구 슬롯이 없어지는 것 + TryClaim이 SaveGame을
+                        //    직접 호출해 suspend도 우회하는 것 → SuspendPendingRewardClaims
+                        // 3) AddItem 복구 실패 시 스크롤 손실 → 반환값 체크 + PendingReward fallback
+                        // 4) Teleport 성공 후 finally에서 TryClaim이 실행되면, ChangeSceneToPacked는
+                        //    deferred라 current_scene이 아직 출발 씬인 상태에서 BuildSaveData가 호출돼
+                        //    디스크의 목적지 정보를 덮어쓴다 → 성공 경로에서는 claimNow:false로 즉시
+                        //    재개를 막고, 새 씬 _Ready → LoadFromSaveData → TryClaim이 책임지게 위임
+                        if (!TownReturnHandler.CanUse()) return;
+                        var consumed = slot.Item;
+                        int consumedLevel = slot.EnhancementLevel;
+                        SaveManager.SuspendAutoSave();
+                        GameManager.Instance?.SuspendPendingRewardClaims();
+                        bool teleportSucceeded = false;
+                        try
+                        {
+                            RemoveItem(slotIndex, 1);
+                            AudioManager.Instance?.PlaySFX("potion_use.wav");
+                            teleportSucceeded = TownReturnHandler.Teleport();
+                            if (!teleportSucceeded)
+                            {
+                                bool restored = AddItem(consumed, 1, consumedLevel, fireAcquired: false);
+                                if (!restored)
+                                {
+                                    GameManager.Instance?.AddPendingReward(consumed, 1, consumedLevel);
+                                    GD.PrintErr("귀환 실패 + 인벤 복구 실패 — 주문서를 보류 보상에 보관");
+                                }
+                                else
+                                {
+                                    GD.Print("귀환 실패 — 주문서를 돌려받았습니다.");
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            // 성공: 새 씬이 책임. 실패: 즉시 claim해야 보류 보상이 복구된 슬롯에 들어가거나
+                            // 큐에 남은 채 다음 자연 save에서 영속화됨.
+                            GameManager.Instance?.ResumePendingRewardClaims(claimNow: !teleportSucceeded);
+                            SaveManager.ResumeAutoSave();
+                        }
+                        return;
+
+                    case ItemUseEffect.Heal:
+                        target.Heal(slot.Item.HealAmount);
+                        GD.Print($"{slot.Item.ItemName} 사용! HP +{slot.Item.HealAmount}");
+                        AudioManager.Instance?.PlaySFX("potion_use.wav");
+                        RemoveItem(slotIndex, 1);
+                        return;
+
+                    case ItemUseEffect.None:
+                    default:
+                        return;
+                }
             }
             else if (slot.Item.Type.IsEquipment() && slot.Item.Type != ItemType.SkillBook)
             {

@@ -22,8 +22,8 @@ namespace FirstGame.UI
         private FilterMode _filterMode = FilterMode.All;
         private Button[] _filterButtons;
 
-        private const int SlotSize = 48;
-        private const int IconSize = 32;
+        private const int SlotSize = 40;
+        private const int IconSize = 28;
 
         private static readonly string[] FilterIconPaths =
         {
@@ -159,9 +159,12 @@ namespace FirstGame.UI
 
         private void CreateFilterButtons()
         {
-            // 타이틀 HBox 찾기 (VBox의 첫 번째 자식)
-            var vbox = _grid.GetParent();
-            var titleHBox = vbox.GetChild(0) as HBoxContainer;
+            // 타이틀 HBox 찾기 (VBox의 첫 번째 자식).
+            // _grid는 ScrollContainer 안으로 옮겨졌으므로 GetParent()가 더 이상 VBox가 아님.
+            // VBox는 grid → scroll → vbox 경로로 두 단계 위.
+            var gridParent = _grid.GetParent();
+            var vbox = gridParent is ScrollContainer ? gridParent.GetParent() : gridParent;
+            var titleHBox = vbox?.GetChild(0) as HBoxContainer;
             if (titleHBox == null) return;
 
             var filterBox = new HBoxContainer();

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemconsume001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "마을 귀환 주문서"
+Description = "사용 시 즉시 마을로 이동합니다. 던전 안에서도 사용 가능."
+Rarity = 1
+Price = 200
+SellPrice = 50
+Type = 0
+IsStackable = true
+MaxStack = 99
+UseEffect = 2
+HealAmount = 0

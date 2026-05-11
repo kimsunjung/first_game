@@ -20,14 +20,26 @@ namespace FirstGame.Core
 		// throttle 내 RequestAutoSave는 dirty 표시만 — 만료 후 TickDirty에서 자동 flush.
 		// 종료 다이얼로그 '예' 직전에도 FlushDirtySave를 호출해 진행 손실을 막는다.
 		private static bool _dirty = false;
+		// 다단계 트랜잭션(예: 귀환 주문서 = RemoveItem → 씬 전환) 도중 OnInventoryChanged 같은
+		// 이벤트가 RequestAutoSave를 트리거해 중간 상태를 디스크에 박는 결함 차단. 카운터 기반으로
+		// 중첩 안전. SceneManager.ChangeScene이 캡처/저장을 직접 책임지므로, 트랜잭션 동안에는
+		// auto-save가 들어와도 dirty만 표시되고 디스크 쓰기는 미루어진다.
+		private static int _autoSaveSuspendCount = 0;
+		public static void SuspendAutoSave() => _autoSaveSuspendCount++;
+		public static void ResumeAutoSave()
+		{
+			if (_autoSaveSuspendCount > 0) _autoSaveSuspendCount--;
+		}
 
 		public static SaveData PendingLoadData { get; set; } = null;
 
 		public static event Action OnGameSaved;
 
-		public static SaveData SaveGame(string slot = AutoSaveSlot)
+		/// <summary>현재 게임 상태에서 SaveData를 구축. 디스크 쓰기 없음.
+		/// 씬 트리 의존 코드(예: PlayerController.WriteSaveData가 CurrentScene 읽기)는 여기서
+		/// 실행되므로 ChangeScene 전에 호출해야 안전하다.</summary>
+		public static SaveData BuildSaveData()
 		{
-			// GameManager.Player를 통해 ISaveable 획득 (GetNodesInGroup 제거)
 			var player = GameManager.Instance?.Player;
 			if (player == null || player is not ISaveable saveable) return null;
 
@@ -37,32 +49,39 @@ namespace FirstGame.Core
 				Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
 				PendingRewardItems = new System.Collections.Generic.List<SavedItemSlot>(GameManager.Instance.PendingRewards)
 			};
-
-			// 각 시스템이 자신의 데이터를 기록
 			saveable.WriteSaveData(data);
+			return data;
+		}
 
+		/// <summary>미리 구축된 SaveData를 디스크에 원자적으로 기록. 성공 시 true.
+		/// SceneManager.ChangeScene이 큐잉 성공 후 호출 — 실패한 씬 전환이 save를 더럽히지 않게.</summary>
+		public static bool WriteSaveDataToDisk(SaveData data, string slot = AutoSaveSlot)
+		{
+			if (data == null) return false;
 			try
 			{
-				DirAccess.MakeDirRecursiveAbsolute(
-					ProjectSettings.GlobalizePath(SaveDir)
-				);
-
+				DirAccess.MakeDirRecursiveAbsolute(ProjectSettings.GlobalizePath(SaveDir));
 				string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
-				string json = JsonSerializer.Serialize(data, new JsonSerializerOptions
-				{
-					WriteIndented = true
-				});
+				string json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
 				WriteAtomic(path, json);
-
 				OnGameSaved?.Invoke();
 				_lastAutoSaveMs = Godot.Time.GetTicksMsec();
 				_dirty = false;
 				GD.Print($"게임이 저장되었습니다: {slot}");
+				return true;
 			}
 			catch (Exception e)
 			{
 				GD.PrintErr($"SaveManager: 저장 실패 - {e.Message}");
+				return false;
 			}
+		}
+
+		public static SaveData SaveGame(string slot = AutoSaveSlot)
+		{
+			var data = BuildSaveData();
+			if (data == null) return null;
+			WriteSaveDataToDisk(data, slot);
 			return data;
 		}
 
@@ -105,6 +124,14 @@ namespace FirstGame.Core
 		/// </summary>
 		public static void RequestAutoSave(string slot = AutoSaveSlot)
 		{
+			// 트랜잭션 격리 — 다단계 작업(예: 귀환 주문서) 도중에 OnInventoryChanged가
+			// RequestAutoSave를 호출해도 중간 상태가 디스크에 박히지 않게 dirty만 표시.
+			// Resume 후 다음 RequestAutoSave 또는 TickDirty에서 flush됨.
+			if (_autoSaveSuspendCount > 0)
+			{
+				_dirty = true;
+				return;
+			}
 			ulong nowMs = Godot.Time.GetTicksMsec();
 			if (_lastAutoSaveMs > 0 && nowMs - _lastAutoSaveMs < AutoSaveThrottleMs)
 			{
@@ -121,6 +148,7 @@ namespace FirstGame.Core
 		public static void TickDirty(string slot = AutoSaveSlot)
 		{
 			if (!_dirty) return;
+			if (_autoSaveSuspendCount > 0) return; // 트랜잭션 진행 중 — flush 미루기
 			ulong nowMs = Godot.Time.GetTicksMsec();
 			if (_lastAutoSaveMs == 0 || nowMs - _lastAutoSaveMs >= AutoSaveThrottleMs)
 				SaveGame(slot);
@@ -154,31 +182,9 @@ namespace FirstGame.Core
 			_dirty = false;
 		}
 
-		/// <summary>씬 전환용: 저장 후 PendingLoadData에 메모리에서 직접 할당</summary>
-		public static void SaveAndSetPending(string slot = AutoSaveSlot)
-		{
-			var data = SaveGame(slot);
-			if (data != null) PendingLoadData = data;
-		}
-
-		/// <summary>씬 전환 후 CurrentScene과 스폰 위치를 목적지 기준으로 덮어씀 (메모리 + 파일)</summary>
-		public static void OverrideCurrentScene(string scenePath, Godot.Vector2 spawnPosition, string slot = AutoSaveSlot)
-		{
-			if (PendingLoadData == null) return;
-			PendingLoadData.CurrentScene = scenePath;
-			PendingLoadData.PlayerPosX = spawnPosition.X;
-			PendingLoadData.PlayerPosY = spawnPosition.Y;
-			try
-			{
-				string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
-				if (!File.Exists(path)) return;
-				WriteAtomic(path, JsonSerializer.Serialize(PendingLoadData, new JsonSerializerOptions { WriteIndented = true }));
-			}
-			catch (Exception e)
-			{
-				GD.PrintErr($"SaveManager: CurrentScene 업데이트 실패 - {e.Message}");
-			}
-		}
+		// SaveAndSetPending/OverrideCurrentScene는 capture-first 패턴 도입 후 호출처가 없어 제거됨.
+		// 씬 전환 후 save 동기화는 SceneManager.ChangeScene이 BuildSaveData → 캡처 override →
+		// 큐잉 성공 시에만 WriteSaveDataToDisk + PendingLoadData 설정으로 일원화한다.
 
 		public static void LoadGame(string slot = null)
 		{
@@ -310,8 +316,57 @@ namespace FirstGame.Core
 				data.FieldSeeds ??= new System.Collections.Generic.Dictionary<string, int>();
 			}
 
+			if (data.Version < 6)
+			{
+				// v5→v6: 방문한 씬 목록. 기존 유저는 v6 이전엔 방문 이력을 안 남겼으므로
+				// CurrentScene 번호 + DefeatedBosses로 진행도를 역추정해 하위 지역을 자동
+				// unlock한다. 완벽 복원은 불가하지만 "field_3까지 갔는데 텔레포트 NPC가
+				// field_1만 인식" 같은 회귀를 방지.
+				data.VisitedScenes ??= new System.Collections.Generic.List<string>();
+				BackfillVisitedScenesV6(data);
+			}
+
 			data.Version = SaveData.LatestVersion;
 			GD.Print($"SaveManager: 세이브 데이터 v{data.Version}으로 마이그레이션 완료");
+		}
+
+		/// <summary>v5→v6 마이그: CurrentScene 번호 + DefeatedBosses 수를 근거로 하위 지역을
+		/// 방문 이력에 자동 등록. 텔레포트 NPC가 기존 진행도를 인식하도록 보정.</summary>
+		private static void BackfillVisitedScenesV6(SaveData data)
+		{
+			void Add(string path)
+			{
+				if (!data.VisitedScenes.Contains(path)) data.VisitedScenes.Add(path);
+			}
+
+			Add("res://Scenes/Maps/town.tscn"); // 마을은 항상 도달 가능
+			if (!string.IsNullOrEmpty(data.CurrentScene)) Add(data.CurrentScene);
+
+			// CurrentScene이 field_N이면 field_1..N 모두 unlock.
+			// dungeon_N이면 field_1..N + dungeon_1..N 모두 unlock (던전 들어갔으니 그 위 필드도 거쳐옴).
+			int fieldMax = 0, dungeonMax = 0;
+			if (!string.IsNullOrEmpty(data.CurrentScene))
+			{
+				var m = System.Text.RegularExpressions.Regex.Match(data.CurrentScene, @"field_(\d+)\.tscn$");
+				if (m.Success && int.TryParse(m.Groups[1].Value, out int fn)) fieldMax = fn;
+				var dm = System.Text.RegularExpressions.Regex.Match(data.CurrentScene, @"dungeon_(\d+)\.tscn$");
+				if (dm.Success && int.TryParse(dm.Groups[1].Value, out int dn))
+				{
+					dungeonMax = dn;
+					fieldMax = System.Math.Max(fieldMax, dn);
+				}
+			}
+
+			// 처치한 보스 수도 진행도 시그널 — N개 처치했으면 dungeon_1..N도 다녀왔다고 본다.
+			if (data.DefeatedBosses != null)
+				dungeonMax = System.Math.Max(dungeonMax, System.Math.Min(data.DefeatedBosses.Count, 3));
+			// 던전까지 갔으면 그 번호의 필드도 거쳐 옴.
+			fieldMax = System.Math.Max(fieldMax, dungeonMax);
+
+			for (int i = 1; i <= fieldMax && i <= 3; i++)
+				Add($"res://Scenes/Maps/field_{i}.tscn");
+			for (int i = 1; i <= dungeonMax && i <= 3; i++)
+				Add($"res://Scenes/Maps/dungeon_{i}.tscn");
 		}
 
 		public static bool HasSave(string slot = AutoSaveSlot)

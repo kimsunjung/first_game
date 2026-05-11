@@ -92,6 +92,13 @@ namespace FirstGame.Entities.Player
 				data.FieldSeeds = new Dictionary<string, int>();
 				foreach (var kv in gm.FieldSeeds)
 					data.FieldSeeds[kv.Key] = kv.Value;
+
+				// 방문 이력 — 텔레포트 NPC 활성화 기준.
+				data.VisitedScenes = new List<string>(gm.VisitedScenes);
+				// 현재 씬은 무조건 포함 (저장 직전 ChangeScene이 아직 발생하지 않았을 수도).
+				string cur = GetTree().CurrentScene.SceneFilePath;
+				if (!string.IsNullOrEmpty(cur) && !data.VisitedScenes.Contains(cur))
+					data.VisitedScenes.Add(cur);
 			}
 		}
 

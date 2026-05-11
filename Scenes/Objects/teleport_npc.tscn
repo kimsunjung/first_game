@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://teleportnpc001"]
+
+[ext_resource type="Script" path="res://Scripts/Entities/TeleportNpc.cs" id="1_tpNpc"]
+[ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0105.png" id="2_npc_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/npc_dialogue.png" id="3_prompt"]
+[ext_resource type="Resource" uid="uid://tpdest001" path="res://Resources/Teleport/dest_field_1.tres" id="4_f1"]
+[ext_resource type="Resource" uid="uid://tpdest002" path="res://Resources/Teleport/dest_field_2.tres" id="5_f2"]
+[ext_resource type="Resource" uid="uid://tpdest003" path="res://Resources/Teleport/dest_field_3.tres" id="6_f3"]
+[ext_resource type="Resource" uid="uid://tpdest004" path="res://Resources/Teleport/dest_dungeon_1.tres" id="7_d1"]
+[ext_resource type="Resource" uid="uid://tpdest005" path="res://Resources/Teleport/dest_dungeon_2.tres" id="8_d2"]
+[ext_resource type="Resource" uid="uid://tpdest006" path="res://Resources/Teleport/dest_dungeon_3.tres" id="9_d3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tp"]
+radius = 80.0
+
+[node name="TeleportNPC" type="Area2D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_tpNpc")
+PromptIcon = ExtResource("3_prompt")
+NpcName = "텔레포트"
+Destinations = Array[Resource]([ExtResource("4_f1"), ExtResource("5_f2"), ExtResource("6_f3"), ExtResource("7_d1"), ExtResource("8_d2"), ExtResource("9_d3")])
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_tp")
+debug_color = Color(0.3, 0.55, 0.85, 0.42)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(1.5, 1.5)
+modulate = Color(0.4, 0.7, 1, 1)
+texture = ExtResource("2_npc_tex")
+
+[node name="TeleportIcon" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -22.0
+offset_right = 24.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 8
+text = "[TELEPORT]"
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="."]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = 14.0
+offset_right = 40.0
+offset_bottom = 28.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 8
+text = "F - 텔레포트"
+horizontal_alignment = 1

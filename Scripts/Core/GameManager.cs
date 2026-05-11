@@ -102,12 +102,30 @@ namespace FirstGame.Core
 			if (map != null) foreach (var kv in map) _fieldSeeds[kv.Key] = kv.Value;
 		}
 
+		// ─── 방문한 씬 — 텔레포트 NPC의 목적지 활성화 기준 ─────
+		private readonly HashSet<string> _visitedScenes = new();
+		public IReadOnlyCollection<string> VisitedScenes => _visitedScenes;
+		public bool HasVisitedScene(string scenePath) => !string.IsNullOrEmpty(scenePath) && _visitedScenes.Contains(scenePath);
+		public void RecordSceneVisit(string scenePath)
+		{
+			if (string.IsNullOrEmpty(scenePath)) return;
+			_visitedScenes.Add(scenePath);
+		}
+		public void RestoreVisitedScenes(List<string> list)
+		{
+			_visitedScenes.Clear();
+			if (list != null) foreach (var s in list) if (!string.IsNullOrEmpty(s)) _visitedScenes.Add(s);
+		}
+
 		/// <summary>인벤 트랜잭션(예: QuestManager.CompleteQuest) 동안 보류 보상 클레임 차단.</summary>
 		public void SuspendPendingRewardClaims() => _claimSuspendCount++;
-		public void ResumePendingRewardClaims()
+		/// <summary>Resume. claimNow=false면 카운터만 풀고 즉시 TryClaim하지 않음 — 귀환 주문서처럼
+		/// 트랜잭션 끝에 씬 전환이 큐잉된 경우, 여기서 claim하면 BuildSaveData가 deferred 큐 상태에서
+		/// old CurrentScene을 캡처해 디스크의 목적지 정보를 덮어쓴다. 그 경우 호출자가 false로 전달.</summary>
+		public void ResumePendingRewardClaims(bool claimNow = true)
 		{
 			if (_claimSuspendCount > 0) _claimSuspendCount--;
-			if (_claimSuspendCount == 0) TryClaimPendingRewards();
+			if (_claimSuspendCount == 0 && claimNow) TryClaimPendingRewards();
 		}
 
 		/// <summary>인벤이 비어 자리 생긴 시점에 호출. 가능한 보상부터 순서대로 지급.</summary>
@@ -164,6 +182,7 @@ namespace FirstGame.Core
 			_activeEnemies.Clear();
 			_pendingRewards.Clear(); // 이전 세션 보류 보상이 새 게임으로 이월되지 않도록
 			_fieldSeeds.Clear();
+			_visitedScenes.Clear();
 			_claimSuspendCount = 0;
 			_claimingPendingRewards = false;
 			_isRestoringState = false;

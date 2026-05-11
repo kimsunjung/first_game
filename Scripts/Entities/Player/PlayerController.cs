@@ -293,6 +293,9 @@ namespace FirstGame.Entities.Player
 				// 절차적 필드맵 seed 복원 — 같은 씬 재진입 시 동일 지형이 보장돼
 				// 저장 좌표가 장애물 안으로 들어가는 결함 차단.
 				GameManager.Instance?.RestoreFieldSeeds(data.FieldSeeds);
+				GameManager.Instance?.RestoreVisitedScenes(data.VisitedScenes);
+				// 현재 씬을 visited에 추가 (로드된 직후의 시작 씬도 방문 처리).
+				GameManager.Instance?.RecordSceneVisit(GetTree().CurrentScene.SceneFilePath);
 
 				SaveManager.PendingLoadData = null;
 			}
