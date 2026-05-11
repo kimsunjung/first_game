@@ -76,15 +76,15 @@ namespace FirstGame.Core
 		{
 			if (!IsActiveQuestComplete || player == null) return false;
 
-			// 트랜잭션 격리 — ConsumeItems가 만든 빈 슬롯을 pending reward가 가로채는 race 차단.
-			GameManager.Instance?.SuspendPendingRewardClaims();
-			try
+			// 트랜잭션 격리 — 두 가지 다 막아야 함.
+			// 1) pending claim: ConsumeItems가 만든 빈 슬롯을 보상이 가로채는 race
+			// 2) autosave: 보상 지급(AddItem)이 퀘스트 완료 마킹보다 *먼저* 발생하므로, throttle
+			//    만료 시 OnInventoryChanged → RequestAutoSave → 즉시 SaveGame이 "보상은 받았는데
+			//    퀘스트는 아직 활성" 중간 상태를 디스크에 박을 수 있음.
+			// QuestDialog가 완료 직후 SaveGame을 호출해 dispose 후 최종 상태를 영속화한다.
+			using (GameTransaction.Begin())
 			{
 				return CompleteQuestInternal(player);
-			}
-			finally
-			{
-				GameManager.Instance?.ResumePendingRewardClaims();
 			}
 		}
 

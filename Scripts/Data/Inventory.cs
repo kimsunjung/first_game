@@ -187,27 +187,26 @@ namespace FirstGame.Data
                     case ItemUseEffect.ReturnToTown:
                         // 귀환 주문서 트랜잭션 — 막아야 할 4가지.
                         // 1) RemoveItem이 OnInventoryChanged → RequestAutoSave를 트리거해 중간 상태가
-                        //    디스크에 박히는 것 → SuspendAutoSave
-                        // 2) RemoveItem이 만든 빈 슬롯을 TryClaimPendingRewards가 가로채 보상으로 채워
-                        //    Teleport 실패 시 AddItem 복구 슬롯이 없어지는 것 + TryClaim이 SaveGame을
-                        //    직접 호출해 suspend도 우회하는 것 → SuspendPendingRewardClaims
+                        //    디스크에 박히는 것 → suspendAutoSave (GameTransaction 기본 true)
+                        // 2) RemoveItem이 만든 빈 슬롯을 TryClaim이 가로채는 것 + TryClaim의 직접
+                        //    SaveGame이 suspend를 우회하는 것 → suspendPendingClaims (기본 true)
                         // 3) AddItem 복구 실패 시 스크롤 손실 → 반환값 체크 + PendingReward fallback
-                        // 4) Teleport 성공 후 finally에서 TryClaim이 실행되면, ChangeSceneToPacked는
-                        //    deferred라 current_scene이 아직 출발 씬인 상태에서 BuildSaveData가 호출돼
-                        //    디스크의 목적지 정보를 덮어쓴다 → 성공 경로에서는 claimNow:false로 즉시
-                        //    재개를 막고, 새 씬 _Ready → LoadFromSaveData → TryClaim이 책임지게 위임
+                        // 4) Teleport 성공 후 dispose에서 TryClaim이 실행되면 deferred 큐 상태에서
+                        //    BuildSaveData가 old CurrentScene을 캡처해 디스크를 덮는 것 →
+                        //    SetClaimAfterDispose(false)로 새 씬에 위임
                         if (!TownReturnHandler.CanUse()) return;
                         var consumed = slot.Item;
                         int consumedLevel = slot.EnhancementLevel;
-                        SaveManager.SuspendAutoSave();
-                        GameManager.Instance?.SuspendPendingRewardClaims();
-                        bool teleportSucceeded = false;
-                        try
+                        using (var tx = GameTransaction.Begin())
                         {
                             RemoveItem(slotIndex, 1);
                             AudioManager.Instance?.PlaySFX("potion_use.wav");
-                            teleportSucceeded = TownReturnHandler.Teleport();
-                            if (!teleportSucceeded)
+                            bool teleportSucceeded = TownReturnHandler.Teleport();
+                            if (teleportSucceeded)
+                            {
+                                tx.SetClaimAfterDispose(false); // 새 씬 _Ready → LoadFromSaveData → TryClaim 위임
+                            }
+                            else
                             {
                                 bool restored = AddItem(consumed, 1, consumedLevel, fireAcquired: false);
                                 if (!restored)
@@ -220,13 +219,6 @@ namespace FirstGame.Data
                                     GD.Print("귀환 실패 — 주문서를 돌려받았습니다.");
                                 }
                             }
-                        }
-                        finally
-                        {
-                            // 성공: 새 씬이 책임. 실패: 즉시 claim해야 보류 보상이 복구된 슬롯에 들어가거나
-                            // 큐에 남은 채 다음 자연 save에서 영속화됨.
-                            GameManager.Instance?.ResumePendingRewardClaims(claimNow: !teleportSucceeded);
-                            SaveManager.ResumeAutoSave();
                         }
                         return;
 

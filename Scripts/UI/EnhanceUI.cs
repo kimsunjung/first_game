@@ -258,20 +258,16 @@ namespace FirstGame.UI
 		{
 			if (!_hasSelection) return;
 
-			// pending reward 클레임 격리 — ConsumeItems가 OnInventoryChanged를 발생시켜
-			// TryClaimPendingRewards가 강화 결과 적용 전에 인벤 빈 자리를 채워 SaveGame이
-			// stale 상태로 떨어지는 결함 차단. finally에서 Resume하며 1회 claim+save.
-			GameManager.Instance?.SuspendPendingRewardClaims();
-			try
+			// 트랜잭션 격리 — 두 가지 다 막아야 함.
+			// 1) pending claim: ConsumeItems가 만든 빈 슬롯을 보상이 가로채는 race
+			// 2) autosave: 재료 차감(EnhanceUI.cs ConsumeItems)은 강화 결과 적용보다 *먼저*
+			//    발생하므로, throttle 만료 시 OnInventoryChanged → RequestAutoSave → 즉시 SaveGame이
+			//    "재료는 빠졌는데 강화는 아직 안 됨" 중간 상태를 디스크에 박을 수 있음.
+			// dispose 후 명시적 SaveGame이 최종 상태를 영속화.
+			using (GameTransaction.Begin())
 			{
 				DoEnhance();
 			}
-			finally
-			{
-				GameManager.Instance?.ResumePendingRewardClaims();
-			}
-			// 강화 결과(골드/재료/장비 강화 레벨)를 즉시 영속화 — Resume 내부 TryClaim은
-			// 큐가 비어 있으면 SaveGame을 호출하지 않으므로 보정.
 			SaveManager.SaveGame();
 		}
 
