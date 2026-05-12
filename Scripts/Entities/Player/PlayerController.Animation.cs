@@ -6,48 +6,39 @@ namespace FirstGame.Entities.Player
 {
 	public partial class PlayerController
 	{
-		// ─── 애니메이션 설정 (Kenney 정적 타일 + 프로그래밍 효과) ────
+		private const string PlayerFramesPath = "res://Resources/Generated/GPT/Characters/Player/player_sprite_frames.tres";
+
+		// ─── 애니메이션 설정 (GPT 4방향 스프라이트 시트) ──────────────
 		private void SetupAnimations()
 		{
 			_animSprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
 			if (_animSprite == null) { GD.PrintErr("PlayerController: AnimatedSprite2D 없음"); return; }
 
-			var frames = new SpriteFrames();
-			if (frames.HasAnimation("default")) frames.RemoveAnimation("default");
-
-			var tilemap = AnimationHelper.KenneyTilemap;
-			if (tilemap == null) { GD.PrintErr("PlayerController: Kenney 타일맵 로드 실패"); return; }
-
-			int ts = KenneyTiles.TileSize;
-
-			// 단일 프레임 애니메이션 등록 (방향 없이 1종씩)
-			AnimationHelper.AddSingleTileAnimation(frames, "idle", tilemap, KenneyTiles.CharPlayer, ts, 6, true);
-			AnimationHelper.AddSingleTileAnimation(frames, "walk", tilemap, KenneyTiles.CharPlayer, ts, 6, true);
-			AnimationHelper.AddSingleTileAnimation(frames, "attack", tilemap, KenneyTiles.CharPlayer, ts, 6, false);
-			AnimationHelper.AddSingleTileAnimation(frames, "hit", tilemap, KenneyTiles.CharPlayer, ts, 6, false);
-			AnimationHelper.AddSingleTileAnimation(frames, "death", tilemap, KenneyTiles.CharPlayer, ts, 6, false);
+			var frames = GD.Load<SpriteFrames>(PlayerFramesPath);
+			if (frames == null) { GD.PrintErr($"PlayerController: SpriteFrames 로드 실패 - {PlayerFramesPath}"); return; }
 
 			_animSprite.SpriteFrames = frames;
-			_animSprite.Play("idle");
+			_animSprite.Play("idle_down");
 			_animSprite.AnimationFinished += OnAnimationFinished;
 		}
 
-		// ─── 방향 (8방향 물리 + FlipH 표시) ────────────────────────
-		private void UpdateFlipH()
+		// 대각선 입력 시 X/Y 우세 축으로 4방향 중 하나 선택. 정확히 같으면 X 우선.
+		private string GetDirSuffix()
 		{
-			if (_animSprite == null) return;
-			if (Mathf.Abs(_facingDirection.X) > 0.1f)
-				_animSprite.FlipH = _facingDirection.X < 0;
+			Vector2 d = _facingDirection;
+			if (Mathf.Abs(d.X) >= Mathf.Abs(d.Y))
+				return d.X >= 0 ? "right" : "left";
+			return d.Y > 0 ? "down" : "up";
 		}
 
 		// ─── 애니메이션 업데이트 ────────────────────────────────────
 		private void UpdateAnimation()
 		{
 			if (_animSprite == null || _isAnimLocked) return;
-			UpdateFlipH();
 
 			bool isMoving = Velocity != Vector2.Zero;
-			string target = isMoving ? "walk" : "idle";
+			string dir = GetDirSuffix();
+			string target = isMoving ? $"walk_{dir}" : $"idle_{dir}";
 			PlayAnim(target);
 
 			// 걷기 바운스 효과
@@ -93,8 +84,6 @@ namespace FirstGame.Entities.Player
 			Velocity = Vector2.Zero;
 			_walkBounceTween?.Kill();
 
-			UpdateFlipH();
-
 			// 공격 방향으로 lunge + scale 펄스
 			Vector2 lungeDir = _facingDirection.Normalized() * 8f;
 			var tween = CreateTween();
@@ -120,7 +109,6 @@ namespace FirstGame.Entities.Player
 			if (_animSprite == null || IsDead) return;
 			_isAnimLocked = true;
 
-			// 흰색 플래시 + 흔들림 (기존 코드 패턴 유지)
 			_animSprite.Modulate = new Color(10f, 10f, 10f, 1f);
 			var hitTween = CreateTween();
 			hitTween.TweenProperty(_animSprite, "position:x", 3f, 0.03f);
@@ -145,17 +133,12 @@ namespace FirstGame.Entities.Player
 			var tween = CreateTween();
 			tween.TweenProperty(_animSprite, "modulate:a", 0f, 0.5f);
 			tween.Parallel().TweenProperty(_animSprite, "scale", new Vector2(0.3f, 0.3f), 0.5f);
-			// 사망 후 처리는 기존 로직에서 담당
 		}
 
 		// ─── 애니메이션 완료 콜백 ───────────────────────────────────
 		private void OnAnimationFinished()
 		{
-			// Kenney 정적 타일은 1프레임이므로 즉시 완료됨
-			// 실제 애니메이션 타이밍은 Tween으로 제어
+			// walk_<dir>는 loop라 완료 안 됨. 비전이 효과는 Tween으로 처리.
 		}
-
-		// ─── 하위 호환 (GetDirectionSuffix 제거됨) ──────────────────
-		// Combat.cs 등에서 _facingDirection을 직접 사용
 	}
 }

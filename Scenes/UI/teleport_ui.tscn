@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://teleportui001"]
+[gd_scene format=3 uid="uid://dwxwdg3tlpiyy"]
 
 [ext_resource type="Script" path="res://Scripts/UI/TeleportUI.cs" id="1_tpUI"]
 

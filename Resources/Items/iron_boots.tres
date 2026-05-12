@@ -1,12 +1,15 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemboots002"]
 
 [ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/iron_boots.png" id="2_icon"]
+
 
 [resource]
 script = ExtResource("1")
 ItemName = "강철 부츠"
 Description = "튼튼한 강철 부츠. 방어력 +3, 이동속도 +3"
 Rarity = 1
+Icon = ExtResource("2_icon")
 Price = 220
 SellPrice = 110
 Type = 7

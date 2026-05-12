@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemwarhm001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/war_hammer.png" id="2_icon"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "전쟁 망치"
+Description = "(밸런스 미정 — 추후 컨텐츠 기획 시 설정)"
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 0
+SellPrice = 0
+Type = 1
+IsStackable = false
+MaxStack = 1
+AttackType = 2

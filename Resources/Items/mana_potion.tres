@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bi1c1fctcod6o"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/mana_potion.png" id="2_icon"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "마나 물약"
+Description = "(밸런스 미정 — UseEffect 코드 작업 후 MP 회복 연결)"
+Rarity = 0
+Icon = ExtResource("2_icon")
+Price = 0
+SellPrice = 0
+Type = 0
+IsStackable = true
+MaxStack = 99
+UseEffect = 0
+HealAmount = 0

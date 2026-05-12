@@ -1,12 +1,15 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemboots003"]
 
 [ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/traveler_boots.png" id="2_icon"]
+
 
 [resource]
 script = ExtResource("1")
 ItemName = "여행자의 부츠"
 Description = "오랜 여행자의 부츠. 방어력 +2, 이동속도 +12"
 Rarity = 2
+Icon = ExtResource("2_icon")
 Price = 500
 SellPrice = 250
 Type = 7

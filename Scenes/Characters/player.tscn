@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bmhr8n74an4sq" path="res://Scripts/Entities/Player/PlayerController.cs" id="1_0pdwm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j4k56"]
-size = Vector2(14, 12)
+size = Vector2(24, 20)
 
 [node name="Player" type="CharacterBody2D" unique_id=1068721970 groups=["Player"]]
 collision_mask = 7
@@ -17,5 +17,5 @@ scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_j4k56")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=330163817]
-zoom = Vector2(3, 3)
+zoom = Vector2(2, 2)
 position_smoothing_enabled = true

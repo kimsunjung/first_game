@@ -1,12 +1,15 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itemboots001"]
 
 [ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/boots.png" id="2_icon"]
+
 
 [resource]
 script = ExtResource("1")
 ItemName = "가죽 부츠"
 Description = "발걸음이 가벼워진다. 방어력 +1, 이동속도 +5"
 Rarity = 0
+Icon = ExtResource("2_icon")
 Price = 80
 SellPrice = 40
 Type = 7
