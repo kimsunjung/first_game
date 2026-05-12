@@ -37,8 +37,10 @@ namespace FirstGame.Entities.Player
 				}
 			}
 
-			PlayHitAnimation();
-			if (Stats.CurrentHealth <= 0) Die();
+			if (Stats.CurrentHealth <= 0)
+				Die();
+			else
+				PlayHitAnimation();
 		}
 
 		public void GainExp(int amount)

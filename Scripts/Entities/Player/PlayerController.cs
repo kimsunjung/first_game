@@ -25,6 +25,9 @@ namespace FirstGame.Entities.Player
 		// 애니메이션
 		private AnimatedSprite2D _animSprite;
 		private bool _isAnimLocked = false;
+		// 피격 Tween(modulate/흔들림) 진행 중 표시. attack 애니가 같은 시점 끝나도 hit이 lock을
+		// 풀어주기 전엔 walk/idle로 튀지 않도록 가드 (Codex P2).
+		private bool _isHitFlashing = false;
 		// Kenney 타일맵 기반 스프라이트 (정적 1프레임 + 프로그래밍 애니메이션)
 		private Tween _walkBounceTween;
 

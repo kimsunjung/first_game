@@ -109,6 +109,7 @@ namespace FirstGame.Entities.Player
 		{
 			if (_animSprite == null || IsDead) return;
 			_isAnimLocked = true;
+			_isHitFlashing = true;
 
 			_animSprite.Modulate = new Color(10f, 10f, 10f, 1f);
 			var hitTween = CreateTween();
@@ -119,6 +120,7 @@ namespace FirstGame.Entities.Player
 			hitTween.TweenProperty(_animSprite, "modulate", new Color(1f, 1f, 1f, 1f), 0.08f);
 			hitTween.TweenCallback(Callable.From(() =>
 			{
+				_isHitFlashing = false;
 				_isAnimLocked = false;
 				UpdateAnimation();
 			}));
@@ -140,6 +142,8 @@ namespace FirstGame.Entities.Player
 		private void OnAnimationFinished()
 		{
 			// attack_<dir>만 loop=false. 끝나면 lock 풀고 walk/idle로 복귀.
+			// 단, 피격 Tween(_isHitFlashing) 또는 사망 중에는 lock 유지 — 해당 콜백이 풀어줌.
+			if (IsDead || _isHitFlashing) return;
 			string anim = _animSprite?.Animation.ToString() ?? "";
 			if (anim.StartsWith("attack_"))
 			{

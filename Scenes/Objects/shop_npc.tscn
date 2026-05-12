@@ -6,7 +6,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/health_potion.tres" id="2_potion"]
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hipotion"]
 [ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="4_megapotion"]
-[ext_resource type="Resource" uid="uid://itemconsume001" path="res://Resources/Items/return_scroll.tres" id="23_rscroll"]
+[ext_resource type="Resource" uid="uid://bi02gfux88d6o" path="res://Resources/Items/return_scroll.tres" id="23_rscroll"]
 [ext_resource type="Resource" path="res://Resources/Items/iron_sword.tres" id="5_sword"]
 [ext_resource type="Resource" path="res://Resources/Items/steel_sword.tres" id="6_steelsword"]
 [ext_resource type="Resource" path="res://Resources/Items/battle_axe.tres" id="7_axe"]

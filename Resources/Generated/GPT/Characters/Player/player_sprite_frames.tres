@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://d1jf7gvfp3i7q"]
 
 [ext_resource type="Texture2D" uid="uid://6p3886ige1na" path="res://Resources/Generated/GPT/Characters/Player/player_walk_sheet_32.png" id="1_sheet"]
-[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Characters/Player/Attack/player_attack_sheet_64.png" id="2_attack_sheet"]
+[ext_resource type="Texture2D" uid="uid://c5nmiaip75ary" path="res://Resources/Generated/GPT/Characters/Player/Attack/player_attack_sheet_64.png" id="2_attack_sheet"]
 
 [sub_resource type="AtlasTexture" id="atlas_down_1"]
 atlas = ExtResource("1_sheet")
