@@ -76,31 +76,32 @@ namespace FirstGame.Entities.Player
 			}
 		}
 
-		// ─── 공격 애니메이션 (프로그래밍 효과) ──────────────────────
+		// ─── 공격 애니메이션 (attack_<dir> 시트 재생) ──────────────
 		private void PlayAttackAnimation()
 		{
 			if (_animSprite == null) return;
 			_isAnimLocked = true;
 			Velocity = Vector2.Zero;
 			_walkBounceTween?.Kill();
+			// 바운스 효과로 position이 어긋난 상태에서 attack 들어올 수 있어 원점 복귀
+			_animSprite.Position = Vector2.Zero;
 
-			// 공격 방향으로 lunge + scale 펄스
-			Vector2 lungeDir = _facingDirection.Normalized() * 8f;
-			var tween = CreateTween();
-			tween.TweenProperty(_animSprite, "scale", new Vector2(1.3f, 1.3f), 0.07f);
-			tween.Parallel().TweenProperty(_animSprite, "position",
-				new Vector2(lungeDir.X, lungeDir.Y), 0.07f);
-			tween.TweenProperty(_animSprite, "scale", Vector2.One, 0.08f);
-			tween.Parallel().TweenProperty(_animSprite, "position", Vector2.Zero, 0.08f);
-			tween.TweenCallback(Callable.From(() =>
+			string dir = GetDirSuffix();
+			string animName = $"attack_{dir}";
+			if (_animSprite.SpriteFrames != null && _animSprite.SpriteFrames.HasAnimation(animName))
 			{
-				// 공격 후 경직 (값을 늘려 공격 속도 조절)
+				_animSprite.Play(animName);
+				// loop=false라 끝나면 OnAnimationFinished에서 lock 해제
+			}
+			else
+			{
+				// fallback: 애니 없으면 짧은 timer 후 lock 해제
 				GetTree().CreateTimer(0.25).Timeout += () =>
 				{
 					_isAnimLocked = false;
 					UpdateAnimation();
 				};
-			}));
+			}
 		}
 
 		// ─── 피격 애니메이션 ────────────────────────────────────────
@@ -138,7 +139,13 @@ namespace FirstGame.Entities.Player
 		// ─── 애니메이션 완료 콜백 ───────────────────────────────────
 		private void OnAnimationFinished()
 		{
-			// walk_<dir>는 loop라 완료 안 됨. 비전이 효과는 Tween으로 처리.
+			// attack_<dir>만 loop=false. 끝나면 lock 풀고 walk/idle로 복귀.
+			string anim = _animSprite?.Animation.ToString() ?? "";
+			if (anim.StartsWith("attack_"))
+			{
+				_isAnimLocked = false;
+				UpdateAnimation();
+			}
 		}
 	}
 }
