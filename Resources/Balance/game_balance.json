@@ -50,6 +50,7 @@
   "zones": {
     "field_1":  { "hpMul": 1.0, "atkMul": 1.0, "expMul": 1.0 },
     "mine_1":   { "hpMul": 1.5, "atkMul": 1.2, "expMul": 1.4 },
+    "mine_2":   { "hpMul": 2.0, "atkMul": 1.6, "expMul": 1.7 },
     "dungeon_1": { "hpMul": 1.8, "atkMul": 1.5, "expMul": 1.5 },
     "field_2":  { "hpMul": 2.5, "atkMul": 1.8, "expMul": 2.0 },
     "dungeon_2": { "hpMul": 3.5, "atkMul": 2.3, "expMul": 3.0 },

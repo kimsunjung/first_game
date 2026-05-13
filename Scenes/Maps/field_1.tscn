@@ -12,8 +12,6 @@
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
 [ext_resource type="Resource" uid="uid://cr0uxb4estgbh" path="res://Resources/Enemies/orc_basic.tres" id="12_orc1"]
-[ext_resource type="Resource" uid="uid://baxcmhcdjq873" path="res://Resources/Enemies/orc_warrior.tres" id="13_orc2"]
-[ext_resource type="Resource" uid="uid://dg1yife2gyn0o" path="res://Resources/Enemies/orc_rogue.tres" id="14_orc3"]
 [ext_resource type="Script" uid="uid://dmf0bg8r5ncbd" path="res://Scripts/Maps/MapGenerator.cs" id="15_5m0au"]
 [ext_resource type="TileSet" uid="uid://qg8y8romnyuy" path="res://Resources/Tilesets/field_tileset.tres" id="16_tileset"]
 
@@ -80,7 +78,7 @@ DestinationName = "광산"
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = [ExtResource("12_orc1"), ExtResource("13_orc2"), ExtResource("14_orc3")]
+StatVariants = Array[Resource("res://Resources/Enemies/orc_basic.tres")]([ExtResource("12_orc1")])
 SpawnRadius = 280.0
 
 [node name="Walls" type="StaticBody2D" parent="." unique_id=1787972207]

@@ -32,8 +32,14 @@ namespace FirstGame.Data
 		// ─── 스프라이트 설정 (Kenney 타일맵 좌표) ────────────────────
 		[ExportGroup("Sprite")]
 		[Export] public Vector2I SpriteAtlasCoords { get; set; } = new(10, 8);
-		// 단일 PNG 스프라이트 (정면 1프레임 등). 지정 시 타일맵 좌표 대신 사용 가능 — 후속 EnemyController 분기에서 처리.
+		// 단일 PNG 스프라이트 (정면 1프레임 등). 지정 시 타일맵 좌표 대신 사용. EnemyController.SetupAnimations가 분기.
 		[Export] public Texture2D Sprite { get; set; }
+		// AnimatedSprite2D만의 시각 스케일. 1.0이 기본. 128×128처럼 큰 원본 PNG를 게임용 크기로 축소할 때 사용.
+		// 콜리전·체력바·elite root scale은 영향 받지 않음 — root Scale은 EnemySpawner의 elite 처리가 점유.
+		[Export] public float SpriteScale { get; set; } = 1.0f;
+		// CollisionShape2D만의 스케일. 1.0이 기본. SpriteScale로 시각이 커진 적의 충돌 박스 정합성 회복용.
+		// 14×14 기본 콜리전 기준으로 배수 적용 — root Scale 미사용이라 elite scale과 독립적으로 동작.
+		[Export] public float CollisionScale { get; set; } = 1.0f;
 
 		// ─── 드롭 테이블 ─────────────────────────────────────────────
 		[ExportGroup("Drop Table")]

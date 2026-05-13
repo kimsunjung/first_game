@@ -50,6 +50,20 @@ namespace FirstGame.Core
 		}
 
 		/// <summary>
+		/// 단일 Texture2D(개별 PNG)를 1프레임 애니메이션으로 등록. EnemyStats.Sprite처럼
+		/// 정면 1포즈 PNG를 idle/run/death 모두 같은 프레임으로 쓸 때 사용.
+		/// </summary>
+		public static void AddSinglePngAnimation(SpriteFrames frames, string animName,
+			Texture2D texture, int fps, bool loop)
+		{
+			if (texture == null) return;
+			frames.AddAnimation(animName);
+			frames.SetAnimationSpeed(animName, fps);
+			frames.SetAnimationLoop(animName, loop);
+			frames.AddFrame(animName, texture);
+		}
+
+		/// <summary>
 		/// Kenney tilemap_packed.png 텍스처를 캐싱하여 반환합니다.
 		/// </summary>
 		private static Texture2D _kenneyTilemap;

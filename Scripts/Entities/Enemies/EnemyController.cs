@@ -77,6 +77,15 @@ namespace FirstGame.Entities.Enemies
 
 			CollisionMask |= 4;
 
+			// CollisionScale은 CollisionShape2D만 — root Scale 미사용이라 elite scale과 독립.
+			// 큰 적(rock_golem 등)의 시각/충돌 정합성 회복용.
+			if (Stats.CollisionScale > 0f && !Mathf.IsEqualApprox(Stats.CollisionScale, 1.0f))
+			{
+				var col = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+				if (col != null)
+					col.Scale = new Vector2(Stats.CollisionScale, Stats.CollisionScale);
+			}
+
 			GameManager.Instance?.RegisterEnemy(this);
 			SetupAnimations();
 		}
@@ -99,18 +108,32 @@ namespace FirstGame.Entities.Enemies
 			if (frames.HasAnimation("default"))
 				frames.RemoveAnimation("default");
 
-			var tilemap = AnimationHelper.KenneyTilemap;
-			if (tilemap == null) { GD.PrintErr("EnemyController: Kenney 타일맵 로드 실패"); return; }
+			// Stats.Sprite 지정 시 단일 PNG로 1프레임 애니 구성 — mine_* 적처럼 정면 1포즈
+			// 시트만 있는 신규 적용. 미지정 시 기존 Kenney 타일맵 fallback.
+			if (Stats.Sprite != null)
+			{
+				AnimationHelper.AddSinglePngAnimation(frames, "idle", Stats.Sprite, 6, true);
+				AnimationHelper.AddSinglePngAnimation(frames, "run", Stats.Sprite, 6, true);
+				AnimationHelper.AddSinglePngAnimation(frames, "death", Stats.Sprite, 8, false);
+			}
+			else
+			{
+				var tilemap = AnimationHelper.KenneyTilemap;
+				if (tilemap == null) { GD.PrintErr("EnemyController: Kenney 타일맵 로드 실패"); return; }
 
-			int ts = KenneyTiles.TileSize;
-			var coords = Stats.SpriteAtlasCoords;
+				int ts = KenneyTiles.TileSize;
+				var coords = Stats.SpriteAtlasCoords;
 
-			// Kenney 정적 타일: 1프레임 애니메이션
-			AnimationHelper.AddSingleTileAnimation(frames, "idle", tilemap, coords, ts, 6, true);
-			AnimationHelper.AddSingleTileAnimation(frames, "run", tilemap, coords, ts, 6, true);
-			AnimationHelper.AddSingleTileAnimation(frames, "death", tilemap, coords, ts, 8, false);
+				// Kenney 정적 타일: 1프레임 애니메이션
+				AnimationHelper.AddSingleTileAnimation(frames, "idle", tilemap, coords, ts, 6, true);
+				AnimationHelper.AddSingleTileAnimation(frames, "run", tilemap, coords, ts, 6, true);
+				AnimationHelper.AddSingleTileAnimation(frames, "death", tilemap, coords, ts, 8, false);
+			}
 
 			_animSprite.SpriteFrames = frames;
+			// SpriteScale은 시각만 — root CharacterBody2D.Scale에 손대지 않아 콜리전/체력바/elite scale 보호.
+			if (Stats.SpriteScale > 0f && !Mathf.IsEqualApprox(Stats.SpriteScale, 1.0f))
+				_animSprite.Scale = new Vector2(Stats.SpriteScale, Stats.SpriteScale);
 			_animSprite.Play("idle");
 			_animSprite.AnimationFinished += OnAnimationFinished;
 		}
@@ -326,13 +349,16 @@ namespace FirstGame.Entities.Enemies
 				Vector2 attackDir = (_target.GlobalPosition - GlobalPosition).Normalized();
 				if (attackDir == Vector2.Zero) attackDir = Vector2.Right;
 
-				// 시전 연출: 파란/보라 톤 + 몸 부풀리기
+				// 시전 연출: 파란/보라 톤 + 몸 부풀리기.
+				// baseScale 저장 — SetupAnimations에서 적용된 Stats.SpriteScale을 연출 종료 시 보존.
+				// (Vector2.One으로 복구하면 mine_* 처럼 SpriteScale<1 인 적이 원본 PNG 크기로 튄다.)
 				if (_animSprite != null)
 				{
+					Vector2 baseScale = _animSprite.Scale;
 					_animSprite.Modulate = new Color(0.7f, 0.7f, 1.4f, 1f);
 					var tween = CreateTween();
 					_attackTween = tween;
-					tween.TweenProperty(_animSprite, "scale", new Vector2(1.2f, 0.8f), 0.2f);
+					tween.TweenProperty(_animSprite, "scale", baseScale * new Vector2(1.2f, 0.8f), 0.2f);
 					// 사망 후 투사체 발사 차단: _isDying 검사 추가.
 					tween.TweenCallback(Callable.From(() =>
 					{
@@ -343,7 +369,7 @@ namespace FirstGame.Entities.Enemies
 							AudioManager.Instance?.PlaySFX("enemy_attack.wav");
 						}
 					}));
-					tween.TweenProperty(_animSprite, "scale", Vector2.One, 0.15f);
+					tween.TweenProperty(_animSprite, "scale", baseScale, 0.15f);
 					tween.TweenProperty(_animSprite, "modulate", new Color(1f, 1f, 1f, 1f), 0.15f);
 					tween.TweenCallback(Callable.From(() => _isAttacking = false));
 				}
