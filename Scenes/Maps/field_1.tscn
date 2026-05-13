@@ -70,6 +70,12 @@ position = Vector2(640, 695)
 TargetScenePath = "res://Scenes/Maps/field_2.tscn"
 TargetSpawnPosition = Vector2(640, 80)
 
+[node name="PortalToMine1" parent="." unique_id=1234567890 instance=ExtResource("9_portal")]
+position = Vector2(640, 25)
+TargetScenePath = "res://Scenes/Maps/mine_1.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+DestinationName = "광산"
+
 [node name="EnemySpawner" type="Node2D" parent="." unique_id=1809830065]
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")

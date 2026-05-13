@@ -99,6 +99,9 @@ namespace FirstGame.Entities.Player
 				string cur = GetTree().CurrentScene.SceneFilePath;
 				if (!string.IsNullOrEmpty(cur) && !data.VisitedScenes.Contains(cur))
 					data.VisitedScenes.Add(cur);
+
+				// 채광 완료된 광산 노드 — 씬 재진입 시 부활 차단.
+				data.MinedNodes = new List<string>(gm.MinedNodes);
 			}
 		}
 

@@ -117,6 +117,22 @@ namespace FirstGame.Core
 			if (list != null) foreach (var s in list) if (!string.IsNullOrEmpty(s)) _visitedScenes.Add(s);
 		}
 
+		// ─── 채광 완료된 광산 노드 — 씬 재진입 시 즉시 QueueFree 기준 ─────
+		// NodeId 형식: "{SceneFilePath}/{NodeName}". MiningNode가 _Ready/OnInteract에서 사용.
+		private readonly HashSet<string> _minedNodes = new();
+		public IReadOnlyCollection<string> MinedNodes => _minedNodes;
+		public bool IsNodeMined(string nodeId) => !string.IsNullOrEmpty(nodeId) && _minedNodes.Contains(nodeId);
+		public void RecordNodeMined(string nodeId)
+		{
+			if (string.IsNullOrEmpty(nodeId)) return;
+			_minedNodes.Add(nodeId);
+		}
+		public void RestoreMinedNodes(List<string> list)
+		{
+			_minedNodes.Clear();
+			if (list != null) foreach (var s in list) if (!string.IsNullOrEmpty(s)) _minedNodes.Add(s);
+		}
+
 		/// <summary>인벤 트랜잭션(예: QuestManager.CompleteQuest) 동안 보류 보상 클레임 차단.</summary>
 		public void SuspendPendingRewardClaims() => _claimSuspendCount++;
 		/// <summary>Resume. claimNow=false면 카운터만 풀고 즉시 TryClaim하지 않음 — 귀환 주문서처럼
@@ -183,6 +199,7 @@ namespace FirstGame.Core
 			_pendingRewards.Clear(); // 이전 세션 보류 보상이 새 게임으로 이월되지 않도록
 			_fieldSeeds.Clear();
 			_visitedScenes.Clear();
+			_minedNodes.Clear();
 			_claimSuspendCount = 0;
 			_claimingPendingRewards = false;
 			_isRestoringState = false;

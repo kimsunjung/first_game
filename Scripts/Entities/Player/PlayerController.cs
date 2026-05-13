@@ -297,6 +297,7 @@ namespace FirstGame.Entities.Player
 				// 저장 좌표가 장애물 안으로 들어가는 결함 차단.
 				GameManager.Instance?.RestoreFieldSeeds(data.FieldSeeds);
 				GameManager.Instance?.RestoreVisitedScenes(data.VisitedScenes);
+				GameManager.Instance?.RestoreMinedNodes(data.MinedNodes);
 				// 현재 씬을 visited에 추가 (로드된 직후의 시작 씬도 방문 처리).
 				GameManager.Instance?.RecordSceneVisit(GetTree().CurrentScene.SceneFilePath);
 

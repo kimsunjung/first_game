@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b7m8x2zomb1ie"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Resource" uid="uid://djkwf7m5ay001" path="res://Resources/Items/iron_ore.tres" id="2_iron"]
+[ext_resource type="Resource" uid="uid://b3eh8tw04gv02" path="res://Resources/Items/magnetite.tres" id="3_mag"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 70.0
+AttackRange = 35.0
+BaseDamage = 4
+ExperienceReward = 25
+Behavior = 0
+EnemyTypeName = "Zombie"
+SpriteAtlasCoords = Vector2i(5, 8)
+PossibleDrops = Array[Resource]([ExtResource("2_iron"), ExtResource("3_mag")])
+DropWeights = PackedFloat32Array(0.7, 0.15)
+DropChance = 0.6
+MaxHealth = 120

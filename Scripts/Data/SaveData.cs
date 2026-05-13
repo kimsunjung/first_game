@@ -13,7 +13,7 @@ namespace FirstGame.Data
 
 	public class SaveData
 	{
-		public const int LatestVersion = 7;
+		public const int LatestVersion = 8;
 		public int Version { get; set; } = LatestVersion;
 
 		public float PlayerPosX { get; set; }
@@ -80,6 +80,10 @@ namespace FirstGame.Data
 		// ─── v6: 방문한 씬 경로 목록 — 텔레포트 NPC가 "한 번이라도 다녀온 곳만"
 		// 목적지 활성화하는 기준. SceneManager.ChangeScene이 자동 기록.
 		public List<string> VisitedScenes { get; set; } = new();
+
+		// ─── v8: 채광 완료된 광산 노드 ID 목록. 씬 재진입 시 해당 노드는 즉시 QueueFree.
+		// 누락 시 빈 리스트로 로드되어 모든 노드 다시 활성.
+		public List<string> MinedNodes { get; set; } = new();
 
 		// ─── 보류 보상함: 인벤 가득 등으로 즉시 지급 못한 보상(주로 보스 드랍).
 		// 게임 시작 시 자동 재시도 + 사용자 알림. 필드 드랍과 달리 세이브에 영속화되어

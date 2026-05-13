@@ -326,6 +326,13 @@ namespace FirstGame.Core
 				BackfillVisitedScenesV6(data);
 			}
 
+			if (data.Version < 8)
+			{
+				// v7→v8: 광산 채광 완료 노드 목록. 누락 시 빈 리스트 — 다음 채광부터 영속화 시작.
+				// 광산이 신규 콘텐츠라 v7 이하 세이브엔 채광 기록 자체가 없어 backfill 불필요.
+				data.MinedNodes ??= new System.Collections.Generic.List<string>();
+			}
+
 			data.Version = SaveData.LatestVersion;
 			GD.Print($"SaveManager: 세이브 데이터 v{data.Version}으로 마이그레이션 완료");
 		}
