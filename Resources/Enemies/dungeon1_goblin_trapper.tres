@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b1d1gobtrap0006"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon1/goblin_trapper.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[ext_resource type="Resource" path="res://Resources/Items/orc_leather.tres" id="4_leather"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 120.0
+DetectionRange = 240.0
+AttackRange = 32.0
+BaseDamage = 5
+AttackCooldown = 1.4
+ExperienceReward = 30
+GoldReward = 22
+Behavior = 0
+EnemyTypeName = "GoblinTrapper"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.38
+CollisionScale = 1.6
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_leather")])
+DropWeights = PackedFloat32Array(0.6, 0.4)
+DropChance = 0.4
+MaxHealth = 70
+Defense = 0
