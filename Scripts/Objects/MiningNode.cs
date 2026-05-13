@@ -39,9 +39,23 @@ namespace FirstGame.Objects
 				label.Text = $"[F] {OreItem.ItemName} 채광";
 
 			// 광종별 Sprite2D는 OreItem.Icon에서 자동 추출 — .tscn texture override 불필요.
+			// 광물 PNG는 128×128이고 강화석은 32×32라 일률 scale 못 씀 — 표시 크기 32px로 일관화.
 			var sprite = GetNodeOrNull<Sprite2D>("Sprite2D");
 			if (sprite != null && OreItem?.Icon != null)
+			{
 				sprite.Texture = OreItem.Icon;
+				const float TargetSize = 32f;
+				float maxDim = Mathf.Max(OreItem.Icon.GetWidth(), OreItem.Icon.GetHeight());
+				if (maxDim > TargetSize)
+				{
+					float s = TargetSize / maxDim;
+					sprite.Scale = new Vector2(s, s);
+				}
+				else
+				{
+					sprite.Scale = Vector2.One;
+				}
+			}
 		}
 
 		protected override void OnInteract()
