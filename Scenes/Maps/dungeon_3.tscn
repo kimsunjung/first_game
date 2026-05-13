@@ -11,9 +11,11 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
-[ext_resource type="Resource" uid="uid://e360qqlbtjgf" path="res://Resources/Enemies/skeleton_mage.tres" id="13_skel3"]
-[ext_resource type="Resource" uid="uid://cs85xqwqiwm3i" path="res://Resources/Enemies/skeleton_rogue.tres" id="14_skel4"]
-[ext_resource type="Resource" uid="uid://dp4rst6uvw7xy" path="res://Resources/Enemies/boss_skeleton_king.tres" id="15_boss"]
+[ext_resource type="Resource" uid="uid://b1d3awraith01" path="res://Resources/Enemies/dungeon3_abyss_wraith.tres" id="13_wraith"]
+[ext_resource type="Resource" uid="uid://b1d3assassin02" path="res://Resources/Enemies/dungeon3_shadow_assassin.tres" id="14_assassin"]
+[ext_resource type="Resource" uid="uid://b1d3warlock0004" path="res://Resources/Enemies/dungeon3_cursed_warlock.tres" id="15_warlock"]
+[ext_resource type="Resource" uid="uid://b1d3ahound000006" path="res://Resources/Enemies/dungeon3_abyss_hound.tres" id="16_hound"]
+[ext_resource type="Resource" uid="uid://bossd3lich00009" path="res://Resources/Enemies/boss_dungeon3_ancient_lich.tres" id="17_boss"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -62,12 +64,12 @@ TargetSpawnPosition = Vector2(1150, 360)
 position = Vector2(700, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/skeleton_mage.tres")]([ExtResource("13_skel3"), ExtResource("14_skel4")])
+StatVariants = Array[Resource("res://Resources/Enemies/dungeon3_abyss_wraith.tres")]([ExtResource("13_wraith"), ExtResource("14_assassin"), ExtResource("15_warlock"), ExtResource("16_hound")])
 SpawnInterval = 4.0
 MaxEnemies = 5
 SpawnRadius = 280.0
-BossStatVariant = ExtResource("15_boss")
-BossId = "skeleton_king_d3"
+BossStatVariant = ExtResource("17_boss")
+BossId = "ancient_lich_d3"
 
 [node name="Walls" type="StaticBody2D" parent="."]
 collision_layer = 4

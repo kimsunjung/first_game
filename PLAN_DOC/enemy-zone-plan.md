@@ -17,17 +17,22 @@ mine_2는 mine_1보다 깊은 광산이며 보스가 없고 일반 몹 가중치
 | `field_2` | 묘지 외곽/황폐 필드 — 약한 언데드 중반 초입 | skeleton_base + skeleton_warrior + skeleton_rogue | **skeleton_base + skeleton_warrior + skeleton_rogue** (3종 균등 랜덤 유지) | 좌동 + 좀비 외야(현재 mine_zombie_*과 별개의 야외 좀비) | 없음 | mage는 의도적 제거 → dungeon_2로 이동. **가중치 분포는 EnemySpawner 미지원 — weighted spawn은 별도 후속 PR** |
 | `dungeon_2` | 지하 묘지 — 본격 스켈레톤 던전 | skeleton_warrior + skeleton_mage + skeleton_rogue | **유지** (현 구성 적절) | 좌동 + 강화 스켈레톤 가디언 | `boss_skeleton_king` (BossId="skeleton_king_d2", 유지) | 변경 없음 |
 | `field_3` | 저주받은 황무지 — 고급 언데드/타락 기사 | skeleton_warrior + skeleton_mage + skeleton_rogue (dungeon_2와 동일) | **skeleton_warrior + skeleton_mage** (rogue 제거, warrior 위주) | 신규: 타락 기사(`fallen_knight`), 망령(`wraith_field`), 강화 좀비 | 없음 | 현재는 d2와의 구분이 약함 — 신규 이미지 시급 |
-| `dungeon_3` | 심연 던전 — 최종급 언데드/심연 계열 | skeleton_warrior + skeleton_mage + skeleton_rogue + boss_skeleton_king 재사용 | **skeleton_mage + skeleton_rogue** (warrior 제거, 마법/은신 위주) | 신규: 리치(`ancient_lich`), 심연 망령(`abyssal_wraith`), 그림자 자객 | 임시 `boss_skeleton_king` 재사용 (BossId="skeleton_king_d3"로 d2와 처치 키 분리). **별도 최종 보스 이미지/리소스 필요**: `boss_ancient_lich.tres` | BossId 충돌은 EnemyController가 .tscn 주입값으로 처리. d2/d3 분리 OK |
+| `dungeon_3` | 심연 던전 — 최종급 언데드/심연 계열 | skeleton_warrior + skeleton_mage + skeleton_rogue + boss_skeleton_king 재사용 | **abyss_wraith + shadow_assassin + cursed_warlock + abyss_hound** (4종 균등) | 좌동 + death_knight/bone_golem/ancient_lich(엘리트)/dungeon_guardian 가중치 시스템 도착 후 추가 | **`boss_dungeon3_ancient_lich`** (BossId="ancient_lich_d3"로 교체) | 보스 교체로 기존 `skeleton_king_d3` 처치 기록 폐기(개발 중 결정) — 이전에 d3 보스 잡았던 세이브는 ancient_lich를 다시 잡아야 함 |
 
 ## 필요 신규 이미지 (GPT 생성 우선순위)
 
 | 순위 | 적 종류 | 사용 지역 | 비고 |
 |---|---|---|---|
+<<<<<<< HEAD
 | 1 | `boss_ancient_lich` | dungeon_3 | 최종 보스 — 현재 d3가 d2 보스 재사용 중. 식별성 즉시 필요 |
 | 2 | ~~`slime`, `goblin`, `wolf`~~ | field_1 | **완료** — slime/wild_wolf/goblin_scout/orc_scout/wild_boar 배치, forest_spider/spirit/hobgoblin_guard는 리소스만 |
+=======
+| 1 | ~~`boss_ancient_lich`~~ | dungeon_3 | **완료** — `boss_dungeon3_ancient_lich.tres` 등록 + dungeon_3 BossStatVariant 교체 |
+| 2 | ~~`slime`, `goblin`, `wolf`~~ | field_1 | **완료** — field_1 PR에서 처리 (slime/wild_wolf/goblin_scout/orc_scout/wild_boar 배치) |
+>>>>>>> worktree-dungeon3-enemies
 | 3 | `fallen_knight`, `wraith_field` | field_3 | d2/d3와의 시각 분리 — 이번 임시 배치가 워리어/메이지 재사용 |
 | 4 | `zombie_field_basic`, `zombie_field_runner` | field_2 | 묘지 외곽 좀비 — mine_zombie_*과 별개 야외 변종 |
-| 5 | `abyssal_wraith`, `shadow_assassin` | dungeon_3 | 일반 몹 차별화 |
+| 5 | ~~`abyssal_wraith`, `shadow_assassin`~~ | dungeon_3 | **완료** — abyss_wraith/shadow_assassin/cursed_warlock/abyss_hound 배치, death_knight/bone_golem/ancient_lich(엘리트)/dungeon_guardian 리소스만 |
 | 6 | `skeleton_guardian` | dungeon_2 | 강화 변형 — 우선순위 낮음 |
 
 ## 필요 신규 EnemyStats 리소스 (이미지 도착 시 동반 생성)
@@ -40,16 +45,19 @@ mine_2는 mine_1보다 깊은 광산이며 보스가 없고 일반 몹 가중치
 - `Resources/Enemies/wraith_field.tres`
 - `Resources/Enemies/zombie_field_basic.tres`
 - `Resources/Enemies/zombie_field_runner.tres`
-- `Resources/Enemies/abyssal_wraith.tres`
-- `Resources/Enemies/shadow_assassin.tres`
-- `Resources/Enemies/ancient_lich.tres` (일반급 변형 검토)
-- `Resources/Enemies/boss_ancient_lich.tres` (보스급)
+- ~~`Resources/Enemies/abyssal_wraith.tres`~~ → 등록 완료 (`dungeon3_abyss_wraith.tres`)
+- ~~`Resources/Enemies/shadow_assassin.tres`~~ → 등록 완료 (`dungeon3_shadow_assassin.tres`)
+- ~~`Resources/Enemies/ancient_lich.tres`~~ → 등록 완료 (`dungeon3_ancient_lich.tres`, 엘리트 일반급, 맵 미배치)
+- ~~`Resources/Enemies/boss_ancient_lich.tres`~~ → 등록 완료 (`boss_dungeon3_ancient_lich.tres`, dungeon_3 보스 교체)
+- 추가 등록 완료: `dungeon3_cursed_warlock.tres`, `dungeon3_abyss_hound.tres`, `dungeon3_death_knight.tres`, `dungeon3_bone_golem.tres`, `dungeon3_dungeon_guardian.tres` (death_knight/bone_golem/dungeon_guardian은 맵 미배치)
 
 ## 보스 처치 ID 충돌 처리
 
 EnemyController는 `BossId` 필드를 .tscn EnemySpawner에서 주입받아 `GameManager.RecordBossDefeat(bossKey)` 호출 시 사용한다. 같은 `boss_skeleton_king.tres`를 d2/d3가 공유해도 BossId가 각각 `"skeleton_king_d2"` / `"skeleton_king_d3"`로 분리되므로 처치 기록이 충돌하지 않는다 — 현 코드에 이미 반영됨.
 
 신규 `boss_ancient_lich.tres` 도입 시 d3의 BossId를 `"ancient_lich_d3"` 등으로 갱신하면 기존 d3 진행 세이브에서 보스 재처치 가능(BossId가 바뀌면 새 키이므로). 호환성 위해 마이그레이션 시 d3 정복 기록 보존 여부는 별도 결정.
+
+**적용 완료 (2026-05-13)**: dungeon_3 보스 `boss_skeleton_king`(BossId `"skeleton_king_d3"`) → `boss_dungeon3_ancient_lich`(BossId `"ancient_lich_d3"`)로 교체. 개발 중이라 처치 기록 마이그레이션은 생략 — `skeleton_king_d3` 처치 기록은 폐기되고 새 보스를 다시 잡아야 한다. `dungeon_2`의 `boss_skeleton_king`/`"skeleton_king_d2"`는 그대로 유지.
 
 ## 변경 전 → 변경 후 한눈 요약
 
@@ -60,7 +68,7 @@ dungeon_1 orc_warrior + shaman                 →  orc_basic + warrior + rogue 
 field_2   skel_base + warrior + rogue          →  유지 (3종 균등, mage 없음 — dungeon_2로 분리)
 dungeon_2 skel_warrior + mage + rogue          →  유지
 field_3   skel_warrior + mage + rogue (==d2)   →  skel_warrior + mage (rogue 제거)
-dungeon_3 skel_warrior + mage + rogue (==d2)   →  skel_mage + rogue (warrior 제거)
+dungeon_3 skel_warrior + mage + rogue (==d2)   →  abyss_wraith + shadow_assassin + cursed_warlock + abyss_hound (4종 균등) + boss_dungeon3_ancient_lich (보스 교체)
 ```
 
 ## 알려진 제약
