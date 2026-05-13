@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b1mrgol1c006"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Mine/rock_golem.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 38.0
+DetectionRange = 200.0
+AttackRange = 50.0
+BaseDamage = 10
+AttackCooldown = 2.8
+ExperienceReward = 70
+GoldReward = 65
+Behavior = 0
+EnemyTypeName = "RockGolem"
+SpriteAtlasCoords = Vector2i(5, 8)
+Sprite = ExtResource("2_tex")
+DropChance = 0.7
+MaxHealth = 350
+Defense = 14

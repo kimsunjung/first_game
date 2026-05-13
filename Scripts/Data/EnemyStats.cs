@@ -32,6 +32,8 @@ namespace FirstGame.Data
 		// ─── 스프라이트 설정 (Kenney 타일맵 좌표) ────────────────────
 		[ExportGroup("Sprite")]
 		[Export] public Vector2I SpriteAtlasCoords { get; set; } = new(10, 8);
+		// 단일 PNG 스프라이트 (정면 1프레임 등). 지정 시 타일맵 좌표 대신 사용 가능 — 후속 EnemyController 분기에서 처리.
+		[Export] public Texture2D Sprite { get; set; }
 
 		// ─── 드롭 테이블 ─────────────────────────────────────────────
 		[ExportGroup("Drop Table")]

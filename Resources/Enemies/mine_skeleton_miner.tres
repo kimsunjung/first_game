@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b1mskmn1c007"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Mine/skeleton_miner.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/iron_ore.tres" id="3_iron"]
+[ext_resource type="Resource" path="res://Resources/Items/silver_ore.tres" id="4_silver"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 78.0
+DetectionRange = 220.0
+AttackRange = 38.0
+BaseDamage = 6
+AttackCooldown = 1.9
+ExperienceReward = 38
+GoldReward = 32
+Behavior = 0
+EnemyTypeName = "SkeletonMiner"
+SpriteAtlasCoords = Vector2i(5, 8)
+Sprite = ExtResource("2_tex")
+PossibleDrops = Array[Resource]([ExtResource("3_iron"), ExtResource("4_silver")])
+DropWeights = PackedFloat32Array(0.7, 0.3)
+DropChance = 0.65
+MaxHealth = 150
+Defense = 3
