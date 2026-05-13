@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using FirstGame.Data;
 using FirstGame.Core.Interfaces;
 
@@ -9,6 +10,8 @@ namespace FirstGame.Objects
 	{
 		[Export] public ItemData Item { get; set; }
 		[Export] public int Quantity { get; set; } = 1;
+		// 장신구 드롭의 인스턴스별 affix. EnemyController.SpawnFieldDrop이 주입.
+		public List<ItemAffix> Affixes { get; set; } = new();
 
 		private Sprite2D _sprite;
 		private float _startY;
@@ -136,7 +139,7 @@ namespace FirstGame.Objects
 				return;
 			}
 
-			bool added = collector.CollectItem(Item, Quantity);
+			bool added = collector.CollectItem(Item, Quantity, Affixes);
 			if (added)
 			{
 				FirstGame.Core.AudioManager.Instance?.PlaySFX("pickup.wav");

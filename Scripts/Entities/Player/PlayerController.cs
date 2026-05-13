@@ -192,9 +192,9 @@ namespace FirstGame.Entities.Player
 		}
 
 		// ─── IItemCollector 구현 ─────────────────────────────────────
-		public bool CollectItem(ItemData item, int quantity)
+		public bool CollectItem(ItemData item, int quantity, List<ItemAffix> affixes = null)
 		{
-			return Inventory.AddItem(item, quantity);
+			return Inventory.AddItem(item, quantity, 0, true, affixes);
 		}
 
 		// ─── ISkillTarget.GetNearbyEnemies 구현 ─────────────────────
@@ -236,7 +236,7 @@ namespace FirstGame.Entities.Player
 					foreach (var savedSlot in data.InventoryItems)
 					{
 						var item = GD.Load<ItemData>(savedSlot.ItemPath);
-						if (item != null) Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel, fireAcquired: false);
+						if (item != null) Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel, fireAcquired: false, savedSlot.Affixes);
 					}
 				}
 

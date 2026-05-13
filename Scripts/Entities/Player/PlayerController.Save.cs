@@ -27,7 +27,7 @@ namespace FirstGame.Entities.Player
 			data.ConPoints = Stats.ConPoints;
 			data.IntPoints = Stats.IntPoints;
 
-			// 인벤토리
+			// 인벤토리 — 슬롯별 affix까지 함께 직렬화 (장신구 인스턴스 보존).
 			data.InventoryItems = new List<SavedItemSlot>();
 			foreach (var invSlot in Inventory.Slots)
 			{
@@ -37,7 +37,8 @@ namespace FirstGame.Entities.Player
 				{
 					ItemPath = invSlot.Item.ResourcePath,
 					Quantity = invSlot.Quantity,
-					EnhancementLevel = invSlot.EnhancementLevel
+					EnhancementLevel = invSlot.EnhancementLevel,
+					Affixes = invSlot.Affixes != null ? new List<ItemAffix>(invSlot.Affixes) : new List<ItemAffix>()
 				});
 			}
 
@@ -60,6 +61,12 @@ namespace FirstGame.Entities.Player
 			data.EquippedRing1Path = Inventory.EquippedRing1?.ResourcePath ?? "";
 			data.EquippedRing2Path = Inventory.EquippedRing2?.ResourcePath ?? "";
 			data.EquippedBraceletPath = Inventory.EquippedBracelet?.ResourcePath ?? "";
+
+			// 장신구 슬롯의 affix — 4슬롯만(Helmet/Boots는 이번 PR affix 미대상이라 빈 리스트 유지).
+			data.EquippedNecklaceAffixes = new List<ItemAffix>(Inventory.EquippedNecklaceAffixes);
+			data.EquippedRing1Affixes    = new List<ItemAffix>(Inventory.EquippedRing1Affixes);
+			data.EquippedRing2Affixes    = new List<ItemAffix>(Inventory.EquippedRing2Affixes);
+			data.EquippedBraceletAffixes = new List<ItemAffix>(Inventory.EquippedBraceletAffixes);
 
 			// 퀘스트 상태
 			var qm = GameManager.Instance?.QuestManager;

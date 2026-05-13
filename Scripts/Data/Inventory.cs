@@ -40,6 +40,13 @@ namespace FirstGame.Data
         public int EquippedArmorEnhancement { get; private set; } = 0;
         public int EquippedAccessoryEnhancement { get; private set; } = 0;
 
+        // 장신구(Ring/Necklace/Bracelet) 슬롯의 인스턴스별 affix.
+        // Helmet/Boots는 이번 PR 범위에서 affix 미대상이라 페어 필드 없음.
+        public List<ItemAffix> EquippedNecklaceAffixes { get; private set; } = new();
+        public List<ItemAffix> EquippedRing1Affixes { get; private set; } = new();
+        public List<ItemAffix> EquippedRing2Affixes { get; private set; } = new();
+        public List<ItemAffix> EquippedBraceletAffixes { get; private set; } = new();
+
         // ─── 강화 헬퍼 ────────────────────────────────────────────
         // 무기 전용 정책. Armor/Accessory는 항상 0 — 호출처 변경 없이 자연스럽게 무효화된다.
         public static (int damage, int health, int defense) GetEnhancementBonuses(ItemData item, int level)
@@ -74,11 +81,14 @@ namespace FirstGame.Data
         /// true: 새 획득(필드 픽업/보상/구매)으로 간주해 OnItemPickedUp 발신.
         /// false: 복원/장착해제/롤백 등 내부 이동이라 픽업 토스트 미발신.
         /// </param>
-        public bool AddItem(ItemData item, int amount = 1, int enhancementLevel = 0, bool fireAcquired = true)
+        public bool AddItem(ItemData item, int amount = 1, int enhancementLevel = 0, bool fireAcquired = true, List<ItemAffix> affixes = null)
         {
             if (!CanAddItem(item, amount)) return false;
 
-            if (item.IsStackable)
+            // affix가 있는 인스턴스는 stack 불가 — 슬롯마다 고유 옵션 보존.
+            bool hasAffixes = affixes != null && affixes.Count > 0;
+
+            if (item.IsStackable && !hasAffixes)
             {
                 int remaining = amount;
                 int maxStack = Math.Max(1, item.MaxStack);
@@ -86,6 +96,7 @@ namespace FirstGame.Data
                 foreach (var existing in Slots)
                 {
                     if (!IsSameItem(existing.Item, item)) continue;
+                    if (existing.Affixes != null && existing.Affixes.Count > 0) continue; // affix 있는 슬롯과 stack 금지
 
                     int space = maxStack - existing.Quantity;
                     if (space <= 0) continue;
@@ -116,7 +127,8 @@ namespace FirstGame.Data
                     {
                         Item = item,
                         Quantity = 1,
-                        EnhancementLevel = enhancementLevel
+                        EnhancementLevel = enhancementLevel,
+                        Affixes = hasAffixes ? new List<ItemAffix>(affixes) : new List<ItemAffix>()
                     });
                 }
             }
@@ -367,20 +379,27 @@ namespace FirstGame.Data
         private void EquipExtraInternal(int slotIndex, ItemData item, ExtraSlot slotKey, IEquipTarget target)
         {
             var slot = Slots[slotIndex];
+            // 인벤 슬롯에서 in-place 교체 — slot.Affixes 참조가 prev로 덮이기 전에 캡처.
+            var newAffixes = slot.Affixes != null ? new List<ItemAffix>(slot.Affixes) : new List<ItemAffix>();
             var prev = GetExtraSlot(slotKey);
+            var prevAffixes = GetExtraAffixes(slotKey);
             if (prev != null)
             {
                 ApplyItemBonuses(prev, target, -1);
+                ApplyAffixBonuses(prevAffixes, target, -1);
                 slot.Item = prev;
                 slot.Quantity = 1;
                 slot.EnhancementLevel = 0;
+                slot.Affixes = prevAffixes != null ? new List<ItemAffix>(prevAffixes) : new List<ItemAffix>();
             }
             else
             {
                 Slots.RemoveAt(slotIndex);
             }
             SetExtraSlot(slotKey, item);
+            SetExtraAffixes(slotKey, newAffixes);
             ApplyItemBonuses(item, target, +1);
+            ApplyAffixBonuses(GetExtraAffixes(slotKey), target, +1);
         }
 
         public bool UnequipWeapon(IEquipTarget target)
@@ -392,14 +411,18 @@ namespace FirstGame.Data
                 return false;
             }
 
-            var (dmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
-            target.ModifyBaseDamage(-(EquippedWeapon.BonusDamage + dmg));
-            bool added = AddItem(EquippedWeapon, 1, EquippedWeaponEnhancement, fireAcquired: false);
-            if (!added) return false;
+            using (GameTransaction.Begin())
+            {
+                var (dmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
+                target.ModifyBaseDamage(-(EquippedWeapon.BonusDamage + dmg));
+                bool added = AddItem(EquippedWeapon, 1, EquippedWeaponEnhancement, fireAcquired: false);
+                if (!added) return false;
 
-            EquippedWeapon = null;
-            EquippedWeaponEnhancement = 0;
-            OnEquipmentChanged?.Invoke();
+                EquippedWeapon = null;
+                EquippedWeaponEnhancement = 0;
+                OnEquipmentChanged?.Invoke();
+            }
+            SaveManager.RequestAutoSave();
             return true;
         }
 
@@ -412,13 +435,17 @@ namespace FirstGame.Data
                 return false;
             }
 
-            target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
-            target.ModifyDefense(-EquippedArmor.BonusDefense);
-            bool added = AddItem(EquippedArmor, 1, 0, fireAcquired: false);
-            if (!added) return false;
+            using (GameTransaction.Begin())
+            {
+                target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
+                target.ModifyDefense(-EquippedArmor.BonusDefense);
+                bool added = AddItem(EquippedArmor, 1, 0, fireAcquired: false);
+                if (!added) return false;
 
-            EquippedArmor = null;
-            OnEquipmentChanged?.Invoke();
+                EquippedArmor = null;
+                OnEquipmentChanged?.Invoke();
+            }
+            SaveManager.RequestAutoSave();
             return true;
         }
 
@@ -431,14 +458,18 @@ namespace FirstGame.Data
                 return false;
             }
 
-            target.ModifyDefense(-EquippedAccessory.BonusDefense);
-            if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-EquippedAccessory.BonusDamage);
-            if (EquippedAccessory.BonusMaxHealth > 0) target.ModifyMaxHealth(-EquippedAccessory.BonusMaxHealth);
-            bool added = AddItem(EquippedAccessory, 1, 0, fireAcquired: false);
-            if (!added) return false;
+            using (GameTransaction.Begin())
+            {
+                target.ModifyDefense(-EquippedAccessory.BonusDefense);
+                if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-EquippedAccessory.BonusDamage);
+                if (EquippedAccessory.BonusMaxHealth > 0) target.ModifyMaxHealth(-EquippedAccessory.BonusMaxHealth);
+                bool added = AddItem(EquippedAccessory, 1, 0, fireAcquired: false);
+                if (!added) return false;
 
-            EquippedAccessory = null;
-            OnEquipmentChanged?.Invoke();
+                EquippedAccessory = null;
+                OnEquipmentChanged?.Invoke();
+            }
+            SaveManager.RequestAutoSave();
             return true;
         }
 
@@ -486,6 +517,29 @@ namespace FirstGame.Data
             }
         }
 
+        /// <summary>장신구 슬롯의 affix 페어. Helmet/Boots는 null 반환(미대상).</summary>
+        public List<ItemAffix> GetExtraAffixes(ExtraSlot s) => s switch
+        {
+            ExtraSlot.Necklace => EquippedNecklaceAffixes,
+            ExtraSlot.Ring1 => EquippedRing1Affixes,
+            ExtraSlot.Ring2 => EquippedRing2Affixes,
+            ExtraSlot.Bracelet => EquippedBraceletAffixes,
+            _ => null
+        };
+
+        private void SetExtraAffixes(ExtraSlot s, List<ItemAffix> affixes)
+        {
+            var copy = affixes != null ? new List<ItemAffix>(affixes) : new List<ItemAffix>();
+            switch (s)
+            {
+                case ExtraSlot.Necklace: EquippedNecklaceAffixes = copy; break;
+                case ExtraSlot.Ring1:    EquippedRing1Affixes    = copy; break;
+                case ExtraSlot.Ring2:    EquippedRing2Affixes    = copy; break;
+                case ExtraSlot.Bracelet: EquippedBraceletAffixes = copy; break;
+                // Helmet/Boots는 affix 미대상 — 무시.
+            }
+        }
+
         /// <summary>장비 보너스 일괄 적용 (sign=+1 장착, -1 해제).</summary>
         private static void ApplyItemBonuses(ItemData item, IEquipTarget target, int sign)
         {
@@ -497,15 +551,36 @@ namespace FirstGame.Data
             if (item.BonusMoveSpeed != 0f) target.ModifyMoveSpeed(sign * item.BonusMoveSpeed);
         }
 
-        /// <summary>세이브에서 신규 부위별 슬롯 복원. 빈 path는 무시.</summary>
-        public void RestoreExtraSlot(ExtraSlot slot, string itemPath, IEquipTarget target)
+        /// <summary>affix 합산 적용 (sign=+1 장착, -1 해제). 같은 type이 여러 개면 모두 누적.</summary>
+        private static void ApplyAffixBonuses(List<ItemAffix> affixes, IEquipTarget target, int sign)
+        {
+            if (affixes == null || affixes.Count == 0) return;
+            foreach (var a in affixes)
+            {
+                switch (a.Type)
+                {
+                    case ItemAffixType.BonusDamage:    target.ModifyBaseDamage(sign * (int)a.Value); break;
+                    case ItemAffixType.BonusDefense:   target.ModifyDefense(sign * (int)a.Value); break;
+                    case ItemAffixType.BonusMaxHealth: target.ModifyMaxHealth(sign * (int)a.Value); break;
+                    case ItemAffixType.BonusMaxMp:     target.ModifyMaxMp(sign * (int)a.Value); break;
+                    case ItemAffixType.BonusCritRate:  target.ModifyCritRate(sign * a.Value); break;
+                    case ItemAffixType.BonusMoveSpeed: target.ModifyMoveSpeed(sign * a.Value); break;
+                }
+            }
+        }
+
+        /// <summary>세이브에서 신규 부위별 슬롯 복원. 빈 path는 무시.
+        /// affixes는 Necklace/Ring/Bracelet 슬롯에만 의미 있음. Helmet/Boots는 null 전달.</summary>
+        public void RestoreExtraSlot(ExtraSlot slot, string itemPath, List<ItemAffix> affixes, IEquipTarget target)
         {
             if (string.IsNullOrEmpty(itemPath)) return;
             var item = GD.Load<ItemData>(itemPath);
             if (item == null) return;
 
             SetExtraSlot(slot, item);
+            SetExtraAffixes(slot, affixes);
             ApplyItemBonuses(item, target, +1);
+            ApplyAffixBonuses(GetExtraAffixes(slot), target, +1);
             OnEquipmentChanged?.Invoke();
         }
 
@@ -519,12 +594,21 @@ namespace FirstGame.Data
                 return false;
             }
 
-            ApplyItemBonuses(item, target, -1);
-            bool added = AddItem(item, 1, 0, fireAcquired: false);
-            if (!added) return false;
+            // 트랜잭션 격리 — AddItem의 OnInventoryChanged 자동저장이 끼면 "스탯은 빠졌는데
+            // 장비 슬롯은 아직 차 있는" 중간 상태가 디스크에 박힌다. dispose 후 한 번에 영속화.
+            using (GameTransaction.Begin())
+            {
+                var affixes = GetExtraAffixes(slot);
+                ApplyItemBonuses(item, target, -1);
+                ApplyAffixBonuses(affixes, target, -1);
+                bool added = AddItem(item, 1, 0, fireAcquired: false, affixes);
+                if (!added) return false;
 
-            SetExtraSlot(slot, null);
-            OnEquipmentChanged?.Invoke();
+                SetExtraSlot(slot, null);
+                SetExtraAffixes(slot, new List<ItemAffix>());
+                OnEquipmentChanged?.Invoke();
+            }
+            SaveManager.RequestAutoSave();
             return true;
         }
 
@@ -691,12 +775,12 @@ namespace FirstGame.Data
             RestoreEquipment(loadedWeapon, loadedArmor, target, loadedAccessory,
                 data.EquippedWeaponEnhancement);
 
-            RestoreExtraSlot(ExtraSlot.Helmet, data.EquippedHelmetPath, target);
-            RestoreExtraSlot(ExtraSlot.Boots, data.EquippedBootsPath, target);
-            RestoreExtraSlot(ExtraSlot.Necklace, migrateNecklacePath, target);
-            RestoreExtraSlot(ExtraSlot.Ring1, migrateRing1Path, target);
-            RestoreExtraSlot(ExtraSlot.Ring2, data.EquippedRing2Path, target);
-            RestoreExtraSlot(ExtraSlot.Bracelet, data.EquippedBraceletPath, target);
+            RestoreExtraSlot(ExtraSlot.Helmet, data.EquippedHelmetPath, null, target); // Helmet은 affix 미대상
+            RestoreExtraSlot(ExtraSlot.Boots, data.EquippedBootsPath, null, target);  // Boots는 affix 미대상
+            RestoreExtraSlot(ExtraSlot.Necklace, migrateNecklacePath, data.EquippedNecklaceAffixes, target);
+            RestoreExtraSlot(ExtraSlot.Ring1, migrateRing1Path, data.EquippedRing1Affixes, target);
+            RestoreExtraSlot(ExtraSlot.Ring2, data.EquippedRing2Path, data.EquippedRing2Affixes, target);
+            RestoreExtraSlot(ExtraSlot.Bracelet, data.EquippedBraceletPath, data.EquippedBraceletAffixes, target);
 
             return report;
         }

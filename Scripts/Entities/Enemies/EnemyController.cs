@@ -454,40 +454,40 @@ namespace FirstGame.Entities.Enemies
 			// 보스: 직접 인벤토리에 안전 지급 (앱 종료/재시작 시 드랍 손실 방지).
 			//       인벤이 가득 차면 필드 드랍 fallback.
 			// 일반: 기존대로 필드 드랍 (DropChance 적용).
-			if (Stats.PossibleDrops != null && Stats.PossibleDrops.Length > 0)
+			if (Stats.IsBoss)
 			{
-				if (Stats.IsBoss)
+				// 트랜잭션 격리 — AddItem의 OnInventoryChanged 자동저장이 보스 키 기록 전에 끼면
+				// "보상은 받았는데 보스는 미처치" 상태가 디스크에 박혀 재진입 시 중복 보상 위험.
+				// dispose 후 SaveGame이 보상 + 보스 키 + 인벤 모두 한 시점에 영속화.
+				using (GameTransaction.Begin())
 				{
-					// 보스 보상은 영속화 보장. 인벤 가득이면 필드 드랍 fallback 대신 PendingRewards에
-					// 보관 — 세이브에 함께 직렬화되어 앱 종료/OS kill에도 손실되지 않는다.
-					var inv = GameManager.Instance?.Player?.Inventory;
-					foreach (var droppedItem in Stats.PossibleDrops)
+					if (Stats.PossibleDrops != null && Stats.PossibleDrops.Length > 0)
 					{
-						bool added = inv != null && inv.AddItem(droppedItem, 1);
-						if (!added)
-							GameManager.Instance?.AddPendingReward(droppedItem, 1);
+						var inv = GameManager.Instance?.Player?.Inventory;
+						foreach (var droppedItem in Stats.PossibleDrops)
+						{
+							var affixes = AffixGenerator.IsJewelry(droppedItem.Type) ? AffixGenerator.GenerateForJewelry() : null;
+							bool added = inv != null && inv.AddItem(droppedItem, 1, 0, true, affixes);
+							if (!added)
+								GameManager.Instance?.AddPendingReward(droppedItem, 1, 0, affixes);
+						}
 					}
+
+					EventManager.TriggerBossDied();
+					string bossKey = !string.IsNullOrEmpty(BossId) ? BossId : Stats.EnemyTypeName;
+					GameManager.Instance?.RecordBossDefeat(bossKey);
 				}
-				else if (GD.Randf() <= Stats.DropChance)
+				SaveManager.SaveGame();
+			}
+			else
+			{
+				if (Stats.PossibleDrops != null && Stats.PossibleDrops.Length > 0 && GD.Randf() <= Stats.DropChance)
 				{
 					int index = Stats.PickDropIndex();
 					SpawnFieldDrop(Stats.PossibleDrops[index], 50, 120);
 				}
-			}
-
-			// 보스 처치 기록 — 보상/드랍 지급 *후*에 기록해 인벤 반영과 보스 키 저장이 한 시점에 영속화됨.
-			if (Stats.IsBoss)
-			{
-				EventManager.TriggerBossDied();
-				string bossKey = !string.IsNullOrEmpty(BossId) ? BossId : Stats.EnemyTypeName;
-				GameManager.Instance?.RecordBossDefeat(bossKey);
-			}
-
-			// 자동 저장 — 보스 처치는 즉시(보상 + 보스 키 함께 영속화), 일반몹은 throttle
-			if (Stats.IsBoss)
-				SaveManager.SaveGame();
-			else
 				SaveManager.RequestAutoSave();
+			}
 
 			// 사망 애니메이션 재생 후 QueueFree
 			if (_animSprite != null)
@@ -513,6 +513,9 @@ namespace FirstGame.Entities.Enemies
 			var fieldItem = prefab.Instantiate<FirstGame.Objects.FieldItem>();
 			fieldItem.Item = item;
 			fieldItem.Quantity = 1;
+			// 장신구 드롭이면 1~2개 affix 부여 — 같은 .tres라도 개체마다 달라짐.
+			if (AffixGenerator.IsJewelry(item.Type))
+				fieldItem.Affixes = AffixGenerator.GenerateForJewelry();
 			GetTree().CurrentScene.AddChild(fieldItem);
 			Vector2 dropDir = new Vector2((float)GD.RandRange(-1, 1), -1).Normalized();
 			fieldItem.Drop(GlobalPosition, dropDir, (float)GD.RandRange(minForce, maxForce));

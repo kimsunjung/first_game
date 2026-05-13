@@ -67,14 +67,15 @@ namespace FirstGame.Core
 		public event Action<FirstGame.Data.ItemData, int> OnPendingRewardAdded; // (item, qty)
 		public event Action<FirstGame.Data.ItemData, int> OnPendingRewardClaimed; // (item, qty)
 
-		public void AddPendingReward(FirstGame.Data.ItemData item, int qty, int enhancement = 0)
+		public void AddPendingReward(FirstGame.Data.ItemData item, int qty, int enhancement = 0, List<FirstGame.Data.ItemAffix> affixes = null)
 		{
 			if (item == null || qty <= 0) return;
 			_pendingRewards.Add(new FirstGame.Data.SavedItemSlot
 			{
 				ItemPath = item.ResourcePath,
 				Quantity = qty,
-				EnhancementLevel = enhancement
+				EnhancementLevel = enhancement,
+				Affixes = affixes != null ? new List<FirstGame.Data.ItemAffix>(affixes) : new List<FirstGame.Data.ItemAffix>()
 			});
 			OnPendingRewardAdded?.Invoke(item, qty);
 		}
@@ -174,7 +175,7 @@ namespace FirstGame.Core
 					if (!inv.CanAddItem(item, pending.Quantity)) continue;
 					_pendingRewards.RemoveAt(i);
 					queueMutated = true;
-					if (inv.AddItem(item, pending.Quantity, pending.EnhancementLevel))
+					if (inv.AddItem(item, pending.Quantity, pending.EnhancementLevel, true, pending.Affixes))
 						OnPendingRewardClaimed?.Invoke(item, pending.Quantity);
 					else
 						_pendingRewards.Insert(0, pending); // 매우 드문 race — 큐 끝에 복귀

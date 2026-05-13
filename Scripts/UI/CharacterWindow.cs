@@ -68,8 +68,16 @@ namespace FirstGame.UI
 				_player = pc;
 				_player.Stats.OnStatPointsChanged += OnStatPointsChanged;
 				if (_player.Inventory != null)
-					_player.Inventory.OnEquipmentChanged += RefreshEquipmentSlots;
+					_player.Inventory.OnEquipmentChanged += OnEquipmentChanged;
 			}
+		}
+
+		// 장비 변경 시 슬롯과 HP/MP/ATK/DEF 라벨 모두 즉시 갱신 — affix가 빠진/들어온 직후
+		// 캐릭터 창에 stale 수치가 남는 회귀 차단.
+		private void OnEquipmentChanged()
+		{
+			RefreshEquipmentSlots();
+			RefreshDisplay();
 		}
 
 		private void BuildEquipmentSlots()
@@ -136,7 +144,7 @@ namespace FirstGame.UI
 
 			if (item != null)
 			{
-				panel.TooltipText = item.ItemName;
+				panel.TooltipText = BuildSlotTooltip(key, item);
 				if (item.Icon != null)
 				{
 					var icon = new TextureRect
@@ -187,6 +195,59 @@ namespace FirstGame.UI
 			}
 		}
 
+		/// <summary>장착 슬롯 hover 툴팁 — 장신구면 affix 라인 동봉.</summary>
+		private string BuildSlotTooltip(EquipKey key, ItemData item)
+		{
+			string baseName = item.ItemName;
+			List<ItemAffix> affixes = key switch
+			{
+				EquipKey.Necklace => _player?.Inventory?.EquippedNecklaceAffixes,
+				EquipKey.Ring1    => _player?.Inventory?.EquippedRing1Affixes,
+				EquipKey.Ring2    => _player?.Inventory?.EquippedRing2Affixes,
+				EquipKey.Bracelet => _player?.Inventory?.EquippedBraceletAffixes,
+				_ => null
+			};
+			if (affixes == null || affixes.Count == 0) return baseName;
+			var sb = new System.Text.StringBuilder(baseName);
+			sb.Append("\n추가 옵션:");
+			foreach (var a in affixes) sb.Append('\n').Append(FormatAffix(a));
+			return sb.ToString();
+		}
+
+		private static string FormatAffix(ItemAffix a) => a.Type switch
+		{
+			ItemAffixType.BonusDamage    => $"  ATK +{(int)a.Value}",
+			ItemAffixType.BonusDefense   => $"  DEF +{(int)a.Value}",
+			ItemAffixType.BonusMaxHealth => $"  HP +{(int)a.Value}",
+			ItemAffixType.BonusMaxMp     => $"  MP +{(int)a.Value}",
+			ItemAffixType.BonusCritRate  => $"  치명타 +{a.Value * 100f:0.#}%",
+			ItemAffixType.BonusMoveSpeed => $"  이동속도 +{a.Value:0.00}",
+			_ => ""
+		};
+
+		/// <summary>장신구 4슬롯의 affix를 type별로 합산한 뒤 "(+N)" 접미사 반환.
+		/// 합이 0이면 빈 문자열 — affix 없을 때 괄호 생략.</summary>
+		private string AffixSuffix(ItemAffixType type)
+		{
+			float sum = SumEquippedAffix(type);
+			if (sum == 0f) return "";
+			if (type == ItemAffixType.BonusCritRate || type == ItemAffixType.BonusMoveSpeed)
+				return $" (+{sum:0.00})";
+			return $" (+{(int)sum})";
+		}
+
+		private float SumEquippedAffix(ItemAffixType type)
+		{
+			if (_player?.Inventory == null) return 0f;
+			var inv = _player.Inventory;
+			float sum = 0f;
+			foreach (var a in inv.EquippedNecklaceAffixes) if (a.Type == type) sum += a.Value;
+			foreach (var a in inv.EquippedRing1Affixes)    if (a.Type == type) sum += a.Value;
+			foreach (var a in inv.EquippedRing2Affixes)    if (a.Type == type) sum += a.Value;
+			foreach (var a in inv.EquippedBraceletAffixes) if (a.Type == type) sum += a.Value;
+			return sum;
+		}
+
 		private static StyleBoxFlat CreateSlotStyle(bool occupied)
 		{
 			var style = new StyleBoxFlat();
@@ -207,7 +268,7 @@ namespace FirstGame.UI
 			{
 				_player.Stats.OnStatPointsChanged -= OnStatPointsChanged;
 				if (_player.Inventory != null)
-					_player.Inventory.OnEquipmentChanged -= RefreshEquipmentSlots;
+					_player.Inventory.OnEquipmentChanged -= OnEquipmentChanged;
 			}
 		}
 
@@ -246,10 +307,10 @@ namespace FirstGame.UI
 			if (_player == null) return;
 			var s = _player.Stats;
 			if (_levelLabel != null) _levelLabel.Text = $"Lv.{s.Level}";
-			if (_hpLabel != null) _hpLabel.Text = $"HP: {s.CurrentHealth} / {s.MaxHealth}";
-			if (_mpLabel != null) _mpLabel.Text = $"MP: {s.CurrentMp} / {s.MaxMp}";
-			if (_atkLabel != null) _atkLabel.Text = $"ATK: {s.BaseDamage}";
-			if (_defLabel != null) _defLabel.Text = $"DEF: {s.Defense}";
+			if (_hpLabel != null)  _hpLabel.Text  = $"HP: {s.CurrentHealth} / {s.MaxHealth}{AffixSuffix(ItemAffixType.BonusMaxHealth)}";
+			if (_mpLabel != null)  _mpLabel.Text  = $"MP: {s.CurrentMp} / {s.MaxMp}{AffixSuffix(ItemAffixType.BonusMaxMp)}";
+			if (_atkLabel != null) _atkLabel.Text = $"ATK: {s.BaseDamage}{AffixSuffix(ItemAffixType.BonusDamage)}";
+			if (_defLabel != null) _defLabel.Text = $"DEF: {s.Defense}{AffixSuffix(ItemAffixType.BonusDefense)}";
 			if (_spLabel != null) _spLabel.Text = $"SP: {s.StatPoints}";
 			var prog = BalanceData.Progression;
 			if (_strLabel != null) _strLabel.Text = $"STR:{s.StrPoints} (+{s.StrPoints * prog.StrAtkBonus}공)";

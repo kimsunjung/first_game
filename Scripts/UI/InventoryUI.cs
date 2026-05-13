@@ -385,13 +385,39 @@ namespace FirstGame.UI
             }
             else if (Inventory.IsExtraEquipType(item.Type))
             {
-                // 신규 부위별 장비: 모든 보너스를 단순 표시 (현재 대비 비교는 없음)
-                if (item.BonusDamage > 0) info += $"\n공격력: +{item.BonusDamage}";
-                if (item.BonusMaxHealth > 0) info += $"\nHP: +{item.BonusMaxHealth}";
-                if (item.BonusDefense > 0) info += $"\n방어력: +{item.BonusDefense}";
-                if (item.BonusMaxMp > 0) info += $"\nMP: +{item.BonusMaxMp}";
-                if (item.BonusCritRate > 0f) info += $"\n치명타: +{item.BonusCritRate * 100f:0.#}%";
-                if (item.BonusMoveSpeed > 0f) info += $"\n이동속도: +{item.BonusMoveSpeed:0.#}";
+                // 신규 부위별 장비 — affix 있는 인스턴스는 base + affix = total 형식으로 통합 표시.
+                // 예: base 공격력 +3, affix +1 → "공격력: +4 (+1)"
+                int affixDmg = 0, affixDef = 0, affixHp = 0, affixMp = 0;
+                float affixCrit = 0f, affixSpd = 0f;
+                if (slot.Affixes != null)
+                {
+                    foreach (var a in slot.Affixes)
+                    {
+                        switch (a.Type)
+                        {
+                            case ItemAffixType.BonusDamage:    affixDmg  += (int)a.Value; break;
+                            case ItemAffixType.BonusDefense:   affixDef  += (int)a.Value; break;
+                            case ItemAffixType.BonusMaxHealth: affixHp   += (int)a.Value; break;
+                            case ItemAffixType.BonusMaxMp:     affixMp   += (int)a.Value; break;
+                            case ItemAffixType.BonusCritRate:  affixCrit += a.Value; break;
+                            case ItemAffixType.BonusMoveSpeed: affixSpd  += a.Value; break;
+                        }
+                    }
+                }
+
+                int totalDmg = item.BonusDamage + affixDmg;
+                int totalHp  = item.BonusMaxHealth + affixHp;
+                int totalDef = item.BonusDefense + affixDef;
+                int totalMp  = item.BonusMaxMp + affixMp;
+                float totalCrit = item.BonusCritRate + affixCrit;
+                float totalSpd  = item.BonusMoveSpeed + affixSpd;
+
+                if (totalDmg > 0) info += FormatStat("공격력", totalDmg, affixDmg);
+                if (totalHp  > 0) info += FormatStat("HP",   totalHp,  affixHp);
+                if (totalDef > 0) info += FormatStat("방어력", totalDef, affixDef);
+                if (totalMp  > 0) info += FormatStat("MP",   totalMp,  affixMp);
+                if (totalCrit > 0f) info += FormatStatPercent("치명타", totalCrit, affixCrit);
+                if (totalSpd  > 0f) info += FormatStatFloat("이동속도", totalSpd, affixSpd);
             }
 
             _itemInfoLabel.Text = info;
@@ -402,6 +428,22 @@ namespace FirstGame.UI
                 _quickSlotPanel.Visible = item.Type == ItemType.Consumable;
             RefreshGrid();
         }
+
+        // affix 합산 표시 헬퍼 — affix 분이 0이면 괄호 생략, 0이 아니면 "(+N)" 동봉.
+        private static string FormatStat(string label, int total, int affixPart)
+            => affixPart > 0
+                ? $"\n{label}: +{total} (+{affixPart})"
+                : $"\n{label}: +{total}";
+
+        private static string FormatStatPercent(string label, float total, float affixPart)
+            => affixPart > 0f
+                ? $"\n{label}: +{total * 100f:0.#}% (+{affixPart * 100f:0.#}%)"
+                : $"\n{label}: +{total * 100f:0.#}%";
+
+        private static string FormatStatFloat(string label, float total, float affixPart)
+            => affixPart > 0f
+                ? $"\n{label}: +{total:0.00} (+{affixPart:0.00})"
+                : $"\n{label}: +{total:0.##}";
 
         private void ClearSelection()
         {
