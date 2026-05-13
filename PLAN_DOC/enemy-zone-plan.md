@@ -23,13 +23,8 @@ mine_2는 mine_1보다 깊은 광산이며 보스가 없고 일반 몹 가중치
 
 | 순위 | 적 종류 | 사용 지역 | 비고 |
 |---|---|---|---|
-<<<<<<< HEAD
-| 1 | `boss_ancient_lich` | dungeon_3 | 최종 보스 — 현재 d3가 d2 보스 재사용 중. 식별성 즉시 필요 |
-| 2 | ~~`slime`, `goblin`, `wolf`~~ | field_1 | **완료** — slime/wild_wolf/goblin_scout/orc_scout/wild_boar 배치, forest_spider/spirit/hobgoblin_guard는 리소스만 |
-=======
 | 1 | ~~`boss_ancient_lich`~~ | dungeon_3 | **완료** — `boss_dungeon3_ancient_lich.tres` 등록 + dungeon_3 BossStatVariant 교체 |
-| 2 | ~~`slime`, `goblin`, `wolf`~~ | field_1 | **완료** — field_1 PR에서 처리 (slime/wild_wolf/goblin_scout/orc_scout/wild_boar 배치) |
->>>>>>> worktree-dungeon3-enemies
+| 2 | ~~`slime`, `goblin`, `wolf`~~ | field_1 | **완료** — slime/wild_wolf/goblin_scout/orc_scout/wild_boar 배치, forest_spider/spirit/hobgoblin_guard는 리소스만 |
 | 3 | `fallen_knight`, `wraith_field` | field_3 | d2/d3와의 시각 분리 — 이번 임시 배치가 워리어/메이지 재사용 |
 | 4 | `zombie_field_basic`, `zombie_field_runner` | field_2 | 묘지 외곽 좀비 — mine_zombie_*과 별개 야외 변종 |
 | 5 | ~~`abyssal_wraith`, `shadow_assassin`~~ | dungeon_3 | **완료** — abyss_wraith/shadow_assassin/cursed_warlock/abyss_hound 배치, death_knight/bone_golem/ancient_lich(엘리트)/dungeon_guardian 리소스만 |
