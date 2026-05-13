@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b1fld1slime01"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field1/slime.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[ext_resource type="Resource" path="res://Resources/Items/material_wood.tres" id="4_wood"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 55.0
+DetectionRange = 180.0
+AttackRange = 28.0
+BaseDamage = 2
+AttackCooldown = 2.2
+ExperienceReward = 8
+GoldReward = 6
+Behavior = 0
+EnemyTypeName = "Slime"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.32
+CollisionScale = 1.4
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_wood")])
+DropWeights = PackedFloat32Array(0.7, 0.3)
+DropChance = 0.25
+MaxHealth = 40
+Defense = 0

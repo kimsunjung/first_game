@@ -11,7 +11,7 @@ mine_2는 mine_1보다 깊은 광산이며 보스가 없고 일반 몹 가중치
 
 | 지역 | 컨셉 | 변경 전 (Before) | 임시 배치 (현 PR) | 목표 배치 (필요 신규 이미지 포함) | 보스 | 비고 |
 |---|---|---|---|---|---|---|
-| `field_1` | 초원/초반 사냥터 — 가장 쉬운 야외 | orc_basic, orc_warrior, orc_rogue (오크 3종) | **orc_basic** 단일 (워리어/로그/샤먼 제거) | 슬라임, 늑대, 고블린, 약한 오크 정찰병 | 없음 | warrior/rogue는 dungeon_1로 이동 |
+| `field_1` | 초원/초반 사냥터 — 가장 쉬운 야외 | orc_basic, orc_warrior, orc_rogue (오크 3종) | **field1_slime + wild_wolf + goblin_scout + orc_scout + wild_boar** (5종 균등) | 좌동 + forest_spider/spirit/hobgoblin_guard (가중치 시스템 도착 시) | 없음 | orc_basic은 dungeon_1로 이동. forest_spider/spirit/hobgoblin_guard는 리소스+PNG 등록 완료, 맵 미배치 (균등 랜덤이라 강한몹/희귀몹 분포 곤란) |
 | `mine_1` | 광산 입구 — Iron/Silver/Gold 채광 | zombie_basic | (이번 PR 변경 X — 광산 적 작업 PR이 다룸) | mine_zombie_basic/fast/armored 위주 + skeleton_miner 일부 | 없음 | 광산 적 8종(mine_*.tres) 등록 작업과 충돌 방지 |
 | `dungeon_1` | 오크 소굴 — 오크 계열 첫 던전 | orc_warrior + orc_shaman (orc_basic 누락) | **orc_basic + orc_warrior + orc_rogue + orc_shaman** | 좌동 + 상위 오크 정예/맹수 | `boss_orc_king` (유지) | basic 누락 회귀 수정 |
 | `field_2` | 묘지 외곽/황폐 필드 — 약한 언데드 중반 초입 | skeleton_base + skeleton_warrior + skeleton_rogue | **skeleton_base + skeleton_warrior + skeleton_rogue** (3종 균등 랜덤 유지) | 좌동 + 좀비 외야(현재 mine_zombie_*과 별개의 야외 좀비) | 없음 | mage는 의도적 제거 → dungeon_2로 이동. **가중치 분포는 EnemySpawner 미지원 — weighted spawn은 별도 후속 PR** |
@@ -24,7 +24,7 @@ mine_2는 mine_1보다 깊은 광산이며 보스가 없고 일반 몹 가중치
 | 순위 | 적 종류 | 사용 지역 | 비고 |
 |---|---|---|---|
 | 1 | `boss_ancient_lich` | dungeon_3 | 최종 보스 — 현재 d3가 d2 보스 재사용 중. 식별성 즉시 필요 |
-| 2 | `slime`, `goblin`, `wolf` | field_1 | 초반 필드 정체성 회복 — 현재 orc_basic 단일이라 단조로움 |
+| 2 | ~~`slime`, `goblin`, `wolf`~~ | field_1 | **완료** — slime/wild_wolf/goblin_scout/orc_scout/wild_boar 배치, forest_spider/spirit/hobgoblin_guard는 리소스만 |
 | 3 | `fallen_knight`, `wraith_field` | field_3 | d2/d3와의 시각 분리 — 이번 임시 배치가 워리어/메이지 재사용 |
 | 4 | `zombie_field_basic`, `zombie_field_runner` | field_2 | 묘지 외곽 좀비 — mine_zombie_*과 별개 야외 변종 |
 | 5 | `abyssal_wraith`, `shadow_assassin` | dungeon_3 | 일반 몹 차별화 |
@@ -32,9 +32,10 @@ mine_2는 mine_1보다 깊은 광산이며 보스가 없고 일반 몹 가중치
 
 ## 필요 신규 EnemyStats 리소스 (이미지 도착 시 동반 생성)
 
-- `Resources/Enemies/slime.tres`
-- `Resources/Enemies/wolf.tres`
-- `Resources/Enemies/goblin.tres`
+- ~~`Resources/Enemies/slime.tres`~~ → 등록 완료 (`field1_slime.tres`)
+- ~~`Resources/Enemies/wolf.tres`~~ → 등록 완료 (`field1_wild_wolf.tres`)
+- ~~`Resources/Enemies/goblin.tres`~~ → 등록 완료 (`field1_goblin_scout.tres`)
+- 추가 등록 완료: `field1_orc_scout.tres`, `field1_wild_boar.tres`, `field1_forest_spider.tres`, `field1_forest_spirit.tres`, `field1_hobgoblin_guard.tres` (뒤 3종은 맵 미배치)
 - `Resources/Enemies/fallen_knight.tres`
 - `Resources/Enemies/wraith_field.tres`
 - `Resources/Enemies/zombie_field_basic.tres`
@@ -53,7 +54,7 @@ EnemyController는 `BossId` 필드를 .tscn EnemySpawner에서 주입받아 `Gam
 ## 변경 전 → 변경 후 한눈 요약
 
 ```
-field_1   orc_basic + warrior + rogue          →  orc_basic (단일)
+field_1   orc_basic + warrior + rogue          →  field1_slime + wild_wolf + goblin_scout + orc_scout + wild_boar (5종 균등)
 mine_1    (변경 없음 — 별도 PR)
 dungeon_1 orc_warrior + shaman                 →  orc_basic + warrior + rogue + shaman
 field_2   skel_base + warrior + rogue          →  유지 (3종 균등, mage 없음 — dungeon_2로 분리)

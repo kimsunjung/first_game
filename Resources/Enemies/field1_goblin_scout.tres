@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b1fld1goblin03"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field1/goblin_scout.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[ext_resource type="Resource" uid="uid://djkwf7m5ay001" path="res://Resources/Items/iron_ore.tres" id="4_iron"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 90.0
+DetectionRange = 220.0
+AttackRange = 35.0
+BaseDamage = 3
+AttackCooldown = 1.8
+ExperienceReward = 12
+GoldReward = 10
+Behavior = 0
+EnemyTypeName = "GoblinScout"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.4
+CollisionScale = 1.7
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_iron")])
+DropWeights = PackedFloat32Array(0.7, 0.3)
+DropChance = 0.3
+MaxHealth = 55
+Defense = 0

@@ -11,7 +11,11 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
-[ext_resource type="Resource" uid="uid://cr0uxb4estgbh" path="res://Resources/Enemies/orc_basic.tres" id="12_orc1"]
+[ext_resource type="Resource" uid="uid://b1fld1slime01" path="res://Resources/Enemies/field1_slime.tres" id="12_slime"]
+[ext_resource type="Resource" uid="uid://b1fld1wolf002" path="res://Resources/Enemies/field1_wild_wolf.tres" id="13_wolf"]
+[ext_resource type="Resource" uid="uid://b1fld1goblin03" path="res://Resources/Enemies/field1_goblin_scout.tres" id="14_goblin"]
+[ext_resource type="Resource" uid="uid://b1fld1orcsc004" path="res://Resources/Enemies/field1_orc_scout.tres" id="15_orcscout"]
+[ext_resource type="Resource" uid="uid://b1fld1boar0005" path="res://Resources/Enemies/field1_wild_boar.tres" id="16_boar"]
 [ext_resource type="Script" uid="uid://dmf0bg8r5ncbd" path="res://Scripts/Maps/MapGenerator.cs" id="15_5m0au"]
 [ext_resource type="TileSet" uid="uid://qg8y8romnyuy" path="res://Resources/Tilesets/field_tileset.tres" id="16_tileset"]
 
@@ -78,7 +82,7 @@ DestinationName = "광산"
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/orc_basic.tres")]([ExtResource("12_orc1")])
+StatVariants = Array[Resource("res://Resources/Enemies/field1_slime.tres")]([ExtResource("12_slime"), ExtResource("13_wolf"), ExtResource("14_goblin"), ExtResource("15_orcscout"), ExtResource("16_boar")])
 SpawnRadius = 280.0
 
 [node name="Walls" type="StaticBody2D" parent="." unique_id=1787972207]

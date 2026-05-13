@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b1fld1hobgob008"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field1/hobgoblin_guard.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 65.0
+DetectionRange = 230.0
+AttackRange = 40.0
+BaseDamage = 6
+AttackCooldown = 2.2
+ExperienceReward = 30
+GoldReward = 22
+Behavior = 0
+EnemyTypeName = "HobgoblinGuard"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.48
+CollisionScale = 2.1
+DropChance = 0.0
+MaxHealth = 130
+Defense = 2
