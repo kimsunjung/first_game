@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b1d3ahound000006"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon3/abyss_hound.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/ancient_hide.tres" id="4_ah"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 145.0
+DetectionRange = 280.0
+AttackRange = 34.0
+BaseDamage = 10
+AttackCooldown = 1.2
+ExperienceReward = 50
+GoldReward = 36
+Behavior = 0
+EnemyTypeName = "AbyssHound"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.45
+CollisionScale = 2.0
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ah")])
+DropWeights = PackedFloat32Array(0.5, 0.5)
+DropChance = 0.4
+MaxHealth = 130
+Defense = 1
