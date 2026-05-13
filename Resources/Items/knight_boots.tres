@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bitem_knightboots"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/knight_boots.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "기사단 부츠"
+Description = "기사단 정예가 신는 강화 부츠. 방어와 체력을 보강한다."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 550
+SellPrice = 180
+Type = 7
+IsStackable = false
+MaxStack = 1
+BonusDefense = 5
+BonusMaxHealth = 25

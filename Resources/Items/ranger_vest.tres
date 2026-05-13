@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bitem_rngvest001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/ranger_vest.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "레인저 조끼"
+Description = "가벼운 가죽과 천으로 만든 조끼. 민첩한 움직임에 어울린다."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 450
+SellPrice = 150
+Type = 2
+IsStackable = false
+MaxStack = 1
+BonusDefense = 4
+BonusMaxHealth = 15
+BonusMoveSpeed = 10.0
+BonusCritRate = 0.03

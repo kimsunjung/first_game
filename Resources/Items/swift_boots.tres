@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bitem_swiftboots"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/swift_boots.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "신속 부츠"
+Description = "날개 장식이 달린 가벼운 부츠. 이동속도가 크게 오른다."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 420
+SellPrice = 140
+Type = 7
+IsStackable = false
+MaxStack = 1
+BonusDefense = 2
+BonusMoveSpeed = 20.0

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bitem_battlehelm1"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/battle_helm.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "전투 투구"
+Description = "루비 장식이 박힌 정예 전투 투구. 강철 투구보다 상위 등급."
+Rarity = 3
+Icon = ExtResource("2_icon")
+Price = 1100
+SellPrice = 360
+Type = 6
+IsStackable = false
+MaxStack = 1
+BonusDefense = 9
+BonusMaxHealth = 45
+BonusCritRate = 0.03

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bitem_mystbrace01"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/mystic_bracelet.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "신비한 팔찌"
+Description = "자수정이 박힌 우아한 팔찌. 마나와 치명타율을 올린다."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 750
+SellPrice = 250
+Type = 10
+IsStackable = false
+MaxStack = 1
+BonusMaxMp = 20
+BonusCritRate = 0.05

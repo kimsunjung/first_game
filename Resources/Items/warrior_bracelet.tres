@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bitem_warbrace01"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/warrior_bracelet.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "전사의 팔찌"
+Description = "루비가 박힌 묵직한 팔찌. 공격력과 방어력을 함께 올린다."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 700
+SellPrice = 230
+Type = 10
+IsStackable = false
+MaxStack = 1
+BonusDamage = 6
+BonusDefense = 2

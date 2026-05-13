@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bitem_rangerhood"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/ranger_hood.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "레인저 후드"
+Description = "가벼운 천 후드. 민첩성과 치명타율을 올린다."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 380
+SellPrice = 130
+Type = 6
+IsStackable = false
+MaxStack = 1
+BonusDefense = 3
+BonusMoveSpeed = 8.0
+BonusCritRate = 0.05

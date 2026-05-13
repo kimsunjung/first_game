@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bitem_emring0001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/emerald_ring.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "에메랄드 반지"
+Description = "에메랄드가 박힌 황금 반지. 마나와 방어를 함께 올린다."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 980
+SellPrice = 320
+Type = 9
+IsStackable = false
+MaxStack = 1
+BonusMaxMp = 15
+BonusDefense = 3
+BonusCritRate = 0.03
