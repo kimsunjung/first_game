@@ -14,9 +14,9 @@ mine_2는 mine_1보다 깊은 광산이며 보스가 없고 일반 몹 가중치
 | `field_1` | 초원/초반 사냥터 — 가장 쉬운 야외 | orc_basic, orc_warrior, orc_rogue (오크 3종) | **field1_slime + wild_wolf + goblin_scout + orc_scout + wild_boar** (5종 균등) | 좌동 + forest_spider/spirit/hobgoblin_guard (가중치 시스템 도착 시) | 없음 | orc_basic은 dungeon_1로 이동. forest_spider/spirit/hobgoblin_guard는 리소스+PNG 등록 완료, 맵 미배치 (균등 랜덤이라 강한몹/희귀몹 분포 곤란) |
 | `mine_1` | 광산 입구 — Iron/Silver/Gold 채광 | zombie_basic | (이번 PR 변경 X — 광산 적 작업 PR이 다룸) | mine_zombie_basic/fast/armored 위주 + skeleton_miner 일부 | 없음 | 광산 적 8종(mine_*.tres) 등록 작업과 충돌 방지 |
 | `dungeon_1` | 오크 소굴 — 오크 계열 첫 던전 | orc_warrior + orc_shaman (orc_basic 누락) | **dungeon1_orc_club + orc_axe_warrior + orc_rogue + orc_shaman** (4종 균등, 신규 PNG) | 좌동 + orc_brute/goblin_trapper/orc_captain 정예 (가중치 시스템 도착 시) | **`boss_orc_warlord_boss`** (BossId="orc_warlord_d1"로 교체) — 기존 `boss_orc_king` 처치 기록 폐기(개발 중 결정) | 기존 orc_basic/warrior/rogue/shaman/boss_orc_king은 보존(미배치). orc_brute/goblin_trapper/orc_captain은 리소스+PNG만 등록 |
-| `field_2` | 묘지 외곽/황폐 필드 — 약한 언데드 중반 초입 | skeleton_base + skeleton_warrior + skeleton_rogue | **skeleton_base + skeleton_warrior + skeleton_rogue** (3종 균등 랜덤 유지) | 좌동 + 좀비 외야(현재 mine_zombie_*과 별개의 야외 좀비) | 없음 | mage는 의도적 제거 → dungeon_2로 이동. **가중치 분포는 EnemySpawner 미지원 — weighted spawn은 별도 후속 PR** |
-| `dungeon_2` | 지하 묘지 — 본격 스켈레톤 던전 | skeleton_warrior + skeleton_mage + skeleton_rogue | **유지** (현 구성 적절) | 좌동 + 강화 스켈레톤 가디언 | `boss_skeleton_king` (BossId="skeleton_king_d2", 유지) | 변경 없음 |
-| `field_3` | 저주받은 황무지 — 고급 언데드/타락 기사 | skeleton_warrior + skeleton_mage + skeleton_rogue (dungeon_2와 동일) | **skeleton_warrior + skeleton_mage** (rogue 제거, warrior 위주) | 신규: 타락 기사(`fallen_knight`), 망령(`wraith_field`), 강화 좀비 | 없음 | 현재는 d2와의 구분이 약함 — 신규 이미지 시급 |
+| `field_2` | 묘지 외곽/황폐 필드 — 약한 언데드 중반 초입 | skeleton_base + skeleton_warrior + skeleton_rogue | **skeleton_wanderer + skeleton_archer + zombie_walker + grave_slime + cursed_wolf** (5종 균등, 신규 PNG) | 좌동 + ghoul/bone_soldier/grave_wraith 정예 (가중치 시스템 도착 시) | 없음 | 기존 skeleton_base/warrior/rogue 보존(미배치). ghoul/bone_soldier/grave_wraith는 리소스+PNG만 등록 |
+| `dungeon_2` | 지하 묘지 — 본격 스켈레톤 던전 | skeleton_warrior + skeleton_mage + skeleton_rogue | **dungeon2_skeleton_warrior + skeleton_mage + skeleton_rogue + bone_archer + ghoul_brute** (5종 균등, 신규 PNG) | 좌동 + bone_knight/crypt_wraith/skeleton_champion 정예 (가중치 시스템 도착 시) | `boss_skeleton_king` (BossId="skeleton_king_d2", 유지) | 기존 skeleton_warrior/mage/rogue 보존(미배치). skeleton_champion은 네임드/보스 후보 보관 |
+| `field_3` | 저주받은 황무지 — 고급 언데드/타락 기사 | skeleton_warrior + skeleton_mage + skeleton_rogue (dungeon_2와 동일) | **field3_cursed_soldier + dark_wolf + shadow_bat + bone_hound + plague_ghoul** (5종 균등, 신규 PNG) | 좌동 + fallen_knight/ruin_golem/cursed_banner_wraith 정예 (가중치 시스템 도착 시) | 없음 | 기존 skeleton_warrior/mage 보존(미배치). fallen_knight/ruin_golem/cursed_banner_wraith는 리소스+PNG만 등록 |
 | `dungeon_3` | 심연 던전 — 최종급 언데드/심연 계열 | skeleton_warrior + skeleton_mage + skeleton_rogue + boss_skeleton_king 재사용 | **abyss_wraith + shadow_assassin + cursed_warlock + abyss_hound** (4종 균등) | 좌동 + death_knight/bone_golem/ancient_lich(엘리트)/dungeon_guardian 가중치 시스템 도착 후 추가 | **`boss_dungeon3_ancient_lich`** (BossId="ancient_lich_d3"로 교체) | 보스 교체로 기존 `skeleton_king_d3` 처치 기록 폐기(개발 중 결정) — 이전에 d3 보스 잡았던 세이브는 ancient_lich를 다시 잡아야 함 |
 
 ## 필요 신규 이미지 (GPT 생성 우선순위)
@@ -25,10 +25,10 @@ mine_2는 mine_1보다 깊은 광산이며 보스가 없고 일반 몹 가중치
 |---|---|---|---|
 | 1 | ~~`boss_ancient_lich`~~ | dungeon_3 | **완료** — `boss_dungeon3_ancient_lich.tres` 등록 + dungeon_3 BossStatVariant 교체 |
 | 2 | ~~`slime`, `goblin`, `wolf`~~ | field_1 | **완료** — slime/wild_wolf/goblin_scout/orc_scout/wild_boar 배치, forest_spider/spirit/hobgoblin_guard는 리소스만 |
-| 3 | `fallen_knight`, `wraith_field` | field_3 | d2/d3와의 시각 분리 — 이번 임시 배치가 워리어/메이지 재사용 |
-| 4 | `zombie_field_basic`, `zombie_field_runner` | field_2 | 묘지 외곽 좀비 — mine_zombie_*과 별개 야외 변종 |
+| 3 | ~~`fallen_knight`, `wraith_field`~~ | field_3 | **완료** — cursed_soldier/dark_wolf/shadow_bat/bone_hound/plague_ghoul 배치, fallen_knight/ruin_golem/cursed_banner_wraith는 리소스만 |
+| 4 | ~~`zombie_field_basic`, `zombie_field_runner`~~ | field_2 | **완료** — skeleton_wanderer/skeleton_archer/zombie_walker/grave_slime/cursed_wolf 배치, ghoul/bone_soldier/grave_wraith는 리소스만 |
 | 5 | ~~`abyssal_wraith`, `shadow_assassin`~~ | dungeon_3 | **완료** — abyss_wraith/shadow_assassin/cursed_warlock/abyss_hound 배치, death_knight/bone_golem/ancient_lich(엘리트)/dungeon_guardian 리소스만 |
-| 6 | `skeleton_guardian` | dungeon_2 | 강화 변형 — 우선순위 낮음 |
+| 6 | ~~`skeleton_guardian`~~ | dungeon_2 | **완료** — dungeon2_skeleton_warrior/mage/rogue/bone_archer/ghoul_brute 배치, bone_knight/crypt_wraith/skeleton_champion은 리소스만 |
 
 ## 필요 신규 EnemyStats 리소스 (이미지 도착 시 동반 생성)
 
@@ -36,10 +36,12 @@ mine_2는 mine_1보다 깊은 광산이며 보스가 없고 일반 몹 가중치
 - ~~`Resources/Enemies/wolf.tres`~~ → 등록 완료 (`field1_wild_wolf.tres`)
 - ~~`Resources/Enemies/goblin.tres`~~ → 등록 완료 (`field1_goblin_scout.tres`)
 - 추가 등록 완료: `field1_orc_scout.tres`, `field1_wild_boar.tres`, `field1_forest_spider.tres`, `field1_forest_spirit.tres`, `field1_hobgoblin_guard.tres` (뒤 3종은 맵 미배치)
-- `Resources/Enemies/fallen_knight.tres`
-- `Resources/Enemies/wraith_field.tres`
-- `Resources/Enemies/zombie_field_basic.tres`
-- `Resources/Enemies/zombie_field_runner.tres`
+- ~~`Resources/Enemies/fallen_knight.tres`~~ → 등록 완료 (`field3_fallen_knight.tres`, 정예, 맵 미배치)
+- ~~`Resources/Enemies/wraith_field.tres`~~ → field_3는 `field3_cursed_banner_wraith.tres`로 대체 (정예, 맵 미배치)
+- 추가 등록 완료 (field_3): `field3_cursed_soldier.tres`, `field3_dark_wolf.tres`, `field3_shadow_bat.tres`, `field3_bone_hound.tres`, `field3_plague_ghoul.tres`, `field3_ruin_golem.tres` (ruin_golem은 맵 미배치)
+- ~~`Resources/Enemies/zombie_field_basic.tres`~~ → field_2는 field2_zombie_walker.tres로 대체
+- ~~`Resources/Enemies/zombie_field_runner.tres`~~ → field_2는 field2_cursed_wolf 등으로 대체
+- 추가 등록 완료 (field_2): `field2_skeleton_wanderer.tres`, `field2_skeleton_archer.tres`, `field2_zombie_walker.tres`, `field2_grave_slime.tres`, `field2_cursed_wolf.tres`, `field2_ghoul.tres`, `field2_bone_soldier.tres`, `field2_grave_wraith.tres` (뒤 3종은 맵 미배치)
 - ~~`Resources/Enemies/abyssal_wraith.tres`~~ → 등록 완료 (`dungeon3_abyss_wraith.tres`)
 - ~~`Resources/Enemies/shadow_assassin.tres`~~ → 등록 완료 (`dungeon3_shadow_assassin.tres`)
 - ~~`Resources/Enemies/ancient_lich.tres`~~ → 등록 완료 (`dungeon3_ancient_lich.tres`, 엘리트 일반급, 맵 미배치)
@@ -60,11 +62,28 @@ EnemyController는 `BossId` 필드를 .tscn EnemySpawner에서 주입받아 `Gam
 field_1   orc_basic + warrior + rogue          →  field1_slime + wild_wolf + goblin_scout + orc_scout + wild_boar (5종 균등)
 mine_1    (변경 없음 — 별도 PR)
 dungeon_1 orc_warrior + shaman                 →  dungeon1_orc_club + axe_warrior + rogue + shaman (4종 균등, 신규 PNG)
-field_2   skel_base + warrior + rogue          →  유지 (3종 균등, mage 없음 — dungeon_2로 분리)
-dungeon_2 skel_warrior + mage + rogue          →  유지
-field_3   skel_warrior + mage + rogue (==d2)   →  skel_warrior + mage (rogue 제거)
+field_2   skel_base + warrior + rogue          →  skeleton_wanderer + archer + zombie_walker + grave_slime + cursed_wolf (5종 균등, 신규 PNG)
+dungeon_2 skel_warrior + mage + rogue          →  dungeon2_skeleton_warrior + mage + rogue + bone_archer + ghoul_brute (5종 균등, 신규 PNG)
+field_3   skel_warrior + mage + rogue (==d2)   →  field3_cursed_soldier + dark_wolf + shadow_bat + bone_hound + plague_ghoul (5종 균등, 신규 PNG)
 dungeon_3 skel_warrior + mage + rogue (==d2)   →  abyss_wraith + shadow_assassin + cursed_warlock + abyss_hound (4종 균등) + boss_dungeon3_ancient_lich (보스 교체)
 ```
+
+## 네임드/보스 후보 리소스 (2026-05-13 등록, 맵 미배치)
+
+`Resources/Generated/GPT/Enemies/NamedBosses/`에 8개 PNG + 8개 `EnemyStats.tres`를 등록했다. 일반 EnemyVariants에 배치하지 않은 상태이며, 맵별 보스 교체 시 후보로 사용 — 기존 `boss_orc_king`/`boss_skeleton_king`/`boss_orc_warlord_boss`/`boss_dungeon3_ancient_lich`는 그대로 유지.
+
+| 리소스 | 종류 | 후보 지역 | HP/Dmg/Def | 비고 |
+|---|---|---|---|---|
+| `field1_forest_alpha_wolf_named.tres` | 네임드 | field_1 | 220/8/1 | 빠른 늑대 정예 |
+| `dungeon1_orc_warlord_boss.tres` | 보스 | dungeon_1 | 1100/17/4 | 기존 `boss_orc_warlord_boss.tres`와 별개 변형 |
+| `field2_graveyard_wight_named.tres` | 네임드 | field_2 | 280/11/3 | 무덤 영혼 정예 |
+| `dungeon2_skeleton_king_boss.tres` | 보스 | dungeon_2 | 1200/18/5 | 기존 `boss_skeleton_king.tres` 교체 후보 |
+| `field3_plague_brute_named.tres` | 네임드 | field_3 | 380/14/4 | 역병 거인 정예 |
+| `dungeon3_ancient_lich_boss.tres` | 보스(Ranged) | dungeon_3 | 1500/22/5 | 기존 `boss_dungeon3_ancient_lich.tres`와 별개 변형 |
+| `mine_golem_named.tres` | 네임드 | mine_2 | 420/13/8 | 광산 강자 |
+| `mine_crystal_guardian_boss.tres` | 보스 | mine_2/mine_3 | 1400/20/6 | 광산 보스 후보 |
+
+**맵 변경 없음.** 이번 작업으로 `Scenes/Maps/*.tscn`의 `EnemyVariants`/`BossStatVariant`/`BossId`는 전혀 건드리지 않았다. 보스 교체는 별도 작업으로 추후 진행.
 
 ## 알려진 제약
 

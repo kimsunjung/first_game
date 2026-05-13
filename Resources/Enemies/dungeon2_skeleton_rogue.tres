@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://cm4gq1itdagf7"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon2/skeleton_rogue.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="4_bd"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 130.0
+DetectionRange = 260.0
+AttackRange = 34.0
+BaseDamage = 8
+AttackCooldown = 1.3
+ExperienceReward = 50
+GoldReward = 35
+Behavior = 0
+EnemyTypeName = "Dungeon2SkeletonRogue"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.40
+CollisionScale = 1.7
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_bd")])
+DropWeights = PackedFloat32Array(0.55, 0.45)
+DropChance = 0.4
+MaxHealth = 110
+Defense = 0

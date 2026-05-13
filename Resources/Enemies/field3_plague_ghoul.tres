@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://bysny3oas8osi"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field3/plague_ghoul.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/ancient_hide.tres" id="4_ah"]
+[ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="5_bd"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 90.0
+DetectionRange = 270.0
+AttackRange = 38.0
+BaseDamage = 10
+AttackCooldown = 1.7
+ExperienceReward = 65
+GoldReward = 48
+Behavior = 0
+EnemyTypeName = "PlagueGhoul"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.47
+CollisionScale = 1.95
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ah"), ExtResource("5_bd")])
+DropWeights = PackedFloat32Array(0.45, 0.35, 0.2)
+DropChance = 0.45
+MaxHealth = 170
+Defense = 2

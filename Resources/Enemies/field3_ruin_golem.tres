@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b12v6oyfpuosk"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field3/ruin_golem.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/ancient_bone.tres" id="4_ab"]
+[ext_resource type="Resource" path="res://Resources/Items/iron_helm.tres" id="5_helm"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 50.0
+DetectionRange = 270.0
+AttackRange = 44.0
+BaseDamage = 14
+AttackCooldown = 2.8
+ExperienceReward = 110
+GoldReward = 80
+Behavior = 0
+EnemyTypeName = "RuinGolem"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.6
+CollisionScale = 2.6
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab"), ExtResource("5_helm")])
+DropWeights = PackedFloat32Array(0.4, 0.45, 0.15)
+DropChance = 0.55
+MaxHealth = 380
+Defense = 9

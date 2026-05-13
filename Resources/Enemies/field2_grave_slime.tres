@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://pyofm3ftt2sh"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field2/grave_slime.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="4_bd"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 60.0
+DetectionRange = 210.0
+AttackRange = 32.0
+BaseDamage = 4
+AttackCooldown = 2.0
+ExperienceReward = 22
+GoldReward = 16
+Behavior = 0
+EnemyTypeName = "GraveSlime"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.40
+CollisionScale = 1.6
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_bd")])
+DropWeights = PackedFloat32Array(0.6, 0.4)
+DropChance = 0.3
+MaxHealth = 70
+Defense = 0

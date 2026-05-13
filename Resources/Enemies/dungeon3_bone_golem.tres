@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b1d3bgolem00005"]
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://devw7r2ms8vwe"]
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon3/bone_golem.png" id="2_tex"]

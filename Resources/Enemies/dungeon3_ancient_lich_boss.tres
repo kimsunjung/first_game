@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://3xeaep05vjyr"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1_es"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/ancient_lich.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="4_mega"]
+[ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="5_core"]
+[ext_resource type="Resource" path="res://Resources/Items/shadow_ring.tres" id="6_sring"]
+[ext_resource type="Resource" path="res://Resources/Items/runic_bracelet.tres" id="7_rbrace"]
+[ext_resource type="Resource" path="res://Resources/Items/guardian_amulet.tres" id="8_gamulet"]
+
+[resource]
+script = ExtResource("1_es")
+MoveSpeed = 70.0
+DetectionRange = 330.0
+AttackRange = 250.0
+PreferredRange = 220.0
+BaseDamage = 22
+AttackCooldown = 1.8
+ExperienceReward = 500
+GoldReward = 500
+Behavior = 1
+EnemyTypeName = "AncientLichNamed"
+IsBoss = true
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.65
+CollisionScale = 2.8
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_mega"), ExtResource("5_core"), ExtResource("6_sring"), ExtResource("7_rbrace"), ExtResource("8_gamulet")])
+DropWeights = PackedFloat32Array(0.18, 0.18, 0.24, 0.15, 0.13, 0.12)
+DropChance = 1.0
+MaxHealth = 1500
+CurrentHealth = 1500
+Defense = 5

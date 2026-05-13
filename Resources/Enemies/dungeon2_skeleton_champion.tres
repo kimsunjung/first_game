@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://dtbcr583bewyx"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon2/skeleton_champion.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="3_mega"]
+[ext_resource type="Resource" path="res://Resources/Items/ancient_bone.tres" id="4_ab"]
+[ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="5_core"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 80.0
+DetectionRange = 290.0
+AttackRange = 44.0
+BaseDamage = 14
+AttackCooldown = 1.8
+ExperienceReward = 100
+GoldReward = 80
+Behavior = 0
+EnemyTypeName = "SkeletonChampion"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.55
+CollisionScale = 2.4
+PossibleDrops = Array[Resource]([ExtResource("3_mega"), ExtResource("4_ab"), ExtResource("5_core")])
+DropWeights = PackedFloat32Array(0.4, 0.4, 0.2)
+DropChance = 0.6
+MaxHealth = 350
+Defense = 5

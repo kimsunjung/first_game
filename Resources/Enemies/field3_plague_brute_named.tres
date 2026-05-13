@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://d0ta13b3h2obk"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/plague_brute.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/ancient_hide.tres" id="4_ah"]
+[ext_resource type="Resource" path="res://Resources/Items/ancient_bone.tres" id="5_ab"]
+[ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="6_core"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 75.0
+DetectionRange = 290.0
+AttackRange = 44.0
+BaseDamage = 14
+AttackCooldown = 2.0
+ExperienceReward = 130
+GoldReward = 95
+Behavior = 0
+EnemyTypeName = "PlagueBrute"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.55
+CollisionScale = 2.4
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ah"), ExtResource("5_ab"), ExtResource("6_core")])
+DropWeights = PackedFloat32Array(0.35, 0.3, 0.25, 0.1)
+DropChance = 0.6
+MaxHealth = 380
+Defense = 4

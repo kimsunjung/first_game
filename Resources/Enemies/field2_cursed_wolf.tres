@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://hxpuhy84h53u"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field2/cursed_wolf.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[ext_resource type="Resource" path="res://Resources/Items/ancient_hide.tres" id="4_ah"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 130.0
+DetectionRange = 250.0
+AttackRange = 34.0
+BaseDamage = 6
+AttackCooldown = 1.3
+ExperienceReward = 30
+GoldReward = 22
+Behavior = 0
+EnemyTypeName = "CursedWolf"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.45
+CollisionScale = 2.0
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_ah")])
+DropWeights = PackedFloat32Array(0.55, 0.45)
+DropChance = 0.35
+MaxHealth = 95
+Defense = 0

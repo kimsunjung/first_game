@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://3xd8lr86iyym"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1_es"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/skeleton_king.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="4_mega"]
+[ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="5_core"]
+[ext_resource type="Resource" uid="uid://itemboots002" path="res://Resources/Items/iron_boots.tres" id="6_ib"]
+[ext_resource type="Resource" uid="uid://itembrace002" path="res://Resources/Items/silver_bracelet.tres" id="7_sb"]
+
+[resource]
+script = ExtResource("1_es")
+MoveSpeed = 75.0
+DetectionRange = 320.0
+AttackRange = 48.0
+BaseDamage = 18
+AttackCooldown = 1.9
+ExperienceReward = 400
+GoldReward = 400
+EnemyTypeName = "SkeletonKingNamed"
+IsBoss = true
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.65
+CollisionScale = 2.8
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_mega"), ExtResource("5_core"), ExtResource("6_ib"), ExtResource("7_sb")])
+DropWeights = PackedFloat32Array(0.20, 0.20, 0.25, 0.20, 0.15)
+DropChance = 1.0
+MaxHealth = 1200
+CurrentHealth = 1200
+Defense = 5

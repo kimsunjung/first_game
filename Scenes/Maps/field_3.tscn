@@ -11,8 +11,11 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
-[ext_resource type="Resource" uid="uid://gd8yrg2pfw6j" path="res://Resources/Enemies/skeleton_warrior.tres" id="12_skel2"]
-[ext_resource type="Resource" uid="uid://e360qqlbtjgf" path="res://Resources/Enemies/skeleton_mage.tres" id="13_skel3"]
+[ext_resource type="Resource" uid="uid://bf3curssold0001" path="res://Resources/Enemies/field3_cursed_soldier.tres" id="20_soldier"]
+[ext_resource type="Resource" uid="uid://bf3darkwolf0002" path="res://Resources/Enemies/field3_dark_wolf.tres" id="21_wolf"]
+[ext_resource type="Resource" uid="uid://bf3shadowbat003" path="res://Resources/Enemies/field3_shadow_bat.tres" id="22_bat"]
+[ext_resource type="Resource" uid="uid://bf3bonehound004" path="res://Resources/Enemies/field3_bone_hound.tres" id="23_hound"]
+[ext_resource type="Resource" uid="uid://bf3plaguegh0005" path="res://Resources/Enemies/field3_plague_ghoul.tres" id="24_ghoul"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -66,7 +69,7 @@ TargetSpawnPosition = Vector2(80, 360)
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/skeleton_warrior.tres")]([ExtResource("12_skel2"), ExtResource("13_skel3")])
+StatVariants = Array[Resource("res://Resources/Enemies/field3_cursed_soldier.tres")]([ExtResource("20_soldier"), ExtResource("21_wolf"), ExtResource("22_bat"), ExtResource("23_hound"), ExtResource("24_ghoul")])
 SpawnInterval = 3.0
 MaxEnemies = 7
 SpawnRadius = 300.0

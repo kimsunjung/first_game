@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b7m8x2zomb1ie"]
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b7m8x20omb1ie"]
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
 [ext_resource type="Resource" uid="uid://djkwf7m5ay001" path="res://Resources/Items/iron_ore.tres" id="2_iron"]

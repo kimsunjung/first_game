@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://po3eubuc8osj"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field2/ghoul.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/ancient_hide.tres" id="4_ah"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 90.0
+DetectionRange = 250.0
+AttackRange = 36.0
+BaseDamage = 8
+AttackCooldown = 1.6
+ExperienceReward = 45
+GoldReward = 32
+Behavior = 0
+EnemyTypeName = "Ghoul"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.45
+CollisionScale = 1.9
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ah")])
+DropWeights = PackedFloat32Array(0.5, 0.5)
+DropChance = 0.4
+MaxHealth = 160
+Defense = 2

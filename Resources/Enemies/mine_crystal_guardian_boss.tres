@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://3xmogmm4pspx"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1_es"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/crystal_guardian.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="4_mega"]
+[ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="5_core"]
+[ext_resource type="Resource" path="res://Resources/Items/iron_armor.tres" id="6_armor"]
+[ext_resource type="Resource" uid="uid://itembrace002" path="res://Resources/Items/silver_bracelet.tres" id="7_sb"]
+
+[resource]
+script = ExtResource("1_es")
+MoveSpeed = 70.0
+DetectionRange = 310.0
+AttackRange = 46.0
+BaseDamage = 20
+AttackCooldown = 2.0
+ExperienceReward = 450
+GoldReward = 450
+EnemyTypeName = "CrystalGuardian"
+IsBoss = true
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.65
+CollisionScale = 2.8
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_mega"), ExtResource("5_core"), ExtResource("6_armor"), ExtResource("7_sb")])
+DropWeights = PackedFloat32Array(0.20, 0.20, 0.25, 0.20, 0.15)
+DropChance = 1.0
+MaxHealth = 1400
+CurrentHealth = 1400
+Defense = 6

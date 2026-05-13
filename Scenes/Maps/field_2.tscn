@@ -11,9 +11,11 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
-[ext_resource type="Resource" uid="uid://bj1japjwlh264" path="res://Resources/Enemies/skeleton_base.tres" id="12_skel1"]
-[ext_resource type="Resource" uid="uid://gd8yrg2pfw6j" path="res://Resources/Enemies/skeleton_warrior.tres" id="13_skel2"]
-[ext_resource type="Resource" uid="uid://cs85xqwqiwm3i" path="res://Resources/Enemies/skeleton_rogue.tres" id="14_skel3"]
+[ext_resource type="Resource" uid="uid://bf2skelwander01" path="res://Resources/Enemies/field2_skeleton_wanderer.tres" id="20_wanderer"]
+[ext_resource type="Resource" uid="uid://bf2skelarcher02" path="res://Resources/Enemies/field2_skeleton_archer.tres" id="21_archer"]
+[ext_resource type="Resource" uid="uid://bf2zombwalker003" path="res://Resources/Enemies/field2_zombie_walker.tres" id="22_zombie"]
+[ext_resource type="Resource" uid="uid://bf2graveslime04" path="res://Resources/Enemies/field2_grave_slime.tres" id="23_slime"]
+[ext_resource type="Resource" uid="uid://bf2cursedwolf005" path="res://Resources/Enemies/field2_cursed_wolf.tres" id="24_wolf"]
 [ext_resource type="Script" uid="uid://dmf0bg8r5ncbd" path="res://Scripts/Maps/MapGenerator.cs" id="15_5m0au"]
 [ext_resource type="TileSet" uid="uid://qg8y8romnyuy" path="res://Resources/Tilesets/field_tileset.tres" id="16_tileset"]
 
@@ -74,7 +76,7 @@ TargetSpawnPosition = Vector2(640, 80)
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/skeleton_base.tres")]([ExtResource("12_skel1"), ExtResource("13_skel2"), ExtResource("14_skel3")])
+StatVariants = Array[Resource("res://Resources/Enemies/field2_skeleton_wanderer.tres")]([ExtResource("20_wanderer"), ExtResource("21_archer"), ExtResource("22_zombie"), ExtResource("23_slime"), ExtResource("24_wolf")])
 SpawnInterval = 3.5
 MaxEnemies = 6
 SpawnRadius = 280.0

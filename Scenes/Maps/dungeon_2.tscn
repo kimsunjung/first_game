@@ -11,9 +11,11 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
-[ext_resource type="Resource" uid="uid://gd8yrg2pfw6j" path="res://Resources/Enemies/skeleton_warrior.tres" id="12_skel2"]
-[ext_resource type="Resource" uid="uid://e360qqlbtjgf" path="res://Resources/Enemies/skeleton_mage.tres" id="13_skel3"]
-[ext_resource type="Resource" uid="uid://cs85xqwqiwm3i" path="res://Resources/Enemies/skeleton_rogue.tres" id="14_skel4"]
+[ext_resource type="Resource" uid="uid://bd2skelwar00001" path="res://Resources/Enemies/dungeon2_skeleton_warrior.tres" id="20_warrior"]
+[ext_resource type="Resource" uid="uid://bd2skelmage0002" path="res://Resources/Enemies/dungeon2_skeleton_mage.tres" id="21_mage"]
+[ext_resource type="Resource" uid="uid://bd2skelrogue003" path="res://Resources/Enemies/dungeon2_skeleton_rogue.tres" id="22_rogue"]
+[ext_resource type="Resource" uid="uid://bd2bonearch00004" path="res://Resources/Enemies/dungeon2_bone_archer.tres" id="23_archer"]
+[ext_resource type="Resource" uid="uid://bd2ghoulbrute005" path="res://Resources/Enemies/dungeon2_ghoul_brute.tres" id="24_brute"]
 [ext_resource type="Resource" uid="uid://dp4rst6uvw7xy" path="res://Resources/Enemies/boss_skeleton_king.tres" id="15_boss"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
@@ -63,7 +65,7 @@ TargetSpawnPosition = Vector2(1150, 360)
 position = Vector2(700, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/skeleton_warrior.tres")]([ExtResource("12_skel2"), ExtResource("13_skel3"), ExtResource("14_skel4")])
+StatVariants = Array[Resource("res://Resources/Enemies/dungeon2_skeleton_warrior.tres")]([ExtResource("20_warrior"), ExtResource("21_mage"), ExtResource("22_rogue"), ExtResource("23_archer"), ExtResource("24_brute")])
 SpawnInterval = 4.5
 MaxEnemies = 4
 SpawnRadius = 250.0
