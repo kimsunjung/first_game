@@ -11,11 +11,11 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
-[ext_resource type="Resource" uid="uid://baxcmhcdjq873" path="res://Resources/Enemies/orc_warrior.tres" id="12_orc2"]
-[ext_resource type="Resource" path="res://Resources/Enemies/orc_shaman.tres" id="13_orc4"]
-[ext_resource type="Resource" uid="uid://cljvyxtj68uii" path="res://Resources/Enemies/boss_orc_king.tres" id="14_boss"]
-[ext_resource type="Resource" uid="uid://cr0uxb4estgbh" path="res://Resources/Enemies/orc_basic.tres" id="15_orc1"]
-[ext_resource type="Resource" uid="uid://dg1yife2gyn0o" path="res://Resources/Enemies/orc_rogue.tres" id="16_orc3"]
+[ext_resource type="Resource" uid="uid://bossd1warlord001" path="res://Resources/Enemies/boss_orc_warlord_boss.tres" id="14_boss"]
+[ext_resource type="Resource" uid="uid://b1d1orcclub001" path="res://Resources/Enemies/dungeon1_orc_club.tres" id="20_club"]
+[ext_resource type="Resource" uid="uid://b1d1orcaxe0002" path="res://Resources/Enemies/dungeon1_orc_axe_warrior.tres" id="21_axe"]
+[ext_resource type="Resource" uid="uid://b1d1orcrogue003" path="res://Resources/Enemies/dungeon1_orc_rogue.tres" id="22_rogue"]
+[ext_resource type="Resource" uid="uid://b1d1orcshaman04" path="res://Resources/Enemies/dungeon1_orc_shaman.tres" id="23_shaman"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -64,11 +64,12 @@ TargetSpawnPosition = Vector2(1150, 360)
 position = Vector2(700, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/orc_warrior.tres")]([ExtResource("15_orc1"), ExtResource("12_orc2"), ExtResource("16_orc3"), ExtResource("13_orc4")])
+StatVariants = Array[Resource("res://Resources/Enemies/dungeon1_orc_club.tres")]([ExtResource("20_club"), ExtResource("21_axe"), ExtResource("22_rogue"), ExtResource("23_shaman")])
 SpawnInterval = 4.0
 MaxEnemies = 4
 SpawnRadius = 250.0
 BossStatVariant = ExtResource("14_boss")
+BossId = "orc_warlord_d1"
 
 [node name="Walls" type="StaticBody2D" parent="."]
 collision_layer = 4
