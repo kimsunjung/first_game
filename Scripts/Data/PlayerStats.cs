@@ -46,6 +46,7 @@ namespace FirstGame.Data
 		public void ModifyCritRate(float delta) => CritRate += delta;
 		public void ModifyMoveSpeed(float delta) => MoveSpeed += delta;
 		public void Heal(int amount) => CurrentHealth = Math.Min(CurrentHealth + amount, MaxHealth);
+		public void RestoreMp(int amount) => CurrentMp = Math.Min(CurrentMp + amount, MaxMp);
 
 		// ─── 레벨/경험치 ─────────────────────────────────────────────
 		private int _level = 1;

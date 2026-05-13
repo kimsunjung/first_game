@@ -9,6 +9,8 @@ namespace FirstGame.Objects
 	{
 		[Export] public ItemData OreItem { get; set; }
 		[Export] public int Quantity { get; set; } = 1;
+		/// <summary>씬 재진입 시 채광 상태에서 부활할 확률(0~1). 0이면 영구 비활성 — 강화석 같은 희귀 자원용.</summary>
+		[Export] public float RespawnChanceOnReentry { get; set; } = 0f;
 
 		// NodeId 형식: "{SceneFilePath}/{NodeName}" — 씬 안에서 노드명이 고유하므로 충돌 없음.
 		// 별도 Export 없이 자동 추출 — 씬에서 노드명 바꾸면 저장 데이터가 깨지지만 광맥은 stable.
@@ -16,11 +18,20 @@ namespace FirstGame.Objects
 
 		protected override void OnReady()
 		{
-			// 이미 채광 완료된 노드면 즉시 제거 — 씬 재진입 시 부활 차단.
 			if (GameManager.Instance != null && GameManager.Instance.IsNodeMined(GetNodeId()))
 			{
-				QueueFree();
-				return;
+				// 광종별 부활 — RespawnChance > 0이면 씬 재진입 시 확률로 다시 활성.
+				// 부활 결정 시 MinedNodes에서 즉시 제거 → 다음 자동저장에 영속화.
+				if (RespawnChanceOnReentry > 0f && GD.Randf() < RespawnChanceOnReentry)
+				{
+					GameManager.Instance.UnmineNode(GetNodeId());
+					// 정상 흐름으로 진행 — 라벨 세팅 후 채광 가능 상태.
+				}
+				else
+				{
+					QueueFree();
+					return;
+				}
 			}
 
 			var label = GetNodeOrNull<Label>("PromptLabel");

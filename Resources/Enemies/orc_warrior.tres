@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
 [ext_resource type="Resource" path="res://Resources/Items/orc_leather.tres" id="3_leather"]
+[ext_resource type="Resource" uid="uid://djkwf7m5ay001" path="res://Resources/Items/iron_ore.tres" id="4_iron"]
 
 [resource]
 script = ExtResource("1")
@@ -13,5 +14,6 @@ MaxHealth = 170
 BaseDamage = 5
 ExperienceReward = 35
 SpriteAtlasCoords = Vector2i(11, 8)
-PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_leather")])
+PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_leather"), ExtResource("4_iron")])
+DropWeights = PackedFloat32Array(0.5, 0.35, 0.15)
 DropChance = 0.4

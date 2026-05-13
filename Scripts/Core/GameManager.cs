@@ -128,6 +128,12 @@ namespace FirstGame.Core
 			if (string.IsNullOrEmpty(nodeId)) return;
 			_minedNodes.Add(nodeId);
 		}
+		/// <summary>광종별 리스폰 굴림 성공 시 호출 — 노드를 다시 채광 가능 상태로 되돌린다.</summary>
+		public void UnmineNode(string nodeId)
+		{
+			if (string.IsNullOrEmpty(nodeId)) return;
+			_minedNodes.Remove(nodeId);
+		}
 		public void RestoreMinedNodes(List<string> list)
 		{
 			_minedNodes.Clear();

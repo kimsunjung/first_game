@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://matshop001"]
+
+[ext_resource type="Script" path="res://Scripts/Entities/Shop/ShopNPC.cs" id="1_shop"]
+[ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0105.png" id="16_npc_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/npc_dialogue.png" id="prompt_icon"]
+[ext_resource type="Resource" uid="uid://djkwf7m5ay001" path="res://Resources/Items/iron_ore.tres" id="2_iron"]
+[ext_resource type="Resource" uid="uid://b3eh8tw04gv02" path="res://Resources/Items/magnetite.tres" id="3_mag"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="4_hp"]
+[ext_resource type="Resource" path="res://Resources/Items/mana_potion.tres" id="5_mp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_matshop"]
+radius = 80.0
+
+[node name="MaterialShopNPC" type="Area2D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_shop")
+PromptIcon = ExtResource("prompt_icon")
+ShopItems = Array[Resource]([ExtResource("2_iron"), ExtResource("3_mag"), ExtResource("4_hp"), ExtResource("5_mp")])
+ShopName = "재료 상점"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_matshop")
+debug_color = Color(0.6, 0.5, 0.3, 0.42)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(1.5, 1.5)
+modulate = Color(0.75, 0.55, 0.35, 1)
+texture = ExtResource("16_npc_tex")
+
+[node name="ShopIcon" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -22.0
+offset_right = 24.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 8
+text = "[광물상]"
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="."]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = 14.0
+offset_right = 50.0
+offset_bottom = 28.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 8
+text = "F - 재료 상점"
+horizontal_alignment = 1

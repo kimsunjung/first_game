@@ -94,14 +94,17 @@ shape = SubResource("wall_right")
 [node name="IronNode1" parent="." instance=ExtResource("13_mine_node")]
 position = Vector2(400, 200)
 OreItem = ExtResource("14_iron")
+RespawnChanceOnReentry = 0.7
 
 [node name="IronNode2" parent="." instance=ExtResource("13_mine_node")]
 position = Vector2(900, 500)
 OreItem = ExtResource("14_iron")
+RespawnChanceOnReentry = 0.7
 
 [node name="MagnetiteNode" parent="." instance=ExtResource("13_mine_node")]
 position = Vector2(700, 350)
 OreItem = ExtResource("15_magnetite")
+RespawnChanceOnReentry = 0.5
 
 [node name="Sprite2D" parent="MagnetiteNode" index="1"]
 texture = ExtResource("17_silver_tex")

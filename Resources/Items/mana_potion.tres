@@ -7,13 +7,13 @@
 [resource]
 script = ExtResource("1")
 ItemName = "마나 물약"
-Description = "(밸런스 미정 — UseEffect 코드 작업 후 MP 회복 연결)"
+Description = "MP를 50 회복한다."
 Rarity = 0
 Icon = ExtResource("2_icon")
-Price = 0
-SellPrice = 0
+Price = 80
+SellPrice = 30
 Type = 0
 IsStackable = true
 MaxStack = 99
-UseEffect = 0
-HealAmount = 0
+UseEffect = 3
+HealAmount = 50

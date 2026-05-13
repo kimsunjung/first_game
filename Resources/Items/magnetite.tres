@@ -9,4 +9,6 @@ script = ExtResource("1")
 ItemName = "자철석"
 Description = "강력한 자성을 띤 광물. 중급 이상의 무기 강화에 필요하다."
 Icon = ExtResource("2_icon")
+Price = 400
+SellPrice = 80
 Type = 4

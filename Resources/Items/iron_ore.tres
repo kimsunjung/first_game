@@ -9,4 +9,6 @@ script = ExtResource("1")
 ItemName = "철광석"
 Description = "광산에서 채굴한 철광석. 무기 강화에 사용된다."
 Icon = ExtResource("2_icon")
+Price = 150
+SellPrice = 30
 Type = 4

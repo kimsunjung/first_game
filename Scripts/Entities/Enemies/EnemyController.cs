@@ -466,7 +466,7 @@ namespace FirstGame.Entities.Enemies
 						var inv = GameManager.Instance?.Player?.Inventory;
 						foreach (var droppedItem in Stats.PossibleDrops)
 						{
-							var affixes = AffixGenerator.IsJewelry(droppedItem.Type) ? AffixGenerator.GenerateForJewelry() : null;
+							var affixes = AffixGenerator.IsJewelry(droppedItem.Type) ? AffixGenerator.GenerateForJewelry(droppedItem.Rarity) : null;
 							bool added = inv != null && inv.AddItem(droppedItem, 1, 0, true, affixes);
 							if (!added)
 								GameManager.Instance?.AddPendingReward(droppedItem, 1, 0, affixes);
@@ -513,9 +513,9 @@ namespace FirstGame.Entities.Enemies
 			var fieldItem = prefab.Instantiate<FirstGame.Objects.FieldItem>();
 			fieldItem.Item = item;
 			fieldItem.Quantity = 1;
-			// 장신구 드롭이면 1~2개 affix 부여 — 같은 .tres라도 개체마다 달라짐.
+			// 장신구 드롭이면 rarity에 따라 affix 개수·값 차등 부여 — 같은 .tres라도 개체마다 달라짐.
 			if (AffixGenerator.IsJewelry(item.Type))
-				fieldItem.Affixes = AffixGenerator.GenerateForJewelry();
+				fieldItem.Affixes = AffixGenerator.GenerateForJewelry(item.Rarity);
 			GetTree().CurrentScene.AddChild(fieldItem);
 			Vector2 dropDir = new Vector2((float)GD.RandRange(-1, 1), -1).Normalized();
 			fieldItem.Drop(GlobalPosition, dropDir, (float)GD.RandRange(minForce, maxForce));

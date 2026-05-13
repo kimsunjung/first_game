@@ -6,7 +6,7 @@
 script = ExtResource("1")
 ItemName = "은 팔찌"
 Description = "마력이 깃든 은 팔찌. 공격력 +2, 치명타 +5%"
-Rarity = 1
+Rarity = 2
 Price = 220
 SellPrice = 110
 Type = 10

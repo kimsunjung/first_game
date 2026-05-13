@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="15_portal"]
 [ext_resource type="PackedScene" uid="uid://bauilbfctdypk" path="res://Scenes/Objects/teleport_npc.tscn" id="18_tpNpc"]
 [ext_resource type="PackedScene" uid="uid://dwxwdg3tlpiyy" path="res://Scenes/UI/teleport_ui.tscn" id="19_tpUI"]
+[ext_resource type="PackedScene" uid="uid://matshop001" path="res://Scenes/Objects/material_shop_npc.tscn" id="20_matshop"]
 [ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0024.png" id="16_stone"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
@@ -87,6 +88,11 @@ position = Vector2(528, 96)
 NpcId = "teleport"
 
 [node name="TeleportUI" parent="TeleportNPC" instance=ExtResource("19_tpUI")]
+
+[node name="MaterialShopNPC" parent="." instance=ExtResource("20_matshop")]
+position = Vector2(624, 96)
+
+[node name="ShopUI" parent="MaterialShopNPC" instance=ExtResource("9_shopUI")]
 
 [node name="SavePoint" parent="." instance=ExtResource("14_save")]
 position = Vector2(128, 96)

@@ -9,4 +9,6 @@ script = ExtResource("1")
 ItemName = "강화석"
 Description = "마력이 응축된 희귀한 광석. 고단계 무기 강화의 핵심 재료."
 Icon = ExtResource("2_icon")
+Price = 0
+SellPrice = 200
 Type = 4

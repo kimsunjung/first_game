@@ -237,6 +237,13 @@ namespace FirstGame.Data
                         RemoveItem(slotIndex, 1);
                         return;
 
+                    case ItemUseEffect.RestoreMana:
+                        target.RestoreMp(slot.Item.HealAmount);
+                        GD.Print($"{slot.Item.ItemName} 사용! MP +{slot.Item.HealAmount}");
+                        AudioManager.Instance?.PlaySFX("potion_use.wav");
+                        RemoveItem(slotIndex, 1);
+                        return;
+
                     case ItemUseEffect.None:
                     default:
                         return;

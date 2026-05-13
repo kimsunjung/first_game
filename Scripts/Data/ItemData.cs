@@ -7,7 +7,8 @@ namespace FirstGame.Data
 	{
 		None,         // 효과 없음 (소비 안 됨)
 		Heal,         // HealAmount만큼 HP 회복
-		ReturnToTown  // 즉시 마을 이동
+		ReturnToTown, // 즉시 마을 이동
+		RestoreMana   // HealAmount만큼 MP 회복 (이름은 HP 공용이지만 enum 케이스로 분기)
 	}
 
 	public enum ItemType

@@ -15,6 +15,7 @@ namespace FirstGame.Core.Interfaces
 		void ModifyCritRate(float delta);
 		void ModifyMoveSpeed(float delta);
 		void Heal(int amount);
+		void RestoreMp(int amount);
 		bool LearnSkill(SkillData skill);
 	}
 }

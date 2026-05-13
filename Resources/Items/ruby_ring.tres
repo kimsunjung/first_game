@@ -8,7 +8,7 @@
 script = ExtResource("1")
 ItemName = "루비 반지"
 Description = "(밸런스 미정 — 추후 컨텐츠 기획 시 설정)"
-Rarity = 0
+Rarity = 2
 Icon = ExtResource("2_icon")
 Price = 0
 SellPrice = 0
