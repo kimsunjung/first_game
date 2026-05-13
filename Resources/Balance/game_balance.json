@@ -7,16 +7,16 @@
     "downgradeMaxLevel": 8,
     "destroyMinLevel": 9,
     "enhanceMaterials": [
-      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 1},
-      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 1},
-      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 2},
-      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 2},
-      {"itemPath": "res://Resources/Items/orc_leather.tres", "quantity": 3},
-      {"itemPath": "res://Resources/Items/bone_dust.tres", "quantity": 1},
-      {"itemPath": "res://Resources/Items/bone_dust.tres", "quantity": 2},
-      {"itemPath": "res://Resources/Items/bone_dust.tres", "quantity": 2},
-      {"itemPath": "res://Resources/Items/boss_core.tres", "quantity": 1},
-      {"itemPath": "res://Resources/Items/boss_core.tres", "quantity": 1}
+      {"itemPath": "res://Resources/Items/iron_ore.tres",      "quantity": 1},
+      {"itemPath": "res://Resources/Items/iron_ore.tres",      "quantity": 2},
+      {"itemPath": "res://Resources/Items/iron_ore.tres",      "quantity": 3},
+      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 1},
+      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 2},
+      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 3},
+      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 2},
+      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 3},
+      {"itemPath": "res://Resources/Items/enhance_stone.tres", "quantity": 1},
+      {"itemPath": "res://Resources/Items/enhance_stone.tres", "quantity": 2}
     ]
   },
   "combat": {

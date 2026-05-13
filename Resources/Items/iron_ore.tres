@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djkwf7m5ay001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/gold_ore.png" id="2_icon"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "철광석"
+Description = "광산에서 채굴한 철광석. 무기 강화에 사용된다."
+Icon = ExtResource("2_icon")
+Type = 4

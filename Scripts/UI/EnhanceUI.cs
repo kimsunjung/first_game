@@ -29,8 +29,8 @@ namespace FirstGame.UI
 		private Inventory _inventory;
 		private readonly Random _rng = new();
 
-		// 선택된 강화 대상
-		private enum TargetKind { Inventory, EquippedWeapon, EquippedArmor, EquippedAccessory }
+		// 선택된 강화 대상 — 무기 전용 정책. 인벤토리의 무기 슬롯 또는 장착 중인 무기.
+		private enum TargetKind { Inventory, EquippedWeapon }
 		private TargetKind _targetKind;
 		// InventorySlot 참조로 추적 — 같은 .tres / 같은 강화 레벨이 인벤에 여러 개 있을 때
 		// FindIndex가 잘못된 슬롯을 잡지 않도록 객체 동일성으로 끝까지 추종.
@@ -99,7 +99,7 @@ namespace FirstGame.UI
 
 			_entries.Clear();
 
-			// 1) 장착 중인 장비
+			// 1) 장착 중인 무기
 			if (_inventory.EquippedWeapon != null)
 				_entries.Add(new EnhanceEntry
 				{
@@ -107,25 +107,11 @@ namespace FirstGame.UI
 					Item = _inventory.EquippedWeapon,
 					Level = _inventory.EquippedWeaponEnhancement
 				});
-			if (_inventory.EquippedArmor != null)
-				_entries.Add(new EnhanceEntry
-				{
-					Kind = TargetKind.EquippedArmor,
-					Item = _inventory.EquippedArmor,
-					Level = _inventory.EquippedArmorEnhancement
-				});
-			if (_inventory.EquippedAccessory != null)
-				_entries.Add(new EnhanceEntry
-				{
-					Kind = TargetKind.EquippedAccessory,
-					Item = _inventory.EquippedAccessory,
-					Level = _inventory.EquippedAccessoryEnhancement
-				});
 
-			// 2) 인벤토리 내 장비 아이템
+			// 2) 인벤토리 내 무기 — 방어구/장신구는 강화 대상이 아니므로 제외.
 			foreach (var slot in _inventory.Slots)
 			{
-				if (slot.Item.Type == ItemType.Weapon || slot.Item.Type == ItemType.Armor || slot.Item.Type == ItemType.Accessory)
+				if (slot.Item.Type == ItemType.Weapon)
 				{
 					_entries.Add(new EnhanceEntry
 					{
@@ -135,6 +121,11 @@ namespace FirstGame.UI
 						Level = slot.EnhancementLevel
 					});
 				}
+			}
+
+			if (_entries.Count == 0)
+			{
+				ShowMessage("강화 가능한 무기가 없습니다.");
 			}
 
 			foreach (var entry in _entries)
@@ -282,14 +273,6 @@ namespace FirstGame.UI
 					item = _inventory.EquippedWeapon;
 					currentLevel = _inventory.EquippedWeaponEnhancement;
 					break;
-				case TargetKind.EquippedArmor:
-					item = _inventory.EquippedArmor;
-					currentLevel = _inventory.EquippedArmorEnhancement;
-					break;
-				case TargetKind.EquippedAccessory:
-					item = _inventory.EquippedAccessory;
-					currentLevel = _inventory.EquippedAccessoryEnhancement;
-					break;
 				default: // Inventory
 					if (_targetSlot == null || !_inventory.Slots.Contains(_targetSlot))
 					{
@@ -401,26 +384,14 @@ namespace FirstGame.UI
 			var target = _player.Stats as IEquipTarget;
 			if (target == null) return;
 
-			switch (_targetKind)
+			if (_targetKind == TargetKind.EquippedWeapon)
 			{
-				case TargetKind.EquippedWeapon:
-				case TargetKind.EquippedArmor:
-				case TargetKind.EquippedAccessory:
-					var equipType = _targetKind switch
-					{
-						TargetKind.EquippedWeapon => ItemType.Weapon,
-						TargetKind.EquippedArmor => ItemType.Armor,
-						_ => ItemType.Accessory
-					};
-					_inventory.SetEquippedEnhancement(equipType, newLevel, target);
-					break;
-				default:
-					if (_targetSlot != null && _inventory.Slots.Contains(_targetSlot))
-					{
-						_targetSlot.EnhancementLevel = newLevel;
-						_inventory.NotifyChanged();
-					}
-					break;
+				_inventory.SetEquippedEnhancement(ItemType.Weapon, newLevel, target);
+			}
+			else if (_targetSlot != null && _inventory.Slots.Contains(_targetSlot))
+			{
+				_targetSlot.EnhancementLevel = newLevel;
+				_inventory.NotifyChanged();
 			}
 		}
 
@@ -429,21 +400,13 @@ namespace FirstGame.UI
 			var target = _player.Stats as IEquipTarget;
 			if (target == null) return;
 
-			switch (_targetKind)
+			if (_targetKind == TargetKind.EquippedWeapon)
 			{
-				case TargetKind.EquippedWeapon:
-					_inventory.DestroyEquippedItem(ItemType.Weapon, target);
-					break;
-				case TargetKind.EquippedArmor:
-					_inventory.DestroyEquippedItem(ItemType.Armor, target);
-					break;
-				case TargetKind.EquippedAccessory:
-					_inventory.DestroyEquippedItem(ItemType.Accessory, target);
-					break;
-				default:
-					if (_targetSlot != null && _inventory.Slots.Remove(_targetSlot))
-						_inventory.NotifyChanged();
-					break;
+				_inventory.DestroyEquippedItem(ItemType.Weapon, target);
+			}
+			else if (_targetSlot != null && _inventory.Slots.Remove(_targetSlot))
+			{
+				_inventory.NotifyChanged();
 			}
 		}
 
@@ -453,10 +416,6 @@ namespace FirstGame.UI
 			{
 				case TargetKind.EquippedWeapon when _inventory.EquippedWeapon != null:
 					return new EnhanceEntry { Kind = TargetKind.EquippedWeapon, Item = _inventory.EquippedWeapon, Level = _inventory.EquippedWeaponEnhancement };
-				case TargetKind.EquippedArmor when _inventory.EquippedArmor != null:
-					return new EnhanceEntry { Kind = TargetKind.EquippedArmor, Item = _inventory.EquippedArmor, Level = _inventory.EquippedArmorEnhancement };
-				case TargetKind.EquippedAccessory when _inventory.EquippedAccessory != null:
-					return new EnhanceEntry { Kind = TargetKind.EquippedAccessory, Item = _inventory.EquippedAccessory, Level = _inventory.EquippedAccessoryEnhancement };
 				case TargetKind.Inventory when _targetSlot != null && _inventory.Slots.Contains(_targetSlot):
 					var slot = _targetSlot;
 					return new EnhanceEntry { Kind = TargetKind.Inventory, Slot = slot, Item = slot.Item, Level = slot.EnhancementLevel };
@@ -492,14 +451,8 @@ namespace FirstGame.UI
 
 		private static string FormatBonuses(ItemData item, int dmgBonus, int defBonus)
 		{
-			if (item == null) return "";
-			return item.Type switch
-			{
-				ItemType.Weapon => $"강화 보너스: ATK +{dmgBonus}",
-				ItemType.Armor => $"강화 보너스: DEF +{defBonus}",
-				ItemType.Accessory => item.BonusDamage > 0 ? $"강화 보너스: ATK +{dmgBonus}" : $"강화 보너스: DEF +{defBonus}",
-				_ => ""
-			};
+			if (item == null || item.Type != ItemType.Weapon) return "";
+			return $"강화 보너스: ATK +{dmgBonus}";
 		}
 
 		protected override void OnExitTreeInternal()

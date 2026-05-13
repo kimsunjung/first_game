@@ -82,4 +82,22 @@ namespace FirstGame.Data
 		[ExportGroup("Skill Book")]
 		[Export] public SkillData LearnedSkill { get; set; }
 	}
+
+	/// <summary>장신구 등 인스턴스별 랜덤 옵션(affix) 종류.</summary>
+	public enum ItemAffixType
+	{
+		BonusDamage,
+		BonusDefense,
+		BonusMaxHealth,
+		BonusMaxMp,
+		BonusCritRate,
+		BonusMoveSpeed
+	}
+
+	/// <summary>아이템 인스턴스에 붙는 단일 옵션. POCO — System.Text.Json으로 직접 직렬화.</summary>
+	public class ItemAffix
+	{
+		public ItemAffixType Type { get; set; }
+		public float Value { get; set; }
+	}
 }

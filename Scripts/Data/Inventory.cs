@@ -11,6 +11,8 @@ namespace FirstGame.Data
         public ItemData Item { get; set; }
         public int Quantity { get; set; }
         public int EnhancementLevel { get; set; } = 0;
+        // v7: 인스턴스별 affix. 이번 PR에서는 빈 리스트로 유지 — 후속 PR이 드랍 시점에 채움.
+        public List<ItemAffix> Affixes { get; set; } = new();
     }
 
     public class Inventory
@@ -31,25 +33,19 @@ namespace FirstGame.Data
         public ItemData EquippedRing2 { get; internal set; }
         public ItemData EquippedBracelet { get; internal set; }
 
-        // 장착된 장비의 강화 수치
+        // 장착 중인 장비의 강화 수치.
+        // 무기 전용 정책 — Armor/Accessory 강화는 폐기됐지만 SaveData/세이브 호환을 위해 필드는 남기고
+        // 항상 0으로만 사용한다. EnhanceUI/Inventory 어디서도 더 이상 변경하지 않음.
         public int EquippedWeaponEnhancement { get; private set; } = 0;
         public int EquippedArmorEnhancement { get; private set; } = 0;
         public int EquippedAccessoryEnhancement { get; private set; } = 0;
-        // 신규 슬롯은 강화 미지원 — 항상 0 유지 (이후 단계에서 확장)
 
         // ─── 강화 헬퍼 ────────────────────────────────────────────
+        // 무기 전용 정책. Armor/Accessory는 항상 0 — 호출처 변경 없이 자연스럽게 무효화된다.
         public static (int damage, int health, int defense) GetEnhancementBonuses(ItemData item, int level)
         {
-            if (item == null || level <= 0) return (0, 0, 0);
-            return item.Type switch
-            {
-                ItemType.Weapon => (level * 2, 0, 0),
-                ItemType.Armor => (0, 0, level * 1),
-                ItemType.Accessory => item.BonusDamage > 0
-                    ? (level * 1, 0, 0)
-                    : (0, 0, level * 1),
-                _ => (0, 0, 0)
-            };
+            if (item == null || level <= 0 || item.Type != ItemType.Weapon) return (0, 0, 0);
+            return (level * 2, 0, 0);
         }
 
         public static string GetEnhancedName(ItemData item, int enhancementLevel)
@@ -286,49 +282,41 @@ namespace FirstGame.Data
             else if (item.Type == ItemType.Armor)
             {
                 var prevItem = EquippedArmor;
-                int prevEnh = EquippedArmorEnhancement;
                 if (prevItem != null)
                 {
-                    var (_, _, pdef) = GetEnhancementBonuses(prevItem, prevEnh);
                     target.ModifyMaxHealth(-prevItem.BonusMaxHealth);
-                    target.ModifyDefense(-(prevItem.BonusDefense + pdef));
+                    target.ModifyDefense(-prevItem.BonusDefense);
                     slot.Item = prevItem;
                     slot.Quantity = 1;
-                    slot.EnhancementLevel = prevEnh;
+                    slot.EnhancementLevel = 0;
                 }
                 else
                 {
                     Slots.RemoveAt(slotIndex);
                 }
                 EquippedArmor = item;
-                EquippedArmorEnhancement = enhLevel;
-                var (_, _, def) = GetEnhancementBonuses(item, enhLevel);
                 target.ModifyMaxHealth(item.BonusMaxHealth);
-                target.ModifyDefense(item.BonusDefense + def);
+                target.ModifyDefense(item.BonusDefense);
             }
             else if (item.Type == ItemType.Accessory)
             {
                 var prevItem = EquippedAccessory;
-                int prevEnh = EquippedAccessoryEnhancement;
                 if (prevItem != null)
                 {
-                    var (pdmg, _, pdef) = GetEnhancementBonuses(prevItem, prevEnh);
-                    target.ModifyDefense(-(prevItem.BonusDefense + pdef));
-                    if (prevItem.BonusDamage > 0) target.ModifyBaseDamage(-(prevItem.BonusDamage + pdmg));
+                    target.ModifyDefense(-prevItem.BonusDefense);
+                    if (prevItem.BonusDamage > 0) target.ModifyBaseDamage(-prevItem.BonusDamage);
                     if (prevItem.BonusMaxHealth > 0) target.ModifyMaxHealth(-prevItem.BonusMaxHealth);
                     slot.Item = prevItem;
                     slot.Quantity = 1;
-                    slot.EnhancementLevel = prevEnh;
+                    slot.EnhancementLevel = 0;
                 }
                 else
                 {
                     Slots.RemoveAt(slotIndex);
                 }
                 EquippedAccessory = item;
-                EquippedAccessoryEnhancement = enhLevel;
-                var (dmgBonus, _, defBonus) = GetEnhancementBonuses(item, enhLevel);
-                target.ModifyDefense(item.BonusDefense + defBonus);
-                if (item.BonusDamage > 0) target.ModifyBaseDamage(item.BonusDamage + dmgBonus);
+                target.ModifyDefense(item.BonusDefense);
+                if (item.BonusDamage > 0) target.ModifyBaseDamage(item.BonusDamage);
                 if (item.BonusMaxHealth > 0) target.ModifyMaxHealth(item.BonusMaxHealth);
             }
             else if (IsExtraEquipType(item.Type))
@@ -424,14 +412,12 @@ namespace FirstGame.Data
                 return false;
             }
 
-            var (_, _, def) = GetEnhancementBonuses(EquippedArmor, EquippedArmorEnhancement);
             target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
-            target.ModifyDefense(-(EquippedArmor.BonusDefense + def));
-            bool added = AddItem(EquippedArmor, 1, EquippedArmorEnhancement, fireAcquired: false);
+            target.ModifyDefense(-EquippedArmor.BonusDefense);
+            bool added = AddItem(EquippedArmor, 1, 0, fireAcquired: false);
             if (!added) return false;
 
             EquippedArmor = null;
-            EquippedArmorEnhancement = 0;
             OnEquipmentChanged?.Invoke();
             return true;
         }
@@ -445,15 +431,13 @@ namespace FirstGame.Data
                 return false;
             }
 
-            var (dmgBonus, _, defBonus) = GetEnhancementBonuses(EquippedAccessory, EquippedAccessoryEnhancement);
-            target.ModifyDefense(-(EquippedAccessory.BonusDefense + defBonus));
-            if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-(EquippedAccessory.BonusDamage + dmgBonus));
+            target.ModifyDefense(-EquippedAccessory.BonusDefense);
+            if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-EquippedAccessory.BonusDamage);
             if (EquippedAccessory.BonusMaxHealth > 0) target.ModifyMaxHealth(-EquippedAccessory.BonusMaxHealth);
-            bool added = AddItem(EquippedAccessory, 1, EquippedAccessoryEnhancement, fireAcquired: false);
+            bool added = AddItem(EquippedAccessory, 1, 0, fireAcquired: false);
             if (!added) return false;
 
             EquippedAccessory = null;
-            EquippedAccessoryEnhancement = 0;
             OnEquipmentChanged?.Invoke();
             return true;
         }
@@ -627,65 +611,26 @@ namespace FirstGame.Data
 
         // --- 강화 지원 (EnhanceUI용) ---
 
-        /// <summary>장착 중인 장비의 강화 수치 변경 (보너스 재계산 포함)</summary>
+        /// <summary>장착 중인 무기의 강화 수치 변경 (보너스 재계산 포함). 무기 외 ItemType은 무시.</summary>
         public void SetEquippedEnhancement(ItemType type, int newLevel, IEquipTarget target)
         {
-            switch (type)
-            {
-                case ItemType.Weapon when EquippedWeapon != null:
-                    var (oldWDmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
-                    target.ModifyBaseDamage(-oldWDmg);
-                    EquippedWeaponEnhancement = newLevel;
-                    var (newWDmg, _, _) = GetEnhancementBonuses(EquippedWeapon, newLevel);
-                    target.ModifyBaseDamage(newWDmg);
-                    break;
-                case ItemType.Armor when EquippedArmor != null:
-                    var (_, _, oldADef) = GetEnhancementBonuses(EquippedArmor, EquippedArmorEnhancement);
-                    target.ModifyDefense(-oldADef);
-                    EquippedArmorEnhancement = newLevel;
-                    var (_, _, newADef) = GetEnhancementBonuses(EquippedArmor, newLevel);
-                    target.ModifyDefense(newADef);
-                    break;
-                case ItemType.Accessory when EquippedAccessory != null:
-                    var (oldAccDmg, _, oldAccDef) = GetEnhancementBonuses(EquippedAccessory, EquippedAccessoryEnhancement);
-                    if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-oldAccDmg);
-                    else target.ModifyDefense(-oldAccDef);
-                    EquippedAccessoryEnhancement = newLevel;
-                    var (newAccDmg, _, newAccDef) = GetEnhancementBonuses(EquippedAccessory, newLevel);
-                    if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(newAccDmg);
-                    else target.ModifyDefense(newAccDef);
-                    break;
-            }
+            if (type != ItemType.Weapon || EquippedWeapon == null) return;
+            var (oldWDmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
+            target.ModifyBaseDamage(-oldWDmg);
+            EquippedWeaponEnhancement = newLevel;
+            var (newWDmg, _, _) = GetEnhancementBonuses(EquippedWeapon, newLevel);
+            target.ModifyBaseDamage(newWDmg);
             OnEquipmentChanged?.Invoke();
         }
 
-        /// <summary>장착 중인 장비 파괴 (강화 실패 시). 모든 보너스 제거 후 null로.</summary>
+        /// <summary>장착 중인 무기 파괴 (강화 실패 시). 보너스 제거 후 null로. 무기 외 ItemType은 무시.</summary>
         public void DestroyEquippedItem(ItemType type, IEquipTarget target)
         {
-            switch (type)
-            {
-                case ItemType.Weapon when EquippedWeapon != null:
-                    var (wDmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
-                    target.ModifyBaseDamage(-(EquippedWeapon.BonusDamage + wDmg));
-                    EquippedWeapon = null;
-                    EquippedWeaponEnhancement = 0;
-                    break;
-                case ItemType.Armor when EquippedArmor != null:
-                    var (_, _, aDef) = GetEnhancementBonuses(EquippedArmor, EquippedArmorEnhancement);
-                    target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
-                    target.ModifyDefense(-(EquippedArmor.BonusDefense + aDef));
-                    EquippedArmor = null;
-                    EquippedArmorEnhancement = 0;
-                    break;
-                case ItemType.Accessory when EquippedAccessory != null:
-                    var (accDmg, _, accDef) = GetEnhancementBonuses(EquippedAccessory, EquippedAccessoryEnhancement);
-                    target.ModifyDefense(-(EquippedAccessory.BonusDefense + accDef));
-                    if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-(EquippedAccessory.BonusDamage + accDmg));
-                    if (EquippedAccessory.BonusMaxHealth > 0) target.ModifyMaxHealth(-EquippedAccessory.BonusMaxHealth);
-                    EquippedAccessory = null;
-                    EquippedAccessoryEnhancement = 0;
-                    break;
-            }
+            if (type != ItemType.Weapon || EquippedWeapon == null) return;
+            var (wDmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
+            target.ModifyBaseDamage(-(EquippedWeapon.BonusDamage + wDmg));
+            EquippedWeapon = null;
+            EquippedWeaponEnhancement = 0;
             OnEquipmentChanged?.Invoke();
         }
 
@@ -741,8 +686,10 @@ namespace FirstGame.Data
                 }
             }
 
+            // 무기 전용 정책: data.EquippedArmorEnhancement / EquippedAccessoryEnhancement는
+            // 의도적으로 무시한다. v6 이하 세이브에 비정상적으로 강화 +N이 박혀 있어도 0으로 클램프.
             RestoreEquipment(loadedWeapon, loadedArmor, target, loadedAccessory,
-                data.EquippedWeaponEnhancement, data.EquippedArmorEnhancement, data.EquippedAccessoryEnhancement);
+                data.EquippedWeaponEnhancement);
 
             RestoreExtraSlot(ExtraSlot.Helmet, data.EquippedHelmetPath, target);
             RestoreExtraSlot(ExtraSlot.Boots, data.EquippedBootsPath, target);
@@ -766,10 +713,11 @@ namespace FirstGame.Data
             public bool MigratedToInventory;
         }
 
-        // 세이브/로드 시 장비 복원 (RestoreFromSaveData 내부에서 호출)
+        // 세이브/로드 시 장비 복원 (RestoreFromSaveData 내부에서 호출).
+        // 강화는 무기 전용 — Armor/Accessory에는 강화 수치 적용 안 함.
         public void RestoreEquipment(ItemData weapon, ItemData armor, IEquipTarget target,
             ItemData accessory = null,
-            int weaponEnhance = 0, int armorEnhance = 0, int accessoryEnhance = 0)
+            int weaponEnhance = 0)
         {
             if (weapon != null)
             {
@@ -781,18 +729,14 @@ namespace FirstGame.Data
             if (armor != null)
             {
                 EquippedArmor = armor;
-                EquippedArmorEnhancement = armorEnhance;
-                var (_, _, def) = GetEnhancementBonuses(armor, armorEnhance);
                 target.ModifyMaxHealth(armor.BonusMaxHealth);
-                target.ModifyDefense(armor.BonusDefense + def);
+                target.ModifyDefense(armor.BonusDefense);
             }
             if (accessory != null)
             {
                 EquippedAccessory = accessory;
-                EquippedAccessoryEnhancement = accessoryEnhance;
-                var (dmgBonus, _, defBonus) = GetEnhancementBonuses(accessory, accessoryEnhance);
-                target.ModifyDefense(accessory.BonusDefense + defBonus);
-                if (accessory.BonusDamage > 0) target.ModifyBaseDamage(accessory.BonusDamage + dmgBonus);
+                target.ModifyDefense(accessory.BonusDefense);
+                if (accessory.BonusDamage > 0) target.ModifyBaseDamage(accessory.BonusDamage);
                 if (accessory.BonusMaxHealth > 0) target.ModifyMaxHealth(accessory.BonusMaxHealth);
             }
             OnEquipmentChanged?.Invoke();
