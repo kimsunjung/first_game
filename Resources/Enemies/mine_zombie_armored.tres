@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://b1mzarm1c003"]
+
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Mine/zombie_armored.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1")
+MoveSpeed = 52.0
+DetectionRange = 190.0
+AttackRange = 40.0
+BaseDamage = 6
+AttackCooldown = 2.2
+ExperienceReward = 42
+GoldReward = 38
+Behavior = 0
+EnemyTypeName = "MineZombieArmored"
+SpriteAtlasCoords = Vector2i(5, 8)
+Sprite = ExtResource("2_tex")
+DropChance = 0.55
+MaxHealth = 250
+Defense = 8
