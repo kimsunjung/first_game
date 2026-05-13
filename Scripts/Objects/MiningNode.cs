@@ -37,6 +37,11 @@ namespace FirstGame.Objects
 			var label = GetNodeOrNull<Label>("PromptLabel");
 			if (label != null && OreItem != null)
 				label.Text = $"[F] {OreItem.ItemName} 채광";
+
+			// 광종별 Sprite2D는 OreItem.Icon에서 자동 추출 — .tscn texture override 불필요.
+			var sprite = GetNodeOrNull<Sprite2D>("Sprite2D");
+			if (sprite != null && OreItem?.Icon != null)
+				sprite.Texture = OreItem.Icon;
 		}
 
 		protected override void OnInteract()

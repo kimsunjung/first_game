@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bmt2ore7l5m08"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Ores/mithril_ore.png" id="2_icon"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "미스릴광석"
+Description = "마력을 머금은 희귀 광석. 최상급 무기 강화의 핵심 재료."
+Icon = ExtResource("2_icon")
+Price = 3000
+SellPrice = 600
+Type = 4

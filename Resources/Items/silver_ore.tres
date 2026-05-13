@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bsv2ore7l1m04"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Ores/silver_ore.png" id="2_icon"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "은광석"
+Description = "광산에서 채굴한 은광석. 중급 무기 강화에 사용된다."
+Icon = ExtResource("2_icon")
+Price = 400
+SellPrice = 80
+Type = 4

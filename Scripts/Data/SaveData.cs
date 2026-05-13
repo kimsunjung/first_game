@@ -13,7 +13,7 @@ namespace FirstGame.Data
 
 	public class SaveData
 	{
-		public const int LatestVersion = 8;
+		public const int LatestVersion = 9;
 		public int Version { get; set; } = LatestVersion;
 
 		public float PlayerPosX { get; set; }

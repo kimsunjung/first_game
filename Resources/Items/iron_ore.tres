@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djkwf7m5ay001"]
 
 [ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
-[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/gold_ore.png" id="2_icon"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Ores/iron_ore.png" id="2_icon"]
 
 
 [resource]

@@ -333,6 +333,13 @@ namespace FirstGame.Core
 				data.MinedNodes ??= new System.Collections.Generic.List<string>();
 			}
 
+			if (data.Version < 9)
+			{
+				// v8→v9: 광물 리소스 명칭 통일. magnetite.tres("자철석") → silver_ore.tres("은광석").
+				// 인벤/보류보상/퀵슬롯에 박혀 있던 구 경로를 일괄 치환 — 세이브 로드 시점에 깨지지 않도록.
+				MigrateMagnetiteToSilver(data);
+			}
+
 			data.Version = SaveData.LatestVersion;
 			GD.Print($"SaveManager: 세이브 데이터 v{data.Version}으로 마이그레이션 완료");
 		}
@@ -374,6 +381,28 @@ namespace FirstGame.Core
 				Add($"res://Scenes/Maps/field_{i}.tscn");
 			for (int i = 1; i <= dungeonMax && i <= 3; i++)
 				Add($"res://Scenes/Maps/dungeon_{i}.tscn");
+		}
+
+		private const string OldMagnetitePath = "res://Resources/Items/magnetite.tres";
+		private const string NewSilverOrePath = "res://Resources/Items/silver_ore.tres";
+
+		private static void MigrateMagnetiteToSilver(SaveData data)
+		{
+			if (data.InventoryItems != null)
+			{
+				foreach (var slot in data.InventoryItems)
+					if (slot != null && slot.ItemPath == OldMagnetitePath) slot.ItemPath = NewSilverOrePath;
+			}
+			if (data.PendingRewardItems != null)
+			{
+				foreach (var slot in data.PendingRewardItems)
+					if (slot != null && slot.ItemPath == OldMagnetitePath) slot.ItemPath = NewSilverOrePath;
+			}
+			if (data.QuickSlotPaths != null)
+			{
+				for (int i = 0; i < data.QuickSlotPaths.Count; i++)
+					if (data.QuickSlotPaths[i] == OldMagnetitePath) data.QuickSlotPaths[i] = NewSilverOrePath;
+			}
 		}
 
 		public static bool HasSave(string slot = AutoSaveSlot)

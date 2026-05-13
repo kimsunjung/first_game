@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bpt2ore7l3m06"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Ores/platinum_ore.png" id="2_icon"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "백금광석"
+Description = "광산 심부에서만 채굴되는 백금광석. 상급 강화의 주재료."
+Icon = ExtResource("2_icon")
+Price = 1500
+SellPrice = 300
+Type = 4

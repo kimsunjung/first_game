@@ -10,11 +10,11 @@
       {"itemPath": "res://Resources/Items/iron_ore.tres",      "quantity": 1},
       {"itemPath": "res://Resources/Items/iron_ore.tres",      "quantity": 2},
       {"itemPath": "res://Resources/Items/iron_ore.tres",      "quantity": 3},
-      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 1},
-      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 2},
-      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 3},
-      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 2},
-      {"itemPath": "res://Resources/Items/magnetite.tres",     "quantity": 3},
+      {"itemPath": "res://Resources/Items/silver_ore.tres",     "quantity": 1},
+      {"itemPath": "res://Resources/Items/silver_ore.tres",     "quantity": 2},
+      {"itemPath": "res://Resources/Items/silver_ore.tres",     "quantity": 3},
+      {"itemPath": "res://Resources/Items/silver_ore.tres",     "quantity": 2},
+      {"itemPath": "res://Resources/Items/silver_ore.tres",     "quantity": 3},
       {"itemPath": "res://Resources/Items/enhance_stone.tres", "quantity": 1},
       {"itemPath": "res://Resources/Items/enhance_stone.tres", "quantity": 2}
     ]

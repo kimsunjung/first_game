@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
 [ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="3_bone"]
-[ext_resource type="Resource" uid="uid://b3eh8tw04gv02" path="res://Resources/Items/magnetite.tres" id="4_mag"]
+[ext_resource type="Resource" uid="uid://bsv2ore7l1m04" path="res://Resources/Items/silver_ore.tres" id="4_silver"]
 
 [resource]
 script = ExtResource("1")
@@ -15,7 +15,7 @@ ExperienceReward = 38
 GoldReward = 30
 EnemyTypeName = "Skeleton"
 SpriteAtlasCoords = Vector2i(8, 7)
-PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_bone"), ExtResource("4_mag")])
+PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_bone"), ExtResource("4_silver")])
 DropWeights = PackedFloat32Array(0.3, 0.55, 0.15)
 DropChance = 0.4
 MaxHealth = 140

@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://mine1scene01"]
+[gd_scene format=3 uid="uid://mine2scene01"]
 
 [ext_resource type="PackedScene" uid="uid://ycuqlv4685cv" path="res://Scenes/Characters/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://c8qj0y5x4k3l" path="res://Scenes/UI/hud.tscn" id="2_hud"]
@@ -11,12 +11,15 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
-[ext_resource type="Resource" uid="uid://b7m8x2zomb1ie" path="res://Resources/Enemies/zombie_basic.tres" id="12_zombie"]
-[ext_resource type="PackedScene" path="res://Scenes/Objects/mining_node.tscn" id="13_mine_node"]
-[ext_resource type="Resource" uid="uid://djkwf7m5ay001" path="res://Resources/Items/iron_ore.tres" id="14_iron"]
-[ext_resource type="Resource" uid="uid://bsv2ore7l1m04" path="res://Resources/Items/silver_ore.tres" id="15_silver"]
-[ext_resource type="Resource" uid="uid://bgo2ore7l2m05" path="res://Resources/Items/gold_ore.tres" id="16_gold"]
-[ext_resource type="Resource" uid="uid://c7xqf2lpmn503" path="res://Resources/Items/enhance_stone.tres" id="17_enhance"]
+[ext_resource type="Resource" path="res://Resources/Enemies/mine_skeleton_miner.tres" id="12_miner"]
+[ext_resource type="Resource" path="res://Resources/Enemies/mine_cave_bat.tres" id="13_bat"]
+[ext_resource type="Resource" path="res://Resources/Enemies/mine_rock_golem.tres" id="14_golem"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/mining_node.tscn" id="15_mine_node"]
+[ext_resource type="Resource" uid="uid://bcp2ore7l4m07" path="res://Resources/Items/copper_ore.tres" id="16_copper"]
+[ext_resource type="Resource" uid="uid://bpt2ore7l3m06" path="res://Resources/Items/platinum_ore.tres" id="17_platinum"]
+[ext_resource type="Resource" uid="uid://bmt2ore7l5m08" path="res://Resources/Items/mithril_ore.tres" id="18_mithril"]
+[ext_resource type="Resource" uid="uid://brb2ore7l6m09" path="res://Resources/Items/ruby_ore.tres" id="19_ruby"]
+[ext_resource type="Resource" uid="uid://bsp2ore7l7m10" path="res://Resources/Items/sapphire_ore.tres" id="20_sapphire"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -30,13 +33,13 @@ size = Vector2(16, 720)
 [sub_resource type="RectangleShape2D" id="wall_right"]
 size = Vector2(16, 720)
 
-[node name="Mine1" type="Node2D"]
+[node name="Mine2" type="Node2D"]
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -10
 offset_right = 1280.0
 offset_bottom = 720.0
-color = Color(0.08, 0.07, 0.05, 1)
+color = Color(0.05, 0.04, 0.08, 1)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(80, 360)
@@ -56,24 +59,19 @@ position = Vector2(80, 360)
 [node name="SavePoint" parent="." instance=ExtResource("8_save")]
 position = Vector2(200, 200)
 
-[node name="PortalToField1" parent="." instance=ExtResource("9_portal")]
+[node name="PortalToMine1" parent="." instance=ExtResource("9_portal")]
 position = Vector2(50, 360)
-TargetScenePath = "res://Scenes/Maps/field_1.tscn"
-TargetSpawnPosition = Vector2(640, 80)
-
-[node name="PortalToMine2" parent="." instance=ExtResource("9_portal")]
-position = Vector2(1230, 360)
-TargetScenePath = "res://Scenes/Maps/mine_2.tscn"
-TargetSpawnPosition = Vector2(80, 360)
+TargetScenePath = "res://Scenes/Maps/mine_1.tscn"
+TargetSpawnPosition = Vector2(1180, 360)
 
 [node name="EnemySpawner" type="Node2D" parent="."]
 position = Vector2(700, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/zombie_basic.tres")]([ExtResource("12_zombie")])
-SpawnInterval = 4.0
-MaxEnemies = 4
-SpawnRadius = 280.0
+StatVariants = Array[Resource("res://Resources/Enemies/mine_skeleton_miner.tres")]([ExtResource("12_miner"), ExtResource("13_bat"), ExtResource("14_golem")])
+SpawnInterval = 3.5
+MaxEnemies = 5
+SpawnRadius = 320.0
 
 [node name="Walls" type="StaticBody2D" parent="."]
 collision_layer = 4
@@ -95,26 +93,32 @@ shape = SubResource("wall_left")
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
 
-[node name="IronOreNode1" parent="." instance=ExtResource("13_mine_node")]
-position = Vector2(400, 200)
-OreItem = ExtResource("14_iron")
+[node name="CopperOreNode1" parent="." instance=ExtResource("15_mine_node")]
+position = Vector2(350, 180)
+OreItem = ExtResource("16_copper")
 RespawnChanceOnReentry = 0.7
 
-[node name="IronOreNode2" parent="." instance=ExtResource("13_mine_node")]
-position = Vector2(900, 500)
-OreItem = ExtResource("14_iron")
+[node name="CopperOreNode2" parent="." instance=ExtResource("15_mine_node")]
+position = Vector2(950, 200)
+OreItem = ExtResource("16_copper")
 RespawnChanceOnReentry = 0.7
 
-[node name="SilverOreNode1" parent="." instance=ExtResource("13_mine_node")]
-position = Vector2(700, 350)
-OreItem = ExtResource("15_silver")
+[node name="PlatinumOreNode1" parent="." instance=ExtResource("15_mine_node")]
+position = Vector2(640, 540)
+OreItem = ExtResource("17_platinum")
 RespawnChanceOnReentry = 0.5
 
-[node name="GoldOreNode1" parent="." instance=ExtResource("13_mine_node")]
-position = Vector2(300, 550)
-OreItem = ExtResource("16_gold")
+[node name="MithrilOreNode1" parent="." instance=ExtResource("15_mine_node")]
+position = Vector2(1100, 540)
+OreItem = ExtResource("18_mithril")
 RespawnChanceOnReentry = 0.3
 
-[node name="EnhanceStoneNode" parent="." instance=ExtResource("13_mine_node")]
-position = Vector2(1100, 250)
-OreItem = ExtResource("17_enhance")
+[node name="RubyOreNode1" parent="." instance=ExtResource("15_mine_node")]
+position = Vector2(280, 530)
+OreItem = ExtResource("19_ruby")
+RespawnChanceOnReentry = 0.3
+
+[node name="SapphireOreNode1" parent="." instance=ExtResource("15_mine_node")]
+position = Vector2(1100, 360)
+OreItem = ExtResource("20_sapphire")
+RespawnChanceOnReentry = 0.3
