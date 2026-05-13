@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bauilbfctdypk"]
 
 [ext_resource type="Script" path="res://Scripts/Entities/TeleportNpc.cs" id="1_tpNpc"]
-[ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0105.png" id="2_npc_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/NPCs/Town/teleport_guide.png" id="2_npc_tex"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/npc_dialogue.png" id="3_prompt"]
 [ext_resource type="Resource" uid="uid://tpdest001" path="res://Resources/Teleport/dest_field_1.tres" id="4_f1"]
 [ext_resource type="Resource" uid="uid://tpdest002" path="res://Resources/Teleport/dest_field_2.tres" id="5_f2"]
@@ -27,8 +27,8 @@ debug_color = Color(0.3, 0.55, 0.85, 0.42)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
-scale = Vector2(1.5, 1.5)
-modulate = Color(0.4, 0.7, 1, 1)
+scale = Vector2(0.3, 0.3)
+modulate = Color(1, 1, 1, 1)
 texture = ExtResource("2_npc_tex")
 
 [node name="TeleportIcon" type="Label" parent="."]
@@ -38,12 +38,12 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -24.0
-offset_top = -22.0
+offset_top = -38.0
 offset_right = 24.0
 offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 6
 text = "[TELEPORT]"
 horizontal_alignment = 1
 
@@ -55,11 +55,11 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -40.0
-offset_top = 14.0
+offset_top = 24.0
 offset_right = 40.0
 offset_bottom = 28.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 6
 text = "F - 텔레포트"
 horizontal_alignment = 1
