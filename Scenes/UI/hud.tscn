@@ -131,10 +131,13 @@ vertical_alignment = 1
 
 [node name="ExpBar" type="ProgressBar" parent="." unique_id=111111105]
 unique_name_in_owner = true
-anchors_preset = 10
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
-offset_bottom = 3.0
+grow_vertical = 0
+offset_top = -3.0
 max_value = 100.0
 value = 0.0
 show_percentage = false
