@@ -39,6 +39,10 @@ play_movie/
 .tmp.driveupload/
 .idx/
 
+# ChatGPT 원본 시트 — 슬라이싱 후 SourceSheets/로 사본 보관. 루트 원본은 추적하지 않음.
+ChatGPT Image*.png
+ChatGPT Image*.png.import
+
 # OS
 Thumbs.db
 Desktop.ini

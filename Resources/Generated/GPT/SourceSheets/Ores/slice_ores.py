@@ -27,9 +27,10 @@ from pathlib import Path
 from PIL import Image
 
 HERE = Path(__file__).resolve().parent
-WORKTREE = HERE.parents[4]  # .../agent-xxx (Resources/Generated/GPT/SourceSheets/Ores -> ../../../../..)
-ORIGINAL_SHEET = Path("/Users/ksj/personal/project/first_game/ChatGPT Image 2026년 5월 13일 오후 03_49_38.png")
+WORKTREE = HERE.parents[4]  # Resources/Generated/GPT/SourceSheets/Ores -> project root
+# 원본 시트는 이미 SHEET_COPY로 보관되어 있으므로 외부 절대경로 의존 제거. 부재 시에만 옵셔널로 폴백.
 SHEET_COPY = HERE / "source_ores_2026_05_13.png"
+ORIGINAL_SHEET = WORKTREE / "ChatGPT Image 2026년 5월 13일 오후 03_49_38.png"
 OUT_DIR = WORKTREE / "Resources" / "Generated" / "GPT" / "Icons" / "Ores"
 
 COLS = 4
@@ -60,8 +61,12 @@ def ensure_dirs() -> None:
 
 
 def copy_original() -> None:
-    if not SHEET_COPY.exists():
+    if SHEET_COPY.exists():
+        return
+    if ORIGINAL_SHEET.exists():
         shutil.copy2(ORIGINAL_SHEET, SHEET_COPY)
+    else:
+        raise FileNotFoundError(f"Neither SHEET_COPY({SHEET_COPY}) nor ORIGINAL_SHEET({ORIGINAL_SHEET}) found")
 
 
 def remove_background(cell: Image.Image) -> Image.Image:
