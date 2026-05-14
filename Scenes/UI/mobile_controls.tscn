@@ -147,6 +147,38 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_font_sizes/font_size = 14
 text = "R"
 
+[node name="SkillButton5" type="Button" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -310.0
+offset_top = -105.0
+offset_right = -265.0
+offset_bottom = -60.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_font_sizes/font_size = 14
+text = "T"
+
+[node name="SkillButton6" type="Button" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -105.0
+offset_right = -215.0
+offset_bottom = -60.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_font_sizes/font_size = 14
+text = "Y"
+
 [node name="InteractButton" type="Button" parent="."]
 anchor_left = 1.0
 anchor_right = 1.0

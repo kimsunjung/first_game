@@ -199,6 +199,8 @@ namespace FirstGame.Entities.Player
 				else if (key == Key.Q) UseSkillSlot(0);
 				else if (key == Key.W && !IsMoving()) UseSkillSlot(1);
 				else if (key == Key.E) UseSkillSlot(2);
+				else if (key == Key.T) UseSkillSlot(4);
+				else if (key == Key.Y) UseSkillSlot(5);
 				else if (key == Key.R) UseSkillSlot(3);
 			}
 		}
@@ -325,13 +327,22 @@ namespace FirstGame.Entities.Player
 				GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses ?? new());
 				GameManager.Instance.PlayerGold = data.PlayerGold;
 
-				// 인벤토리 복원
+				// 인벤토리 복원 — 직렬화된 슬롯 순서대로 그대로 추가, IsEquipped 보존.
 				if (data.InventoryItems != null)
 				{
 					foreach (var savedSlot in data.InventoryItems)
 					{
 						var item = GD.Load<ItemData>(savedSlot.ItemPath);
-						if (item != null) Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel, fireAcquired: false, savedSlot.Affixes);
+						if (item == null) continue;
+						bool added = Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel,
+							fireAcquired: false, savedSlot.Affixes);
+						// AddItem 직후 마지막 슬롯에 IsEquipped 마킹 (AddItem이 stack했을 경우 마킹 안 됨)
+						if (added && savedSlot.IsEquipped && Inventory.Slots.Count > 0)
+						{
+							var last = Inventory.Slots[Inventory.Slots.Count - 1];
+							if (last.Item.ResourcePath == savedSlot.ItemPath)
+								last.IsEquipped = true;
+						}
 					}
 				}
 

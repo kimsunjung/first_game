@@ -11,10 +11,11 @@ namespace FirstGame.UI
 		private VBoxContainer _slotContainer;
 		private IPlayer _player;
 
-		private static readonly string[] SlotKeys = { "Q", "W", "E", "R" };
+		private static readonly string[] SlotKeys = { "Q", "W", "E", "R", "T", "Y" };
+		public const int SlotCount = 6;
 		private const int SlotWidth = 276;
-		private const int SlotHeight = 56;
-		private const int IconSize = 34;
+		private const int SlotHeight = 48;
+		private const int IconSize = 30;
 
 		protected override void OnReadyInternal()
 		{
@@ -49,7 +50,7 @@ namespace FirstGame.UI
 
 			var learned = _player.Stats.LearnedSkills;
 
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < SlotCount; i++)
 			{
 				bool hasSkill = i < learned.Count;
 				var panel = new PanelContainer();

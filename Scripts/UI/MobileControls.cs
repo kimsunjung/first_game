@@ -11,7 +11,8 @@ namespace FirstGame.UI
     public partial class MobileControls : Control
     {
         private Button _attackButton;
-        private Button[] _skillButtons = new Button[4];
+        private const int SkillButtonCount = 6;
+        private Button[] _skillButtons = new Button[SkillButtonCount];
         private Button _interactButton;
         private Texture2D _interactDefaultIcon;
         private Button _inventoryButton;
@@ -19,15 +20,15 @@ namespace FirstGame.UI
         private Button _skillWindowButton;
 
         // 스킬 버튼 위에 표시할 쿨타임 레이블 (프로그래밍 방식으로 생성)
-        private Label[] _cooldownLabels = new Label[4];
+        private Label[] _cooldownLabels = new Label[SkillButtonCount];
 
         // 같은 프레임 중복 트리거 방지. emulate_mouse_from_touch=true 환경에서
         // 첫 터치는 Pressed 시그널(MouseButton)로, 두 번째 터치는 ScreenTouch 직접 핸들러로
         // 들어오는데 단일 터치가 양쪽 모두로 보이는 케이스를 차단.
         private ulong _lastAttackFrame = 0;
-        private readonly ulong[] _lastSkillFrame = new ulong[4];
+        private readonly ulong[] _lastSkillFrame = new ulong[SkillButtonCount];
 
-        private static readonly string[] SlotKeys = { "Q", "W", "E", "R" };
+        private static readonly string[] SlotKeys = { "Q", "W", "E", "R", "T", "Y" };
 
         private static readonly Color ColorReady    = Colors.White;
         private static readonly Color ColorCooldown = new Color(0.5f, 0.5f, 0.5f, 0.8f);
@@ -38,7 +39,7 @@ namespace FirstGame.UI
             MouseFilter = MouseFilterEnum.Ignore;
 
             _attackButton = GetNodeOrNull<Button>("AttackButton");
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < SkillButtonCount; i++)
                 _skillButtons[i] = GetNodeOrNull<Button>($"SkillButton{i + 1}");
             _interactButton    = GetNodeOrNull<Button>("InteractButton");
             // 씬 편집기에서 지정한 기본 아이콘 보관 — 타깃 PromptIcon이 null이면 이걸로 폴백.
@@ -51,7 +52,7 @@ namespace FirstGame.UI
             // emulate_mouse_from_touch=true에서 두 번째 터치(이동 중 공격)는 마우스 이벤트로
             // 변환되지 않아 Pressed 시그널이 안 뜬다. ScreenTouch를 직접 받아 보강.
             if (_attackButton != null) _attackButton.GuiInput += OnAttackGuiInput;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < SkillButtonCount; i++)
             {
                 int slot = i;
                 _skillButtons[i]?.Connect("pressed", Callable.From(() => OnSkillPressed(slot)));
@@ -109,7 +110,7 @@ namespace FirstGame.UI
             var player = GetPlayer();
             if (player == null) return;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < SkillButtonCount; i++)
             {
                 var btn = _skillButtons[i];
                 var lbl = _cooldownLabels[i];
