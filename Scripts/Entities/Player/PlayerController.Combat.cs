@@ -17,7 +17,11 @@ namespace FirstGame.Entities.Player
 			AudioManager.Instance?.PlaySFX("player_hit.wav");
 			SpawnFloatingLabel(GlobalPosition, finalDamage, false, true);
 			if (finalDamage >= Stats.MaxHealth * 0.2f)
+			{
 				TriggerCameraShake(5f, 0.3f);
+				// 큰 피해는 임팩트를 강조하는 히트 스톱 — 위협 강조.
+				UIEffectManager.HitStop(0.08f, 0.05f);
+			}
 
 			// 플레이어 넉백: 가장 가까운 적 반대 방향으로 밀림
 			var enemies = GameManager.Instance?.ActiveEnemies;
@@ -119,17 +123,9 @@ namespace FirstGame.Entities.Player
 					TriggerCameraShake(2f, 0.1f);
 			}
 
-			// 히트스톱: 적중 시 잠깐 프리즈 (이미 히트스탑 중이면 중복 타이머 생성 방지)
-			if (hitAny && Engine.TimeScale > 0.1)
-			{
-				float stopDuration = isCrit ? 0.08f : 0.05f;
-				Engine.TimeScale = 0.05;
-				GetTree().CreateTimer(stopDuration, true, false, true).Timeout += () =>
-				{
-					if (IsInstanceValid(this))
-						Engine.TimeScale = 1.0;
-				};
-			}
+			// 히트스톱: 적중 시 짧은 프리즈. 크리는 조금 더 길게.
+			if (hitAny)
+				UIEffectManager.HitStop(isCrit ? 0.10f : 0.06f, 0.05f);
 		}
 	}
 }

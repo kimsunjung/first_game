@@ -69,6 +69,8 @@ namespace FirstGame.Data.Skills
 				ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.Fire;
 				hitTarget.TakeDamage(dmg, element);
 				target.TriggerCameraShake(7f, 0.3f);
+				// 스킬 명중 시 히트 스톱(크리는 더 길게) — 일반 공격보다 살짝 강한 인상.
+				FirstGame.Core.UIEffectManager.HitStop(fbCrit ? 0.12f : 0.08f, 0.05f);
 				GD.Print($"파이어볼트 명중! ({dmg} 데미지{(fbCrit ? " CRIT!" : "")})");
 			}
 			else
