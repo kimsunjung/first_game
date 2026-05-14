@@ -309,6 +309,18 @@ namespace FirstGame.Core
 		public override void _Process(double delta)
 		{
 			SaveManager.TickDirty();
+			DayNightCycle.Tick((float)delta);
+		}
+
+		// Esc 키 — 열린 UI 윈도우가 있으면 닫고, 없으면 일시정지 메뉴 표시.
+		public override void _UnhandledInput(InputEvent @event)
+		{
+			if (@event.IsActionPressed("ui_cancel") && !@event.IsEcho())
+			{
+				if (FirstGame.UI.WindowManager.CloseTop()) return;
+				ShowExitConfirm();
+				GetViewport().SetInputAsHandled();
+			}
 		}
 
 		// 모바일 뒤로가기 / 백그라운드 진입 / 포커스 아웃 알림 처리.
@@ -330,42 +342,19 @@ namespace FirstGame.Core
 		private ConfirmationDialog _exitDialog;
 		private bool _exitDialogPausing = false;
 
+		private FirstGame.UI.PauseMenu _pauseMenu;
 		private void ShowExitConfirm()
 		{
-			if (_exitDialog == null || !IsInstanceValid(_exitDialog))
+			// 신규 정책: 단순 종료 확인 → 메인화면/설정/종료/취소 4옵션 메뉴.
+			if (_pauseMenu == null || !IsInstanceValid(_pauseMenu))
 			{
-				_exitDialog = new ConfirmationDialog
-				{
-					Title = "종료",
-					DialogText = "게임을 종료하시겠습니까?",
-					OkButtonText = "예",
-					CancelButtonText = "아니오",
-					ProcessMode = ProcessModeEnum.Always
-				};
-				_exitDialog.Confirmed += () =>
-				{
-					// dirty 여부 무관하게 무조건 저장 — 퀘스트 완료/상점/장비 등 dirty flag
-					// 미설정 변경까지 보존.
-					SaveManager.FlushBeforeExit();
-					GetTree().Quit();
-				};
-				_exitDialog.VisibilityChanged += OnExitDialogVisibilityChanged;
-				GetTree().Root.AddChild(_exitDialog);
+				_pauseMenu = new FirstGame.UI.PauseMenu();
+				GetTree().Root.AddChild(_pauseMenu);
 			}
-			if (_exitDialog.Visible) return;
-			_exitDialogPausing = true;
-			UIPauseManager.RequestPause();
-			_exitDialog.PopupCentered();
+			_pauseMenu.Open();
 		}
 
-		private void OnExitDialogVisibilityChanged()
-		{
-			if (_exitDialog == null || _exitDialog.Visible) return;
-			if (_exitDialogPausing)
-			{
-				_exitDialogPausing = false;
-				UIPauseManager.ReleasePause();
-			}
-		}
+		// 레거시 ConfirmationDialog 핸들러 — PauseMenu가 대체. 호출 경로 없으므로 빈 함수로 유지.
+		private void OnExitDialogVisibilityChanged() { }
 	}
 }

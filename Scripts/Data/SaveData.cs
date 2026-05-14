@@ -58,6 +58,8 @@ namespace FirstGame.Data
 		// ─── v2: 월드 상태 ────────────────────────────────────
 		public string CurrentScene { get; set; } = "";
 		public float DayTime { get; set; } = 0.3f;
+		// v11+: 게임 일수. 신규 게임은 1일부터 시작.
+		public int GameDay { get; set; } = 1;
 		public List<string> DefeatedBosses { get; set; } = new();
 		public List<string> CompletedQuestIds { get; set; } = new();
 

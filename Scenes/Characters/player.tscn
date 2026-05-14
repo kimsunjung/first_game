@@ -45,7 +45,7 @@ show_percentage = false
 
 [node name="VisionLight" type="PointLight2D" parent="."]
 texture = SubResource("vision_tex")
-texture_scale = 1.0
-energy = 1.1
+texture_scale = 0.8
+energy = 0.55
 range_z_min = -1024
 range_z_max = 1024

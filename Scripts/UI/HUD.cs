@@ -24,10 +24,11 @@ namespace FirstGame.UI
 		private TextureRect[] _quickSlotIcons = new TextureRect[QuickSlotCount];
 		private Label[] _quickSlotQtys = new Label[QuickSlotCount];
 
-		// MP / 레벨 / EXP (없을 수 있으므로 null-safe)
+		// MP / 레벨 / EXP / 시간 (없을 수 있으므로 null-safe)
 		private ProgressBar _mpBar;
 		private Label _mpLabel;
 		private Label _levelLabel;
+		private Label _timeLabel;
 		private ProgressBar _expBar;
 		private Label _levelUpLabel;
 		private Label _questLabel;
@@ -59,6 +60,12 @@ namespace FirstGame.UI
 			_mpBar = GetNodeOrNull<ProgressBar>("%MpBar");
 			_mpLabel = GetNodeOrNull<Label>("%MpLabel");
 			_levelLabel = GetNodeOrNull<Label>("%LevelLabel");
+			_timeLabel = GetNodeOrNull<Label>("%TimeLabel");
+			if (_timeLabel != null)
+			{
+				_timeLabel.Text = DayNightCycle.FormatTime();
+				DayNightCycle.OnTimeChanged += UpdateTimeDisplay;
+			}
 			_expBar = GetNodeOrNull<ProgressBar>("%ExpBar");
 			_levelUpLabel = GetNodeOrNull<Label>("%LevelUpLabel");
 			if (_levelUpLabel != null) _levelUpLabel.Visible = false;
@@ -109,6 +116,11 @@ namespace FirstGame.UI
 			UpdateQuickSlotDisplay();
 		}
 
+		private void UpdateTimeDisplay()
+		{
+			if (_timeLabel != null) _timeLabel.Text = DayNightCycle.FormatTime();
+		}
+
 		public override void _ExitTree()
 		{
 			if (GameManager.Instance != null)
@@ -131,6 +143,7 @@ namespace FirstGame.UI
 			EventManager.OnPlayerDeath -= ShowGameOver;
 			EventManager.OnLevelUp -= ShowLevelUp;
 			SaveManager.OnGameSaved -= ShowSaveNotification;
+			DayNightCycle.OnTimeChanged -= UpdateTimeDisplay;
 			if (GameManager.Instance != null)
 			{
 				GameManager.Instance.QuestManager.OnQuestStateChanged -= UpdateQuestDisplay;

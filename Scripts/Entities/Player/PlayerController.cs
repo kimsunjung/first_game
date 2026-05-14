@@ -262,6 +262,7 @@ namespace FirstGame.Entities.Player
 			var cls = SaveManager.PendingNewGameClass ?? FirstGame.Data.PlayerClass.Warrior;
 			SaveManager.PendingNewGameClass = null;
 			Stats.PlayerClass = cls;
+			FirstGame.Core.DayNightCycle.ResetForNewGame();
 
 			string weaponPath = cls switch
 			{
@@ -333,6 +334,8 @@ namespace FirstGame.Entities.Player
 			try
 			{
 				GlobalPosition = new Vector2(data.PlayerPosX, data.PlayerPosY);
+				// 게임 시간 복원 — v10 이하 누락 시 기본(06:00 / Day 1)
+				FirstGame.Core.DayNightCycle.RestoreFromSave(data.DayTime, data.GameDay);
 
 				// 스탯 재계산: 레벨 → STR/CON/INT → 장비(RestoreEquipment) 순서로 결정론적 재계산
 				// data.PlayerMaxHealth 직접 신뢰 금지: RestoreEquipment가 장비 보너스를 더하므로 이중 카운팅 발생

@@ -13,6 +13,8 @@ namespace FirstGame.Entities.Player
 		{
 			data.PlayerPosX = GlobalPosition.X;
 			data.PlayerPosY = GlobalPosition.Y;
+			data.DayTime = FirstGame.Core.DayNightCycle.NormalizedTime;
+			data.GameDay = FirstGame.Core.DayNightCycle.Day;
 
 			// 월드 상태
 			data.CurrentScene = GetTree().CurrentScene.SceneFilePath;
