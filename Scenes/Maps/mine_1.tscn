@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
 [ext_resource type="PackedScene" uid="uid://cbaxkv482ttqk" path="res://Scenes/Characters/enemy.tscn" id="10_enemy"]
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
-[ext_resource type="Resource" uid="uid://b7m8x2zomb1ie" path="res://Resources/Enemies/zombie_basic.tres" id="12_zombie"]
+[ext_resource type="Resource" uid="uid://b1m0bas1c001" path="res://Resources/Enemies/mine_zombie_basic.tres" id="12_zombie"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/mining_node.tscn" id="13_mine_node"]
 [ext_resource type="Resource" uid="uid://djkwf7m5ay001" path="res://Resources/Items/iron_ore.tres" id="14_iron"]
 [ext_resource type="Resource" uid="uid://bsv2ore7l1m04" path="res://Resources/Items/silver_ore.tres" id="15_silver"]
@@ -70,7 +70,7 @@ TargetSpawnPosition = Vector2(80, 360)
 position = Vector2(700, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/zombie_basic.tres")]([ExtResource("12_zombie")])
+StatVariants = Array[Resource("res://Resources/Enemies/mine_zombie_basic.tres")]([ExtResource("12_zombie")])
 SpawnInterval = 4.0
 MaxEnemies = 4
 SpawnRadius = 280.0
