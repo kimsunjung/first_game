@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://armor_stormvest01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/ranger_vest.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "폭풍 조끼"
+Description = "전격 궁수를 위한 조끼. 폭풍 세트."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 1050
+SellPrice = 345
+Type = 2
+IsStackable = false
+MaxStack = 1
+BonusDefense = 9
+BonusMaxHealth = 25
+BonusMaxMp = 0
+BonusMoveSpeed = 0.0
+RequiredClass = 2
+AvailableToAllClasses = false
+
+Weight = 5.0

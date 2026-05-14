@@ -1,17 +1,22 @@
-[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ilg10g87rkcm"]
-
-[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://armor_darkhelm01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/dark_helm.png" id="2_icon"]
-
-
 [resource]
 script = ExtResource("1")
-ItemName = "검은 풀헬멧"
-Description = "(밸런스 미정 — 추후 컨텐츠 기획 시 설정)"
-Rarity = 0
+ItemName = "암흑 투구"
+Description = "어둠이 깃든 투구. 보스 드랍 전용."
+Rarity = 3
 Icon = ExtResource("2_icon")
 Price = 0
-SellPrice = 0
+SellPrice = 1500
 Type = 6
 IsStackable = false
 MaxStack = 1
+BonusDefense = 10
+BonusMaxHealth = 30
+BonusMaxMp = 0
+BonusMoveSpeed = 0.0
+RequiredClass = 0
+AvailableToAllClasses = false
+IsShopBlocked = true
+Weight = 5.0
