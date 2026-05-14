@@ -580,6 +580,7 @@ namespace FirstGame.Data
             if (item.BonusCritRate != 0f) target.ModifyCritRate(sign * item.BonusCritRate);
             if (item.BonusMoveSpeed != 0f) target.ModifyMoveSpeed(sign * item.BonusMoveSpeed);
             if (item.BonusAttackSpeed != 0f) target.ModifyAttackSpeed(sign * item.BonusAttackSpeed);
+            if (item.BonusLifesteal != 0f) target.ModifyLifesteal(sign * item.BonusLifesteal);
         }
 
         /// <summary>affix 합산 적용 (sign=+1 장착, -1 해제). 같은 type이 여러 개면 모두 누적.</summary>
@@ -597,6 +598,7 @@ namespace FirstGame.Data
                     case ItemAffixType.BonusCritRate:  target.ModifyCritRate(sign * a.Value); break;
                     case ItemAffixType.BonusMoveSpeed: target.ModifyMoveSpeed(sign * a.Value); break;
                     case ItemAffixType.BonusAttackSpeed: target.ModifyAttackSpeed(sign * a.Value); break;
+                    case ItemAffixType.BonusLifesteal: target.ModifyLifesteal(sign * a.Value); break;
                 }
             }
         }

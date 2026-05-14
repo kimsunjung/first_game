@@ -118,9 +118,14 @@ namespace FirstGame.Data
 		// 캐릭터 클래스 — 신규 게임 시 선택. 세이브에 정수로 저장. 기본 Warrior(전사).
 		public PlayerClass PlayerClass { get; set; } = PlayerClass.Warrior;
 
-		// 패시브 누적 — 학습한 패시브 스킬의 효과를 누적 저장. ApplyPassiveBonuses에서
-		// 매 로드마다 결정론적으로 재계산. 로드 외 정상 흐름에선 LearnSkill이 즉시 누적.
-		public float LifestealPercent { get; private set; } = 0f;
+		// Lifesteal 누적 — 두 소스 분리해야 ApplyPassiveBonuses 재호출 시 장비 보너스가 깨지지 않음.
+		// _passive: 학습한 패시브 스킬 (ApplyPassiveBonuses가 매 로드 재계산)
+		// _equip: 장비/affix (Inventory.ApplyItemBonuses/ApplyAffixBonuses가 += / -=)
+		private float _passiveLifesteal = 0f;
+		private float _equipLifesteal = 0f;
+		public float LifestealPercent => _passiveLifesteal + _equipLifesteal;
+
+		// 패시브 HP 재생 — 장비 보너스 없어 분리 불필요.
 		public float PassiveHpRegenPerSec { get; private set; } = 0f;
 
 		public int ExpToNextLevel => (int)(ExpBaseMultiplier * Math.Pow(_level, ExpPowerExponent));
@@ -260,7 +265,7 @@ namespace FirstGame.Data
 		{
 			switch (skill.PassiveKind)
 			{
-				case PassiveType.Lifesteal:  LifestealPercent += skill.PassiveValue; break;
+				case PassiveType.Lifesteal:  _passiveLifesteal += skill.PassiveValue; break;
 				case PassiveType.HpRegen:    PassiveHpRegenPerSec += skill.PassiveValue; break;
 				case PassiveType.CritBoost:  CritRate += skill.PassiveValue; break;
 				case PassiveType.SpeedBoost: MoveSpeed += skill.PassiveValue; break;
@@ -268,14 +273,17 @@ namespace FirstGame.Data
 		}
 
 		/// <summary>로드 시 SetLevelFromSave가 베이스 리셋 후 호출 — 학습된 패시브 효과 재적용.
-		/// LifestealPercent/PassiveHpRegenPerSec 누적 필드도 0으로 리셋 후 재계산해 결정론 보장.</summary>
+		/// _passiveLifesteal/PassiveHpRegenPerSec만 리셋 — _equipLifesteal은 장비 경로에서 관리.</summary>
 		public void ApplyPassiveBonuses()
 		{
-			LifestealPercent = 0f;
+			_passiveLifesteal = 0f;
 			PassiveHpRegenPerSec = 0f;
 			foreach (var sk in _learnedSkills)
 				if (sk != null && sk.IsPassive) ApplySinglePassive(sk);
 		}
+
+		// 장비/affix 흡수 누적/감소 (Inventory.ApplyItemBonuses + ApplyAffixBonuses 경로).
+		public void ModifyLifesteal(float delta) => _equipLifesteal += delta;
 
 		public bool HasSkill(SkillType type) =>
 			_learnedSkills.Exists(s => s.Type == type);

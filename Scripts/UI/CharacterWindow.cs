@@ -221,12 +221,14 @@ namespace FirstGame.UI
 
 		private static string FormatAffix(ItemAffix a) => a.Type switch
 		{
-			ItemAffixType.BonusDamage    => $"  ATK +{(int)a.Value}",
-			ItemAffixType.BonusDefense   => $"  DEF +{(int)a.Value}",
-			ItemAffixType.BonusMaxHealth => $"  HP +{(int)a.Value}",
-			ItemAffixType.BonusMaxMp     => $"  MP +{(int)a.Value}",
-			ItemAffixType.BonusCritRate  => $"  치명타 +{a.Value * 100f:0.#}%",
-			ItemAffixType.BonusMoveSpeed => $"  이동속도 +{a.Value:0.00}",
+			ItemAffixType.BonusDamage      => $"  ATK +{(int)a.Value}",
+			ItemAffixType.BonusDefense     => $"  DEF +{(int)a.Value}",
+			ItemAffixType.BonusMaxHealth   => $"  HP +{(int)a.Value}",
+			ItemAffixType.BonusMaxMp       => $"  MP +{(int)a.Value}",
+			ItemAffixType.BonusCritRate    => $"  치명타 +{a.Value * 100f:0.#}%",
+			ItemAffixType.BonusMoveSpeed   => $"  이동속도 +{a.Value:0.00}",
+			ItemAffixType.BonusAttackSpeed => $"  공격속도 +{a.Value * 100f:0.#}%",
+			ItemAffixType.BonusLifesteal   => $"  HP 흡수 +{a.Value * 100f:0.#}%",
 			_ => ""
 		};
 
@@ -236,7 +238,8 @@ namespace FirstGame.UI
 		{
 			float sum = SumEquippedAffix(type);
 			if (sum == 0f) return "";
-			if (type == ItemAffixType.BonusCritRate || type == ItemAffixType.BonusMoveSpeed)
+			if (type == ItemAffixType.BonusCritRate || type == ItemAffixType.BonusMoveSpeed
+				|| type == ItemAffixType.BonusAttackSpeed || type == ItemAffixType.BonusLifesteal)
 				return $" (+{sum:0.00})";
 			return $" (+{(int)sum})";
 		}

@@ -80,6 +80,8 @@ namespace FirstGame.Data
 		[Export] public float BonusCritRate { get; set; } = 0f;
 		// 공격속도 — 1.0이 베이스. 0.15는 공격 cooldown을 15% 단축(공격 15% 더 빠름).
 		[Export] public float BonusAttackSpeed { get; set; } = 0f;
+		// HP 흡수 — 적중 데미지의 N% 만큼 회복. 0.01 = 1%. 장신구에 미약하게 붙음.
+		[Export] public float BonusLifesteal { get; set; } = 0f;
 		[Export] public WeaponAttackType AttackType { get; set; } = WeaponAttackType.Slice;
 
 		// 상점 차단 — true면 일반 상점에서 진열·판매 안 됨. 적 드랍/보스 전용 무기에 사용.
@@ -112,7 +114,8 @@ namespace FirstGame.Data
 		BonusMaxMp,
 		BonusCritRate,
 		BonusMoveSpeed,
-		BonusAttackSpeed
+		BonusAttackSpeed,
+		BonusLifesteal
 	}
 
 	/// <summary>아이템 인스턴스에 붙는 단일 옵션. POCO — System.Text.Json으로 직접 직렬화.</summary>
