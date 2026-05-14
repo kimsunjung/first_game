@@ -107,9 +107,14 @@ namespace FirstGame.Data
 		{
 			_level = Mathf.Clamp(level, 1, MaxLevel);
 			int levelsGained = _level - 1;
+			// 결정론적 리셋 — 매 로드마다 베이스로 되돌려 ApplyStatPointBonuses += 누적 차단.
+			// CritRate/MoveSpeed/Defense는 레벨 보너스가 없으므로 베이스값으로 직접 복귀.
 			MaxHealth = 100 + levelsGained * LevelUpHealthBonus;
 			BaseDamage = 10 + levelsGained * LevelUpDamageBonus;
 			MaxMp = 50 + levelsGained * LevelUpMpBonus;
+			CritRate = 0.1f;       // CharacterStats 베이스 — affix/장비/DEX는 후속에 더해짐
+			MoveSpeed = 120.0f;    // CharacterStats 베이스
+			Defense = 0;           // 장비 보너스만 더해짐
 			_exp = Mathf.Max(0, exp);
 		}
 
@@ -204,8 +209,19 @@ namespace FirstGame.Data
 		public void LoadLearnedSkills(List<SkillData> skills)
 		{
 			_learnedSkills.Clear();
-			if (skills != null)
-				_learnedSkills.AddRange(skills);
+			if (skills == null) return;
+			// 직접 변조된 세이브가 다른 클래스 전용 스킬을 잔류시키는 케이스 차단.
+			// 정상 경로(LearnSkill)는 이미 체크되므로 일관성 보장.
+			foreach (var sk in skills)
+			{
+				if (sk == null) continue;
+				if (!sk.AvailableToAllClasses && sk.RequiredClass != PlayerClass)
+				{
+					GD.PrintErr($"[Load] {sk.SkillName} 스킬이 {PlayerClassUtil.DisplayName(PlayerClass)} 클래스와 불일치 — 제거");
+					continue;
+				}
+				_learnedSkills.Add(sk);
+			}
 		}
 
 		/// <summary>스킬 슬롯 위치 교체 — Q/W/E/R 슬롯 순서를 사용자가 수동으로 재배치할 때 사용.</summary>

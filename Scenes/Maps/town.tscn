@@ -217,6 +217,7 @@ NpcId = "teleport"
 
 [node name="MaterialShopNPC" parent="." instance=ExtResource("20_matshop")]
 position = Vector2(520, 240)
+NpcId = "material_shop"
 
 [node name="ShopUI" parent="MaterialShopNPC" instance=ExtResource("9_shopUI")]
 

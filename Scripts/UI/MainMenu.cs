@@ -68,29 +68,44 @@ namespace FirstGame.UI
 			GetTree().ChangeSceneToFile("res://Scenes/Maps/town.tscn");
 		}
 
-		// 신규 게임 시 클래스 선택 모달. 3버튼(전사/마법사/궁수) — 선택값을
-		// SaveManager.PendingNewGameClass에 저장하고 town.tscn 로드. tscn 수정 없이 동적 생성.
-		private Control _classSelectPanel;
+		// 신규 게임 시 클래스 선택 모달. 풀스크린 dim ColorRect로 외부 클릭 차단 +
+		// 취소 버튼으로 닫기 가능. tscn 수정 없이 동적 생성.
+		private Control _classSelectRoot;
 		private void ShowClassSelect()
 		{
-			if (_classSelectPanel != null && IsInstanceValid(_classSelectPanel))
+			if (_classSelectRoot != null && IsInstanceValid(_classSelectRoot))
 			{
-				_classSelectPanel.Visible = true;
+				_classSelectRoot.Visible = true;
 				return;
 			}
+
+			// 풀스크린 dim — 배경 클릭 차단.
+			var dim = new ColorRect
+			{
+				Color = new Color(0, 0, 0, 0.55f),
+				AnchorLeft = 0, AnchorTop = 0,
+				AnchorRight = 1, AnchorBottom = 1,
+				OffsetLeft = 0, OffsetTop = 0,
+				OffsetRight = 0, OffsetBottom = 0,
+				GrowHorizontal = Control.GrowDirection.Both,
+				GrowVertical = Control.GrowDirection.Both,
+				MouseFilter = Control.MouseFilterEnum.Stop,
+				ProcessMode = Node.ProcessModeEnum.Always
+			};
+			AddChild(dim);
+			_classSelectRoot = dim;
 
 			var panel = new PanelContainer
 			{
 				AnchorLeft = 0.5f, AnchorRight = 0.5f,
 				AnchorTop = 0.5f, AnchorBottom = 0.5f,
 				OffsetLeft = -240, OffsetRight = 240,
-				OffsetTop = -120, OffsetBottom = 120,
+				OffsetTop = -140, OffsetBottom = 140,
 				ProcessMode = Node.ProcessModeEnum.Always
 			};
-			AddChild(panel);
-			_classSelectPanel = panel;
+			dim.AddChild(panel);
 
-			var vbox = new VBoxContainer { CustomMinimumSize = new Vector2(440, 200) };
+			var vbox = new VBoxContainer { CustomMinimumSize = new Vector2(440, 240) };
 			vbox.AddThemeConstantOverride("separation", 8);
 			panel.AddChild(vbox);
 
@@ -105,6 +120,25 @@ namespace FirstGame.UI
 			AddClassButton(vbox, FirstGame.Data.PlayerClass.Warrior);
 			AddClassButton(vbox, FirstGame.Data.PlayerClass.Mage);
 			AddClassButton(vbox, FirstGame.Data.PlayerClass.Archer);
+
+			var cancel = new Button
+			{
+				Text = "취소",
+				CustomMinimumSize = new Vector2(0, 36)
+			};
+			cancel.Pressed += CloseClassSelect;
+			vbox.AddChild(cancel);
+		}
+
+		private void CloseClassSelect()
+		{
+			if (_classSelectRoot != null && IsInstanceValid(_classSelectRoot))
+			{
+				_classSelectRoot.QueueFree();
+				_classSelectRoot = null;
+			}
+			// 잔존 정적 클래스 선택값 안전 클리어.
+			SaveManager.PendingNewGameClass = null;
 		}
 
 		private void AddClassButton(VBoxContainer vbox, FirstGame.Data.PlayerClass cls)
@@ -118,8 +152,9 @@ namespace FirstGame.UI
 			btn.Pressed += () =>
 			{
 				SaveManager.PendingNewGameClass = cls;
-				if (_classSelectPanel != null && IsInstanceValid(_classSelectPanel))
-					_classSelectPanel.QueueFree();
+				if (_classSelectRoot != null && IsInstanceValid(_classSelectRoot))
+					_classSelectRoot.QueueFree();
+				_classSelectRoot = null;
 				StartNewGame();
 			};
 			vbox.AddChild(btn);

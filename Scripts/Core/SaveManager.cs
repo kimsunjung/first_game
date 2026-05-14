@@ -344,6 +344,15 @@ namespace FirstGame.Core
 				MigrateMagnetiteToSilver(data);
 			}
 
+			if (data.Version < 10)
+			{
+				// v9→v10: 메인 스토리 챕터 플래그 도입. 기존 진행도를 DefeatedBosses와 VisitedScenes
+				// 기반으로 backfill — 기존 플레이어가 v10 로드 시 NPC 대사가 Prologue부터 재시작되는
+				// 회귀 차단. (PlayerClassId=0=Warrior, DexPoints=0은 JSON 누락 시 자동 0 폴백이라
+				// 별도 처리 불필요.)
+				BackfillChapterFlagsV10(data);
+			}
+
 			data.Version = SaveData.LatestVersion;
 			GD.Print($"SaveManager: 세이브 데이터 v{data.Version}으로 마이그레이션 완료");
 		}
@@ -407,6 +416,42 @@ namespace FirstGame.Core
 				for (int i = 0; i < data.QuickSlotPaths.Count; i++)
 					if (data.QuickSlotPaths[i] == OldMagnetitePath) data.QuickSlotPaths[i] = NewSilverOrePath;
 			}
+		}
+
+		/// <summary>v9→v10 마이그: 챕터 플래그를 DefeatedBosses/VisitedScenes 기반으로 backfill.
+		/// 기존 플레이어의 진행도 표지(NPC 대사 단계)가 Prologue로 초기화되지 않도록.</summary>
+		private static void BackfillChapterFlagsV10(SaveData data)
+		{
+			if (data.ChapterFlags == null) data.ChapterFlags = new System.Collections.Generic.List<string>();
+			void Add(string flag) { if (!data.ChapterFlags.Contains(flag)) data.ChapterFlags.Add(flag); }
+
+			// VisitedScenes 기반 — field_outpost 또는 그 이후 진입 흔적이 있으면 Prologue 통과.
+			if (data.VisitedScenes != null)
+			{
+				foreach (var s in data.VisitedScenes)
+				{
+					if (string.IsNullOrEmpty(s)) continue;
+					if (s.EndsWith("/field_outpost.tscn")) Add(FirstGame.Data.ChapterFlags.OutpostEntered);
+					if (s.EndsWith("/dungeon_3.tscn")) Add(FirstGame.Data.ChapterFlags.AbyssUnsealed);
+				}
+			}
+			// 보스 처치 기반 — 챕터별 플래그 자동 채움.
+			if (data.DefeatedBosses != null)
+			{
+				foreach (var b in data.DefeatedBosses)
+				{
+					switch (b)
+					{
+						case "orc_warlord_d1":   Add(FirstGame.Data.ChapterFlags.OrcWarlordKilled); break;
+						case "skeleton_king_d2": Add(FirstGame.Data.ChapterFlags.SkeletonKingKilled); break;
+						case "ancient_lich_d3":  Add(FirstGame.Data.ChapterFlags.LichKilled); break;
+					}
+				}
+			}
+			// 보스 처치된 적이 있는데 OutpostEntered가 누락이면 추가 — 던전을 클리어한 플레이어는
+			// 당연히 Prologue를 지났음을 보장.
+			if (data.ChapterFlags.Count > 0 && !data.ChapterFlags.Contains(FirstGame.Data.ChapterFlags.OutpostEntered))
+				Add(FirstGame.Data.ChapterFlags.OutpostEntered);
 		}
 
 		public static bool HasSave(string slot = AutoSaveSlot)

@@ -166,6 +166,14 @@ namespace FirstGame.Core
 		public void RecordChapterFlag(string flag)
 		{
 			if (string.IsNullOrEmpty(flag)) return;
+			// 복원 중에는 _chapterFlags만 채우고 OnChapterAdvanced/AutoSave 미발화.
+			// 호출 순서 의존을 깨고 (LoadFromSaveData에서 Restore → RecordSceneVisit 순서가
+			// 바뀌어도) 로드 직후 엔딩이 재생되거나 부분 복원 상태에서 저장되는 회귀 차단.
+			if (_isRestoringState)
+			{
+				_chapterFlags.Add(flag);
+				return;
+			}
 			var beforeChapter = CurrentChapter;
 			if (_chapterFlags.Add(flag))
 			{

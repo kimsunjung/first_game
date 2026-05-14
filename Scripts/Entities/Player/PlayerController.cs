@@ -254,7 +254,9 @@ namespace FirstGame.Entities.Player
 			{
 				if (Inventory.AddItem(weapon, 1, 0, fireAcquired: false))
 				{
-					int idx = Inventory.Slots.FindIndex(s => s.Item == weapon);
+					// ResourcePath 비교 — GD.Load 캐싱이 깨지거나(테스트 빌드) 같은 ItemData가
+					// 두 슬롯에 분할된 가상 케이스에도 안정적. 참조 동등성 의존 제거.
+					int idx = Inventory.Slots.FindIndex(s => s.Item?.ResourcePath == weaponPath);
 					if (idx >= 0) Inventory.EquipItem(idx, Stats);
 				}
 			}

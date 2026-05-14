@@ -154,7 +154,14 @@ namespace FirstGame.UI
 			var panel = new ColorRect
 			{
 				Color = new Color(0, 0, 0, 0),
+				// PRESET_FULL_RECT: 풀스크린 입력 영역 확보 — Anchor만으론 Size가 0이라
+				// GuiInput 영역이 없어 탭이 안 먹는 결함 차단.
+				AnchorLeft = 0, AnchorTop = 0,
 				AnchorRight = 1, AnchorBottom = 1,
+				OffsetLeft = 0, OffsetTop = 0,
+				OffsetRight = 0, OffsetBottom = 0,
+				GrowHorizontal = Control.GrowDirection.Both,
+				GrowVertical = Control.GrowDirection.Both,
 				MouseFilter = Control.MouseFilterEnum.Stop,
 				ProcessMode = ProcessModeEnum.Always
 			};
@@ -299,8 +306,27 @@ namespace FirstGame.UI
 		public void ShowNpcDialogue(string npcId, string line)
 		{
 			if (string.IsNullOrEmpty(line)) return;
+			// 이전 라벨을 즉시 트리에서 제거 — QueueFree는 deferred라 같은 프레임 공존으로
+			// 깜빡임 발생. RemoveChild로 즉시 분리한 뒤 QueueFree로 메모리 정리.
 			if (_npcDialogueLabel != null && IsInstanceValid(_npcDialogueLabel))
+			{
+				var oldParent = _npcDialogueLabel.GetParent();
+				if (oldParent != null) oldParent.RemoveChild(_npcDialogueLabel);
 				_npcDialogueLabel.QueueFree();
+				_npcDialogueLabel = null;
+			}
+
+			// 전용 CanvasLayer(layer=100) — ShopUI/InventoryUI 등 다른 CanvasLayer 위에 출력.
+			// 그렇지 않으면 OnInteract가 즉시 fullscreen 본 UI를 열 때 토스트가 가려져 안 보임.
+			var scene = GetTree()?.CurrentScene;
+			if (scene == null) return;
+			var dialogueLayer = scene.GetNodeOrNull<CanvasLayer>("__NpcDialogueLayer");
+			if (dialogueLayer == null)
+			{
+				dialogueLayer = new CanvasLayer { Name = "__NpcDialogueLayer", Layer = 100 };
+				dialogueLayer.ProcessMode = ProcessModeEnum.Always;
+				scene.AddChild(dialogueLayer);
+			}
 
 			var label = new Label
 			{
@@ -318,7 +344,7 @@ namespace FirstGame.UI
 			label.AddThemeFontSizeOverride("font_size", 14);
 			label.AddThemeColorOverride("font_outline_color", new Color(0, 0, 0, 0.9f));
 			label.AddThemeConstantOverride("outline_size", 4);
-			AddChild(label);
+			dialogueLayer.AddChild(label);
 			_npcDialogueLabel = label;
 
 			var tween = label.CreateTween();
