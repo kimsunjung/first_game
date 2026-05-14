@@ -2,6 +2,10 @@
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/plague_brute.png" id="2_tex"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[ext_resource type="Resource" uid="uid://wpn_glacieraxe01" path="res://Resources/Items/glacier_axe.tres" id="4_gaxe"]
+[ext_resource type="Resource" uid="uid://cloak_frost01" path="res://Resources/Items/frost_cloak.tres" id="5_fcloak"]
+[ext_resource type="Resource" uid="uid://bpat_chg01" path="res://Resources/BossPatterns/pat_charge_basic.tres" id="6_p1"]
+[ext_resource type="Resource" uid="uid://bpat_aoe01" path="res://Resources/BossPatterns/pat_aoe_basic.tres" id="7_p2"]
 [resource]
 script = ExtResource("1")
 MoveSpeed = 65
@@ -17,8 +21,10 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.35
 CollisionScale = 3.0
-PossibleDrops = Array[Resource]([ExtResource("3_hp")])
-DropWeights = PackedFloat32Array(1.0)
-DropChance = 0.3
+Patterns = Array[Resource]([ExtResource("6_p1"), ExtResource("7_p2")])
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_gaxe"), ExtResource("5_fcloak")])
+DropWeights = PackedFloat32Array(0.5, 0.3, 0.2)
+DropChance = 0.7
 MaxHealth = 800
 Defense = 10
+IsBoss = true

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="BossPatternData" format=3 uid="uid://bpat_tp01"]
+[ext_resource type="Script" path="res://Scripts/Entities/Enemies/BossPattern.cs" id="1"]
+[resource]
+script = ExtResource("1")
+PatternType = 5
+TelegraphDuration = 0.5
+CastDuration = 0.2
+Cooldown = 5.0
+DamageMul = 0
+Radius = 0
+ProjectileCount = 0
+SummonCount = 0

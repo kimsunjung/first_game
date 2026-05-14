@@ -8,6 +8,9 @@
 [ext_resource type="Resource" uid="uid://itembrace002" path="res://Resources/Items/silver_bracelet.tres" id="6_sb"]
 [ext_resource type="Resource" uid="uid://itemboots003" path="res://Resources/Items/traveler_boots.tres" id="7_tb"]
 [ext_resource type="Resource" uid="uid://itm_bow_elf_001" path="res://Resources/Items/elven_bow.tres" id="8_elven"]
+[ext_resource type="Resource" uid="uid://bpat_vol01" path="res://Resources/BossPatterns/pat_volley_basic.tres" id="9_p1"]
+[ext_resource type="Resource" uid="uid://bpat_sum01" path="res://Resources/BossPatterns/pat_summon_basic.tres" id="10_p2"]
+[ext_resource type="Resource" uid="uid://bpat_tp01" path="res://Resources/BossPatterns/pat_teleport.tres" id="11_p3"]
 
 [resource]
 script = ExtResource("1_es")
@@ -21,6 +24,7 @@ GoldReward = 300
 EnemyTypeName = "SkeletonKing"
 IsBoss = true
 SpriteAtlasCoords = Vector2i(8, 8)
+Patterns = Array[Resource]([ExtResource("9_p1"), ExtResource("10_p2"), ExtResource("11_p3")])
 PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core"), ExtResource("5_ib"), ExtResource("6_sb"), ExtResource("7_tb"), ExtResource("8_elven")])
 DropWeights = PackedFloat32Array(0.18, 0.13, 0.22, 0.13, 0.13, 0.08, 0.13)
 DropChance = 1.0

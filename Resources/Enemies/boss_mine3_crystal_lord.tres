@@ -3,6 +3,11 @@
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/crystal_guardian.png" id="2_tex"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/ice_shard_projectile.png" id="3_proj"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="4_hp"]
+[ext_resource type="Resource" uid="uid://mat_prism01" path="res://Resources/Items/prismatic_crystal.tres" id="5_prism"]
+[ext_resource type="Resource" uid="uid://armor_darkhelm01" path="res://Resources/Items/dark_helm.tres" id="6_dhelm"]
+[ext_resource type="Resource" uid="uid://bpat_bm02" path="res://Resources/BossPatterns/pat_beam_ice.tres" id="7_p1"]
+[ext_resource type="Resource" uid="uid://bpat_aoe01" path="res://Resources/BossPatterns/pat_aoe_basic.tres" id="8_p2"]
+[ext_resource type="Resource" uid="uid://bpat_sum01" path="res://Resources/BossPatterns/pat_summon_basic.tres" id="9_p3"]
 [resource]
 script = ExtResource("1")
 ProjectileTexture = ExtResource("3_proj")
@@ -21,8 +26,9 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.38
 CollisionScale = 3.2
-PossibleDrops = Array[Resource]([ExtResource("4_hp")])
-DropWeights = PackedFloat32Array(1.0)
+Patterns = Array[Resource]([ExtResource("7_p1"), ExtResource("8_p2"), ExtResource("9_p3")])
+PossibleDrops = Array[Resource]([ExtResource("4_hp"), ExtResource("5_prism"), ExtResource("6_dhelm")])
+DropWeights = PackedFloat32Array(0.4, 0.4, 0.2)
 DropChance = 1.0
 MaxHealth = 1500
 Defense = 10

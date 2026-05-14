@@ -103,6 +103,14 @@ namespace FirstGame.Entities.Enemies
 
 			GameManager.Instance?.RegisterEnemy(this);
 			SetupAnimations();
+
+			// 보스 패턴 브레인 attach — IsBoss + Patterns 배열 모두 있을 때만.
+			if (Stats.IsBoss && Stats.Patterns != null && Stats.Patterns.Length > 0)
+			{
+				var brain = new BossController();
+				brain.Attach(this);
+				AddChild(brain);
+			}
 		}
 
 		public override void _ExitTree()
