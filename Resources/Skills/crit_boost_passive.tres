@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://skl_crit_001"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/heal_self.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "치명타 강화 (패시브)"
+Description = "크리티컬 확률 +5%"
+Icon = ExtResource("2_icon")
+Type = 10
+MpCost = 0
+Cooldown = 0.0
+RequiredLevel = 6
+AvailableToAllClasses = true
+IsPassive = true
+PassiveKind = 3
+PassiveValue = 0.05

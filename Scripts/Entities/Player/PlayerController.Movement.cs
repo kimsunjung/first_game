@@ -65,13 +65,16 @@ namespace FirstGame.Entities.Player
 			}
 		}
 
-		// ─── HP 재생 (비전투 시) ─────────────────────────────────────
+		// ─── HP 재생 (비전투 시 baseline + 패시브는 전투 중에도) ─────
 		private void RegenHp(double delta)
 		{
 			if (IsDead || Stats.CurrentHealth >= Stats.MaxHealth) return;
+			float perSec = Stats.PassiveHpRegenPerSec; // 패시브는 항상 적용
 			double elapsed = Time.GetTicksMsec() / 1000.0 - _lastDamageTime;
-			if (elapsed < BalanceData.Regen.HpDelayAfterHit) return;
-			_hpRegenAccum += BalanceData.Regen.HpPerSec * (float)delta;
+			if (elapsed >= BalanceData.Regen.HpDelayAfterHit)
+				perSec += BalanceData.Regen.HpPerSec; // baseline은 피격 후 일정 시간 경과 시
+			if (perSec <= 0f) return;
+			_hpRegenAccum += perSec * (float)delta;
 			if (_hpRegenAccum >= 1f)
 			{
 				int regen = (int)_hpRegenAccum;

@@ -10,6 +10,7 @@ namespace FirstGame.Core.Interfaces
 	public interface ISkillTarget
 	{
 		Vector2 GlobalPosition { get; }
+		Vector2 FacingDirection { get; }
 		int BaseDamage { get; }
 		float CritRate { get; }
 		float CritMultiplier { get; }

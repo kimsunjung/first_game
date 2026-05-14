@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_skb_whirl_001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Resource" path="res://Resources/Skills/whirlwind.tres" id="2"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/skillbook_power_strike.png" id="3_icon"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "스킬북: 회전 베기"
+Description = "전사 전용 — 주변 광역 공격 (Lv.6 이상)"
+Icon = ExtResource("3_icon")
+Price = 700
+SellPrice = 350
+Type = 3
+IsStackable = false
+MaxStack = 1
+LearnedSkill = ExtResource("2")

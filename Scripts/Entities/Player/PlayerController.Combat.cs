@@ -121,6 +121,12 @@ namespace FirstGame.Entities.Player
 					TriggerCameraShake(3f, 0.15f);
 				else
 					TriggerCameraShake(2f, 0.1f);
+				// Lifesteal 패시브 — 적중 데미지의 N%를 자신 HP로 회복. 최소 1HP 보장.
+				if (Stats.LifestealPercent > 0f)
+				{
+					int heal = System.Math.Max(1, (int)(damage * Stats.LifestealPercent));
+					Stats.CurrentHealth = System.Math.Min(Stats.MaxHealth, Stats.CurrentHealth + heal);
+				}
 			}
 
 			// 히트스톱: 적중 시 짧은 프리즈. 크리는 조금 더 길게.

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_skb_multi_001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Resource" path="res://Resources/Skills/multi_shot.tres" id="2"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/skillbook_fire_bolt.png" id="3_icon"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "스킬북: 다중 사격"
+Description = "궁수 전용 — 전방 콘 다중 타격 (Lv.5 이상)"
+Icon = ExtResource("3_icon")
+Price = 700
+SellPrice = 350
+Type = 3
+IsStackable = false
+MaxStack = 1
+LearnedSkill = ExtResource("2")

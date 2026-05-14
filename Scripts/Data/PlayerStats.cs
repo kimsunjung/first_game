@@ -74,6 +74,11 @@ namespace FirstGame.Data
 		// 캐릭터 클래스 — 신규 게임 시 선택. 세이브에 정수로 저장. 기본 Warrior(전사).
 		public PlayerClass PlayerClass { get; set; } = PlayerClass.Warrior;
 
+		// 패시브 누적 — 학습한 패시브 스킬의 효과를 누적 저장. ApplyPassiveBonuses에서
+		// 매 로드마다 결정론적으로 재계산. 로드 외 정상 흐름에선 LearnSkill이 즉시 누적.
+		public float LifestealPercent { get; private set; } = 0f;
+		public float PassiveHpRegenPerSec { get; private set; } = 0f;
+
 		public int ExpToNextLevel => (int)(ExpBaseMultiplier * Math.Pow(_level, ExpPowerExponent));
 
 		public void AddExp(int amount)
@@ -199,8 +204,32 @@ namespace FirstGame.Data
 				return false;
 			}
 			_learnedSkills.Add(skill);
+			// 패시브 스킬은 학습 즉시 효과 적용 — 능동 슬롯에는 잡히지 않음.
+			if (skill.IsPassive) ApplySinglePassive(skill);
 			GD.Print($"스킬 습득: {skill.SkillName}!");
 			return true;
+		}
+
+		// 패시브 한 개 적용 — LearnSkill 정상 경로와 ApplyPassiveBonuses 재적용 양쪽에서 공유.
+		private void ApplySinglePassive(SkillData skill)
+		{
+			switch (skill.PassiveKind)
+			{
+				case PassiveType.Lifesteal:  LifestealPercent += skill.PassiveValue; break;
+				case PassiveType.HpRegen:    PassiveHpRegenPerSec += skill.PassiveValue; break;
+				case PassiveType.CritBoost:  CritRate += skill.PassiveValue; break;
+				case PassiveType.SpeedBoost: MoveSpeed += skill.PassiveValue; break;
+			}
+		}
+
+		/// <summary>로드 시 SetLevelFromSave가 베이스 리셋 후 호출 — 학습된 패시브 효과 재적용.
+		/// LifestealPercent/PassiveHpRegenPerSec 누적 필드도 0으로 리셋 후 재계산해 결정론 보장.</summary>
+		public void ApplyPassiveBonuses()
+		{
+			LifestealPercent = 0f;
+			PassiveHpRegenPerSec = 0f;
+			foreach (var sk in _learnedSkills)
+				if (sk != null && sk.IsPassive) ApplySinglePassive(sk);
 		}
 
 		public bool HasSkill(SkillType type) =>

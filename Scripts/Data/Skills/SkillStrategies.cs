@@ -80,6 +80,126 @@ namespace FirstGame.Data.Skills
 		}
 	}
 
+	// ─── 신규 능동 스킬 ───────────────────────────────────────────
+
+	/// <summary>ArrowShot (궁수 시작) — FireBolt와 동일 패턴이지만 무속성 단일 원거리.
+	/// 사거리 약간 짧고 MP 소모 낮음.</summary>
+	[SkillStrategy(SkillType.ArrowShot)]
+	public class ArrowShotStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float range = 280f;
+			var enemies = target.GetNearbyEnemies(range);
+			float bestDist = range;
+			IDamageable hitTarget = null;
+			foreach (var (node, damageable) in enemies)
+			{
+				float d = target.GlobalPosition.DistanceTo(node.GlobalPosition);
+				if (d < bestDist) { bestDist = d; hitTarget = damageable; }
+			}
+			if (hitTarget != null)
+			{
+				bool crit = GD.Randf() < target.CritRate;
+				int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+				long raw = (long)target.BaseDamage * multiplier;
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				hitTarget.TakeDamage(dmg, skill.Element);
+				target.TriggerCameraShake(4f, 0.2f);
+				FirstGame.Core.UIEffectManager.HitStop(crit ? 0.10f : 0.06f, 0.05f);
+			}
+		}
+	}
+
+	/// <summary>Whirlwind (전사) — 자신 주변 일정 반경 모든 적에 1.5x 데미지 광역.</summary>
+	[SkillStrategy(SkillType.Whirlwind)]
+	public class WhirlwindStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float radius = 100f;
+			float mul = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			bool anyHit = false;
+			foreach (var (node, damageable) in target.GetNearbyEnemies(radius))
+			{
+				bool crit = GD.Randf() < target.CritRate;
+				long raw = (long)(target.BaseDamage * mul);
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				damageable.TakeDamage(dmg, skill.Element);
+				anyHit = true;
+			}
+			if (anyHit)
+			{
+				target.TriggerCameraShake(6f, 0.25f);
+				FirstGame.Core.UIEffectManager.HitStop(0.08f, 0.05f);
+			}
+		}
+	}
+
+	/// <summary>IceShard (마법사) — FireBolt와 유사한 단일 원거리. 속성 Ice 기본.
+	/// 슬로우 효과는 후속 작업 — 현재 데미지만.</summary>
+	[SkillStrategy(SkillType.IceShard)]
+	public class IceShardStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float range = 320f;
+			var enemies = target.GetNearbyEnemies(range);
+			float bestDist = range;
+			IDamageable hitTarget = null;
+			foreach (var (node, damageable) in enemies)
+			{
+				float d = target.GlobalPosition.DistanceTo(node.GlobalPosition);
+				if (d < bestDist) { bestDist = d; hitTarget = damageable; }
+			}
+			if (hitTarget != null)
+			{
+				bool crit = GD.Randf() < target.CritRate;
+				int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+				long raw = (long)target.BaseDamage * multiplier;
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.Ice;
+				hitTarget.TakeDamage(dmg, element);
+				target.TriggerCameraShake(5f, 0.25f);
+				FirstGame.Core.UIEffectManager.HitStop(crit ? 0.10f : 0.07f, 0.05f);
+			}
+		}
+	}
+
+	/// <summary>MultiShot (궁수) — 전방 콘 안의 모든 적에 1배 데미지(다중 타격).
+	/// Whirlwind와 차별점: 자신 주변이 아니라 전방 방향성 + 사거리 큼.</summary>
+	[SkillStrategy(SkillType.MultiShot)]
+	public class MultiShotStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float range = 220f;
+			int hits = 0;
+			foreach (var (node, damageable) in target.GetNearbyEnemies(range))
+			{
+				// 전방 콘 dot > 0.4 (약 ±66도) — Whirlwind보다 좁고 ArrowShot보다 넓음.
+				Vector2 dir = (node.GlobalPosition - target.GlobalPosition).Normalized();
+				if (target.FacingDirection.Dot(dir) <= 0.4f) continue;
+
+				bool crit = GD.Randf() < target.CritRate;
+				int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 1;
+				long raw = (long)target.BaseDamage * multiplier;
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				damageable.TakeDamage(dmg, skill.Element);
+				hits++;
+			}
+			if (hits > 0)
+			{
+				target.TriggerCameraShake(4f, 0.2f);
+				FirstGame.Core.UIEffectManager.HitStop(0.07f, 0.05f);
+			}
+		}
+	}
+
 	/// <summary>
 	/// Reflection 기반 스킬 전략 팩토리.
 	/// [SkillStrategy(SkillType.X)] 어트리뷰트가 붙은 클래스를 자동 등록.

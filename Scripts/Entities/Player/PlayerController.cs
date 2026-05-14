@@ -67,6 +67,7 @@ namespace FirstGame.Entities.Player
 		int ISkillTarget.BaseDamage => Stats.BaseDamage;
 		float ISkillTarget.CritRate => Stats.CritRate;
 		float ISkillTarget.CritMultiplier => Stats.CritMultiplier;
+		Vector2 ISkillTarget.FacingDirection => _facingDirection;
 		public void HealSelf(int amount) => Stats.CurrentHealth += amount;
 
 		// ─── 라이프사이클 ────────────────────────────────────────────
@@ -245,7 +246,7 @@ namespace FirstGame.Entities.Player
 			string skillPath = cls switch
 			{
 				FirstGame.Data.PlayerClass.Mage   => "res://Resources/Skills/fire_bolt.tres",
-				FirstGame.Data.PlayerClass.Archer => "res://Resources/Skills/dash.tres",
+				FirstGame.Data.PlayerClass.Archer => "res://Resources/Skills/arrow_shot.tres",
 				_ => "res://Resources/Skills/power_strike.tres"
 			};
 
@@ -370,6 +371,8 @@ namespace FirstGame.Entities.Player
 						}
 					}
 					Stats.LoadLearnedSkills(skillsToLoad);
+					// 패시브 스킬 효과를 SetLevelFromSave 베이스 리셋 이후에 재적용 — 매 로드마다 결정론.
+					Stats.ApplyPassiveBonuses();
 				}
 
 				// 처치한 보스 목록 복원
