@@ -13,6 +13,8 @@ namespace FirstGame.Data
         public int EnhancementLevel { get; set; } = 0;
         // v7: 인스턴스별 affix. 이번 PR에서는 빈 리스트로 유지 — 후속 PR이 드랍 시점에 채움.
         public List<ItemAffix> Affixes { get; set; } = new();
+        // v11+: 장착 상태 — 인벤 슬롯에 머물면서 IsEquipped=true로 표시. 장착 아이템도 인벤에 보임.
+        public bool IsEquipped { get; set; } = false;
     }
 
     public class Inventory
@@ -114,6 +116,7 @@ namespace FirstGame.Data
                 foreach (var existing in Slots)
                 {
                     if (!IsSameItem(existing.Item, item)) continue;
+                    if (existing.IsEquipped) continue; // 장착 슬롯은 stack 금지
                     if (existing.Affixes != null && existing.Affixes.Count > 0) continue; // affix 있는 슬롯과 stack 금지
 
                     int space = maxStack - existing.Quantity;
@@ -193,6 +196,13 @@ namespace FirstGame.Data
         public void RemoveItem(int slotIndex, int amount = 1)
         {
             if (slotIndex < 0 || slotIndex >= Slots.Count) return;
+            // 장착 슬롯 보호 — 외부 호출자가 실수로 장착 아이템을 제거하지 않게 차단.
+            // 장비 해제는 UnequipXxx 경유 필수.
+            if (Slots[slotIndex].IsEquipped)
+            {
+                GD.PrintErr("[Inventory] 장착 중인 아이템은 제거할 수 없습니다 — 먼저 해제하세요.");
+                return;
+            }
             Slots[slotIndex].Quantity = Math.Max(0, Slots[slotIndex].Quantity - amount);
             if (Slots[slotIndex].Quantity <= 0)
                 Slots.RemoveAt(slotIndex);
@@ -356,9 +366,7 @@ namespace FirstGame.Data
             var item = slot.Item;
             int enhLevel = slot.EnhancementLevel;
 
-            // 장비 클래스 제한 — 무기·갑옷·모자·신발·장신구 모두 적용. 다른 클래스 전용 차단.
-            // target이 PlayerStats(현재 유일한 IEquipTarget 구현)일 때만 검증 — 후속 IEquipTarget
-            // 구현이 추가돼도 안전 (검증 우회로 기존 동작 유지).
+            // 장비 클래스 제한 — 무기·갑옷·모자·신발·장신구 모두 적용.
             if (item.Type.IsEquipment() && !item.AvailableToAllClasses
                 && target is PlayerStats ps && item.RequiredClass != ps.PlayerClass)
             {
@@ -366,66 +374,35 @@ namespace FirstGame.Data
                 return;
             }
 
-            // 기존 장비를 해당 슬롯 자리에 in-place로 되돌려놓음으로써 가방이 꽉 차도
-            // 교체 가능하게 한다. UnequipXxx → AddItem 경로는 빈 슬롯을 요구해서
-            // MaxSlots 도달 시 거부됐음.
+            // 이미 장착된 슬롯이면 무시 — 다른 슬롯의 같은 타입을 클릭한 경우는 교체 의도이므로 진행.
+            if (slot.IsEquipped) return;
+
+            // 신규 정책: 인벤 슬롯 유지 + IsEquipped 토글.
+            // 1) 기존 장착 슬롯 해제 (스탯 차감 + IsEquipped=false)
+            // 2) 새 슬롯 IsEquipped=true (인벤에 그대로 남음)
+            // MaxSlots 검사 불필요 — 슬롯 카운트 변화 없음.
             if (item.Type == ItemType.Weapon)
             {
-                var prevItem = EquippedWeapon;
-                int prevEnh = EquippedWeaponEnhancement;
-                if (prevItem != null)
-                {
-                    var (pdmg, _, _) = GetEnhancementBonuses(prevItem, prevEnh);
-                    target.ModifyBaseDamage(-(prevItem.BonusDamage + pdmg));
-                    slot.Item = prevItem;
-                    slot.Quantity = 1;
-                    slot.EnhancementLevel = prevEnh;
-                }
-                else
-                {
-                    Slots.RemoveAt(slotIndex);
-                }
+                ClearEquippedWeapon(target);
                 EquippedWeapon = item;
                 EquippedWeaponEnhancement = enhLevel;
+                slot.IsEquipped = true;
                 var (dmg, _, _) = GetEnhancementBonuses(item, enhLevel);
                 target.ModifyBaseDamage(item.BonusDamage + dmg);
             }
             else if (item.Type == ItemType.Armor)
             {
-                var prevItem = EquippedArmor;
-                if (prevItem != null)
-                {
-                    target.ModifyMaxHealth(-prevItem.BonusMaxHealth);
-                    target.ModifyDefense(-prevItem.BonusDefense);
-                    slot.Item = prevItem;
-                    slot.Quantity = 1;
-                    slot.EnhancementLevel = 0;
-                }
-                else
-                {
-                    Slots.RemoveAt(slotIndex);
-                }
+                ClearEquippedArmor(target);
                 EquippedArmor = item;
+                slot.IsEquipped = true;
                 target.ModifyMaxHealth(item.BonusMaxHealth);
                 target.ModifyDefense(item.BonusDefense);
             }
             else if (item.Type == ItemType.Accessory)
             {
-                var prevItem = EquippedAccessory;
-                if (prevItem != null)
-                {
-                    target.ModifyDefense(-prevItem.BonusDefense);
-                    if (prevItem.BonusDamage > 0) target.ModifyBaseDamage(-prevItem.BonusDamage);
-                    if (prevItem.BonusMaxHealth > 0) target.ModifyMaxHealth(-prevItem.BonusMaxHealth);
-                    slot.Item = prevItem;
-                    slot.Quantity = 1;
-                    slot.EnhancementLevel = 0;
-                }
-                else
-                {
-                    Slots.RemoveAt(slotIndex);
-                }
+                ClearEquippedAccessory(target);
                 EquippedAccessory = item;
+                slot.IsEquipped = true;
                 target.ModifyDefense(item.BonusDefense);
                 if (item.BonusDamage > 0) target.ModifyBaseDamage(item.BonusDamage);
                 if (item.BonusMaxHealth > 0) target.ModifyMaxHealth(item.BonusMaxHealth);
@@ -444,6 +421,49 @@ namespace FirstGame.Data
             OnEquipmentChanged?.Invoke();
             AudioManager.Instance?.PlaySFX("equip.wav");
             GD.Print($"{GetEnhancedName(item, enhLevel)} 장착!");
+        }
+
+        /// <summary>기존 장착 무기 스탯 차감 + 해당 인벤 슬롯의 IsEquipped=false.</summary>
+        private void ClearEquippedWeapon(IEquipTarget target)
+        {
+            if (EquippedWeapon == null) return;
+            var (pdmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
+            target.ModifyBaseDamage(-(EquippedWeapon.BonusDamage + pdmg));
+            int idx = FindEquippedSlotIndex(EquippedWeapon);
+            if (idx >= 0) Slots[idx].IsEquipped = false;
+            EquippedWeapon = null;
+            EquippedWeaponEnhancement = 0;
+        }
+
+        private void ClearEquippedArmor(IEquipTarget target)
+        {
+            if (EquippedArmor == null) return;
+            target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
+            target.ModifyDefense(-EquippedArmor.BonusDefense);
+            int idx = FindEquippedSlotIndex(EquippedArmor);
+            if (idx >= 0) Slots[idx].IsEquipped = false;
+            EquippedArmor = null;
+        }
+
+        private void ClearEquippedAccessory(IEquipTarget target)
+        {
+            if (EquippedAccessory == null) return;
+            target.ModifyDefense(-EquippedAccessory.BonusDefense);
+            if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-EquippedAccessory.BonusDamage);
+            if (EquippedAccessory.BonusMaxHealth > 0) target.ModifyMaxHealth(-EquippedAccessory.BonusMaxHealth);
+            int idx = FindEquippedSlotIndex(EquippedAccessory);
+            if (idx >= 0) Slots[idx].IsEquipped = false;
+            EquippedAccessory = null;
+        }
+
+        /// <summary>장착된 아이템 데이터에 해당하는 IsEquipped 슬롯의 인덱스. 없으면 -1.</summary>
+        private int FindEquippedSlotIndex(ItemData item)
+        {
+            if (item == null) return -1;
+            for (int i = 0; i < Slots.Count; i++)
+                if (Slots[i].IsEquipped && IsSameItem(Slots[i].Item, item))
+                    return i;
+            return -1;
         }
 
         /// <summary>반지처럼 같은 ItemType이 두 슬롯(Ring1/Ring2)을 가질 때 사용자가
@@ -487,23 +507,22 @@ namespace FirstGame.Data
         private void EquipExtraInternal(int slotIndex, ItemData item, ExtraSlot slotKey, IEquipTarget target)
         {
             var slot = Slots[slotIndex];
-            // 인벤 슬롯에서 in-place 교체 — slot.Affixes 참조가 prev로 덮이기 전에 캡처.
-            var newAffixes = slot.Affixes != null ? new List<ItemAffix>(slot.Affixes) : new List<ItemAffix>();
+            if (slot.IsEquipped) return;
+
+            // 1) 기존 장착 슬롯 해제 (스탯 차감 + IsEquipped=false). 인벤은 유지.
             var prev = GetExtraSlot(slotKey);
             var prevAffixes = GetExtraAffixes(slotKey);
             if (prev != null)
             {
                 ApplyItemBonuses(prev, target, -1);
                 ApplyAffixBonuses(prevAffixes, target, -1);
-                slot.Item = prev;
-                slot.Quantity = 1;
-                slot.EnhancementLevel = 0;
-                slot.Affixes = prevAffixes != null ? new List<ItemAffix>(prevAffixes) : new List<ItemAffix>();
+                int prevIdx = FindEquippedSlotIndex(prev);
+                if (prevIdx >= 0) Slots[prevIdx].IsEquipped = false;
             }
-            else
-            {
-                Slots.RemoveAt(slotIndex);
-            }
+
+            // 2) 새 슬롯 IsEquipped=true. 인벤 슬롯 유지.
+            slot.IsEquipped = true;
+            var newAffixes = slot.Affixes != null ? new List<ItemAffix>(slot.Affixes) : new List<ItemAffix>();
             SetExtraSlot(slotKey, item);
             SetExtraAffixes(slotKey, newAffixes);
             ApplyItemBonuses(item, target, +1);
@@ -513,22 +532,12 @@ namespace FirstGame.Data
         public bool UnequipWeapon(IEquipTarget target)
         {
             if (EquippedWeapon == null) return false;
-            if (Slots.Count >= MaxSlots)
-            {
-                GD.Print("가방이 꽉 차서 무기를 해제할 수 없습니다!");
-                return false;
-            }
-
+            // 신규 정책: 인벤 슬롯 유지 — IsEquipped=false만. 가방 만석 검사 불필요.
             using (GameTransaction.Begin())
             {
-                var (dmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
-                target.ModifyBaseDamage(-(EquippedWeapon.BonusDamage + dmg));
-                bool added = AddItem(EquippedWeapon, 1, EquippedWeaponEnhancement, fireAcquired: false);
-                if (!added) return false;
-
-                EquippedWeapon = null;
-                EquippedWeaponEnhancement = 0;
+                ClearEquippedWeapon(target);
                 OnEquipmentChanged?.Invoke();
+                OnInventoryChanged?.Invoke();
             }
             SaveManager.RequestAutoSave();
             return true;
@@ -537,21 +546,11 @@ namespace FirstGame.Data
         public bool UnequipArmor(IEquipTarget target)
         {
             if (EquippedArmor == null) return false;
-            if (Slots.Count >= MaxSlots)
-            {
-                GD.Print("가방이 꽉 차서 방어구를 해제할 수 없습니다!");
-                return false;
-            }
-
             using (GameTransaction.Begin())
             {
-                target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
-                target.ModifyDefense(-EquippedArmor.BonusDefense);
-                bool added = AddItem(EquippedArmor, 1, 0, fireAcquired: false);
-                if (!added) return false;
-
-                EquippedArmor = null;
+                ClearEquippedArmor(target);
                 OnEquipmentChanged?.Invoke();
+                OnInventoryChanged?.Invoke();
             }
             SaveManager.RequestAutoSave();
             return true;
@@ -560,22 +559,11 @@ namespace FirstGame.Data
         public bool UnequipAccessory(IEquipTarget target)
         {
             if (EquippedAccessory == null) return false;
-            if (Slots.Count >= MaxSlots)
-            {
-                GD.Print("가방이 꽉 차서 악세서리를 해제할 수 없습니다!");
-                return false;
-            }
-
             using (GameTransaction.Begin())
             {
-                target.ModifyDefense(-EquippedAccessory.BonusDefense);
-                if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-EquippedAccessory.BonusDamage);
-                if (EquippedAccessory.BonusMaxHealth > 0) target.ModifyMaxHealth(-EquippedAccessory.BonusMaxHealth);
-                bool added = AddItem(EquippedAccessory, 1, 0, fireAcquired: false);
-                if (!added) return false;
-
-                EquippedAccessory = null;
+                ClearEquippedAccessory(target);
                 OnEquipmentChanged?.Invoke();
+                OnInventoryChanged?.Invoke();
             }
             SaveManager.RequestAutoSave();
             return true;
@@ -709,32 +697,60 @@ namespace FirstGame.Data
             SetExtraAffixes(slot, affixes);
             ApplyItemBonuses(item, target, +1);
             ApplyAffixBonuses(GetExtraAffixes(slot), target, +1);
+            EnsureEquippedSlotPresent(item, 0, affixes);
             OnEquipmentChanged?.Invoke();
+        }
+
+        /// <summary>장착된 아이템이 인벤에 IsEquipped 슬롯으로 존재하는지 보장.
+        /// 매칭되는 일반 슬롯이 있으면 그 슬롯의 IsEquipped=true, 없으면 신규 추가.
+        /// v10 이하 세이브에서 인벤과 분리 보관된 장비를 신규 정책으로 마이그.</summary>
+        private void EnsureEquippedSlotPresent(ItemData item, int enhancementLevel, List<ItemAffix> affixes = null)
+        {
+            if (item == null) return;
+            // 이미 IsEquipped 슬롯이 있으면 끝
+            int existing = FindEquippedSlotIndex(item);
+            if (existing >= 0) return;
+            // 없으면 일치하는 미장착 슬롯 찾아 IsEquipped 마킹 (없으면 신규 추가)
+            for (int i = 0; i < Slots.Count; i++)
+            {
+                if (!Slots[i].IsEquipped && IsSameItem(Slots[i].Item, item))
+                {
+                    Slots[i].IsEquipped = true;
+                    Slots[i].EnhancementLevel = enhancementLevel;
+                    if (affixes != null && affixes.Count > 0)
+                        Slots[i].Affixes = new List<ItemAffix>(affixes);
+                    return;
+                }
+            }
+            // 신규 슬롯 추가 (MaxSlots 초과해도 강제 — 세이브 복원은 안전 최우선)
+            Slots.Add(new InventorySlot
+            {
+                Item = item,
+                Quantity = 1,
+                EnhancementLevel = enhancementLevel,
+                Affixes = affixes != null ? new List<ItemAffix>(affixes) : new List<ItemAffix>(),
+                IsEquipped = true
+            });
         }
 
         public bool UnequipExtra(ExtraSlot slot, IEquipTarget target)
         {
             var item = GetExtraSlot(slot);
             if (item == null) return false;
-            if (Slots.Count >= MaxSlots)
-            {
-                GD.Print("가방이 꽉 차서 장비를 해제할 수 없습니다!");
-                return false;
-            }
-
-            // 트랜잭션 격리 — AddItem의 OnInventoryChanged 자동저장이 끼면 "스탯은 빠졌는데
-            // 장비 슬롯은 아직 차 있는" 중간 상태가 디스크에 박힌다. dispose 후 한 번에 영속화.
+            // 신규 정책: 인벤 슬롯 유지 — IsEquipped=false. 가방 만석 검사 불필요.
             using (GameTransaction.Begin())
             {
                 var affixes = GetExtraAffixes(slot);
                 ApplyItemBonuses(item, target, -1);
                 ApplyAffixBonuses(affixes, target, -1);
-                bool added = AddItem(item, 1, 0, fireAcquired: false, affixes);
-                if (!added) return false;
+
+                int idx = FindEquippedSlotIndex(item);
+                if (idx >= 0) Slots[idx].IsEquipped = false;
 
                 SetExtraSlot(slot, null);
                 SetExtraAffixes(slot, new List<ItemAffix>());
                 OnEquipmentChanged?.Invoke();
+                OnInventoryChanged?.Invoke();
             }
             SaveManager.RequestAutoSave();
             return true;
@@ -902,6 +918,11 @@ namespace FirstGame.Data
             // 의도적으로 무시한다. v6 이하 세이브에 비정상적으로 강화 +N이 박혀 있어도 0으로 클램프.
             RestoreEquipment(loadedWeapon, loadedArmor, target, loadedAccessory,
                 data.EquippedWeaponEnhancement);
+            // 신규 정책: 장착된 아이템과 매칭되는 인벤 슬롯의 IsEquipped=true 처리.
+            // 매칭되는 슬롯이 없으면 인벤에 별도 추가 (v10 이하 세이브 호환).
+            EnsureEquippedSlotPresent(loadedWeapon, data.EquippedWeaponEnhancement);
+            EnsureEquippedSlotPresent(loadedArmor, 0);
+            EnsureEquippedSlotPresent(loadedAccessory, 0);
 
             RestoreExtraSlot(ExtraSlot.Helmet,   data.EquippedHelmetPath,   null, target);
             RestoreExtraSlot(ExtraSlot.Boots,    data.EquippedBootsPath,    null, target);

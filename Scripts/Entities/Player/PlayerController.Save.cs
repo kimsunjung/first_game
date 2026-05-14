@@ -40,7 +40,8 @@ namespace FirstGame.Entities.Player
 					ItemPath = invSlot.Item.ResourcePath,
 					Quantity = invSlot.Quantity,
 					EnhancementLevel = invSlot.EnhancementLevel,
-					Affixes = invSlot.Affixes != null ? new List<ItemAffix>(invSlot.Affixes) : new List<ItemAffix>()
+					Affixes = invSlot.Affixes != null ? new List<ItemAffix>(invSlot.Affixes) : new List<ItemAffix>(),
+					IsEquipped = invSlot.IsEquipped
 				});
 			}
 

@@ -7,8 +7,10 @@ namespace FirstGame.Data
 		public string ItemPath { get; set; }
 		public int Quantity { get; set; }
 		public int EnhancementLevel { get; set; } = 0;
-		// v7: 인스턴스별 affix. 이번 PR은 빈 리스트로만 직렬화 — 후속 PR이 드랍 시점에 채움.
+		// v7: 인스턴스별 affix.
 		public List<ItemAffix> Affixes { get; set; } = new();
+		// v11+: 슬롯 장착 상태 — 인벤 슬롯이 IsEquipped면 직렬화. 누락 시 false.
+		public bool IsEquipped { get; set; } = false;
 	}
 
 	public class SaveData
