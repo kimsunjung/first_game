@@ -51,6 +51,33 @@ namespace FirstGame.Data
 		public void ModifyMoveSpeed(float delta) => MoveSpeed += delta;
 		public void ModifyAttackSpeed(float delta) => AttackSpeed += delta;
 
+		// 무게 페널티: 0~80% 정상, 80~100% -10% 이속, 100%+ -30% 이속
+		public float WeightPenaltyMultiplier { get; private set; } = 1.0f;
+		private bool _overweightWarned = false;
+
+		public void UpdateWeightPenalty(float currentWeight, float maxWeight)
+		{
+			float ratio = maxWeight > 0f ? currentWeight / maxWeight : 0f;
+			float newMul;
+			if (ratio >= 1.0f) newMul = 0.7f;
+			else if (ratio >= 0.8f) newMul = 0.9f;
+			else newMul = 1.0f;
+
+			if (newMul != WeightPenaltyMultiplier)
+			{
+				WeightPenaltyMultiplier = newMul;
+				if (newMul < 1.0f && !_overweightWarned)
+				{
+					_overweightWarned = true;
+					GD.Print("[무게] 과적! 이동속도가 감소합니다.");
+				}
+				else if (newMul == 1.0f)
+				{
+					_overweightWarned = false;
+				}
+			}
+		}
+
 		// 임시 buff 추적 — duration초 동안 누적 적용, 만료 시 자동 차감.
 		// PlayerController._PhysicsProcess가 TickBuffs(delta) 호출해 timer 진행.
 		private float _buffMoveSpeedAmount = 0f;
