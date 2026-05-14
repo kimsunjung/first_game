@@ -161,6 +161,30 @@ namespace FirstGame.Entities.Enemies
 			_animSprite.AnimationFinished += OnAnimationFinished;
 		}
 
+		/// <summary>주변 다른 적과 너무 가까우면 분리 방향으로 push velocity 반환.</summary>
+		private Vector2 ComputeSeparation()
+		{
+			const float separationRadius = 38f;
+			const float pushStrength = 80f;
+			var enemies = GameManager.Instance?.ActiveEnemies;
+			if (enemies == null) return Vector2.Zero;
+			Vector2 push = Vector2.Zero;
+			int neighbors = 0;
+			foreach (Node2D other in enemies)
+			{
+				if (other == this || !IsInstanceValid(other)) continue;
+				Vector2 diff = GlobalPosition - other.GlobalPosition;
+				float d = diff.Length();
+				if (d > 0.01f && d < separationRadius)
+				{
+					push += diff.Normalized() * (separationRadius - d);
+					neighbors++;
+				}
+			}
+			if (neighbors == 0) return Vector2.Zero;
+			return (push / neighbors) * (pushStrength / separationRadius);
+		}
+
 		public void ApplyKnockback(Vector2 direction, float force)
 		{
 			// 공격 사이클 진입 후에는 knockback 면역 — 자기 사거리 진입 후 바로 밀려나
@@ -261,6 +285,10 @@ namespace FirstGame.Entities.Enemies
 				_avoidanceTimer -= (float)delta;
 				Velocity += _avoidanceNudge;
 			}
+
+			// 적 분리(separation) — 다른 적과 너무 가까우면 반대 방향으로 밀어내기.
+			// MoveAndSlide만으론 겹친 상태 해소 안 됨 → 명시적 push가 필요.
+			Velocity += ComputeSeparation();
 
 			// 넉백 적용 및 감쇠
 			if (_knockbackVelocity.LengthSquared() > 25f)
