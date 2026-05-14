@@ -198,11 +198,15 @@ namespace FirstGame.Entities.Enemies
 					break;
 			}
 
-			// AI stuck 회피 — Chase 중 거의 움직이지 못하면 perpendicular nudge로 우회.
+			// AI stuck 회피 — Chase 중 기대 이동량의 30% 미만이면 stuck으로 판정해 perpendicular nudge.
+			// 고정 임계값(예: 1px) 대신 Stats.MoveSpeed*delta를 기준으로 동적 스케일 — 느린 적(슬라임 등)을
+			// 정상 이동 중인데 stuck으로 오인식하던 결함(Codex P2) 차단.
 			if (_state == EnemyState.Chase)
 			{
 				float movedSq = (GlobalPosition - _lastPosition).LengthSquared();
-				if (movedSq < 1.0f)
+				float expected = Stats.MoveSpeed * (float)delta * 0.3f;
+				float thresholdSq = expected * expected;
+				if (movedSq < thresholdSq)
 				{
 					_stuckTimer += (float)delta;
 					if (_stuckTimer > 0.7f && _avoidanceTimer <= 0f)
@@ -216,10 +220,16 @@ namespace FirstGame.Entities.Enemies
 				}
 				else _stuckTimer = 0f;
 			}
-			else _stuckTimer = 0f;
+			else
+			{
+				// Chase 떠날 때 stuck/avoidance 상태 즉시 해제 — 공격/대기/도주 중 nudge가 의도된
+				// velocity에 더해져 슬라이드되는 결함(Codex P3) 차단.
+				_stuckTimer = 0f;
+				_avoidanceTimer = 0f;
+			}
 			_lastPosition = GlobalPosition;
 
-			if (_avoidanceTimer > 0f)
+			if (_avoidanceTimer > 0f && _state == EnemyState.Chase)
 			{
 				_avoidanceTimer -= (float)delta;
 				Velocity += _avoidanceNudge;
