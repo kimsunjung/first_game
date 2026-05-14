@@ -179,7 +179,7 @@ namespace FirstGame.Entities.Player
 			{
 				Damage = damage,
 				Speed = speed,
-				Direction = _facingDirection != Vector2.Zero ? _facingDirection.Normalized() : Vector2.Right,
+				Direction = GetAimDirection(),
 				Element = element,
 				ProjectileColor = color,
 				SingleHit = true

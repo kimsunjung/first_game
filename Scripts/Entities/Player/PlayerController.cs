@@ -21,6 +21,15 @@ namespace FirstGame.Entities.Player
 
 		public bool IsDead { get; private set; } = false;
 		private Vector2 _facingDirection = Vector2.Down;
+		// 자동 타겟팅 — Mage/Archer 평타·스킬이 가리키는 적. 죽거나 너무 멀어지면 갱신.
+		private Node2D _targetEnemy;
+		private Node2D _targetIndicator;
+		public Node2D TargetEnemy => _targetEnemy;
+
+		// LightningStorm 상태 — duration > 0이면 active. tickInterval마다 가까운 적에 번개.
+		private float _stormDuration = 0f;
+		private float _stormInterval = 2f;
+		private float _stormTickTimer = 0f;
 
 		// 애니메이션
 		private AnimatedSprite2D _animSprite;
@@ -81,7 +90,7 @@ namespace FirstGame.Entities.Player
 			{
 				Damage = damage,
 				Speed = speed,
-				Direction = _facingDirection != Vector2.Zero ? _facingDirection.Normalized() : Vector2.Right,
+				Direction = GetAimDirection(),
 				Element = element,
 				ProjectileColor = color,
 				SingleHit = true
@@ -197,6 +206,112 @@ namespace FirstGame.Entities.Player
 			UpdateCameraShake(delta);
 			if (_attackCooldown > 0f) _attackCooldown -= (float)delta;
 			Stats?.TickBuffs((float)delta);
+			UpdateAutoTarget();
+			UpdateLightningStorm((float)delta);
+		}
+
+		private void UpdateLightningStorm(float delta)
+		{
+			if (_stormDuration <= 0f) return;
+			_stormDuration -= delta;
+			_stormTickTimer -= delta;
+			if (_stormTickTimer <= 0f)
+			{
+				StrikeLightningOnNearestEnemy();
+				_stormTickTimer = _stormInterval;
+			}
+		}
+
+		private void StrikeLightningOnNearestEnemy()
+		{
+			var enemies = GameManager.Instance?.ActiveEnemies;
+			if (enemies == null) return;
+			Node2D best = null;
+			float bestDist = 400f;
+			foreach (Node2D e in enemies)
+			{
+				if (e is not IDamageable) continue;
+				float d = GlobalPosition.DistanceTo(e.GlobalPosition);
+				if (d < bestDist) { bestDist = d; best = e; }
+			}
+			if (best == null) return;
+			int dmg = Stats.BaseDamage * 2;
+			(best as IDamageable)?.TakeDamage(dmg, FirstGame.Data.ElementType.Lightning);
+			// 번개 시각 — 흰색 라인 flash
+			var bolt = new LightningBolt(GlobalPosition, best.GlobalPosition);
+			GetParent().AddChild(bolt);
+			TriggerCameraShake(2.5f, 0.12f);
+		}
+
+		public void StartLightningStorm(float duration, float interval)
+		{
+			_stormDuration = duration;
+			_stormInterval = interval;
+			_stormTickTimer = 0f; // 즉시 첫 타격
+		}
+
+		public void ApplyTempBuff(int dmgDelta, int defDelta, float critDelta, float duration)
+		{
+			Stats?.ApplyBuffEx(0f, 0f, dmgDelta, defDelta, critDelta, duration);
+		}
+
+		// 자동 타겟팅 — Mage/Archer만 적용. Warrior는 근접이라 불필요.
+		// 현재 타겟이 죽거나 600px 밖이면 가장 가까운 적으로 갱신.
+		private void UpdateAutoTarget()
+		{
+			if (Stats == null || Stats.PlayerClass == Data.PlayerClass.Warrior)
+			{
+				ClearTarget();
+				return;
+			}
+			const float maxRange = 600f;
+			// 현재 타겟 유효성 확인
+			if (_targetEnemy != null && IsInstanceValid(_targetEnemy) && _targetEnemy is IDamageable dmg)
+			{
+				float d = GlobalPosition.DistanceTo(_targetEnemy.GlobalPosition);
+				if (d <= maxRange) { UpdateTargetIndicator(); return; }
+			}
+			// 새 타겟 선택 — 가장 가까운 적
+			var enemies = GameManager.Instance?.ActiveEnemies;
+			if (enemies == null) { ClearTarget(); return; }
+			Node2D best = null;
+			float bestDist = maxRange;
+			foreach (Node2D e in enemies)
+			{
+				if (e is not IDamageable) continue;
+				if (!IsInstanceValid(e)) continue;
+				float d = GlobalPosition.DistanceTo(e.GlobalPosition);
+				if (d < bestDist) { bestDist = d; best = e; }
+			}
+			_targetEnemy = best;
+			UpdateTargetIndicator();
+		}
+
+		private void ClearTarget()
+		{
+			_targetEnemy = null;
+			if (_targetIndicator != null && IsInstanceValid(_targetIndicator))
+				_targetIndicator.QueueFree();
+			_targetIndicator = null;
+		}
+
+		private void UpdateTargetIndicator()
+		{
+			if (_targetEnemy == null) { ClearTarget(); return; }
+			if (_targetIndicator == null || !IsInstanceValid(_targetIndicator))
+			{
+				_targetIndicator = new TargetIndicator();
+				GetParent().AddChild(_targetIndicator);
+			}
+			_targetIndicator.GlobalPosition = _targetEnemy.GlobalPosition + Vector2.Up * 28f;
+		}
+
+		/// <summary>현재 타겟의 방향(타겟이 있으면 그쪽, 없으면 facing). 죽으면 facing 폴백.</summary>
+		public Vector2 GetAimDirection()
+		{
+			if (_targetEnemy != null && IsInstanceValid(_targetEnemy))
+				return GlobalPosition.DirectionTo(_targetEnemy.GlobalPosition);
+			return _facingDirection != Vector2.Zero ? _facingDirection.Normalized() : Vector2.Right;
 		}
 
 		public override void _UnhandledInput(InputEvent @event)
