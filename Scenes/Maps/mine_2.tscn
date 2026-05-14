@@ -122,3 +122,9 @@ RespawnChanceOnReentry = 0.3
 position = Vector2(1100, 360)
 OreItem = ExtResource("20_sapphire")
 RespawnChanceOnReentry = 0.3
+
+[node name="PortalToMine3" parent="." instance=ExtResource("9_portal")]
+position = Vector2(1220, 360)
+TargetScenePath = "res://Scenes/Maps/mine_3.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+RespawnChanceOnReentry = 0.3
