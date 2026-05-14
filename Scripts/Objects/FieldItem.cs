@@ -64,7 +64,18 @@ namespace FirstGame.Objects
 			_canCollect = false;
 			GetTree().CreateTimer(0.5).Timeout += () =>
 			{
-				if (IsInstanceValid(this)) _canCollect = true;
+				if (!IsInstanceValid(this)) return;
+				_canCollect = true;
+				// 0.5s 픽업 잠금 동안 플레이어가 이미 위에 서 있어 BodyEntered가 재발화하지 않는 케이스 보강.
+				foreach (var body in GetOverlappingBodies())
+				{
+					if (body is Node2D n2d && n2d.IsInGroup("Player") && n2d is IItemCollector)
+					{
+						_isMagnetized = true;
+						_magnetTarget = n2d;
+						break;
+					}
+				}
 			};
 		}
 
