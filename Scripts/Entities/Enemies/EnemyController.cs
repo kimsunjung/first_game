@@ -32,6 +32,9 @@ namespace FirstGame.Entities.Enemies
 		// 진행 중인 공격 tween 참조 — 사망 시 Kill해 죽은 적이 데미지를 주거나
 		// 투사체를 발사하는 결함 차단. CreateTween()이 반환한 SceneTreeTween을 보관.
 		private Tween _attackTween;
+		// 진행 중인 피격 시각 tween — 연타 시 새 tween을 만들기 전에 이전 것을 Kill해
+		// position:x 흔들기/modulate 페이드가 누적되지 않도록 dedupe.
+		private Tween _hitTween;
 
 		public override void _Ready()
 		{
@@ -140,6 +143,9 @@ namespace FirstGame.Entities.Enemies
 
 		public void ApplyKnockback(Vector2 direction, float force)
 		{
+			// 공격 사이클 진입 후에는 knockback 면역 — 자기 사거리 진입 후 바로 밀려나
+			// 한 번도 공격 못 끝내는 결함 차단. 사이클 종료 콜백에서 _isAttacking=false로 해제.
+			if (_isAttacking) return;
 			_knockbackVelocity = direction * force;
 		}
 
@@ -439,16 +445,17 @@ namespace FirstGame.Entities.Enemies
 			// 플로팅 데미지 표시
 			UIEffectManager.SpawnFloatingLabel(GlobalPosition, damage, false, false);
 
-			// 피격 시 흰색 플래시 + 흔들림
+			// 피격 시 흰색 플래시 + 흔들림 — 연타 시 이전 hitTween을 Kill해 누적 차단.
 			if (_animSprite != null)
 			{
+				if (_hitTween != null && _hitTween.IsValid()) _hitTween.Kill();
 				_animSprite.Modulate = new Color(10f, 10f, 10f, 1f);
-				var hitTween = CreateTween();
-				hitTween.TweenProperty(_animSprite, "position:x", 3f, 0.03f);
-				hitTween.TweenProperty(_animSprite, "position:x", -3f, 0.03f);
-				hitTween.TweenProperty(_animSprite, "position:x", 2f, 0.03f);
-				hitTween.TweenProperty(_animSprite, "position:x", 0f, 0.03f);
-				hitTween.TweenProperty(_animSprite, "modulate",
+				_hitTween = CreateTween();
+				_hitTween.TweenProperty(_animSprite, "position:x", 3f, 0.03f);
+				_hitTween.TweenProperty(_animSprite, "position:x", -3f, 0.03f);
+				_hitTween.TweenProperty(_animSprite, "position:x", 2f, 0.03f);
+				_hitTween.TweenProperty(_animSprite, "position:x", 0f, 0.03f);
+				_hitTween.TweenProperty(_animSprite, "modulate",
 					new Color(1f, 1f, 1f, 1f), 0.08f);
 			}
 

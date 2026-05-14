@@ -24,7 +24,7 @@
     "revivePosX": 320,
     "revivePosY": 200,
     "playerKnockback": 60,
-    "enemyKnockback": 80,
+    "enemyKnockback": 35,
     "autoAttackInterval": 0.5,
     "attackRangeRatio": 0.85
   },
