@@ -8,7 +8,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 55.0
+MoveSpeed = 38.5
 DetectionRange = 300.0
 AttackRange = 46.0
 BaseDamage = 16
@@ -19,7 +19,7 @@ Behavior = 0
 EnemyTypeName = "DungeonGuardian"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.55
+SpriteScale = 0.33
 CollisionScale = 2.5
 PossibleDrops = Array[Resource]([ExtResource("3_mega"), ExtResource("4_ab"), ExtResource("5_core")])
 DropWeights = PackedFloat32Array(0.4, 0.3, 0.3)

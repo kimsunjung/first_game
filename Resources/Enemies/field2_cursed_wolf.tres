@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 130.0
+MoveSpeed = 91.0
 DetectionRange = 250.0
 AttackRange = 34.0
 BaseDamage = 6
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "CursedWolf"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.45
+SpriteScale = 0.27
 CollisionScale = 2.0
 PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_ah")])
 DropWeights = PackedFloat32Array(0.55, 0.45)

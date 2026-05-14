@@ -8,7 +8,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 95.0
+MoveSpeed = 66.5
 DetectionRange = 280.0
 AttackRange = 40.0
 BaseDamage = 12
@@ -19,7 +19,7 @@ Behavior = 0
 EnemyTypeName = "CursedBannerWraith"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.55
+SpriteScale = 0.33
 CollisionScale = 2.3
 PossibleDrops = Array[Resource]([ExtResource("3_mp"), ExtResource("4_bd"), ExtResource("5_core")])
 DropWeights = PackedFloat32Array(0.45, 0.35, 0.2)

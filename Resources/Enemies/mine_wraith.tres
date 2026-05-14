@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 110.0
+MoveSpeed = 77.0
 DetectionRange = 250.0
 AttackRange = 36.0
 BaseDamage = 7
@@ -16,7 +16,7 @@ Behavior = 0
 EnemyTypeName = "MineWraith"
 SpriteAtlasCoords = Vector2i(5, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.4
+SpriteScale = 0.24
 CollisionScale = 1.8
 DropChance = 0.5
 MaxHealth = 130

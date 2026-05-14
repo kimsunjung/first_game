@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 78.0
+MoveSpeed = 54.6
 DetectionRange = 220.0
 AttackRange = 38.0
 BaseDamage = 6
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "SkeletonMiner"
 SpriteAtlasCoords = Vector2i(5, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.4
+SpriteScale = 0.24
 CollisionScale = 1.8
 PossibleDrops = Array[Resource]([ExtResource("3_iron"), ExtResource("4_silver")])
 DropWeights = PackedFloat32Array(0.7, 0.3)

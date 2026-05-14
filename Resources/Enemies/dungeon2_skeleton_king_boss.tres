@@ -10,7 +10,7 @@
 
 [resource]
 script = ExtResource("1_es")
-MoveSpeed = 75.0
+MoveSpeed = 52.5
 DetectionRange = 320.0
 AttackRange = 48.0
 BaseDamage = 18
@@ -21,7 +21,7 @@ EnemyTypeName = "SkeletonKingNamed"
 IsBoss = true
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.65
+SpriteScale = 0.39
 CollisionScale = 2.8
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_mega"), ExtResource("5_core"), ExtResource("6_ib"), ExtResource("7_sb")])
 DropWeights = PackedFloat32Array(0.20, 0.20, 0.25, 0.20, 0.15)

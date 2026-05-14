@@ -8,7 +8,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 80.0
+MoveSpeed = 56.0
 DetectionRange = 270.0
 AttackRange = 42.0
 BaseDamage = 9
@@ -19,7 +19,7 @@ Behavior = 0
 EnemyTypeName = "OrcCaptain"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.5
+SpriteScale = 0.3
 CollisionScale = 2.2
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_leather"), ExtResource("5_iron")])
 DropWeights = PackedFloat32Array(0.4, 0.4, 0.2)

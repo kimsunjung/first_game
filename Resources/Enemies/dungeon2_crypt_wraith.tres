@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 110.0
+MoveSpeed = 77.0
 DetectionRange = 280.0
 AttackRange = 36.0
 BaseDamage = 10
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "CryptWraith"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.45
+SpriteScale = 0.27
 CollisionScale = 1.9
 PossibleDrops = Array[Resource]([ExtResource("3_mp"), ExtResource("4_bd")])
 DropWeights = PackedFloat32Array(0.55, 0.45)

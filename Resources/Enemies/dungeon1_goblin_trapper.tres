@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 120.0
+MoveSpeed = 84.0
 DetectionRange = 240.0
 AttackRange = 32.0
 BaseDamage = 5
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "GoblinTrapper"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.38
+SpriteScale = 0.228
 CollisionScale = 1.6
 PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_leather")])
 DropWeights = PackedFloat32Array(0.6, 0.4)

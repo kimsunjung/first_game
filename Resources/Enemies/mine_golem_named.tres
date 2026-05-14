@@ -9,7 +9,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 55.0
+MoveSpeed = 38.5
 DetectionRange = 290.0
 AttackRange = 44.0
 BaseDamage = 13
@@ -20,7 +20,7 @@ Behavior = 0
 EnemyTypeName = "MineGolem"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.6
+SpriteScale = 0.36
 CollisionScale = 2.6
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab"), ExtResource("5_helm"), ExtResource("6_core")])
 DropWeights = PackedFloat32Array(0.35, 0.35, 0.2, 0.1)

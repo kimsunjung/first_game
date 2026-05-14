@@ -8,7 +8,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 90.0
+MoveSpeed = 63.0
 DetectionRange = 270.0
 AttackRange = 38.0
 BaseDamage = 10
@@ -19,7 +19,7 @@ Behavior = 0
 EnemyTypeName = "PlagueGhoul"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.47
+SpriteScale = 0.282
 CollisionScale = 1.95
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ah"), ExtResource("5_bd")])
 DropWeights = PackedFloat32Array(0.45, 0.35, 0.2)

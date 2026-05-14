@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 38.0
+MoveSpeed = 35.0
 DetectionRange = 200.0
 AttackRange = 50.0
 BaseDamage = 10
@@ -16,7 +16,7 @@ Behavior = 0
 EnemyTypeName = "RockGolem"
 SpriteAtlasCoords = Vector2i(5, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.55
+SpriteScale = 0.33
 CollisionScale = 2.5
 DropChance = 0.7
 MaxHealth = 350

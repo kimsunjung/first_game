@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 110.0
+MoveSpeed = 77.0
 DetectionRange = 230.0
 AttackRange = 30.0
 BaseDamage = 2
@@ -16,7 +16,7 @@ Behavior = 0
 EnemyTypeName = "ForestSpider"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.36
+SpriteScale = 0.216
 CollisionScale = 1.5
 DropChance = 0.0
 MaxHealth = 35

@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 55.0
+MoveSpeed = 38.5
 DetectionRange = 220.0
 AttackRange = 36.0
 BaseDamage = 6
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "ZombieWalker"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.45
+SpriteScale = 0.27
 CollisionScale = 1.9
 PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_ah")])
 DropWeights = PackedFloat32Array(0.6, 0.4)

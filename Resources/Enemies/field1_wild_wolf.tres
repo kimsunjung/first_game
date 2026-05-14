@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 130.0
+MoveSpeed = 91.0
 DetectionRange = 240.0
 AttackRange = 32.0
 BaseDamage = 3
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "WildWolf"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.45
+SpriteScale = 0.27
 CollisionScale = 2.0
 PossibleDrops = Array[Resource]([ExtResource("3_tooth"), ExtResource("4_wolfneck")])
 DropWeights = PackedFloat32Array(0.85, 0.15)

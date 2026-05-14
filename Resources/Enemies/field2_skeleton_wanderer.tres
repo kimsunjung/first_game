@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 80.0
+MoveSpeed = 56.0
 DetectionRange = 240.0
 AttackRange = 36.0
 BaseDamage = 5
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "SkeletonWanderer"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.42
+SpriteScale = 0.252
 CollisionScale = 1.8
 PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_bd")])
 DropWeights = PackedFloat32Array(0.6, 0.4)

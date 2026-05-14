@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 60.0
+MoveSpeed = 42.0
 DetectionRange = 210.0
 AttackRange = 32.0
 BaseDamage = 4
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "GraveSlime"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.40
+SpriteScale = 0.24
 CollisionScale = 1.6
 PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_bd")])
 DropWeights = PackedFloat32Array(0.6, 0.4)

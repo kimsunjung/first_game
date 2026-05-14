@@ -8,7 +8,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 65.0
+MoveSpeed = 45.5
 DetectionRange = 280.0
 AttackRange = 42.0
 BaseDamage = 13
@@ -19,7 +19,7 @@ Behavior = 0
 EnemyTypeName = "FallenKnight"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.5
+SpriteScale = 0.3
 CollisionScale = 2.2
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab"), ExtResource("5_armor")])
 DropWeights = PackedFloat32Array(0.45, 0.45, 0.1)

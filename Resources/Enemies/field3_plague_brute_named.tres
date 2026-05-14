@@ -9,7 +9,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 75.0
+MoveSpeed = 52.5
 DetectionRange = 290.0
 AttackRange = 44.0
 BaseDamage = 14
@@ -20,7 +20,7 @@ Behavior = 0
 EnemyTypeName = "PlagueBrute"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.55
+SpriteScale = 0.33
 CollisionScale = 2.4
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ah"), ExtResource("5_ab"), ExtResource("6_core")])
 DropWeights = PackedFloat32Array(0.35, 0.3, 0.25, 0.1)

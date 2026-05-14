@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 145.0
+MoveSpeed = 101.5
 DetectionRange = 280.0
 AttackRange = 34.0
 BaseDamage = 11
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "ShadowAssassin"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.4
+SpriteScale = 0.24
 CollisionScale = 1.7
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_bd")])
 DropWeights = PackedFloat32Array(0.6, 0.4)

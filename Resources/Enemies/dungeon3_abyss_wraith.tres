@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 115.0
+MoveSpeed = 80.5
 DetectionRange = 280.0
 AttackRange = 36.0
 BaseDamage = 9
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "AbyssWraith"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.42
+SpriteScale = 0.252
 CollisionScale = 1.8
 PossibleDrops = Array[Resource]([ExtResource("3_mp"), ExtResource("4_bd")])
 DropWeights = PackedFloat32Array(0.6, 0.4)

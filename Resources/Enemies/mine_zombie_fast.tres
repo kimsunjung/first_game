@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 115.0
+MoveSpeed = 80.5
 DetectionRange = 230.0
 AttackRange = 35.0
 BaseDamage = 4
@@ -16,7 +16,7 @@ Behavior = 0
 EnemyTypeName = "MineZombieFast"
 SpriteAtlasCoords = Vector2i(5, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.4
+SpriteScale = 0.24
 CollisionScale = 1.8
 DropChance = 0.45
 MaxHealth = 95

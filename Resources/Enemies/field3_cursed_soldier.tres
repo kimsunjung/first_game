@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 75.0
+MoveSpeed = 52.5
 DetectionRange = 270.0
 AttackRange = 42.0
 BaseDamage = 9
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "CursedSoldier"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.48
+SpriteScale = 0.288
 CollisionScale = 2.0
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab")])
 DropWeights = PackedFloat32Array(0.55, 0.45)

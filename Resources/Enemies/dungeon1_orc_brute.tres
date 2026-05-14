@@ -8,7 +8,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 60.0
+MoveSpeed = 42.0
 DetectionRange = 240.0
 AttackRange = 44.0
 BaseDamage = 10
@@ -19,7 +19,7 @@ Behavior = 0
 EnemyTypeName = "OrcBrute"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.55
+SpriteScale = 0.33
 CollisionScale = 2.4
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_leather"), ExtResource("5_iron")])
 DropWeights = PackedFloat32Array(0.4, 0.4, 0.2)

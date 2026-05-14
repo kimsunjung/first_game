@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 90.0
+MoveSpeed = 63.0
 DetectionRange = 220.0
 AttackRange = 35.0
 BaseDamage = 3
@@ -18,7 +18,7 @@ Behavior = 0
 EnemyTypeName = "GoblinScout"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.4
+SpriteScale = 0.24
 CollisionScale = 1.7
 PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_iron")])
 DropWeights = PackedFloat32Array(0.7, 0.3)
