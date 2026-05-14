@@ -5,6 +5,18 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j4k56"]
 size = Vector2(24, 20)
 
+[sub_resource type="Gradient" id="vision_gradient"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 0.95, 0.8, 0.55, 1, 0.85, 0.5, 0)
+
+[sub_resource type="GradientTexture2D" id="vision_tex"]
+gradient = SubResource("vision_gradient")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
 [node name="Player" type="CharacterBody2D" unique_id=1068721970 groups=["Player"]]
 collision_layer = 1
 collision_mask = 7
@@ -30,3 +42,10 @@ offset_bottom = -15.0
 max_value = 100.0
 value = 100.0
 show_percentage = false
+
+[node name="VisionLight" type="PointLight2D" parent="."]
+texture = SubResource("vision_tex")
+texture_scale = 1.6
+energy = 1.4
+range_z_min = -1024
+range_z_max = 1024

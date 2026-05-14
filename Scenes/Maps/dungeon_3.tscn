@@ -31,6 +31,9 @@ size = Vector2(16, 720)
 
 [node name="Dungeon3" type="Node2D"]
 
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.10, 0.10, 0.18, 1)
+
 [node name="Background" type="ColorRect" parent="."]
 z_index = -10
 offset_right = 1280.0
