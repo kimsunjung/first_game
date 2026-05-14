@@ -19,6 +19,12 @@ namespace FirstGame.Entities.Enemies
 		/// </summary>
 		public string BossId { get; set; } = "";
 
+		// 엘리트 affix(스폰 시 EnemySpawner가 주입). Vampiric 자가 재생 tick에 필요.
+		public EliteAffix Affix { get; set; } = EliteAffix.None;
+		private float _regenRatePerSec = 0f; // MaxHealth의 비율
+		private float _regenAccum = 0f;
+		public void SetRegenRate(float ratePerSec) => _regenRatePerSec = Mathf.Max(0f, ratePerSec);
+
 		private Node2D _target;
 		private ProgressBar _healthBar;
 		private AnimatedSprite2D _animSprite;
@@ -158,6 +164,19 @@ namespace FirstGame.Entities.Enemies
 		public override void _PhysicsProcess(double delta)
 		{
 			if (_isDying) return;
+
+			// Vampiric elite 자가 재생 — MaxHealth 비율로 매초 누적, 1HP 단위로 적용.
+			if (_regenRatePerSec > 0f && Stats.CurrentHealth < Stats.MaxHealth)
+			{
+				_regenAccum += Stats.MaxHealth * _regenRatePerSec * (float)delta;
+				if (_regenAccum >= 1f)
+				{
+					int heal = (int)_regenAccum;
+					_regenAccum -= heal;
+					Stats.CurrentHealth = Mathf.Min(Stats.MaxHealth, Stats.CurrentHealth + heal);
+					if (_healthBar != null) _healthBar.Value = Stats.CurrentHealth;
+				}
+			}
 
 			if (!IsInstanceValid(_target))
 			{
@@ -489,6 +508,10 @@ namespace FirstGame.Entities.Enemies
 					damage = (int)(damage * 0.75f);
 				if (damage < 1) damage = 1;
 			}
+
+			// Defense 적용 — Tough 엘리트 affix가 DefenseBonus를 +5 부여하므로 실제 피해 감소로 반영.
+			// 일반 적은 .tres Defense 기본 0이라 영향 없음. PlayerController.TakeDamage와 동일 패턴.
+			damage = Math.Max(1, damage - Stats.Defense);
 
 			Stats.CurrentHealth -= damage;
 			AudioManager.Instance?.PlaySFX("enemy_hit.wav");

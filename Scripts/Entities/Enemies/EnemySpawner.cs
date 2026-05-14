@@ -158,6 +158,8 @@ namespace FirstGame.Entities.Enemies
 				// StatVariants가 있으면 랜덤으로 하나 선택 + zone 난이도 스케일 적용.
 				// .tres 원본을 보호하기 위해 Duplicate 후 변형.
 				bool isElite = false;
+				EliteAffix affix = EliteAffix.None;
+				EliteAffixUtil.AffixParams affixParams = default;
 				if (StatVariants != null && StatVariants.Length > 0)
 				{
 					int idx = (int)(GD.Randi() % (uint)StatVariants.Length);
@@ -165,7 +167,12 @@ namespace FirstGame.Entities.Enemies
 					ApplyZoneScaling(scaled);
 
 					isElite = GD.Randf() < BalanceData.Elite.SpawnChance;
-					if (isElite) ApplyEliteBoost(scaled);
+					if (isElite)
+					{
+						affix = EliteAffixUtil.RollRandom();
+						affixParams = EliteAffixUtil.Get(affix);
+						ApplyEliteBoost(scaled, affixParams);
+					}
 					enemy.Stats = scaled;
 				}
 
@@ -173,7 +180,10 @@ namespace FirstGame.Entities.Enemies
 				if (isElite)
 				{
 					enemy.Scale = new Vector2(BalanceData.Elite.ScaleMultiplier, BalanceData.Elite.ScaleMultiplier);
-					enemy.Modulate = new Color(1.4f, 0.7f, 1.3f, 1f);
+					enemy.Modulate = affixParams.Modulate;
+					enemy.Affix = affix;
+					// Vampiric 재생률을 EnemyController 내부 필드에 주입(public 재생률 setter 대신 reflection-free 경로).
+					enemy.SetRegenRate(affixParams.HpRegenPerSec);
 					enemy.AddToGroup("Elite");
 				}
 				enemy.AddToGroup("Enemy");
@@ -229,16 +239,28 @@ namespace FirstGame.Entities.Enemies
 			return false;
 		}
 
-		private static void ApplyEliteBoost(EnemyStats stats)
+		// 엘리트 부스트: 기본 multiplier(balance.elite)에 affix별 추가 배율 적용.
+		private static void ApplyEliteBoost(EnemyStats stats, EliteAffixUtil.AffixParams affixParams)
 		{
 			var b = BalanceData.Elite;
-			stats.MaxHealth = Mathf.Max(1, Mathf.RoundToInt(stats.MaxHealth * b.HpMultiplier));
+			stats.MaxHealth = Mathf.Max(1, Mathf.RoundToInt(stats.MaxHealth * b.HpMultiplier * affixParams.HpMul));
 			stats.CurrentHealth = stats.MaxHealth;
-			stats.BaseDamage = Mathf.Max(1, Mathf.RoundToInt(stats.BaseDamage * b.AtkMultiplier));
+			stats.BaseDamage = Mathf.Max(1, Mathf.RoundToInt(stats.BaseDamage * b.AtkMultiplier * affixParams.AtkMul));
+			stats.MoveSpeed *= affixParams.MoveSpeedMul;
+			stats.AttackCooldown *= affixParams.AttackCooldownMul;
+			stats.Defense += affixParams.DefenseBonus;
 			stats.ExperienceReward = Mathf.RoundToInt(stats.ExperienceReward * b.ExpMultiplier);
 			stats.DropChance = Mathf.Min(1f, stats.DropChance * b.DropMultiplier);
-			if (!stats.EnemyTypeName.StartsWith("엘리트 "))
-				stats.EnemyTypeName = $"엘리트 {stats.EnemyTypeName}";
+
+			string baseName = stats.EnemyTypeName;
+			if (baseName.StartsWith("엘리트 ")) baseName = baseName.Substring(4);
+			if (baseName.StartsWith("광폭한 ") || baseName.StartsWith("흡혈 ")
+			    || baseName.StartsWith("민첩한 ") || baseName.StartsWith("강건한 "))
+			{
+				int sp = baseName.IndexOf(' ');
+				if (sp > 0) baseName = baseName.Substring(sp + 1);
+			}
+			stats.EnemyTypeName = $"{affixParams.NamePrefix} {baseName}";
 		}
 
 		private void ApplyZoneScaling(EnemyStats stats)

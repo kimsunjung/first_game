@@ -200,9 +200,9 @@ namespace FirstGame.Core
 			if (!HasActiveQuest) return;
 			if (ActiveQuest.Type != QuestType.Kill) return;
 			if (string.IsNullOrEmpty(enemyTypeName)) return;
-			// 엘리트 prefix 무시 (예: "엘리트 Orc" → "Orc"로 매칭)
-			string normalized = enemyTypeName.StartsWith("엘리트 ")
-				? enemyTypeName.Substring(4) : enemyTypeName;
+			// 엘리트 affix prefix 모두 제거 (예: "광폭한 Orc"/"흡혈 Orc" → "Orc"로 매칭).
+			// 신규 affix 추가 시 EliteAffixUtil._allPrefixes만 갱신 — 여기는 수정 불필요.
+			string normalized = EliteAffixUtil.StripElitePrefix(enemyTypeName);
 			if (normalized != ActiveQuest.TargetEnemyType) return;
 
 			Progress = Math.Min(Progress + 1, ActiveQuest.TargetCount);
