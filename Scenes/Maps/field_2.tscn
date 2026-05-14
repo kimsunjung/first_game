@@ -63,7 +63,7 @@ TargetScenePath = "res://Scenes/Maps/field_1.tscn"
 TargetSpawnPosition = Vector2(640, 640)
 
 [node name="PortalToDungeon2" parent="." instance=ExtResource("9_portal")]
-position = Vector2(1220, 360)
+position = Vector2(640, 360)
 TargetScenePath = "res://Scenes/Maps/dungeon_2.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 
