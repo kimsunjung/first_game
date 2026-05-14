@@ -102,6 +102,42 @@ namespace FirstGame.Data.Skills
 
 	/// <summary>IceShard (마법사) — FireBolt와 유사한 단일 원거리. 속성 Ice 기본.
 	/// 슬로우 효과는 후속 작업 — 현재 데미지만.</summary>
+	/// <summary>LightningStorm (마법사) — 10초간 매 2초마다 가장 가까운 적에 번개.
+	/// 능동 발동 시 PlayerStats에 stormDuration 누적, PlayerController가 매 프레임 tick.</summary>
+	[SkillStrategy(SkillType.LightningStorm)]
+	public class LightningStormStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			float duration = skill.DurationSeconds > 0f ? skill.DurationSeconds : 10f;
+			target.StartLightningStorm(duration, 2f);
+			target.TriggerCameraShake(4f, 0.2f);
+		}
+	}
+
+	/// <summary>PreciseAim (궁수) — 10초간 크리율 +30%. ApplyBuffEx 사용.</summary>
+	[SkillStrategy(SkillType.PreciseAim)]
+	public class PreciseAimStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			float dur = skill.DurationSeconds > 0f ? skill.DurationSeconds : 10f;
+			target.ApplyTempBuff(0, 0, 0.30f, dur);
+		}
+	}
+
+	/// <summary>IronStance (전사) — 10초간 방어력 +N. ApplyBuffEx 사용.</summary>
+	[SkillStrategy(SkillType.IronStance)]
+	public class IronStanceStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			float dur = skill.DurationSeconds > 0f ? skill.DurationSeconds : 10f;
+			int defBonus = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 10;
+			target.ApplyTempBuff(0, defBonus, 0f, dur);
+		}
+	}
+
 	[SkillStrategy(SkillType.IceShard)]
 	public class IceShardStrategy : ISkillStrategy
 	{

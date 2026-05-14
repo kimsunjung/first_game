@@ -22,5 +22,9 @@ namespace FirstGame.Core.Interfaces
 		IEnumerable<(Node2D Node, IDamageable Target)> GetNearbyEnemies(float range);
 		// 원거리 스킬 — 정면 방향으로 투사체 발사. 닿을 때 데미지.
 		void FireProjectile(int damage, ElementType element, Color color, float speed = 460f);
+		// 마법사 LightningStorm — duration초 동안 interval초마다 가장 가까운 적에 번개.
+		void StartLightningStorm(float duration, float interval);
+		// 일시 buff — duration초 동안 dmg/def/crit. ApplyBuffEx 래퍼.
+		void ApplyTempBuff(int dmgDelta, int defDelta, float critDelta, float duration);
 	}
 }
