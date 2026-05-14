@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_kill_004"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_kill_04"
+QuestTitle = "해적 소탕"
+Description = "해적 병사 12마리를 처치하라."
+Type = 0
+TargetCount = 12
+TargetEnemyType = "PirateGrunt"
+GiverNpcId = "quest_board"
+GoldReward = 200
+ExpReward = 100
+IsRepeatable = true

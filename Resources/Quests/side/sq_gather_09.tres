@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_gath_009"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/antidote.tres" id="2_item"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_gather_09"
+QuestTitle = "독 해독"
+Description = "해독제 5개를 모아라."
+Type = 1
+TargetCount = 5
+TargetItem = ExtResource("2_item")
+GiverNpcId = "marta_innkeeper"
+GoldReward = 120
+ExpReward = 60
+IsRepeatable = true

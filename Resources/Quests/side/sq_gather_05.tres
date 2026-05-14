@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_gath_005"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/boss_core.tres" id="2_item"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_gather_05"
+QuestTitle = "보스 재료 수집"
+Description = "보스 코어 2개를 구해라."
+Type = 1
+TargetCount = 2
+TargetItem = ExtResource("2_item")
+GiverNpcId = "quest_board"
+GoldReward = 400
+ExpReward = 200
+IsRepeatable = true

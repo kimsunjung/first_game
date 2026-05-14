@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_kill_001"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_kill_01"
+QuestTitle = "오크 사냥"
+Description = "오크 10마리를 처치하라."
+Type = 0
+TargetCount = 10
+TargetEnemyType = "OrcScout"
+GiverNpcId = "quest_board"
+GoldReward = 150
+ExpReward = 80
+IsRepeatable = true

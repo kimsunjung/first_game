@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_kill_010"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_kill_10"
+QuestTitle = "거미 소탕"
+Description = "숲 거미 20마리를 처치하라."
+Type = 0
+TargetCount = 20
+TargetEnemyType = "ForestSpider"
+GiverNpcId = "quest_board"
+GoldReward = 100
+ExpReward = 55
+IsRepeatable = true
