@@ -229,6 +229,11 @@ position = Vector2(600, 180)
 TargetScenePath = "res://Scenes/Maps/field_1.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 
+[node name="PortalToOutpost" parent="." instance=ExtResource("15_portal")]
+position = Vector2(40, 180)
+TargetScenePath = "res://Scenes/Maps/field_outpost.tscn"
+TargetSpawnPosition = Vector2(560, 180)
+
 [node name="Walls" type="StaticBody2D" parent="."]
 collision_layer = 4
 collision_mask = 0
