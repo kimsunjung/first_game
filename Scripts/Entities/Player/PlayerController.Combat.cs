@@ -42,9 +42,33 @@ namespace FirstGame.Entities.Player
 			}
 
 			if (Stats.CurrentHealth <= 0)
+			{
+				// ReviveOnDeath 자동 소비 — 인벤에 있으면 1개 사용해 HP 50% 부활.
+				if (TryAutoRevive()) return;
 				Die();
+			}
 			else
 				PlayHitAnimation();
+		}
+
+		/// <summary>인벤에 ReviveOnDeath 효과 아이템이 있으면 1개 소비 → HP 50% 회복. 반환 true=부활 성공.</summary>
+		private bool TryAutoRevive()
+		{
+			if (Inventory == null) return false;
+			for (int i = 0; i < Inventory.Slots.Count; i++)
+			{
+				var slot = Inventory.Slots[i];
+				if (slot.Item == null) continue;
+				if (slot.Item.Type != ItemType.Consumable) continue;
+				if (slot.Item.UseEffect != ItemUseEffect.ReviveOnDeath) continue;
+
+				Inventory.RemoveItem(i, 1);
+				Stats.CurrentHealth = Mathf.Max(1, Stats.MaxHealth / 2);
+				AudioManager.Instance?.PlaySFX("potion_use.wav");
+				GD.Print($"[부활] {slot.Item.ItemName} 자동 소비! HP 50%로 부활");
+				return true;
+			}
+			return false;
 		}
 
 		public void GainExp(int amount)
