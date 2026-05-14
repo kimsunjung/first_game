@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://f5_titan01"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/plague_brute.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[resource]
+script = ExtResource("1")
+MoveSpeed = 65
+DetectionRange = 300
+AttackRange = 60
+BaseDamage = 30
+AttackCooldown = 3.0
+ExperienceReward = 120
+GoldReward = 80
+Behavior = 0
+EnemyTypeName = "GlacierTitan"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.35
+CollisionScale = 3.0
+PossibleDrops = Array[Resource]([ExtResource("3_hp")])
+DropWeights = PackedFloat32Array(1.0)
+DropChance = 0.3
+MaxHealth = 800
+Defense = 10

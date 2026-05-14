@@ -61,8 +61,18 @@ TargetScenePath = "res://Scenes/Maps/field_2.tscn"
 TargetSpawnPosition = Vector2(640, 640)
 
 [node name="PortalToDungeon3" parent="." instance=ExtResource("9_portal")]
-position = Vector2(1220, 360)
+position = Vector2(640, 360)
 TargetScenePath = "res://Scenes/Maps/dungeon_3.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+
+[node name="PortalToSnowfield" parent="." instance=ExtResource("9_portal")]
+position = Vector2(1220, 200)
+TargetScenePath = "res://Scenes/Maps/field_5_snowfield.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+
+[node name="PortalToVolcano" parent="." instance=ExtResource("9_portal")]
+position = Vector2(1220, 520)
+TargetScenePath = "res://Scenes/Maps/field_6_volcano.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 
 [node name="EnemySpawner" type="Node2D" parent="."]

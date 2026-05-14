@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wpn_glacieraxe01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/great_axe.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "빙하 도끼"
+Description = "빙하에서 캐낸 얼음 도끼. ATK+20"
+Rarity = 3
+Icon = ExtResource("2_icon")
+Price = 0
+SellPrice = 1500
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 20
+AttackType = 2
+RequiredClass = 0
+AvailableToAllClasses = false
+IsShopBlocked = true
+Weight = 4.0
