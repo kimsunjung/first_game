@@ -15,6 +15,7 @@
 [ext_resource type="Resource" uid="uid://f4_sniper01" path="res://Resources/Enemies/field4_pirate_sniper.tres" id="14_e3"]
 [ext_resource type="Resource" uid="uid://f4_crab01" path="res://Resources/Enemies/field4_giant_crab.tres" id="15_e4"]
 [ext_resource type="Resource" uid="uid://f4_seagull01" path="res://Resources/Enemies/field4_seagull_swarm.tres" id="16_e5"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/dungeon_entrance.png" id="20_dent"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -58,6 +59,11 @@ position = Vector2(80, 360)
 position = Vector2(50, 360)
 TargetScenePath = "res://Scenes/Maps/town.tscn"
 TargetSpawnPosition = Vector2(550, 300)
+
+[node name="DungeonEntranceMarker4" type="Sprite2D" parent="."]
+position = Vector2(640, 360)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("20_dent")
 
 [node name="PortalToDungeon4" parent="." instance=ExtResource("9_portal")]
 position = Vector2(640, 360)
