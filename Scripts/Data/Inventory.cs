@@ -156,6 +156,27 @@ namespace FirstGame.Data
 
             OnInventoryChanged?.Invoke();
             if (fireAcquired) OnItemPickedUp?.Invoke(item);
+
+            // 신규 정책: 물약(소모품) 획득·구매 시 빈 퀵슬롯 첫 번째에 자동 등록.
+            // fireAcquired=true(획득/구매)일 때만 — 세이브 복원에는 영향 X.
+            if (fireAcquired && item.Type == ItemType.Consumable)
+            {
+                bool alreadyAssigned = false;
+                for (int i = 0; i < QuickSlots.Length; i++)
+                    if (QuickSlots[i] != null && IsSameItem(QuickSlots[i], item)) { alreadyAssigned = true; break; }
+                if (!alreadyAssigned)
+                {
+                    for (int i = 0; i < QuickSlots.Length; i++)
+                    {
+                        if (QuickSlots[i] == null)
+                        {
+                            QuickSlots[i] = item;
+                            OnQuickSlotChanged?.Invoke();
+                            break;
+                        }
+                    }
+                }
+            }
             return true;
         }
 
