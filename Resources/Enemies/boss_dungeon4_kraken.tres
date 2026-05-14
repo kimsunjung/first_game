@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://boss_kraken01"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/ancient_lich.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/arcane_bolt_projectile.png" id="3_proj"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="4_hp"]
+[resource]
+script = ExtResource("1")
+ProjectileTexture = ExtResource("3_proj")
+ProjectileScale = 0.3
+MoveSpeed = 55.0
+DetectionRange = 400.0
+AttackRange = 300.0
+PreferredRange = 200.0
+BaseDamage = 35
+AttackCooldown = 3.0
+ExperienceReward = 500
+GoldReward = 300
+Behavior = 1
+EnemyTypeName = "Kraken"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.4
+CollisionScale = 3.5
+PossibleDrops = Array[Resource]([ExtResource("4_hp")])
+DropWeights = PackedFloat32Array(1.0)
+DropChance = 1.0
+MaxHealth = 1800
+Defense = 12
+IsBoss = true
