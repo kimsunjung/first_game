@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FirstGame.Core.Interfaces;
+using FirstGame.Data;
 
 namespace FirstGame.Data.Skills
 {
@@ -64,7 +65,9 @@ namespace FirstGame.Data.Skills
 				long rawDmg = (long)target.BaseDamage * multiplier;
 				if (fbCrit) rawDmg = (long)(rawDmg * target.CritMultiplier);
 				int dmg = (int)Math.Min(rawDmg, int.MaxValue);
-				hitTarget.TakeDamage(dmg);
+				// FireBolt 기본 속성 Fire — 스킬 .tres에서 명시되면 그 값 사용.
+				ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.Fire;
+				hitTarget.TakeDamage(dmg, element);
 				target.TriggerCameraShake(7f, 0.3f);
 				GD.Print($"파이어볼트 명중! ({dmg} 데미지{(fbCrit ? " CRIT!" : "")})");
 			}

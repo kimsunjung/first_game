@@ -29,6 +29,12 @@ namespace FirstGame.Entities.Enemies
 		private bool _isAttacking = false;
 		private bool _isProvoked = false; // Passive 행동: 피격 전까지 비공격
 
+		// AI stuck 회피 — Chase 중 일정 시간 위치 변화가 없으면 perpendicular nudge로 우회.
+		private Vector2 _lastPosition = Vector2.Zero;
+		private float _stuckTimer = 0f;
+		private Vector2 _avoidanceNudge = Vector2.Zero;
+		private float _avoidanceTimer = 0f;
+
 		// 진행 중인 공격 tween 참조 — 사망 시 Kill해 죽은 적이 데미지를 주거나
 		// 투사체를 발사하는 결함 차단. CreateTween()이 반환한 SceneTreeTween을 보관.
 		private Tween _attackTween;
@@ -190,6 +196,33 @@ namespace FirstGame.Entities.Enemies
 				default:
 					ExecuteIdle();
 					break;
+			}
+
+			// AI stuck 회피 — Chase 중 거의 움직이지 못하면 perpendicular nudge로 우회.
+			if (_state == EnemyState.Chase)
+			{
+				float movedSq = (GlobalPosition - _lastPosition).LengthSquared();
+				if (movedSq < 1.0f)
+				{
+					_stuckTimer += (float)delta;
+					if (_stuckTimer > 0.7f && _avoidanceTimer <= 0f)
+					{
+						Vector2 perpendicular = new Vector2(-direction.Y, direction.X);
+						if (GD.Randf() < 0.5f) perpendicular = -perpendicular;
+						_avoidanceNudge = perpendicular * Stats.MoveSpeed;
+						_avoidanceTimer = 0.4f;
+						_stuckTimer = 0f;
+					}
+				}
+				else _stuckTimer = 0f;
+			}
+			else _stuckTimer = 0f;
+			_lastPosition = GlobalPosition;
+
+			if (_avoidanceTimer > 0f)
+			{
+				_avoidanceTimer -= (float)delta;
+				Velocity += _avoidanceNudge;
 			}
 
 			// 넉백 적용 및 감쇠
@@ -426,13 +459,26 @@ namespace FirstGame.Entities.Enemies
 			_target = GameManager.Instance?.Player as Node2D;
 		}
 
-		public void TakeDamage(int damage)
+		public void TakeDamage(int damage) => TakeDamage(damage, FirstGame.Data.ElementType.None);
+
+		// 속성 인식 오버로드 — 공격자 속성이 적 Weakness면 1.5x, Element와 같으면 0.75x.
+		public void TakeDamage(int damage, FirstGame.Data.ElementType attackerElement)
 		{
 			if (_isDying) return;
 
 			// Passive 적: 피격 시 도발됨
 			if (!_isProvoked && Stats.Behavior == EnemyBehavior.Passive)
 				_isProvoked = true;
+
+			// 속성 보정
+			if (attackerElement != FirstGame.Data.ElementType.None)
+			{
+				if (Stats.Weakness != FirstGame.Data.ElementType.None && attackerElement == Stats.Weakness)
+					damage = (int)(damage * 1.5f);
+				else if (Stats.Element != FirstGame.Data.ElementType.None && attackerElement == Stats.Element)
+					damage = (int)(damage * 0.75f);
+				if (damage < 1) damage = 1;
+			}
 
 			Stats.CurrentHealth -= damage;
 			AudioManager.Instance?.PlaySFX("enemy_hit.wav");

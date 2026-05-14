@@ -26,5 +26,6 @@ namespace FirstGame.Data
 		[Export] public int HealAmount { get; set; } = 0;       // HealSelf용
 		[Export] public float DurationSeconds { get; set; } = 0f; // Dash용
 		[Export] public int BonusDamageMultiplier { get; set; } = 2; // PowerStrike배율
+		[Export] public ElementType Element { get; set; } = ElementType.None; // 속성 데미지 (None이면 무속성)
 	}
 }

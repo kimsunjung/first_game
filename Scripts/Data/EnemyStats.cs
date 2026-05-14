@@ -41,6 +41,13 @@ namespace FirstGame.Data
 		// 14×14 기본 콜리전 기준으로 배수 적용 — root Scale 미사용이라 elite scale과 독립적으로 동작.
 		[Export] public float CollisionScale { get; set; } = 1.0f;
 
+		// ─── 속성 (Elemental) ───────────────────────────────────────
+		[ExportGroup("Element")]
+		// 적 자체 속성 — 동일 속성 공격에 25% 저항.
+		[Export] public ElementType Element { get; set; } = ElementType.None;
+		// 약점 속성 — 일치하는 공격에 50% 추가 데미지.
+		[Export] public ElementType Weakness { get; set; } = ElementType.None;
+
 		// ─── 투사체 (Ranged 전용) ───────────────────────────────────
 		[ExportGroup("Projectile")]
 		// Ranged 적의 투사체 텍스처. null이면 EnemyProjectile이 기존 DrawCircle 폴백 렌더링 사용.

@@ -4,7 +4,7 @@
 [ext_resource type="Resource" path="res://Resources/Stats/enemy_default_stats.tres" id="3_stats"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7k104"]
-size = Vector2(14, 14)
+size = Vector2(18, 18)
 
 [node name="Enemy" type="CharacterBody2D" unique_id=188341649 groups=["Enemy"]]
 collision_layer = 2
