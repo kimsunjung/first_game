@@ -12,5 +12,7 @@ namespace FirstGame.Data
 	public partial class QuestManifest : Resource
 	{
 		[Export] public QuestData[] MainQuests { get; set; }
+		// 사이드 퀘스트 — IsRepeatable=true 권장. NPC가 GiverNpcId 매칭으로 부여.
+		[Export] public QuestData[] SideQuests { get; set; }
 	}
 }
