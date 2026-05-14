@@ -94,9 +94,23 @@ namespace FirstGame.Entities
 			if (Current != this) return;
 			if (@event.IsActionPressed("interact") && !@event.IsEcho())
 			{
+				ShowChapterDialogueIfAny();
 				OnInteract();
 				GetViewport().SetInputAsHandled();
 			}
+		}
+
+		// 현재 챕터에 맞는 NPC 대사 토스트를 띄운다. ChapterDialogue 미정의 NPC는 no-op.
+		// 포탈/광산 노드 등 NpcId 비어있는 인터랙터블도 자동 통과.
+		private void ShowChapterDialogueIfAny()
+		{
+			if (string.IsNullOrEmpty(NpcId)) return;
+			var gm = FirstGame.Core.GameManager.Instance;
+			if (gm == null) return;
+			string line = FirstGame.Data.ChapterDialogue.Get(NpcId, gm.CurrentChapter);
+			if (string.IsNullOrEmpty(line)) return;
+			var hud = GetTree()?.CurrentScene?.GetNodeOrNull<FirstGame.UI.HUD>("HUD");
+			hud?.ShowNpcDialogue(NpcId, line);
 		}
 
 		private void OnBodyEntered(Node2D body)

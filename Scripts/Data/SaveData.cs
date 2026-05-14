@@ -13,7 +13,7 @@ namespace FirstGame.Data
 
 	public class SaveData
 	{
-		public const int LatestVersion = 9;
+		public const int LatestVersion = 10;
 		public int Version { get; set; } = LatestVersion;
 
 		public float PlayerPosX { get; set; }
@@ -38,6 +38,16 @@ namespace FirstGame.Data
 		public int StrPoints { get; set; } = 0;
 		public int ConPoints { get; set; } = 0;
 		public int IntPoints { get; set; } = 0;
+		// v10: DEX 추가 (궁수 클래스 핵심 스탯). 누락 시 0으로 로드.
+		public int DexPoints { get; set; } = 0;
+
+		// v10: 캐릭터 클래스(Warrior/Mage/Archer). 신규 게임 시작 시 선택.
+		// 누락 시 Warrior(0)로 로드되어 기존 세이브 호환.
+		public int PlayerClassId { get; set; } = 0;
+
+		// v10: 메인 스토리 챕터 플래그. 진행에 따라 추가 누적.
+		// 예: "flag_outpost_entered", "flag_orc_warlord_killed" 등.
+		public List<string> ChapterFlags { get; set; } = new();
 
 		// 퀘스트 상태
 		public string CurrentQuestPath { get; set; } = "";

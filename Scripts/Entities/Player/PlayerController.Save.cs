@@ -26,6 +26,8 @@ namespace FirstGame.Entities.Player
 			data.StrPoints = Stats.StrPoints;
 			data.ConPoints = Stats.ConPoints;
 			data.IntPoints = Stats.IntPoints;
+			data.DexPoints = Stats.DexPoints;
+			data.PlayerClassId = (int)Stats.PlayerClass;
 
 			// 인벤토리 — 슬롯별 affix까지 함께 직렬화 (장신구 인스턴스 보존).
 			data.InventoryItems = new List<SavedItemSlot>();
@@ -109,6 +111,9 @@ namespace FirstGame.Entities.Player
 
 				// 채광 완료된 광산 노드 — 씬 재진입 시 부활 차단.
 				data.MinedNodes = new List<string>(gm.MinedNodes);
+
+				// 메인 스토리 챕터 플래그.
+				data.ChapterFlags = new List<string>(gm.ChapterFlags);
 			}
 		}
 

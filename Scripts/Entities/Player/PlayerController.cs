@@ -129,9 +129,12 @@ namespace FirstGame.Entities.Player
 
 			SetupAnimations();
 
-			// 신규 게임 첫 자동 저장 (Player는 위에서 이미 등록됨)
+			// 신규 게임: 클래스 선택값 + 시작 무기 + 시작 스킬 부여 후 첫 자동 저장.
 			if (SaveManager.PendingLoadData == null && !SaveManager.HasSave())
+			{
+				ApplyNewGameClassSetup();
 				SaveManager.SaveGame();
+			}
 
 			// 인벤에 변동 생길 때마다 pending reward 재시도. 복원 중에는 GameManager의
 			// IsRestoringState 가드가 막아주므로 구독 위치는 자유.
@@ -225,6 +228,41 @@ namespace FirstGame.Entities.Player
 			_headHealthBar.Value = cur;
 		}
 
+		// 신규 게임 시작 시 호출. SaveManager.PendingNewGameClass(MainMenu가 설정)을 읽어
+		// 플레이어 클래스, 시작 무기(starter_*), 시작 스킬을 결정. 누락 시 Warrior 기본.
+		private void ApplyNewGameClassSetup()
+		{
+			var cls = SaveManager.PendingNewGameClass ?? FirstGame.Data.PlayerClass.Warrior;
+			SaveManager.PendingNewGameClass = null;
+			Stats.PlayerClass = cls;
+
+			string weaponPath = cls switch
+			{
+				FirstGame.Data.PlayerClass.Mage   => "res://Resources/Items/starter_staff.tres",
+				FirstGame.Data.PlayerClass.Archer => "res://Resources/Items/starter_bow.tres",
+				_ => "res://Resources/Items/starter_sword.tres"
+			};
+			string skillPath = cls switch
+			{
+				FirstGame.Data.PlayerClass.Mage   => "res://Resources/Skills/fire_bolt.tres",
+				FirstGame.Data.PlayerClass.Archer => "res://Resources/Skills/dash.tres",
+				_ => "res://Resources/Skills/power_strike.tres"
+			};
+
+			var weapon = GD.Load<ItemData>(weaponPath);
+			if (weapon != null)
+			{
+				if (Inventory.AddItem(weapon, 1, 0, fireAcquired: false))
+				{
+					int idx = Inventory.Slots.FindIndex(s => s.Item == weapon);
+					if (idx >= 0) Inventory.EquipItem(idx, Stats);
+				}
+			}
+
+			var skill = GD.Load<SkillData>(skillPath);
+			if (skill != null) Stats.LearnSkill(skill);
+		}
+
 		private void OnLevelUpHandler(int newLevel)
 		{
 			EventManager.TriggerLevelUp(newLevel);
@@ -270,7 +308,8 @@ namespace FirstGame.Entities.Player
 				// 스탯 재계산: 레벨 → STR/CON/INT → 장비(RestoreEquipment) 순서로 결정론적 재계산
 				// data.PlayerMaxHealth 직접 신뢰 금지: RestoreEquipment가 장비 보너스를 더하므로 이중 카운팅 발생
 				Stats.SetLevelFromSave(data.PlayerLevel, data.PlayerExp);
-				Stats.SetStatPointsFromSave(data.StatPoints, data.StrPoints, data.ConPoints, data.IntPoints);
+				Stats.SetStatPointsFromSave(data.StatPoints, data.StrPoints, data.ConPoints, data.IntPoints, data.DexPoints);
+				Stats.PlayerClass = (FirstGame.Data.PlayerClass)data.PlayerClassId;
 				Stats.ApplyStatPointBonuses();
 				GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses ?? new());
 				GameManager.Instance.PlayerGold = data.PlayerGold;
@@ -343,6 +382,7 @@ namespace FirstGame.Entities.Player
 				GameManager.Instance?.RestoreFieldSeeds(data.FieldSeeds);
 				GameManager.Instance?.RestoreVisitedScenes(data.VisitedScenes);
 				GameManager.Instance?.RestoreMinedNodes(data.MinedNodes);
+				GameManager.Instance?.RestoreChapterFlags(data.ChapterFlags);
 				// 현재 씬을 visited에 추가 (로드된 직후의 시작 씬도 방문 처리).
 				GameManager.Instance?.RecordSceneVisit(GetTree().CurrentScene.SceneFilePath);
 

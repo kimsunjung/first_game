@@ -37,7 +37,17 @@ namespace FirstGame.Core
 		// 처치한 보스 목록
 		private readonly HashSet<string> _defeatedBosses = new();
 		public IReadOnlyCollection<string> DefeatedBosses => _defeatedBosses;
-		public void RecordBossDefeat(string bossId) => _defeatedBosses.Add(bossId);
+		public void RecordBossDefeat(string bossId)
+		{
+			_defeatedBosses.Add(bossId);
+			// 메인 스토리 챕터 플래그 매핑 — BossId 기반.
+			switch (bossId)
+			{
+				case "orc_warlord_d1":  RecordChapterFlag(FirstGame.Data.ChapterFlags.OrcWarlordKilled); break;
+				case "skeleton_king_d2": RecordChapterFlag(FirstGame.Data.ChapterFlags.SkeletonKingKilled); break;
+				case "ancient_lich_d3":  RecordChapterFlag(FirstGame.Data.ChapterFlags.LichKilled); break;
+			}
+		}
 		public bool IsBossDefeated(string bossId) => _defeatedBosses.Contains(bossId);
 		public void RestoreDefeatedBosses(List<string> bosses)
 		{
@@ -111,6 +121,11 @@ namespace FirstGame.Core
 		{
 			if (string.IsNullOrEmpty(scenePath)) return;
 			_visitedScenes.Add(scenePath);
+			// 메인 스토리 챕터 플래그 — 씬 첫 진입 기반.
+			if (scenePath.EndsWith("/field_outpost.tscn"))
+				RecordChapterFlag(FirstGame.Data.ChapterFlags.OutpostEntered);
+			else if (scenePath.EndsWith("/dungeon_3.tscn"))
+				RecordChapterFlag(FirstGame.Data.ChapterFlags.AbyssUnsealed);
 		}
 		public void RestoreVisitedScenes(List<string> list)
 		{
@@ -138,6 +153,47 @@ namespace FirstGame.Core
 		{
 			_minedNodes.Clear();
 			if (list != null) foreach (var s in list) if (!string.IsNullOrEmpty(s)) _minedNodes.Add(s);
+		}
+
+		// ─── 챕터 플래그 — 메인 스토리 진행 마커 ──────────────────────
+		// 가장 진행된 플래그가 현재 챕터를 결정. CurrentChapter()가 계산.
+		private readonly HashSet<string> _chapterFlags = new();
+		public IReadOnlyCollection<string> ChapterFlags => _chapterFlags;
+		public bool HasFlag(string flag) => !string.IsNullOrEmpty(flag) && _chapterFlags.Contains(flag);
+
+		public event System.Action<FirstGame.Data.Chapter> OnChapterAdvanced;
+
+		public void RecordChapterFlag(string flag)
+		{
+			if (string.IsNullOrEmpty(flag)) return;
+			var beforeChapter = CurrentChapter;
+			if (_chapterFlags.Add(flag))
+			{
+				var afterChapter = CurrentChapter;
+				if (afterChapter != beforeChapter)
+					OnChapterAdvanced?.Invoke(afterChapter);
+				SaveManager.RequestAutoSave();
+			}
+		}
+
+		public void RestoreChapterFlags(List<string> list)
+		{
+			_chapterFlags.Clear();
+			if (list != null) foreach (var f in list) if (!string.IsNullOrEmpty(f)) _chapterFlags.Add(f);
+		}
+
+		/// <summary>현재 진행 챕터 — 가장 진행된 플래그 기준. 클라이언트가 매 호출마다 계산.</summary>
+		public FirstGame.Data.Chapter CurrentChapter
+		{
+			get
+			{
+				if (_chapterFlags.Contains(FirstGame.Data.ChapterFlags.LichKilled)) return FirstGame.Data.Chapter.Ending;
+				if (_chapterFlags.Contains(FirstGame.Data.ChapterFlags.AbyssUnsealed)) return FirstGame.Data.Chapter.Final;
+				if (_chapterFlags.Contains(FirstGame.Data.ChapterFlags.SkeletonKingKilled)) return FirstGame.Data.Chapter.Chapter3;
+				if (_chapterFlags.Contains(FirstGame.Data.ChapterFlags.OrcWarlordKilled)) return FirstGame.Data.Chapter.Chapter2;
+				if (_chapterFlags.Contains(FirstGame.Data.ChapterFlags.OutpostEntered)) return FirstGame.Data.Chapter.Chapter1;
+				return FirstGame.Data.Chapter.Prologue;
+			}
 		}
 
 		/// <summary>인벤 트랜잭션(예: QuestManager.CompleteQuest) 동안 보류 보상 클레임 차단.</summary>
@@ -207,6 +263,7 @@ namespace FirstGame.Core
 			_fieldSeeds.Clear();
 			_visitedScenes.Clear();
 			_minedNodes.Clear();
+			_chapterFlags.Clear(); // 이전 세션 챕터 진행도가 새 게임으로 이월되지 않도록
 			_claimSuspendCount = 0;
 			_claimingPendingRewards = false;
 			_isRestoringState = false;

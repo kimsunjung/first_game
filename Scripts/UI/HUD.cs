@@ -73,6 +73,7 @@ namespace FirstGame.UI
 				GameManager.Instance.QuestManager.OnRewardBlocked += OnQuestRewardBlocked;
 				GameManager.Instance.OnPendingRewardAdded += OnPendingRewardAdded;
 				GameManager.Instance.OnPendingRewardClaimed += OnPendingRewardClaimed;
+				GameManager.Instance.OnChapterAdvanced += OnChapterAdvanced;
 			}
 			UpdateQuestDisplay();
 
@@ -135,7 +136,88 @@ namespace FirstGame.UI
 				GameManager.Instance.QuestManager.OnRewardBlocked -= OnQuestRewardBlocked;
 				GameManager.Instance.OnPendingRewardAdded -= OnPendingRewardAdded;
 				GameManager.Instance.OnPendingRewardClaimed -= OnPendingRewardClaimed;
+				GameManager.Instance.OnChapterAdvanced -= OnChapterAdvanced;
 			}
+		}
+
+		// 챕터 진행 시 호출. Ending 진입 시 엔딩 시퀀스 자동 표시.
+		private void OnChapterAdvanced(Chapter chapter)
+		{
+			if (chapter == Chapter.Ending) ShowEndingSequence();
+		}
+
+		private async void ShowEndingSequence()
+		{
+			// 검은 fade-in 패널 + 엔딩 텍스트 + 크레딧. UIPauseManager로 게임 정지.
+			UIPauseManager.RequestPause();
+
+			var panel = new ColorRect
+			{
+				Color = new Color(0, 0, 0, 0),
+				AnchorRight = 1, AnchorBottom = 1,
+				MouseFilter = Control.MouseFilterEnum.Stop,
+				ProcessMode = ProcessModeEnum.Always
+			};
+			AddChild(panel);
+
+			var fadeTween = panel.CreateTween();
+			fadeTween.SetProcessMode(Tween.TweenProcessMode.Idle);
+			fadeTween.TweenProperty(panel, "color:a", 1f, 1.5);
+			await ToSignal(fadeTween, Tween.SignalName.Finished);
+
+			if (!IsInstanceValid(this)) return;
+
+			var label = new Label
+			{
+				Text = "— 돌아온 영웅 —\n\n" +
+					   "어둠은 다시 봉인되었다.\n" +
+					   "새벽이 마을에 돌아오고,\n" +
+					   "사람들은 영웅의 이름을 부른다.\n\n" +
+					   "카엘.\n" +
+					   "그의 이야기는 다음 천 년에 새겨질 것이다.\n\n\n" +
+					   "— THE END —",
+				HorizontalAlignment = HorizontalAlignment.Center,
+				VerticalAlignment = VerticalAlignment.Center,
+				AnchorRight = 1, AnchorBottom = 1,
+				ProcessMode = ProcessModeEnum.Always,
+				Modulate = new Color(1, 1, 1, 0)
+			};
+			label.AddThemeFontSizeOverride("font_size", 22);
+			label.AddThemeColorOverride("font_color", new Color(1f, 0.95f, 0.8f));
+			panel.AddChild(label);
+
+			var textTween = label.CreateTween();
+			textTween.SetProcessMode(Tween.TweenProcessMode.Idle);
+			textTween.TweenProperty(label, "modulate:a", 1f, 1.5);
+			await ToSignal(textTween, Tween.SignalName.Finished);
+
+			if (!IsInstanceValid(this)) return;
+
+			var hint = new Label
+			{
+				Text = "[탭하여 계속 — 자유 탐험 모드]",
+				HorizontalAlignment = HorizontalAlignment.Center,
+				AnchorLeft = 0, AnchorRight = 1,
+				AnchorTop = 0.85f, AnchorBottom = 0.95f,
+				ProcessMode = ProcessModeEnum.Always
+			};
+			hint.AddThemeFontSizeOverride("font_size", 14);
+			hint.AddThemeColorOverride("font_color", new Color(0.8f, 0.8f, 0.8f));
+			panel.AddChild(hint);
+
+			panel.GuiInput += (ev) =>
+			{
+				if (ev is InputEventMouseButton mb && mb.Pressed && IsInstanceValid(panel))
+				{
+					UIPauseManager.Reset();
+					panel.QueueFree();
+				}
+				if (ev is InputEventScreenTouch st && st.Pressed && IsInstanceValid(panel))
+				{
+					UIPauseManager.Reset();
+					panel.QueueFree();
+				}
+			};
 		}
 
 		private async void OnPendingRewardAdded(ItemData item, int qty)
@@ -210,6 +292,54 @@ namespace FirstGame.UI
 			if (IsInstanceValid(this))
 				_itemPickupNotification.Visible = false;
 		}
+
+		// NPC 대사 토스트 — 챕터별 한 줄 대사를 화면 상단 중앙에 잠시 표시.
+		// 호출당 새 라벨을 동적 생성하고 2.5초 + 0.6초 fade out 후 자동 정리.
+		private Label _npcDialogueLabel;
+		public void ShowNpcDialogue(string npcId, string line)
+		{
+			if (string.IsNullOrEmpty(line)) return;
+			if (_npcDialogueLabel != null && IsInstanceValid(_npcDialogueLabel))
+				_npcDialogueLabel.QueueFree();
+
+			var label = new Label
+			{
+				Text = $"[{NpcLabel(npcId)}] {line}",
+				HorizontalAlignment = HorizontalAlignment.Center,
+				AutowrapMode = TextServer.AutowrapMode.WordSmart,
+				AnchorLeft = 0.5f, AnchorRight = 0.5f,
+				AnchorTop = 0.0f,  AnchorBottom = 0.0f,
+				OffsetLeft = -240, OffsetRight = 240,
+				OffsetTop = 12,    OffsetBottom = 60,
+				GrowHorizontal = Control.GrowDirection.Both,
+				Modulate = new Color(1f, 0.95f, 0.7f, 1f),
+				ProcessMode = ProcessModeEnum.Always
+			};
+			label.AddThemeFontSizeOverride("font_size", 14);
+			label.AddThemeColorOverride("font_outline_color", new Color(0, 0, 0, 0.9f));
+			label.AddThemeConstantOverride("outline_size", 4);
+			AddChild(label);
+			_npcDialogueLabel = label;
+
+			var tween = label.CreateTween();
+			tween.TweenInterval(2.5);
+			tween.TweenProperty(label, "modulate:a", 0f, 0.6);
+			tween.TweenCallback(Callable.From(() =>
+			{
+				if (Godot.GodotObject.IsInstanceValid(label)) label.QueueFree();
+			}));
+		}
+
+		private static string NpcLabel(string npcId) => npcId switch
+		{
+			"save_point" => "노현자",
+			"shop" => "상점 주인",
+			"blacksmith" => "대장장이",
+			"skill_shop" => "스킬 상인",
+			"material_shop" => "재료 상인",
+			"teleport" => "텔레포트",
+			_ => "주민"
+		};
 
 		private async void ShowLevelUp(int newLevel)
 		{
