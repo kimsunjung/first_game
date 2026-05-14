@@ -13,6 +13,7 @@ namespace FirstGame.UI
         private Button _attackButton;
         private Button[] _skillButtons = new Button[4];
         private Button _interactButton;
+        private Texture2D _interactDefaultIcon;
         private Button _inventoryButton;
         private Button _characterButton;
         private Button _skillWindowButton;
@@ -40,6 +41,8 @@ namespace FirstGame.UI
             for (int i = 0; i < 4; i++)
                 _skillButtons[i] = GetNodeOrNull<Button>($"SkillButton{i + 1}");
             _interactButton    = GetNodeOrNull<Button>("InteractButton");
+            // 씬 편집기에서 지정한 기본 아이콘 보관 — 타깃 PromptIcon이 null이면 이걸로 폴백.
+            if (_interactButton != null) _interactDefaultIcon = _interactButton.Icon;
             _inventoryButton   = GetNodeOrNull<Button>("InventoryButton");
             _characterButton   = GetNodeOrNull<Button>("CharacterButton");
             _skillWindowButton = GetNodeOrNull<Button>("SkillWindowButton");
@@ -97,8 +100,8 @@ namespace FirstGame.UI
                 return;
             }
             _interactButton.Visible = true;
-            if (target.PromptIcon != null)
-                _interactButton.Icon = target.PromptIcon;
+            // PromptIcon이 없는 타깃이면 기본 아이콘으로 복귀 — 이전 타깃 아이콘 잔존 방지.
+            _interactButton.Icon = target.PromptIcon ?? _interactDefaultIcon;
         }
 
         public override void _Process(double delta)

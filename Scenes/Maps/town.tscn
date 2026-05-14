@@ -20,6 +20,16 @@
 [ext_resource type="PackedScene" uid="uid://dwxwdg3tlpiyy" path="res://Scenes/UI/teleport_ui.tscn" id="19_tpUI"]
 [ext_resource type="PackedScene" uid="uid://matshop001" path="res://Scenes/Objects/material_shop_npc.tscn" id="20_matshop"]
 [ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0024.png" id="16_stone"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Town/shop_sign.png" id="21_shopsign"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Town/potion_shelf.png" id="22_potionshelf"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Town/blacksmith_forge.png" id="23_forge"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Town/anvil_workstation.png" id="24_anvil"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Town/weapon_rack.png" id="25_wrack"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Town/magic_book_stand.png" id="26_bookstand"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/water_well.png" id="27_vwell"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/street_lantern.png" id="28_vlantern"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/flower_planter.png" id="29_vflower"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/barrel_group.png" id="30_vbarrel"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(640, 16)
@@ -48,6 +58,69 @@ offset_bottom = 360.0
 texture = ExtResource("16_stone")
 stretch_mode = 1
 
+[node name="Decorations" type="Node2D" parent="."]
+z_index = -1
+
+[node name="ShopSign" type="Sprite2D" parent="Decorations"]
+position = Vector2(320, 35)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("21_shopsign")
+texture_filter = 1
+
+[node name="PotionShelf" type="Sprite2D" parent="Decorations"]
+position = Vector2(370, 78)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("22_potionshelf")
+texture_filter = 1
+
+[node name="MagicBookStand" type="Sprite2D" parent="Decorations"]
+position = Vector2(475, 78)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("26_bookstand")
+texture_filter = 1
+
+[node name="WeaponRack" type="Sprite2D" parent="Decorations"]
+position = Vector2(60, 215)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("25_wrack")
+texture_filter = 1
+
+[node name="BlacksmithForge" type="Sprite2D" parent="Decorations"]
+position = Vector2(180, 215)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("23_forge")
+texture_filter = 1
+
+[node name="AnvilWorkstation" type="Sprite2D" parent="Decorations"]
+position = Vector2(120, 295)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("24_anvil")
+texture_filter = 1
+
+[node name="WaterWell" type="Sprite2D" parent="Decorations"]
+position = Vector2(240, 175)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("27_vwell")
+texture_filter = 1
+
+[node name="StreetLantern" type="Sprite2D" parent="Decorations"]
+position = Vector2(570, 130)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("28_vlantern")
+texture_filter = 1
+
+[node name="FlowerPlanter" type="Sprite2D" parent="Decorations"]
+position = Vector2(75, 135)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("29_vflower")
+texture_filter = 1
+
+[node name="BarrelGroup" type="Sprite2D" parent="Decorations"]
+position = Vector2(470, 250)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("30_vbarrel")
+texture_filter = 1
+
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(80, 180)
 
@@ -66,36 +139,36 @@ position = Vector2(80, 180)
 [node name="QuestDialog" parent="." instance=ExtResource("17_qdlg")]
 
 [node name="ShopNPC" parent="." instance=ExtResource("8_shop")]
-position = Vector2(160, 96)
+position = Vector2(320, 80)
 NpcId = "shop"
 
 [node name="ShopUI" parent="ShopNPC" instance=ExtResource("9_shopUI")]
 
 [node name="SkillShopNPC" parent="." instance=ExtResource("10_skillnpc")]
-position = Vector2(240, 96)
+position = Vector2(520, 80)
 NpcId = "skill_shop"
 
 [node name="SkillShopUI" parent="SkillShopNPC" instance=ExtResource("11_skillshopUI")]
 
 [node name="BlacksmithNPC" parent="." instance=ExtResource("12_smith")]
-position = Vector2(320, 96)
+position = Vector2(120, 240)
 NpcId = "blacksmith"
 
 [node name="EnhanceUI" parent="BlacksmithNPC" instance=ExtResource("13_enhanceUI")]
 
 [node name="TeleportNPC" parent="." instance=ExtResource("18_tpNpc")]
-position = Vector2(400, 96)
+position = Vector2(320, 240)
 NpcId = "teleport"
 
 [node name="TeleportUI" parent="TeleportNPC" instance=ExtResource("19_tpUI")]
 
 [node name="MaterialShopNPC" parent="." instance=ExtResource("20_matshop")]
-position = Vector2(480, 96)
+position = Vector2(520, 240)
 
 [node name="ShopUI" parent="MaterialShopNPC" instance=ExtResource("9_shopUI")]
 
 [node name="SavePoint" parent="." instance=ExtResource("14_save")]
-position = Vector2(80, 96)
+position = Vector2(120, 80)
 NpcId = "save_point"
 
 [node name="PortalToField1" parent="." instance=ExtResource("15_portal")]
