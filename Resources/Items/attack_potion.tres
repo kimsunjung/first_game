@@ -15,6 +15,7 @@ MaxStack = 10
 UseEffect = 4
 BuffAttackSpeed = 0.0
 BuffMoveSpeed = 0.0
+BuffBaseDamage = 8
 BuffDurationSec = 60.0
 HealAmount = 0
 Weight = 0.1

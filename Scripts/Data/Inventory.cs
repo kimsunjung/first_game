@@ -53,13 +53,13 @@ namespace FirstGame.Data
         public List<ItemAffix> EquippedBeltAffixes { get; private set; } = new();
         public List<ItemAffix> EquippedGlovesAffixes { get; private set; } = new();
 
-        // 무게 합산
+        // 무게 합산 — ItemData.EffectiveWeight()가 Type별 기본 처리 (.tres에 Weight 미설정 시 폴백)
         public float CurrentWeight
         {
             get
             {
                 float total = 0f;
-                foreach (var s in Slots) total += (s.Item?.Weight ?? 1f) * s.Quantity;
+                foreach (var s in Slots) total += (s.Item?.EffectiveWeight() ?? 1f) * s.Quantity;
                 return total;
             }
         }
@@ -263,7 +263,13 @@ namespace FirstGame.Data
                         return;
 
                     case ItemUseEffect.Buff:
-                        target.ApplyBuff(slot.Item.BuffMoveSpeed, slot.Item.BuffAttackSpeed, slot.Item.BuffDurationSec);
+                        target.ApplyBuffEx(
+                            slot.Item.BuffMoveSpeed,
+                            slot.Item.BuffAttackSpeed,
+                            slot.Item.BuffBaseDamage,
+                            slot.Item.BuffDefense,
+                            slot.Item.BuffCritRate,
+                            slot.Item.BuffDurationSec);
                         GD.Print($"{slot.Item.ItemName} 사용! {slot.Item.BuffDurationSec:0}초간 효과 적용");
                         AudioManager.Instance?.PlaySFX("potion_use.wav");
                         RemoveItem(slotIndex, 1);

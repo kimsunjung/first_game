@@ -84,19 +84,40 @@ namespace FirstGame.Data
 		private float _buffMoveSpeedRemaining = 0f;
 		private float _buffAttackSpeedAmount = 0f;
 		private float _buffAttackSpeedRemaining = 0f;
+		private int _buffDamageAmount = 0;
+		private float _buffDamageRemaining = 0f;
+		private int _buffDefenseAmount = 0;
+		private float _buffDefenseRemaining = 0f;
+		private float _buffCritAmount = 0f;
+		private float _buffCritRemaining = 0f;
 
 		public void ApplyBuff(float moveDelta, float atkDelta, float durationSec)
+			=> ApplyBuffEx(moveDelta, atkDelta, 0, 0, 0f, durationSec);
+
+		public void ApplyBuffEx(float moveDelta, float atkDelta, int dmgDelta, int defDelta, float critDelta, float durationSec)
 		{
 			if (durationSec <= 0f) return;
 			// 중복 buff 적용 시 기존 효과를 먼저 제거(누적 차단) → 새 값/시간으로 갱신.
 			if (_buffMoveSpeedRemaining > 0f) MoveSpeed -= _buffMoveSpeedAmount;
 			if (_buffAttackSpeedRemaining > 0f) AttackSpeed -= _buffAttackSpeedAmount;
+			if (_buffDamageRemaining > 0f) BaseDamage -= _buffDamageAmount;
+			if (_buffDefenseRemaining > 0f) Defense -= _buffDefenseAmount;
+			if (_buffCritRemaining > 0f) CritRate -= _buffCritAmount;
 			_buffMoveSpeedAmount = moveDelta;
 			_buffAttackSpeedAmount = atkDelta;
-			_buffMoveSpeedRemaining = moveDelta != 0f ? durationSec : 0f;
-			_buffAttackSpeedRemaining = atkDelta != 0f ? durationSec : 0f;
-			MoveSpeed += moveDelta;
+			_buffDamageAmount = dmgDelta;
+			_buffDefenseAmount = defDelta;
+			_buffCritAmount = critDelta;
+			_buffMoveSpeedRemaining   = moveDelta != 0f ? durationSec : 0f;
+			_buffAttackSpeedRemaining = atkDelta  != 0f ? durationSec : 0f;
+			_buffDamageRemaining      = dmgDelta  != 0  ? durationSec : 0f;
+			_buffDefenseRemaining     = defDelta  != 0  ? durationSec : 0f;
+			_buffCritRemaining        = critDelta != 0f ? durationSec : 0f;
+			MoveSpeed   += moveDelta;
 			AttackSpeed += atkDelta;
+			BaseDamage  += dmgDelta;
+			Defense     += defDelta;
+			CritRate    += critDelta;
 		}
 
 		public void TickBuffs(float delta)
@@ -118,6 +139,21 @@ namespace FirstGame.Data
 					AttackSpeed -= _buffAttackSpeedAmount;
 					_buffAttackSpeedAmount = 0f;
 				}
+			}
+			if (_buffDamageRemaining > 0f)
+			{
+				_buffDamageRemaining -= delta;
+				if (_buffDamageRemaining <= 0f) { BaseDamage -= _buffDamageAmount; _buffDamageAmount = 0; }
+			}
+			if (_buffDefenseRemaining > 0f)
+			{
+				_buffDefenseRemaining -= delta;
+				if (_buffDefenseRemaining <= 0f) { Defense -= _buffDefenseAmount; _buffDefenseAmount = 0; }
+			}
+			if (_buffCritRemaining > 0f)
+			{
+				_buffCritRemaining -= delta;
+				if (_buffCritRemaining <= 0f) { CritRate -= _buffCritAmount; _buffCritAmount = 0f; }
 			}
 		}
 		public void Heal(int amount) => CurrentHealth = Math.Min(CurrentHealth + amount, MaxHealth);

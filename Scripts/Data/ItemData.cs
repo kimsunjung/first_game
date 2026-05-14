@@ -99,6 +99,10 @@ namespace FirstGame.Data
 		[Export] public float BuffMoveSpeed { get; set; } = 0f;
 		[Export] public float BuffAttackSpeed { get; set; } = 0f;
 		[Export] public float BuffDurationSec { get; set; } = 0f;
+		// 신규 buff 종: 데미지·방어·치명타. 모두 정수/소수 다양한 단위로 합산.
+		[Export] public int BuffBaseDamage { get; set; } = 0;
+		[Export] public int BuffDefense { get; set; } = 0;
+		[Export] public float BuffCritRate { get; set; } = 0f;
 
 		// 클래스 제한 — 무기에서 사용. AvailableToAllClasses=true(기본)면 누구나 장착.
 		// 무기 .tres에서 false + RequiredClass 지정으로 클래스 전용 무기 표현.
@@ -112,8 +116,33 @@ namespace FirstGame.Data
 		[Export] public SkillData LearnedSkill { get; set; }
 
 		// 무게 — 인벤토리 총 무게 합산에 사용. 소비/재료 0.1, 장신구 0.3, 무기 2~5, 갑옷 3~8
+		// 기본값 1.0이면 EffectiveWeight()가 Type별 합리적 기본을 반환.
+		// 명시적으로 .tres에서 Weight를 설정한 경우 그대로 사용.
 		[ExportGroup("Weight")]
 		[Export] public float Weight { get; set; } = 1.0f;
+
+		/// <summary>Type별 합리적 기본 무게. 신규 .tres가 Weight를 명시했으면 그 값 사용.</summary>
+		public float EffectiveWeight()
+		{
+			// 명시 가중치(0.1 미만이거나 1.0 아닌 값)면 그대로 반환
+			if (Weight != 1.0f) return Weight;
+			// 기본 1.0(미설정)인 경우 카테고리별 추정치 반환
+			return Type switch
+			{
+				ItemType.Consumable => 0.1f,
+				ItemType.Material   => 0.5f,
+				ItemType.Necklace or ItemType.Ring or ItemType.Bracelet => 0.3f,
+				ItemType.SkillBook  => 0.5f,
+				ItemType.Weapon     => 3.0f,
+				ItemType.Armor      => 5.0f,
+				ItemType.Helmet     => 2.5f,
+				ItemType.Boots      => 2.0f,
+				ItemType.Cloak      => 2.5f,
+				ItemType.Belt       => 1.5f,
+				ItemType.Gloves     => 1.5f,
+				_                   => 1.0f
+			};
+		}
 
 		// 순간이동 주문서 전용 — TeleportTargetScene + TeleportTargetPos (Vector2)
 		[ExportGroup("Teleport Scroll")]
