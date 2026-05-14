@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_bow_long_001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "장궁"
+Description = "긴 시위로 사거리와 위력을 늘린 활. 공격 +8, 크리 +4%."
+Rarity = 1
+Price = 300
+SellPrice = 150
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 8
+BonusCritRate = 0.04
+AttackType = 1
+RequiredClass = 2
+AvailableToAllClasses = false

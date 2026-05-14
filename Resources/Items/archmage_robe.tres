@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_robe_arch_001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "대마법사의 로브"
+Description = "고위 마법사의 마력이 깃든 로브. 최대MP +40, 방어 +8, 크리 +4%."
+Rarity = 2
+Price = 1800
+SellPrice = 900
+Type = 2
+IsStackable = false
+MaxStack = 1
+BonusMaxMp = 40
+BonusDefense = 8
+BonusCritRate = 0.04
+RequiredClass = 1
+AvailableToAllClasses = false

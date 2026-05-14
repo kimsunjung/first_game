@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_robe_void_001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "공허의 로브"
+Description = "심연에서 짜낸 직물로 만든 로브. 최대MP +60, 방어 +12, 크리 +6%, 최대HP +10."
+Rarity = 3
+Price = 4200
+SellPrice = 2100
+Type = 2
+IsStackable = false
+MaxStack = 1
+BonusMaxMp = 60
+BonusDefense = 12
+BonusCritRate = 0.06
+BonusMaxHealth = 10
+RequiredClass = 1
+AvailableToAllClasses = false

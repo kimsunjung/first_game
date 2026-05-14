@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_bow_elf_001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "엘프의 비궁"
+Description = "엘프 장인이 깎은 가벼운 명궁. 공격 +20, 크리 +8%, 최대MP +10."
+Rarity = 3
+Price = 2200
+SellPrice = 1100
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 20
+BonusCritRate = 0.08
+BonusMaxMp = 10
+AttackType = 1
+RequiredClass = 2
+AvailableToAllClasses = false

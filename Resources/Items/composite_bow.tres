@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_bow_comp_001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "합성궁"
+Description = "여러 재료를 겹쳐 만든 강력한 활. 공격 +15, 크리 +5%."
+Rarity = 2
+Price = 1100
+SellPrice = 550
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 15
+BonusCritRate = 0.05
+AttackType = 1
+RequiredClass = 2
+AvailableToAllClasses = false

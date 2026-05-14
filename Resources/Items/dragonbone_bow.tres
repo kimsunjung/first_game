@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_bow_drag_001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "용골 활"
+Description = "용의 뼈로 깎아 만든 전설의 활. 공격 +30, 크리 +10%, 이속 +15."
+Rarity = 4
+Price = 5500
+SellPrice = 2750
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 30
+BonusCritRate = 0.10
+BonusMoveSpeed = 15.0
+AttackType = 1
+RequiredClass = 2
+AvailableToAllClasses = false
