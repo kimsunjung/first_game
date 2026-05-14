@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://bauilbfctdypk" path="res://Scenes/Objects/teleport_npc.tscn" id="18_tpNpc"]
 [ext_resource type="PackedScene" uid="uid://dwxwdg3tlpiyy" path="res://Scenes/UI/teleport_ui.tscn" id="19_tpUI"]
 [ext_resource type="PackedScene" uid="uid://matshop001" path="res://Scenes/Objects/material_shop_npc.tscn" id="20_matshop"]
+[ext_resource type="PackedScene" uid="uid://potionshop001" path="res://Scenes/Objects/potion_shop_npc.tscn" id="40_potionshop"]
 [ext_resource type="PackedScene" uid="uid://npc_marta01"  path="res://Scenes/Objects/marta_innkeeper_npc.tscn" id="30_marta"]
 [ext_resource type="PackedScene" uid="uid://npc_hansen01" path="res://Scenes/Objects/hansen_miner_npc.tscn"    id="31_hansen"]
 [ext_resource type="PackedScene" uid="uid://npc_lily01"   path="res://Scenes/Objects/lily_florist_npc.tscn"     id="32_lily"]
@@ -246,6 +247,9 @@ TargetSpawnPosition = Vector2(560, 180)
 position = Vector2(600, 300)
 TargetScenePath = "res://Scenes/Maps/field_4_harbor.tscn"
 TargetSpawnPosition = Vector2(80, 360)
+
+[node name="PotionShopNPC" parent="." instance=ExtResource("40_potionshop")]
+position = Vector2(490, 78)
 
 [node name="QuestBoardUI" parent="." instance=ExtResource("36_qbui")]
 

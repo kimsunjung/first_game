@@ -64,7 +64,7 @@ namespace FirstGame.UI
 				var skill = item.LearnedSkill;
 
 				var panel = new PanelContainer();
-				panel.CustomMinimumSize = new Vector2(260, 40);
+				panel.CustomMinimumSize = new Vector2(260, 26);
 				panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
 				var hbox = new HBoxContainer();
@@ -76,7 +76,7 @@ namespace FirstGame.UI
 				{
 					var icon = new TextureRect();
 					icon.Texture = skill.Icon;
-					icon.CustomMinimumSize = new Vector2(24, 24);
+					icon.CustomMinimumSize = new Vector2(18, 18);
 					icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
 					icon.MouseFilter = Control.MouseFilterEnum.Ignore;
 					hbox.AddChild(icon);
@@ -89,14 +89,14 @@ namespace FirstGame.UI
 
 				var nameLabel = new Label();
 				nameLabel.Text = $"{skill.SkillName}";
-				nameLabel.AddThemeFontSizeOverride("font_size", 12);
+				nameLabel.AddThemeFontSizeOverride("font_size", 10);
 				nameLabel.ClipText = true;
 				nameLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
 				vbox.AddChild(nameLabel);
 
 				var descLabel = new Label();
 				descLabel.Text = $"{skill.Description}  MP:{skill.MpCost}  쿨:{skill.Cooldown}s";
-				descLabel.AddThemeFontSizeOverride("font_size", 10);
+				descLabel.AddThemeFontSizeOverride("font_size", 8);
 				descLabel.ClipText = true;
 				descLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
 				vbox.AddChild(descLabel);
