@@ -34,6 +34,9 @@ namespace FirstGame.UI
             _goldLabel = GetNode<Label>("%ShopGoldLabel");
             _messageLabel = GetNode<Label>("%ShopMessageLabel");
             _closeButton = GetNode<Button>("%CloseButton");
+            // 탭 폰트 축소 — 화면에 더 많은 아이템 보이도록
+            _tabContainer.AddThemeFontSizeOverride("font_size", 10);
+            _goldLabel.AddThemeFontSizeOverride("font_size", 10);
 
             _quantityPanel = GetNode<Control>("%QuantityPanel");
             _quantityLabel = GetNode<Label>("%QuantityItemLabel");
@@ -212,7 +215,7 @@ namespace FirstGame.UI
         private PanelContainer CreateItemPanel(ItemData item, bool isBuyMode)
         {
             var panel = new PanelContainer();
-            panel.CustomMinimumSize = new Vector2(260, 24);
+            panel.CustomMinimumSize = new Vector2(260, 20);
             panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
             var hbox = new HBoxContainer();
@@ -224,7 +227,7 @@ namespace FirstGame.UI
             {
                 var icon = new TextureRect();
                 icon.Texture = item.Icon;
-                icon.CustomMinimumSize = new Vector2(18, 18);
+                icon.CustomMinimumSize = new Vector2(16, 16);
                 icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
                 icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
                 icon.MouseFilter = Control.MouseFilterEnum.Ignore;
@@ -283,7 +286,7 @@ namespace FirstGame.UI
         private PanelContainer CreateSellPanel(InventorySlot slot, int slotIndex)
         {
             var panel = new PanelContainer();
-            panel.CustomMinimumSize = new Vector2(260, 24);
+            panel.CustomMinimumSize = new Vector2(260, 20);
             panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
             var hbox = new HBoxContainer();
@@ -295,7 +298,7 @@ namespace FirstGame.UI
             {
                 var icon = new TextureRect();
                 icon.Texture = slot.Item.Icon;
-                icon.CustomMinimumSize = new Vector2(18, 18);
+                icon.CustomMinimumSize = new Vector2(16, 16);
                 icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
                 icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
                 icon.MouseFilter = Control.MouseFilterEnum.Ignore;
