@@ -10,8 +10,15 @@ namespace FirstGame.Entities
 	{
 		protected override void OnInteract()
 		{
-			// 챕터 대사는 BaseInteractable._UnhandledInput이 ShowChapterDialogueIfAny()를 먼저 호출.
-			// 여기서는 사이드 퀘스트 수락/완료 다이얼로그만 시도.
+			// 퀘스트 보드 NPC는 별도 QuestBoardUI 사용 — 사이드 퀘스트 목록 표시.
+			if (NpcId == "quest_board")
+			{
+				var ui = GetTree()?.CurrentScene?.GetNodeOrNull<FirstGame.UI.QuestBoardUI>("QuestBoardUI");
+				var player = FirstGame.Core.GameManager.Instance?.Player;
+				if (ui != null && player != null) ui.OpenForPlayer(player);
+				return;
+			}
+			// 일반 시민 NPC — 챕터 대사는 BaseInteractable이 자동 처리. 퀘스트 수락/완료 시도.
 			TryOpenQuestDialog();
 		}
 	}

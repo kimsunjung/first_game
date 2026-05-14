@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/boss_health_bar.tscn" id="6_bosshp"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/settings_ui.tscn" id="7_settings"]
 [ext_resource type="PackedScene" uid="uid://b3qstdlg2025u" path="res://Scenes/UI/quest_dialog.tscn" id="17_qdlg"]
+[ext_resource type="PackedScene" uid="uid://b3qboard2025u" path="res://Scenes/UI/quest_board_ui.tscn" id="36_qbui"]
 [ext_resource type="PackedScene" uid="uid://d4k8m2w7v3p1" path="res://Scenes/Objects/shop_npc.tscn" id="8_shop"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/shop_ui.tscn" id="9_shopUI"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/skill_shop_npc.tscn" id="10_skillnpc"]
@@ -245,6 +246,8 @@ TargetSpawnPosition = Vector2(560, 180)
 position = Vector2(600, 300)
 TargetScenePath = "res://Scenes/Maps/field_4_harbor.tscn"
 TargetSpawnPosition = Vector2(80, 360)
+
+[node name="QuestBoardUI" parent="." instance=ExtResource("36_qbui")]
 
 [node name="QuestBoardNpc" parent="." instance=ExtResource("35_qboard")]
 position = Vector2(260, 140)
