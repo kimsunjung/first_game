@@ -43,6 +43,10 @@ namespace FirstGame.Core
 			OnEnemyKilled?.Invoke();
 		}
 
+		// 보스 페이즈 전환 (1→2→3)
+		public static event Action<int> OnBossPhaseChanged;
+		public static void TriggerBossPhaseChanged(int phase) => OnBossPhaseChanged?.Invoke(phase);
+
 		// 퀘스트 진행도용 — 어떤 적이 죽었는지 식별 가능
 		public static event Action<string> OnEnemyKilledTyped;
 		public static void TriggerEnemyKilledTyped(string enemyTypeName)
@@ -72,6 +76,7 @@ namespace FirstGame.Core
 			OnEnemyKilled = null;
 			OnEnemyKilledTyped = null;
 			OnExpGained = null;
+			OnBossPhaseChanged = null;
 
 			// QuestManager는 GameManager 영구 인스턴스 — 적 처치 이벤트 구독을 잃지 않도록 복원.
 			GameManager.Instance?.QuestManager?.Resubscribe();
