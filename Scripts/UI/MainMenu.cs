@@ -50,7 +50,7 @@ namespace FirstGame.UI
 				return;
 			}
 
-			StartNewGame();
+			ShowClassSelect();
 		}
 
 		private void OnConfirmNewGame()
@@ -58,7 +58,7 @@ namespace FirstGame.UI
 			_confirmPanel.Visible = false;
 			DeleteSaveFile("autosave");
 			DeleteSaveFile("manual");
-			StartNewGame();
+			ShowClassSelect();
 		}
 
 		private void StartNewGame()
@@ -66,6 +66,63 @@ namespace FirstGame.UI
 			GameManager.Instance?.ResetForNewGame();
 			SaveManager.PendingLoadData = null;
 			GetTree().ChangeSceneToFile("res://Scenes/Maps/town.tscn");
+		}
+
+		// 신규 게임 시 클래스 선택 모달. 3버튼(전사/마법사/궁수) — 선택값을
+		// SaveManager.PendingNewGameClass에 저장하고 town.tscn 로드. tscn 수정 없이 동적 생성.
+		private Control _classSelectPanel;
+		private void ShowClassSelect()
+		{
+			if (_classSelectPanel != null && IsInstanceValid(_classSelectPanel))
+			{
+				_classSelectPanel.Visible = true;
+				return;
+			}
+
+			var panel = new PanelContainer
+			{
+				AnchorLeft = 0.5f, AnchorRight = 0.5f,
+				AnchorTop = 0.5f, AnchorBottom = 0.5f,
+				OffsetLeft = -240, OffsetRight = 240,
+				OffsetTop = -120, OffsetBottom = 120,
+				ProcessMode = Node.ProcessModeEnum.Always
+			};
+			AddChild(panel);
+			_classSelectPanel = panel;
+
+			var vbox = new VBoxContainer { CustomMinimumSize = new Vector2(440, 200) };
+			vbox.AddThemeConstantOverride("separation", 8);
+			panel.AddChild(vbox);
+
+			var title = new Label
+			{
+				Text = "클래스 선택",
+				HorizontalAlignment = HorizontalAlignment.Center
+			};
+			title.AddThemeFontSizeOverride("font_size", 20);
+			vbox.AddChild(title);
+
+			AddClassButton(vbox, FirstGame.Data.PlayerClass.Warrior);
+			AddClassButton(vbox, FirstGame.Data.PlayerClass.Mage);
+			AddClassButton(vbox, FirstGame.Data.PlayerClass.Archer);
+		}
+
+		private void AddClassButton(VBoxContainer vbox, FirstGame.Data.PlayerClass cls)
+		{
+			var btn = new Button
+			{
+				Text = $"{FirstGame.Data.PlayerClassUtil.DisplayName(cls)} — {FirstGame.Data.PlayerClassUtil.Description(cls)}",
+				CustomMinimumSize = new Vector2(0, 44)
+			};
+			btn.AddThemeFontSizeOverride("font_size", 13);
+			btn.Pressed += () =>
+			{
+				SaveManager.PendingNewGameClass = cls;
+				if (_classSelectPanel != null && IsInstanceValid(_classSelectPanel))
+					_classSelectPanel.QueueFree();
+				StartNewGame();
+			};
+			vbox.AddChild(btn);
 		}
 
 		private void OnContinuePressed()

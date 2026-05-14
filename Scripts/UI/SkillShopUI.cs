@@ -113,11 +113,18 @@ namespace FirstGame.UI
 				var btn = new Button();
 				bool alreadyLearned = _player.Stats.HasSkill(skill.Type);
 				bool levelOk = _player.Stats.Level >= skill.RequiredLevel;
+				// 클래스 제한 — AvailableToAllClasses=true면 통과, 아니면 플레이어 클래스가 RequiredClass와 일치.
+				bool classOk = skill.AvailableToAllClasses || skill.RequiredClass == _player.Stats.PlayerClass;
 
 				btn.MouseFilter = Control.MouseFilterEnum.Pass;
 				if (alreadyLearned)
 				{
 					btn.Text = "학습 완료";
+					btn.Disabled = true;
+				}
+				else if (!classOk)
+				{
+					btn.Text = $"{FirstGame.Data.PlayerClassUtil.DisplayName(skill.RequiredClass)} 전용";
 					btn.Disabled = true;
 				}
 				else if (!levelOk)

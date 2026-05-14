@@ -75,6 +75,9 @@
     "lvStatPoints": 3,
     "strAtkBonus": 0.5,
     "conHpBonus": 3.0,
-    "intMpBonus": 2.0
+    "intMpBonus": 2.0,
+    "dexAtkBonus": 0.3,
+    "dexCritBonus": 0.005,
+    "dexSpeedBonus": 0.5
   }
 }

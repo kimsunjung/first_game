@@ -27,6 +27,10 @@ namespace FirstGame.Data
 		private static float StrDamageBonus => BalanceData.Progression.StrAtkBonus;
 		private static float ConHealthBonus => BalanceData.Progression.ConHpBonus;
 		private static float IntMpBonus => BalanceData.Progression.IntMpBonus;
+		// DEX(궁수 핵심) — 공격력·크리·이속에 동시에 영향. balance json에서 로드.
+		private static float DexDamageBonus => BalanceData.Progression.DexAtkBonus;
+		private static float DexCritBonus => BalanceData.Progression.DexCritBonus;
+		private static float DexSpeedBonus => BalanceData.Progression.DexSpeedBonus;
 
 		// ─── IEquipTarget 구현 ───────────────────────────────────────
 		public void ModifyBaseDamage(int delta) => BaseDamage += delta;
@@ -59,11 +63,16 @@ namespace FirstGame.Data
 		private int _strPoints = 0;
 		private int _conPoints = 0;
 		private int _intPoints = 0;
+		private int _dexPoints = 0;
 
 		public int StatPoints => _statPoints;
 		public int StrPoints => _strPoints;
 		public int ConPoints => _conPoints;
 		public int IntPoints => _intPoints;
+		public int DexPoints => _dexPoints;
+
+		// 캐릭터 클래스 — 신규 게임 시 선택. 세이브에 정수로 저장. 기본 Warrior(전사).
+		public PlayerClass PlayerClass { get; set; } = PlayerClass.Warrior;
 
 		public int ExpToNextLevel => (int)(ExpBaseMultiplier * Math.Pow(_level, ExpPowerExponent));
 
@@ -127,6 +136,13 @@ namespace FirstGame.Data
 					MaxMp += mpDelta;
 					CurrentMp = Mathf.Min(CurrentMp + mpDelta, MaxMp);
 					break;
+				case "DEX":
+					_dexPoints++;
+					int dexAtkDelta = Mathf.RoundToInt(_dexPoints * DexDamageBonus) - Mathf.RoundToInt((_dexPoints - 1) * DexDamageBonus);
+					BaseDamage += dexAtkDelta;
+					CritRate += DexCritBonus;
+					MoveSpeed += DexSpeedBonus;
+					break;
 				default: return false;
 			}
 			_statPoints--;
@@ -134,20 +150,24 @@ namespace FirstGame.Data
 			return true;
 		}
 
-		public void SetStatPointsFromSave(int sp, int str, int con, int intel)
+		public void SetStatPointsFromSave(int sp, int str, int con, int intel, int dex = 0)
 		{
 			_statPoints = sp;
 			_strPoints = str;
 			_conPoints = con;
 			_intPoints = intel;
+			_dexPoints = dex;
 		}
 
-		/// <summary>로드 시 SetStatPointsFromSave 후 호출. STR/CON/INT 보너스를 스탯에 재적용한다.</summary>
+		/// <summary>로드 시 SetStatPointsFromSave 후 호출. STR/CON/INT/DEX 보너스를 스탯에 재적용한다.</summary>
 		public void ApplyStatPointBonuses()
 		{
 			BaseDamage += Mathf.RoundToInt(_strPoints * StrDamageBonus);
 			MaxHealth += Mathf.RoundToInt(_conPoints * ConHealthBonus);
 			MaxMp += Mathf.RoundToInt(_intPoints * IntMpBonus);
+			BaseDamage += Mathf.RoundToInt(_dexPoints * DexDamageBonus);
+			CritRate += _dexPoints * DexCritBonus;
+			MoveSpeed += _dexPoints * DexSpeedBonus;
 		}
 
 		// ─── 스킬 시스템 ─────────────────────────────────────────────
@@ -160,6 +180,12 @@ namespace FirstGame.Data
 			if (_level < skill.RequiredLevel)
 			{
 				GD.Print($"레벨 {skill.RequiredLevel} 이상이 필요합니다! (현재: Lv.{_level})");
+				return false;
+			}
+			// 클래스 제한 — AvailableToAllClasses=true면 통과, 아니면 RequiredClass 일치 필수.
+			if (!skill.AvailableToAllClasses && skill.RequiredClass != PlayerClass)
+			{
+				GD.Print($"{skill.SkillName}은 {PlayerClassUtil.DisplayName(skill.RequiredClass)} 전용 스킬입니다.");
 				return false;
 			}
 			if (_learnedSkills.Exists(s => s.Type == skill.Type))

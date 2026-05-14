@@ -17,9 +17,11 @@ namespace FirstGame.UI
 		private Label _strLabel;
 		private Label _conLabel;
 		private Label _intLabel;
+		private Label _dexLabel;
 		private Button _strBtn;
 		private Button _conBtn;
 		private Button _intBtn;
+		private Button _dexBtn;
 		private Control _equipmentArea;
 
 		private IPlayer _player;
@@ -51,14 +53,17 @@ namespace FirstGame.UI
 			_strLabel = GetNodeOrNull<Label>("%StrInfo");
 			_conLabel = GetNodeOrNull<Label>("%ConInfo");
 			_intLabel = GetNodeOrNull<Label>("%IntInfo");
+			_dexLabel = GetNodeOrNull<Label>("%DexInfo");
 			_strBtn = GetNodeOrNull<Button>("%StrBtn");
 			_conBtn = GetNodeOrNull<Button>("%ConBtn");
 			_intBtn = GetNodeOrNull<Button>("%IntBtn");
+			_dexBtn = GetNodeOrNull<Button>("%DexBtn");
 			_equipmentArea = GetNodeOrNull<Control>("%EquipmentArea");
 
 			if (_strBtn != null) _strBtn.Pressed += () => AllocateStat("STR");
 			if (_conBtn != null) _conBtn.Pressed += () => AllocateStat("CON");
 			if (_intBtn != null) _intBtn.Pressed += () => AllocateStat("INT");
+			if (_dexBtn != null) _dexBtn.Pressed += () => AllocateStat("DEX");
 
 			BuildEquipmentSlots();
 
@@ -316,10 +321,12 @@ namespace FirstGame.UI
 			if (_strLabel != null) _strLabel.Text = $"STR:{s.StrPoints} (+{s.StrPoints * prog.StrAtkBonus}공)";
 			if (_conLabel != null) _conLabel.Text = $"CON:{s.ConPoints} (+{s.ConPoints * prog.ConHpBonus}HP)";
 			if (_intLabel != null) _intLabel.Text = $"INT:{s.IntPoints} (+{s.IntPoints * prog.IntMpBonus}MP)";
+			if (_dexLabel != null) _dexLabel.Text = $"DEX:{s.DexPoints} (+{s.DexPoints * prog.DexAtkBonus:0.#}공 / +{s.DexPoints * prog.DexCritBonus * 100:0.#}%크리)";
 			bool hasSp = s.StatPoints > 0;
 			if (_strBtn != null) _strBtn.Disabled = !hasSp;
 			if (_conBtn != null) _conBtn.Disabled = !hasSp;
 			if (_intBtn != null) _intBtn.Disabled = !hasSp;
+			if (_dexBtn != null) _dexBtn.Disabled = !hasSp;
 		}
 	}
 }

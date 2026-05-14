@@ -12,4 +12,6 @@ Type = 2
 MpCost = 10
 Cooldown = 6.0
 RequiredLevel = 5
+RequiredClass = 2
+AvailableToAllClasses = true
 DurationSeconds = 2.0

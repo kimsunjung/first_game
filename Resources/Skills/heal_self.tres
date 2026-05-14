@@ -12,4 +12,6 @@ Type = 1
 MpCost = 20
 Cooldown = 8.0
 RequiredLevel = 3
+RequiredClass = 0
+AvailableToAllClasses = true
 HealAmount = 50

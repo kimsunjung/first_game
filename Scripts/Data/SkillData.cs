@@ -20,6 +20,11 @@ namespace FirstGame.Data
 		[Export] public int MpCost { get; set; } = 15;
 		[Export] public float Cooldown { get; set; } = 5.0f;
 		[Export] public int RequiredLevel { get; set; } = 1;
+		// 클래스 제한 — None이면 모든 클래스 사용 가능. 특정 클래스 지정 시 그 클래스만 학습/구매 가능.
+		// 신규 게임 시 클래스 시작 스킬은 이 값에 따라 자동 부여.
+		[Export] public PlayerClass RequiredClass { get; set; } = PlayerClass.Warrior;
+		// 정말로 모든 클래스 공통 스킬임을 명시할 때 true. RequiredClass 무시.
+		[Export] public bool AvailableToAllClasses { get; set; } = false;
 
 		// 스킬별 추가 파라미터
 		[ExportGroup("Skill Parameters")]

@@ -12,4 +12,6 @@ Type = 3
 MpCost = 25
 Cooldown = 4.0
 RequiredLevel = 8
+RequiredClass = 1
+AvailableToAllClasses = false
 BonusDamageMultiplier = 2

@@ -126,6 +126,21 @@ layout_mode = 2
 custom_minimum_size = Vector2(44, 32)
 text = "+"
 
+[node name="DexRow" type="HBoxContainer" parent="PanelContainer/OuterVBox/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="DexInfo" type="Label" parent="PanelContainer/OuterVBox/HBoxContainer/VBoxContainer/DexRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DEX: 0  (+0 공격)"
+
+[node name="DexBtn" type="Button" parent="PanelContainer/OuterVBox/HBoxContainer/VBoxContainer/DexRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(44, 32)
+text = "+"
+
 [node name="CloseHint" type="Label" parent="PanelContainer/OuterVBox/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 modulate = Color(0.7, 0.7, 0.7, 1.0)

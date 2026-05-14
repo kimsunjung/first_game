@@ -33,6 +33,10 @@ namespace FirstGame.Core
 
 		public static SaveData PendingLoadData { get; set; } = null;
 
+		// 신규 게임 시작 시 MainMenu가 선택한 클래스를 town.tscn 로드 후 PlayerController가 읽음.
+		// null이면 Warrior(기본) 사용.
+		public static FirstGame.Data.PlayerClass? PendingNewGameClass { get; set; } = null;
+
 		public static event Action OnGameSaved;
 
 		/// <summary>현재 게임 상태에서 SaveData를 구축. 디스크 쓰기 없음.

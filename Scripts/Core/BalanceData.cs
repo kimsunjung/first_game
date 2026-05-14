@@ -171,7 +171,10 @@ namespace FirstGame.Core
 			LvStatPoints = GetInt(el, "lvStatPoints", 3),
 			StrAtkBonus = GetFloat(el, "strAtkBonus", 0.5f),
 			ConHpBonus = GetFloat(el, "conHpBonus", 0.5f),
-			IntMpBonus = GetFloat(el, "intMpBonus", 0.5f)
+			IntMpBonus = GetFloat(el, "intMpBonus", 0.5f),
+			DexAtkBonus = GetFloat(el, "dexAtkBonus", 0.3f),
+			DexCritBonus = GetFloat(el, "dexCritBonus", 0.005f),
+			DexSpeedBonus = GetFloat(el, "dexSpeedBonus", 0.5f)
 		};
 	}
 
@@ -255,5 +258,9 @@ namespace FirstGame.Core
 		public float StrAtkBonus { get; set; } = 0.5f;
 		public float ConHpBonus { get; set; } = 0.5f;
 		public float IntMpBonus { get; set; } = 0.5f;
+		// DEX(궁수) — 1당 공격 +0.3, 크리율 +0.5%, 이속 +0.5
+		public float DexAtkBonus { get; set; } = 0.3f;
+		public float DexCritBonus { get; set; } = 0.005f;
+		public float DexSpeedBonus { get; set; } = 0.5f;
 	}
 }
