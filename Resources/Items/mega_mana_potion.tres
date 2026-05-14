@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cons_mega_mp01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/mana_potion.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "대형 마나 물약"
+Description = "MP를 100 즉시 회복한다."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 480
+SellPrice = 150
+Type = 0
+IsStackable = true
+MaxStack = 5
+UseEffect = 3
+HealAmount = 100
+Weight = 0.1

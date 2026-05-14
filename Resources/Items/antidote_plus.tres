@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cons_antidote2_01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/antidote.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "강화 해독제"
+Description = "중독과 빙결 상태이상을 동시에 해제한다."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 180
+SellPrice = 55
+Type = 0
+IsStackable = true
+MaxStack = 10
+UseEffect = 6
+HealAmount = 3
+Weight = 0.1

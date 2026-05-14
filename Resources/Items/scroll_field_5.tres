@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://scroll_f5_01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/return_scroll.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "설원 주문서"
+Description = "설원(필드 5) 입구로 이동한다."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 200
+SellPrice = 60
+Type = 0
+IsStackable = true
+MaxStack = 5
+UseEffect = 5
+TeleportTargetScene = "res://Scenes/Maps/field_5_snowfield.tscn"
+TeleportTargetPos = Vector2(100, 360)
+Weight = 0.1

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cons_holy_water01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/hi_potion.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "성수"
+Description = "15초간 언데드 적에 대한 피해가 50% 증가한다."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 250
+SellPrice = 75
+Type = 0
+IsStackable = true
+MaxStack = 10
+UseEffect = 4
+BuffAttackSpeed = 0.0
+BuffMoveSpeed = 0.0
+BuffDurationSec = 15.0
+HealAmount = 0
+Weight = 0.1
