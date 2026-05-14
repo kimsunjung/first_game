@@ -4,7 +4,7 @@
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
 [resource]
 script = ExtResource("1")
-MoveSpeed = 80
+MoveSpeed = 60.0
 DetectionRange = 300
 AttackRange = 250
 BaseDamage = 15

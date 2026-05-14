@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 70.0
+MoveSpeed = 52.5
 DetectionRange = 220.0
 AttackRange = 40.0
 MaxHealth = 170
