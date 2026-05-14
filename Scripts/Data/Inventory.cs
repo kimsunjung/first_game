@@ -274,10 +274,10 @@ namespace FirstGame.Data
             var item = slot.Item;
             int enhLevel = slot.EnhancementLevel;
 
-            // 무기 클래스 제한 — 다른 클래스 전용 무기 장착 시도 차단.
+            // 장비 클래스 제한 — 무기·갑옷·모자·신발·장신구 모두 적용. 다른 클래스 전용 차단.
             // target이 PlayerStats(현재 유일한 IEquipTarget 구현)일 때만 검증 — 후속 IEquipTarget
-            // 구현이 추가돼도 안전 (검증 우회로 동작 기존 유지).
-            if (item.Type == ItemType.Weapon && !item.AvailableToAllClasses
+            // 구현이 추가돼도 안전 (검증 우회로 기존 동작 유지).
+            if (item.Type.IsEquipment() && !item.AvailableToAllClasses
                 && target is PlayerStats ps && item.RequiredClass != ps.PlayerClass)
             {
                 GD.Print($"[장착 불가] {item.ItemName}은 {PlayerClassUtil.DisplayName(item.RequiredClass)} 전용입니다 (현재: {PlayerClassUtil.DisplayName(ps.PlayerClass)})");
@@ -375,6 +375,12 @@ namespace FirstGame.Data
             if (!IsExtraEquipType(item.Type)) return;
             // 슬롯 유형이 아이템과 맞는지 검증 (Ring → Ring1/Ring2만 허용 등)
             if (!IsSlotCompatible(item.Type, targetSlot)) return;
+            // 클래스 제한 — EquipItem과 동일 가드.
+            if (!item.AvailableToAllClasses && target is PlayerStats psExtra && item.RequiredClass != psExtra.PlayerClass)
+            {
+                GD.Print($"[장착 불가] {item.ItemName}은 {PlayerClassUtil.DisplayName(item.RequiredClass)} 전용입니다 (현재: {PlayerClassUtil.DisplayName(psExtra.PlayerClass)})");
+                return;
+            }
             EquipExtraInternal(slotIndex, item, targetSlot, target);
             OnInventoryChanged?.Invoke();
             OnEquipmentChanged?.Invoke();

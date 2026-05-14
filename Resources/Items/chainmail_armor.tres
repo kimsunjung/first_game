@@ -16,3 +16,5 @@ IsStackable = false
 MaxStack = 1
 BonusDefense = 7
 BonusMaxHealth = 25
+RequiredClass = 0
+AvailableToAllClasses = false

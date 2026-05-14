@@ -17,3 +17,5 @@ MaxStack = 1
 BonusDefense = 5
 BonusMaxMp = 30
 BonusCritRate = 0.05
+RequiredClass = 1
+AvailableToAllClasses = false

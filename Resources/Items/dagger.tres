@@ -16,5 +16,5 @@ Type = 1
 IsStackable = false
 MaxStack = 1
 AttackType = 0
-RequiredClass = 2
+RequiredClass = 0
 AvailableToAllClasses = false

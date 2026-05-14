@@ -16,3 +16,5 @@ IsStackable = false
 MaxStack = 1
 BonusMaxHealth = 15
 BonusMoveSpeed = 20.0
+RequiredClass = 2
+AvailableToAllClasses = false

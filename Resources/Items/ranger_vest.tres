@@ -18,3 +18,5 @@ BonusDefense = 4
 BonusMaxHealth = 15
 BonusMoveSpeed = 10.0
 BonusCritRate = 0.03
+RequiredClass = 2
+AvailableToAllClasses = false
