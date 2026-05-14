@@ -86,6 +86,24 @@ namespace FirstGame.Entities.Player
 
 			bool hitAny = false;
 
+			// 클래스별 평타 분기 — Warrior=근접, Mage=Fire 마법 원거리, Archer=무속성 화살 원거리.
+			// 데미지는 동일(BaseDamage) — 클래스별 차별은 사거리·속성·시각만. 평타라 MP 0.
+			float effectiveRange;
+			ElementType atkElement = ElementType.None;
+			switch (Stats.PlayerClass)
+			{
+				case PlayerClass.Mage:
+					effectiveRange = 250f;
+					atkElement = ElementType.Fire;
+					break;
+				case PlayerClass.Archer:
+					effectiveRange = 220f;
+					break;
+				default: // Warrior
+					effectiveRange = Stats.AttackRange;
+					break;
+			}
+
 			// 적 공격 — 단일 타격: 정면 콘(dot>0.5) + 사거리 내 후보 중 가장 가까운 적 1마리만 타격.
 			// AoE 결함(한 번 휘둘러서 다수 적이 동시 피해)을 제거하고 1:1 액션 RPG 감각으로 통일.
 			Node2D bestTarget = null;
@@ -98,10 +116,12 @@ namespace FirstGame.Entities.Player
 				{
 					if (enemyNode is not IDamageable) continue;
 					float distance = GlobalPosition.DistanceTo(enemyNode.GlobalPosition);
-					if (distance > Stats.AttackRange) continue;
+					if (distance > effectiveRange) continue;
 					Vector2 dirToEnemy = (enemyNode.GlobalPosition - GlobalPosition).Normalized();
-					// 매우 가까우면 방향 체크 생략(겹쳤을 때 공격 가능), 아니면 정면 콘만
-					if (distance >= 20f && _facingDirection.Dot(dirToEnemy) <= 0.5f) continue;
+					// Warrior 근접에선 매우 가까우면 방향 체크 생략(겹쳤을 때 공격 가능).
+					// Mage/Archer 원거리는 거리에 무관하게 항상 정면 콘 유지.
+					bool isMelee = Stats.PlayerClass == PlayerClass.Warrior;
+					if (!(isMelee && distance < 20f) && _facingDirection.Dot(dirToEnemy) <= 0.5f) continue;
 					if (distance < bestDistance)
 					{
 						bestDistance = distance;
@@ -113,7 +133,7 @@ namespace FirstGame.Entities.Player
 
 			if (bestTarget != null && bestTarget is IDamageable damageableEnemy)
 			{
-				damageableEnemy.TakeDamage(damage);
+				damageableEnemy.TakeDamage(damage, atkElement);
 				hitAny = true;
 				if (bestTarget is IKnockbackable knockable)
 					knockable.ApplyKnockback(bestKnockDir, BalanceData.Combat.EnemyKnockback);

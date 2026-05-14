@@ -258,9 +258,20 @@ namespace FirstGame.UI
 
             // 구매 버튼 — PASS: 클릭은 그대로 처리되면서 드래그가 ScrollContainer까지 전달됨
             var buyButton = new Button();
-            buyButton.Text = "구매";
             buyButton.MouseFilter = Control.MouseFilterEnum.Pass;
-            buyButton.Pressed += () => OnBuyItemSelected(item);
+            // 무기 클래스 제한 — 플레이어 클래스와 다르면 잠금 표시.
+            var playerCls = FirstGame.Core.GameManager.Instance?.Player?.Stats.PlayerClass;
+            if (isBuyMode && item.Type == ItemType.Weapon && !item.AvailableToAllClasses
+                && playerCls.HasValue && item.RequiredClass != playerCls.Value)
+            {
+                buyButton.Text = $"{FirstGame.Data.PlayerClassUtil.DisplayName(item.RequiredClass)} 전용";
+                buyButton.Disabled = true;
+            }
+            else
+            {
+                buyButton.Text = "구매";
+                buyButton.Pressed += () => OnBuyItemSelected(item);
+            }
             hbox.AddChild(buyButton);
 
             return panel;

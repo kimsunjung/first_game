@@ -274,6 +274,16 @@ namespace FirstGame.Data
             var item = slot.Item;
             int enhLevel = slot.EnhancementLevel;
 
+            // 무기 클래스 제한 — 다른 클래스 전용 무기 장착 시도 차단.
+            // target이 PlayerStats(현재 유일한 IEquipTarget 구현)일 때만 검증 — 후속 IEquipTarget
+            // 구현이 추가돼도 안전 (검증 우회로 동작 기존 유지).
+            if (item.Type == ItemType.Weapon && !item.AvailableToAllClasses
+                && target is PlayerStats ps && item.RequiredClass != ps.PlayerClass)
+            {
+                GD.Print($"[장착 불가] {item.ItemName}은 {PlayerClassUtil.DisplayName(item.RequiredClass)} 전용입니다 (현재: {PlayerClassUtil.DisplayName(ps.PlayerClass)})");
+                return;
+            }
+
             // 기존 장비를 해당 슬롯 자리에 in-place로 되돌려놓음으로써 가방이 꽉 차도
             // 교체 가능하게 한다. UnequipXxx → AddItem 경로는 빈 슬롯을 요구해서
             // MaxSlots 도달 시 거부됐음.

@@ -16,3 +16,5 @@ IsStackable = false
 MaxStack = 1
 BonusDamage = 18
 AttackType = 2
+RequiredClass = 0
+AvailableToAllClasses = false

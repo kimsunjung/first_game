@@ -79,6 +79,13 @@ namespace FirstGame.Data
 		[Export] public float BonusCritRate { get; set; } = 0f;
 		[Export] public WeaponAttackType AttackType { get; set; } = WeaponAttackType.Slice;
 
+		// 클래스 제한 — 무기에서 사용. AvailableToAllClasses=true(기본)면 누구나 장착.
+		// 무기 .tres에서 false + RequiredClass 지정으로 클래스 전용 무기 표현.
+		// 방어구/소비/재료는 기본값 그대로 두면 전 클래스 공유.
+		[ExportGroup("Class")]
+		[Export] public PlayerClass RequiredClass { get; set; } = PlayerClass.Warrior;
+		[Export] public bool AvailableToAllClasses { get; set; } = true;
+
 		// 스킬북 전용
 		[ExportGroup("Skill Book")]
 		[Export] public SkillData LearnedSkill { get; set; }

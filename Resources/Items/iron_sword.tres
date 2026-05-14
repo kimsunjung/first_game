@@ -15,3 +15,5 @@ Type = 1
 IsStackable = false
 MaxStack = 1
 BonusDamage = 5
+RequiredClass = 0
+AvailableToAllClasses = false

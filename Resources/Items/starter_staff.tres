@@ -18,3 +18,5 @@ MaxStack = 1
 BonusDamage = 1
 BonusMaxMp = 10
 AttackType = 2
+RequiredClass = 1
+AvailableToAllClasses = false
