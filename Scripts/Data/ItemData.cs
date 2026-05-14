@@ -9,7 +9,10 @@ namespace FirstGame.Data
 		Heal,         // HealAmount만큼 HP 회복
 		ReturnToTown, // 즉시 마을 이동
 		RestoreMana,  // HealAmount만큼 MP 회복 (이름은 HP 공용이지만 enum 케이스로 분기)
-		Buff          // BuffMoveSpeed/BuffAttackSpeed/BuffDurationSec 적용 후 자동 해제
+		Buff,         // BuffMoveSpeed/BuffAttackSpeed/BuffDurationSec 적용 후 자동 해제
+		Teleport,     // TeleportTargetScene으로 즉시 이동 (방문한 씬만 허용)
+		CureStatus,   // 상태이상 해제 (HealAmount=비트마스크: 1=중독, 2=빙결)
+		ReviveOnDeath // 인벤에 있으면 사망 시 자동 소비 → HP 50% 부활
 	}
 
 	public enum ItemType
@@ -24,7 +27,10 @@ namespace FirstGame.Data
 		Boots,      // 신발
 		Necklace,   // 목걸이
 		Ring,       // 반지
-		Bracelet    // 팔찌
+		Bracelet,   // 팔찌
+		Cloak,      // 망토 (등)
+		Belt,       // 벨트 (허리)
+		Gloves      // 장갑 (양손)
 	}
 
 	public static class ItemTypeExtensions
@@ -33,7 +39,8 @@ namespace FirstGame.Data
 		public static bool IsEquipment(this ItemType t) =>
 			t == ItemType.Weapon || t == ItemType.Armor || t == ItemType.Accessory ||
 			t == ItemType.Helmet || t == ItemType.Boots || t == ItemType.Necklace ||
-			t == ItemType.Ring || t == ItemType.Bracelet || t == ItemType.SkillBook;
+			t == ItemType.Ring || t == ItemType.Bracelet || t == ItemType.SkillBook ||
+			t == ItemType.Cloak || t == ItemType.Belt || t == ItemType.Gloves;
 	}
 
 	public enum WeaponAttackType
@@ -103,6 +110,15 @@ namespace FirstGame.Data
 		// 스킬북 전용
 		[ExportGroup("Skill Book")]
 		[Export] public SkillData LearnedSkill { get; set; }
+
+		// 무게 — 인벤토리 총 무게 합산에 사용. 소비/재료 0.1, 장신구 0.3, 무기 2~5, 갑옷 3~8
+		[ExportGroup("Weight")]
+		[Export] public float Weight { get; set; } = 1.0f;
+
+		// 순간이동 주문서 전용 — TeleportTargetScene + TeleportTargetPos (Vector2)
+		[ExportGroup("Teleport Scroll")]
+		[Export] public string TeleportTargetScene { get; set; } = "";
+		[Export] public Godot.Vector2 TeleportTargetPos { get; set; } = Godot.Vector2.Zero;
 	}
 
 	/// <summary>장신구 등 인스턴스별 랜덤 옵션(affix) 종류.</summary>

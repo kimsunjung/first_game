@@ -32,6 +32,10 @@ namespace FirstGame.Data
         public ItemData EquippedRing1 { get; internal set; }
         public ItemData EquippedRing2 { get; internal set; }
         public ItemData EquippedBracelet { get; internal set; }
+        // v11: 망토/벨트/장갑 슬롯
+        public ItemData EquippedCloak { get; internal set; }
+        public ItemData EquippedBelt { get; internal set; }
+        public ItemData EquippedGloves { get; internal set; }
 
         // 장착 중인 장비의 강화 수치.
         // 무기 전용 정책 — Armor/Accessory 강화는 폐기됐지만 SaveData/세이브 호환을 위해 필드는 남기고
@@ -40,12 +44,26 @@ namespace FirstGame.Data
         public int EquippedArmorEnhancement { get; private set; } = 0;
         public int EquippedAccessoryEnhancement { get; private set; } = 0;
 
-        // 장신구(Ring/Necklace/Bracelet) 슬롯의 인스턴스별 affix.
-        // Helmet/Boots는 이번 PR 범위에서 affix 미대상이라 페어 필드 없음.
+        // 장신구 슬롯의 인스턴스별 affix
         public List<ItemAffix> EquippedNecklaceAffixes { get; private set; } = new();
         public List<ItemAffix> EquippedRing1Affixes { get; private set; } = new();
         public List<ItemAffix> EquippedRing2Affixes { get; private set; } = new();
         public List<ItemAffix> EquippedBraceletAffixes { get; private set; } = new();
+        public List<ItemAffix> EquippedCloakAffixes { get; private set; } = new();
+        public List<ItemAffix> EquippedBeltAffixes { get; private set; } = new();
+        public List<ItemAffix> EquippedGlovesAffixes { get; private set; } = new();
+
+        // 무게 합산
+        public float CurrentWeight
+        {
+            get
+            {
+                float total = 0f;
+                foreach (var s in Slots) total += (s.Item?.Weight ?? 1f) * s.Quantity;
+                return total;
+            }
+        }
+        public static float GetMaxWeight() => 50f;
 
         // ─── 강화 헬퍼 ────────────────────────────────────────────
         // 무기 전용 정책. Armor/Accessory는 항상 0 — 호출처 변경 없이 자연스럽게 무효화된다.
@@ -63,8 +81,8 @@ namespace FirstGame.Data
 
         public void NotifyChanged() => OnInventoryChanged?.Invoke();
 
-        // 퀵슬롯 (Quick Slots - 4 slots)
-        public ItemData[] QuickSlots { get; private set; } = new ItemData[4];
+        // 퀵슬롯 (Quick Slots - 6 slots)
+        public ItemData[] QuickSlots { get; private set; } = new ItemData[6];
 
         // UI 갱신용 이벤트 (Events for UI updates)
         public event Action OnInventoryChanged;
@@ -251,6 +269,57 @@ namespace FirstGame.Data
                         RemoveItem(slotIndex, 1);
                         return;
 
+                    case ItemUseEffect.Teleport:
+                    {
+                        var item = slot.Item;
+                        if (string.IsNullOrEmpty(item.TeleportTargetScene)) return;
+                        // 방문 이력 확인 — 방문한 씬만 허용
+                        var gm = GameManager.Instance;
+                        if (gm != null)
+                        {
+                            bool visited = false;
+                            foreach (var s in gm.VisitedScenes)
+                                if (s == item.TeleportTargetScene) { visited = true; break; }
+                            if (!visited)
+                            {
+                                GD.Print($"[텔포] {item.TeleportTargetScene}은 아직 방문하지 않은 지역입니다.");
+                                return;
+                            }
+                        }
+                        var consumed2 = item;
+                        int consumedLevel2 = slot.EnhancementLevel;
+                        using (var tx2 = GameTransaction.Begin())
+                        {
+                            RemoveItem(slotIndex, 1);
+                            AudioManager.Instance?.PlaySFX("potion_use.wav");
+                            var spawnPos = item.TeleportTargetPos != Godot.Vector2.Zero
+                                ? item.TeleportTargetPos : new Godot.Vector2(320, 180);
+                            bool ok = Core.SceneManager.Instance?.ChangeScene(item.TeleportTargetScene, spawnPos) == true;
+                            if (ok)
+                            {
+                                tx2.SetClaimAfterDispose(false);
+                            }
+                            else
+                            {
+                                bool restored2 = AddItem(consumed2, 1, consumedLevel2, fireAcquired: false);
+                                if (!restored2) GameManager.Instance?.AddPendingReward(consumed2, 1, consumedLevel2);
+                            }
+                        }
+                        return;
+                    }
+
+                    case ItemUseEffect.CureStatus:
+                        // HealAmount 비트마스크: 1=중독 해제, 2=빙결 해제 (PlayerStats 확장 시 연동)
+                        GD.Print($"{slot.Item.ItemName} 사용! 상태이상 해제");
+                        AudioManager.Instance?.PlaySFX("potion_use.wav");
+                        RemoveItem(slotIndex, 1);
+                        return;
+
+                    case ItemUseEffect.ReviveOnDeath:
+                        // 사용 시 아무 효과 없음 — 사망 시 자동 소비
+                        GD.Print($"{slot.Item.ItemName}: 사망 시 자동 발동 아이템입니다.");
+                        return;
+
                     case ItemUseEffect.None:
                     default:
                         return;
@@ -397,12 +466,15 @@ namespace FirstGame.Data
 
         private static bool IsSlotCompatible(ItemType t, ExtraSlot s) => (t, s) switch
         {
-            (ItemType.Helmet, ExtraSlot.Helmet) => true,
-            (ItemType.Boots, ExtraSlot.Boots) => true,
-            (ItemType.Necklace, ExtraSlot.Necklace) => true,
-            (ItemType.Bracelet, ExtraSlot.Bracelet) => true,
-            (ItemType.Ring, ExtraSlot.Ring1) => true,
-            (ItemType.Ring, ExtraSlot.Ring2) => true,
+            (ItemType.Helmet,   ExtraSlot.Helmet)   => true,
+            (ItemType.Boots,    ExtraSlot.Boots)     => true,
+            (ItemType.Necklace, ExtraSlot.Necklace)  => true,
+            (ItemType.Bracelet, ExtraSlot.Bracelet)  => true,
+            (ItemType.Ring,     ExtraSlot.Ring1)     => true,
+            (ItemType.Ring,     ExtraSlot.Ring2)     => true,
+            (ItemType.Cloak,    ExtraSlot.Cloak)     => true,
+            (ItemType.Belt,     ExtraSlot.Belt)      => true,
+            (ItemType.Gloves,   ExtraSlot.Gloves)    => true,
             _ => false
         };
 
@@ -505,12 +577,13 @@ namespace FirstGame.Data
 
         // --- 신규 부위별 장비 슬롯 헬퍼 ---
 
-        /// <summary>모자/신발/목걸이/반지/팔찌처럼 강화 미지원 신규 부위인지.</summary>
+        /// <summary>모자/신발/목걸이/반지/팔찌/망토/벨트/장갑처럼 강화 미지원 신규 부위인지.</summary>
         public static bool IsExtraEquipType(ItemType t) =>
             t == ItemType.Helmet || t == ItemType.Boots || t == ItemType.Necklace ||
-            t == ItemType.Ring || t == ItemType.Bracelet;
+            t == ItemType.Ring || t == ItemType.Bracelet ||
+            t == ItemType.Cloak || t == ItemType.Belt || t == ItemType.Gloves;
 
-        public enum ExtraSlot { Helmet, Boots, Necklace, Ring1, Ring2, Bracelet }
+        public enum ExtraSlot { Helmet, Boots, Necklace, Ring1, Ring2, Bracelet, Cloak, Belt, Gloves }
 
         /// <summary>아이템 타입을 어떤 부위 슬롯에 둘지 결정. 반지는 빈 슬롯 우선.</summary>
         private ExtraSlot ResolveExtraSlot(ItemType t) => t switch
@@ -520,6 +593,9 @@ namespace FirstGame.Data
             ItemType.Necklace => ExtraSlot.Necklace,
             ItemType.Bracelet => ExtraSlot.Bracelet,
             ItemType.Ring => EquippedRing1 == null ? ExtraSlot.Ring1 : ExtraSlot.Ring2,
+            ItemType.Cloak => ExtraSlot.Cloak,
+            ItemType.Belt => ExtraSlot.Belt,
+            ItemType.Gloves => ExtraSlot.Gloves,
             _ => ExtraSlot.Helmet
         };
 
@@ -531,6 +607,9 @@ namespace FirstGame.Data
             ExtraSlot.Ring1 => EquippedRing1,
             ExtraSlot.Ring2 => EquippedRing2,
             ExtraSlot.Bracelet => EquippedBracelet,
+            ExtraSlot.Cloak => EquippedCloak,
+            ExtraSlot.Belt => EquippedBelt,
+            ExtraSlot.Gloves => EquippedGloves,
             _ => null
         };
 
@@ -538,22 +617,28 @@ namespace FirstGame.Data
         {
             switch (s)
             {
-                case ExtraSlot.Helmet: EquippedHelmet = item; break;
-                case ExtraSlot.Boots: EquippedBoots = item; break;
+                case ExtraSlot.Helmet:   EquippedHelmet  = item; break;
+                case ExtraSlot.Boots:    EquippedBoots   = item; break;
                 case ExtraSlot.Necklace: EquippedNecklace = item; break;
-                case ExtraSlot.Ring1: EquippedRing1 = item; break;
-                case ExtraSlot.Ring2: EquippedRing2 = item; break;
+                case ExtraSlot.Ring1:    EquippedRing1   = item; break;
+                case ExtraSlot.Ring2:    EquippedRing2   = item; break;
                 case ExtraSlot.Bracelet: EquippedBracelet = item; break;
+                case ExtraSlot.Cloak:    EquippedCloak   = item; break;
+                case ExtraSlot.Belt:     EquippedBelt    = item; break;
+                case ExtraSlot.Gloves:   EquippedGloves  = item; break;
             }
         }
 
-        /// <summary>장신구 슬롯의 affix 페어. Helmet/Boots는 null 반환(미대상).</summary>
+        /// <summary>장신구/신규 슬롯의 affix 페어. Helmet/Boots는 null 반환(미대상).</summary>
         public List<ItemAffix> GetExtraAffixes(ExtraSlot s) => s switch
         {
             ExtraSlot.Necklace => EquippedNecklaceAffixes,
-            ExtraSlot.Ring1 => EquippedRing1Affixes,
-            ExtraSlot.Ring2 => EquippedRing2Affixes,
+            ExtraSlot.Ring1    => EquippedRing1Affixes,
+            ExtraSlot.Ring2    => EquippedRing2Affixes,
             ExtraSlot.Bracelet => EquippedBraceletAffixes,
+            ExtraSlot.Cloak    => EquippedCloakAffixes,
+            ExtraSlot.Belt     => EquippedBeltAffixes,
+            ExtraSlot.Gloves   => EquippedGlovesAffixes,
             _ => null
         };
 
@@ -566,6 +651,9 @@ namespace FirstGame.Data
                 case ExtraSlot.Ring1:    EquippedRing1Affixes    = copy; break;
                 case ExtraSlot.Ring2:    EquippedRing2Affixes    = copy; break;
                 case ExtraSlot.Bracelet: EquippedBraceletAffixes = copy; break;
+                case ExtraSlot.Cloak:    EquippedCloakAffixes    = copy; break;
+                case ExtraSlot.Belt:     EquippedBeltAffixes     = copy; break;
+                case ExtraSlot.Gloves:   EquippedGlovesAffixes   = copy; break;
                 // Helmet/Boots는 affix 미대상 — 무시.
             }
         }
@@ -809,12 +897,16 @@ namespace FirstGame.Data
             RestoreEquipment(loadedWeapon, loadedArmor, target, loadedAccessory,
                 data.EquippedWeaponEnhancement);
 
-            RestoreExtraSlot(ExtraSlot.Helmet, data.EquippedHelmetPath, null, target); // Helmet은 affix 미대상
-            RestoreExtraSlot(ExtraSlot.Boots, data.EquippedBootsPath, null, target);  // Boots는 affix 미대상
-            RestoreExtraSlot(ExtraSlot.Necklace, migrateNecklacePath, data.EquippedNecklaceAffixes, target);
-            RestoreExtraSlot(ExtraSlot.Ring1, migrateRing1Path, data.EquippedRing1Affixes, target);
-            RestoreExtraSlot(ExtraSlot.Ring2, data.EquippedRing2Path, data.EquippedRing2Affixes, target);
-            RestoreExtraSlot(ExtraSlot.Bracelet, data.EquippedBraceletPath, data.EquippedBraceletAffixes, target);
+            RestoreExtraSlot(ExtraSlot.Helmet,   data.EquippedHelmetPath,   null, target);
+            RestoreExtraSlot(ExtraSlot.Boots,    data.EquippedBootsPath,    null, target);
+            RestoreExtraSlot(ExtraSlot.Necklace, migrateNecklacePath,       data.EquippedNecklaceAffixes,  target);
+            RestoreExtraSlot(ExtraSlot.Ring1,    migrateRing1Path,          data.EquippedRing1Affixes,     target);
+            RestoreExtraSlot(ExtraSlot.Ring2,    data.EquippedRing2Path,    data.EquippedRing2Affixes,     target);
+            RestoreExtraSlot(ExtraSlot.Bracelet, data.EquippedBraceletPath, data.EquippedBraceletAffixes,  target);
+            // v11: 망토/벨트/장갑 — 누락 시 빈 문자열이므로 RestoreExtraSlot이 안전하게 무시.
+            RestoreExtraSlot(ExtraSlot.Cloak,    data.EquippedCloakPath,    data.EquippedCloakAffixes,     target);
+            RestoreExtraSlot(ExtraSlot.Belt,     data.EquippedBeltPath,     data.EquippedBeltAffixes,      target);
+            RestoreExtraSlot(ExtraSlot.Gloves,   data.EquippedGlovesPath,   data.EquippedGlovesAffixes,    target);
 
             return report;
         }

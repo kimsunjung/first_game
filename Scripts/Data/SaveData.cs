@@ -13,7 +13,7 @@ namespace FirstGame.Data
 
 	public class SaveData
 	{
-		public const int LatestVersion = 10;
+		public const int LatestVersion = 11;
 		public int Version { get; set; } = LatestVersion;
 
 		public float PlayerPosX { get; set; }
@@ -74,14 +74,21 @@ namespace FirstGame.Data
 		public string EquippedRing2Path { get; set; } = "";
 		public string EquippedBraceletPath { get; set; } = "";
 
-		// ─── v7: 장신구 등 장착 슬롯의 affix. 이번 PR은 빈 리스트로만 직렬화.
-		// 후속 PR에서 드랍 생성 시 채움. v6 세이브 로드 시 누락 필드는 기본 new()로 채워짐.
+		// ─── v7: 장신구 등 장착 슬롯의 affix.
 		public List<ItemAffix> EquippedHelmetAffixes { get; set; } = new();
 		public List<ItemAffix> EquippedBootsAffixes { get; set; } = new();
 		public List<ItemAffix> EquippedNecklaceAffixes { get; set; } = new();
 		public List<ItemAffix> EquippedRing1Affixes { get; set; } = new();
 		public List<ItemAffix> EquippedRing2Affixes { get; set; } = new();
 		public List<ItemAffix> EquippedBraceletAffixes { get; set; } = new();
+
+		// ─── v11: 망토/벨트/장갑 슬롯. 누락 시 빈 문자열로 로드 (BackfillV11 자동 처리).
+		public string EquippedCloakPath { get; set; } = "";
+		public List<ItemAffix> EquippedCloakAffixes { get; set; } = new();
+		public string EquippedBeltPath { get; set; } = "";
+		public List<ItemAffix> EquippedBeltAffixes { get; set; } = new();
+		public string EquippedGlovesPath { get; set; } = "";
+		public List<ItemAffix> EquippedGlovesAffixes { get; set; } = new();
 
 		// ─── v5: 절차적 필드맵 seed (씬 경로 → seed). 첫 진입 시 랜덤 → 저장,
 		// 재진입/리로드 시 같은 seed로 재생성해 플레이어 좌표가 장애물 안에 들어가지 않게 한다.

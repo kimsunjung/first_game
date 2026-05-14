@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://gloves_frost01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/bracelet.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "냉기의 장갑"
+Description = "얼음처럼 차가운 장갑. 냉기 세트."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 950
+SellPrice = 310
+Type = 13
+IsStackable = false
+MaxStack = 1
+BonusDefense = 3
+BonusAttackSpeed = 0.06
+AvailableToAllClasses = true
+Weight = 1.5

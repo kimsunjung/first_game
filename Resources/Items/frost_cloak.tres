@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cloak_frost01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/frost_staff.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "냉기의 망토"
+Description = "서릿발 같은 냉기가 서린 망토. 냉기 마법사 세트."
+Rarity = 3
+Icon = ExtResource("2_icon")
+Price = 2500
+SellPrice = 800
+Type = 11
+IsStackable = false
+MaxStack = 1
+BonusDefense = 8
+BonusMaxMp = 30
+RequiredClass = 1
+AvailableToAllClasses = false
+Weight = 2.5

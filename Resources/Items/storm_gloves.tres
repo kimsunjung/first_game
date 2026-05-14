@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://gloves_storm01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/bracelet.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "폭풍의 장갑"
+Description = "번개 문양이 새겨진 장갑. 폭풍 세트."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 950
+SellPrice = 310
+Type = 13
+IsStackable = false
+MaxStack = 1
+BonusDamage = 4
+BonusCritRate = 0.04
+AvailableToAllClasses = true
+Weight = 1.5
