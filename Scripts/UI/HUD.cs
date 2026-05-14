@@ -402,7 +402,7 @@ namespace FirstGame.UI
 		{
 			_healthBar.MaxValue = maxHp;
 			_healthBar.Value = currentHp;
-			_healthLabel.Text = $"{currentHp} / {maxHp}";
+			_healthLabel.Text = $"{currentHp}/{maxHp}";
 		}
 
 		private void UpdateMpDisplay(int currentMp, int maxMp)
@@ -429,7 +429,7 @@ namespace FirstGame.UI
 
 		private void UpdateGoldDisplay(int gold)
 		{
-			_goldLabel.Text = $"골드: {gold}";
+			_goldLabel.Text = $"{gold}G";
 		}
 
 		private void UpdateQuickSlotDisplay()

@@ -19,19 +19,33 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_bg"]
+bg_color = Color(0.18, 0.04, 0.04, 0.85)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
+bg_color = Color(0.85, 0.15, 0.18, 1.0)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mp_bg"]
-bg_color = Color(0.05, 0.05, 0.2, 0.8)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+bg_color = Color(0.04, 0.05, 0.2, 0.85)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mp_fill"]
-bg_color = Color(0.1, 0.3, 0.9, 1.0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+bg_color = Color(0.1, 0.3, 0.95, 1.0)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_bg"]
 bg_color = Color(0.15, 0.1, 0.05, 0.8)
@@ -42,6 +56,22 @@ corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_fill"]
 bg_color = Color(0.9, 0.75, 0.1, 1.0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chip"]
+bg_color = Color(0.08, 0.08, 0.1, 0.78)
+content_margin_left = 6
+content_margin_top = 2
+content_margin_right = 6
+content_margin_bottom = 2
+border_color = Color(0.5, 0.42, 0.25, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -58,40 +88,53 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1930271282]
 layout_mode = 2
+theme_override_constants/separation = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1579262533]
+[node name="TopRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1579262533]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
-[node name="HealthInfo" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1166683506]
+[node name="VitalsBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TopRow" unique_id=1166683506]
 layout_mode = 2
+theme_override_constants/separation = 1
 
-[node name="HealthBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HBoxContainer/HealthInfo" unique_id=1954119560]
+[node name="HpRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopRow/VitalsBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HealthBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/TopRow/VitalsBox/HpRow" unique_id=1954119560]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 14)
+custom_minimum_size = Vector2(110, 10)
 layout_mode = 2
 value = 100.0
 show_percentage = false
+theme_override_styles/background = SubResource("StyleBoxFlat_hp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
 
-[node name="HealthLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/HealthInfo" unique_id=352412305]
+[node name="HealthLabel" type="Label" parent="MarginContainer/VBoxContainer/TopRow/VitalsBox/HpRow" unique_id=352412305]
 unique_name_in_owner = true
 layout_mode = 2
-text = "100 / 100"
-horizontal_alignment = 1
+text = "100/100"
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(1, 0.6, 0.6, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+vertical_alignment = 1
 
-[node name="MpInfo" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=111111101]
+[node name="MpRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopRow/VitalsBox"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
-[node name="MpBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HBoxContainer/MpInfo" unique_id=111111102]
+[node name="MpBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/TopRow/VitalsBox/MpRow" unique_id=111111102]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 14)
+custom_minimum_size = Vector2(110, 10)
 layout_mode = 2
 max_value = 50.0
 value = 50.0
@@ -99,307 +142,324 @@ show_percentage = false
 theme_override_styles/background = SubResource("StyleBoxFlat_mp_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_mp_fill")
 
-[node name="MpLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/MpInfo" unique_id=111111107]
-layout_mode = 2
-text = "MP"
-theme_override_font_sizes/font_size = 12
-horizontal_alignment = 1
-modulate = Color(0.4, 0.6, 1.0, 1.0)
-
-[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1133256834]
+[node name="MpLabel" type="Label" parent="MarginContainer/VBoxContainer/TopRow/VitalsBox/MpRow" unique_id=111111107]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Gold: 0"
+text = "50/50"
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
 vertical_alignment = 1
 
-[node name="TimeLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="GoldChip" type="PanelContainer" parent="MarginContainer/VBoxContainer/TopRow"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/TopRow/GoldChip" unique_id=1133256834]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "Day 1 06:00"
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+text = "0G"
 vertical_alignment = 1
 
-[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=410222344]
+[node name="TimeChip" type="PanelContainer" parent="MarginContainer/VBoxContainer/TopRow"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="TimeLabel" type="Label" parent="MarginContainer/VBoxContainer/TopRow/TimeChip"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+text = "06:00"
+vertical_alignment = 1
+
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/TopRow" unique_id=410222344]
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="LevelRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=111111103]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 
-[node name="LevelLabel" type="Label" parent="MarginContainer/VBoxContainer/LevelRow" unique_id=111111104]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 0)
+[node name="LevelChip" type="PanelContainer" parent="MarginContainer/VBoxContainer/LevelRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="LevelLabel" type="Label" parent="MarginContainer/VBoxContainer/LevelRow/LevelChip" unique_id=111111104]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(1, 1, 0.7, 1)
 text = "Lv.1"
 vertical_alignment = 1
 
-[node name="ExpBar" type="ProgressBar" parent="." unique_id=111111105]
+[node name="ExpBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/LevelRow" unique_id=111111105]
 unique_name_in_owner = true
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 0
-offset_top = -3.0
-max_value = 100.0
+custom_minimum_size = Vector2(130, 6)
+layout_mode = 2
+size_flags_vertical = 4
 value = 0.0
 show_percentage = false
 theme_override_styles/background = SubResource("StyleBoxFlat_exp_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_exp_fill")
 
-[node name="QuestLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=222100001]
+[node name="LevelUpLabel" type="Label" parent="MarginContainer/VBoxContainer/LevelRow" unique_id=111111106]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
-modulate = Color(1.0, 0.9, 0.55, 1.0)
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+text = "Level Up!"
+visible = false
+
+[node name="QuestLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1111114]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
 text = ""
-visible = false
 
-[node name="GameOverPanel" type="PanelContainer" parent="." unique_id=2038011024]
-texture_filter = 2
-unique_name_in_owner = true
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="CenterContainer" type="CenterContainer" parent="GameOverPanel" unique_id=751611657]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="GameOverPanel/CenterContainer" unique_id=1214069086]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Label" type="Label" parent="GameOverPanel/CenterContainer/VBoxContainer" unique_id=683616311]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "GAME OVER"
-horizontal_alignment = 1
-
-[node name="RestartButton" type="Button" parent="GameOverPanel/CenterContainer/VBoxContainer" unique_id=561806126]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 44)
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Load Save"
-
-[node name="SaveNotification" type="Label" parent="." unique_id=1803154988]
-texture_filter = 2
-unique_name_in_owner = true
-visible = false
+[node name="HBoxContainer2" type="HBoxContainer" parent="." unique_id=1290034723]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -50.0
-offset_top = -100.0
-offset_right = 50.0
-offset_bottom = -70.0
+offset_left = -84.0
+offset_top = -40.0
+offset_right = 84.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 20
-text = "Saved!"
-horizontal_alignment = 1
-
-[node name="ItemPickupNotification" type="Label" parent="." unique_id=1480392790]
-texture_filter = 2
-unique_name_in_owner = true
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -80.0
-offset_top = -130.0
-offset_right = 80.0
-offset_bottom = -100.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 1
-
-[node name="LevelUpLabel" type="Label" parent="." unique_id=111111106]
-texture_filter = 2
-unique_name_in_owner = true
-visible = false
-anchors_preset = 5
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -130.0
-offset_top = -30.0
-offset_right = 130.0
-offset_bottom = 30.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-text = "LEVEL UP!"
-horizontal_alignment = 1
-vertical_alignment = 1
-modulate = Color(1.0, 0.9, 0.2, 1.0)
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="." unique_id=12448192]
-texture_filter = 2
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -95.0
-offset_top = -55.0
-offset_right = 95.0
-offset_bottom = -5.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 10
+theme_override_constants/separation = 2
 
 [node name="SlotPanel1" type="Panel" parent="HBoxContainer2" unique_id=1660012360]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon1" type="TextureRect" parent="HBoxContainer2/SlotPanel1" unique_id=595257225]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = 2.0
-offset_right = 36.0
-offset_bottom = 36.0
+offset_top = 1.0
+offset_right = 24.0
+offset_bottom = 24.0
 
 [node name="QuickSlotQty1" type="Label" parent="HBoxContainer2/SlotPanel1" unique_id=1414275913]
 unique_name_in_owner = true
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
 
 [node name="KeyLabel" type="Label" parent="HBoxContainer2/SlotPanel1" unique_id=1052758256]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
+text = "1"
 
 [node name="SlotPanel2" type="Panel" parent="HBoxContainer2" unique_id=237627158]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon2" type="TextureRect" parent="HBoxContainer2/SlotPanel2" unique_id=1699834880]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = 2.0
-offset_right = 36.0
-offset_bottom = 36.0
+offset_top = 1.0
+offset_right = 24.0
+offset_bottom = 24.0
 
 [node name="QuickSlotQty2" type="Label" parent="HBoxContainer2/SlotPanel2" unique_id=1719469486]
 unique_name_in_owner = true
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
 
 [node name="KeyLabel" type="Label" parent="HBoxContainer2/SlotPanel2" unique_id=1252363850]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
+text = "2"
 
 [node name="SlotPanel3" type="Panel" parent="HBoxContainer2" unique_id=1537310084]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon3" type="TextureRect" parent="HBoxContainer2/SlotPanel3" unique_id=2056567742]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = 2.0
-offset_right = 36.0
-offset_bottom = 36.0
+offset_top = 1.0
+offset_right = 24.0
+offset_bottom = 24.0
 
 [node name="QuickSlotQty3" type="Label" parent="HBoxContainer2/SlotPanel3" unique_id=142322851]
 unique_name_in_owner = true
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
 
 [node name="KeyLabel" type="Label" parent="HBoxContainer2/SlotPanel3" unique_id=1904931545]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
+text = "3"
 
 [node name="SlotPanel4" type="Panel" parent="HBoxContainer2" unique_id=273812523]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon4" type="TextureRect" parent="HBoxContainer2/SlotPanel4" unique_id=2072424525]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = 2.0
-offset_right = 36.0
-offset_bottom = 36.0
+offset_top = 1.0
+offset_right = 24.0
+offset_bottom = 24.0
 
 [node name="QuickSlotQty4" type="Label" parent="HBoxContainer2/SlotPanel4" unique_id=1300678252]
 unique_name_in_owner = true
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
 
 [node name="KeyLabel" type="Label" parent="HBoxContainer2/SlotPanel4" unique_id=582641947]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
+text = "4"
 
 [node name="SlotPanel5" type="Panel" parent="HBoxContainer2"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon5" type="TextureRect" parent="HBoxContainer2/SlotPanel5"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = 2.0
-offset_right = 36.0
-offset_bottom = 36.0
+offset_top = 1.0
+offset_right = 24.0
+offset_bottom = 24.0
 
 [node name="QuickSlotQty5" type="Label" parent="HBoxContainer2/SlotPanel5"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
 
 [node name="KeyLabel" type="Label" parent="HBoxContainer2/SlotPanel5"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
 text = "5"
 
 [node name="SlotPanel6" type="Panel" parent="HBoxContainer2"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 
 [node name="QuickSlotIcon6" type="TextureRect" parent="HBoxContainer2/SlotPanel6"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = 2.0
-offset_right = 36.0
-offset_bottom = 36.0
+offset_top = 1.0
+offset_right = 24.0
+offset_bottom = 24.0
 
 [node name="QuickSlotQty6" type="Label" parent="HBoxContainer2/SlotPanel6"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
 
 [node name="KeyLabel" type="Label" parent="HBoxContainer2/SlotPanel6"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 26.0
+offset_bottom = 12.0
+theme_override_font_sizes/font_size = 7
 text = "6"
 
 [node name="MobileControls" parent="." instance=ExtResource("2_mc")]
+
+[node name="GameOverPanel" type="Control" parent="." unique_id=2086776024]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 0
+
+[node name="ColorRect" type="ColorRect" parent="GameOverPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOverPanel"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -50.0
+offset_right = 110.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameOverLabel" type="Label" parent="GameOverPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="GameOverPanel/VBoxContainer" unique_id=2073555537]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "재시작"
+
+[node name="SaveNotification" type="Label" parent="." unique_id=2086776025]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 40.0
+offset_right = 100.0
+offset_bottom = 60.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.4, 1)
+theme_override_constants/outline_size = 4
+text = "저장됨"
+horizontal_alignment = 1
+
+[node name="ItemPickupNotification" type="Label" parent="." unique_id=2086776026]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 60.0
+offset_right = 100.0
+offset_bottom = 80.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+theme_override_constants/outline_size = 4
+text = ""
+horizontal_alignment = 1

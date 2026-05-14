@@ -63,6 +63,6 @@ namespace FirstGame.Core
 			OnTimeChanged?.Invoke();
 		}
 
-		public static string FormatTime() => $"Day {_dayCount} {Hour:00}:{Minute:00}";
+		public static string FormatTime() => $"{Hour:00}:{Minute:00}";
 	}
 }
