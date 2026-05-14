@@ -194,6 +194,8 @@ namespace FirstGame.Entities.Player
 				else if (key == Key.Key2) Inventory.UseQuickSlot(1, Stats);
 				else if (key == Key.Key3) Inventory.UseQuickSlot(2, Stats);
 				else if (key == Key.Key4) Inventory.UseQuickSlot(3, Stats);
+				else if (key == Key.Key5) Inventory.UseQuickSlot(4, Stats);
+				else if (key == Key.Key6) Inventory.UseQuickSlot(5, Stats);
 				else if (key == Key.Q) UseSkillSlot(0);
 				else if (key == Key.W && !IsMoving()) UseSkillSlot(1);
 				else if (key == Key.E) UseSkillSlot(2);
@@ -355,8 +357,8 @@ namespace FirstGame.Entities.Player
 
 				if (data.QuickSlotPaths != null)
 				{
-					var qsItems = new ItemData[4];
-					for (int i = 0; i < data.QuickSlotPaths.Count && i < 4; i++)
+					var qsItems = new ItemData[6];
+					for (int i = 0; i < data.QuickSlotPaths.Count && i < 6; i++)
 					{
 						if (!string.IsNullOrEmpty(data.QuickSlotPaths[i]))
 							qsItems[i] = GD.Load<ItemData>(data.QuickSlotPaths[i]);
