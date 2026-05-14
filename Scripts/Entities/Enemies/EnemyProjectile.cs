@@ -14,7 +14,6 @@ namespace FirstGame.Entities.Enemies
 		public float TextureScale { get; set; } = 0.5f;
 
 		private float _lifetime = 3f;
-		private float _trailTimer = 0f;
 
 		public override void _Ready()
 		{
@@ -62,32 +61,7 @@ namespace FirstGame.Entities.Enemies
 		{
 			Position += Direction * Speed * FirstGame.Core.BalanceData.Movement.ProjectileSpeedMultiplier * (float)delta;
 			_lifetime -= (float)delta;
-
-			// 잔상 효과
-			_trailTimer -= (float)delta;
-			if (_trailTimer <= 0f)
-			{
-				_trailTimer = 0.05f;
-				SpawnTrail();
-			}
-
 			if (_lifetime <= 0f) QueueFree();
-		}
-
-		private void SpawnTrail()
-		{
-			var trail = new Node2D();
-			trail.GlobalPosition = GlobalPosition;
-			GetTree().CurrentScene.AddChild(trail);
-
-			// 잔상은 서서히 사라짐
-			trail.Modulate = new Color(ProjectileColor.R, ProjectileColor.G, ProjectileColor.B, 0.5f);
-			var tween = trail.CreateTween();
-			tween.TweenProperty(trail, "modulate:a", 0f, 0.3f);
-			tween.TweenCallback(Callable.From(() =>
-			{
-				if (IsInstanceValid(trail)) trail.QueueFree();
-			}));
 		}
 
 		private void OnBodyEntered(Node2D body)
@@ -104,23 +78,36 @@ namespace FirstGame.Entities.Enemies
 
 		private void SpawnHitEffect()
 		{
-			var hit = new Node2D();
-			hit.GlobalPosition = GlobalPosition;
-			GetTree().CurrentScene.AddChild(hit);
+			var flash = new HitFlash { GlobalPosition = GlobalPosition };
+			GetTree().CurrentScene.AddChild(flash);
+			flash.Play(ProjectileColor);
+		}
+	}
 
-			// 히트 시 원형 확장 이펙트
-			var sprite = new Sprite2D();
-			sprite.Modulate = ProjectileColor;
-			sprite.Scale = new Vector2(0.3f, 0.3f);
-			hit.AddChild(sprite);
+	/// <summary>투사체 히트 시 원형 확산 플래시. 자체 _Draw로 그려 빈 Sprite2D 노드 누적 방지.</summary>
+	public partial class HitFlash : Node2D
+	{
+		private const float StartRadius = 4f;
+		private const float EndRadius = 18f;
+		private const float Duration = 0.18f;
 
-			var tween = hit.CreateTween();
-			tween.TweenProperty(sprite, "scale", new Vector2(2.5f, 2.5f), 0.2f);
-			tween.Parallel().TweenProperty(sprite, "modulate:a", 0f, 0.2f);
-			tween.TweenCallback(Callable.From(() =>
-			{
-				if (IsInstanceValid(hit)) hit.QueueFree();
-			}));
+		private float _radius = StartRadius;
+		private float _alpha = 0.9f;
+		private Color _color = Colors.White;
+
+		public void Play(Color color)
+		{
+			_color = color;
+			var tween = CreateTween();
+			tween.SetParallel(true);
+			tween.TweenMethod(Callable.From<float>(r => { _radius = r; QueueRedraw(); }), StartRadius, EndRadius, Duration);
+			tween.TweenMethod(Callable.From<float>(a => { _alpha = a; QueueRedraw(); }), 0.9f, 0f, Duration);
+			tween.Chain().TweenCallback(Callable.From(QueueFree));
+		}
+
+		public override void _Draw()
+		{
+			DrawCircle(Vector2.Zero, _radius, new Color(_color.R, _color.G, _color.B, _alpha));
 		}
 	}
 }
