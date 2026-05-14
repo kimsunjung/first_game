@@ -19,3 +19,4 @@ BonusMaxMp = 10
 AttackType = 1
 RequiredClass = 2
 AvailableToAllClasses = false
+IsShopBlocked = true

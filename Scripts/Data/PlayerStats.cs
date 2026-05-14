@@ -49,6 +49,50 @@ namespace FirstGame.Data
 		}
 		public void ModifyCritRate(float delta) => CritRate += delta;
 		public void ModifyMoveSpeed(float delta) => MoveSpeed += delta;
+		public void ModifyAttackSpeed(float delta) => AttackSpeed += delta;
+
+		// 임시 buff 추적 — duration초 동안 누적 적용, 만료 시 자동 차감.
+		// PlayerController._PhysicsProcess가 TickBuffs(delta) 호출해 timer 진행.
+		private float _buffMoveSpeedAmount = 0f;
+		private float _buffMoveSpeedRemaining = 0f;
+		private float _buffAttackSpeedAmount = 0f;
+		private float _buffAttackSpeedRemaining = 0f;
+
+		public void ApplyBuff(float moveDelta, float atkDelta, float durationSec)
+		{
+			if (durationSec <= 0f) return;
+			// 중복 buff 적용 시 기존 효과를 먼저 제거(누적 차단) → 새 값/시간으로 갱신.
+			if (_buffMoveSpeedRemaining > 0f) MoveSpeed -= _buffMoveSpeedAmount;
+			if (_buffAttackSpeedRemaining > 0f) AttackSpeed -= _buffAttackSpeedAmount;
+			_buffMoveSpeedAmount = moveDelta;
+			_buffAttackSpeedAmount = atkDelta;
+			_buffMoveSpeedRemaining = moveDelta != 0f ? durationSec : 0f;
+			_buffAttackSpeedRemaining = atkDelta != 0f ? durationSec : 0f;
+			MoveSpeed += moveDelta;
+			AttackSpeed += atkDelta;
+		}
+
+		public void TickBuffs(float delta)
+		{
+			if (_buffMoveSpeedRemaining > 0f)
+			{
+				_buffMoveSpeedRemaining -= delta;
+				if (_buffMoveSpeedRemaining <= 0f)
+				{
+					MoveSpeed -= _buffMoveSpeedAmount;
+					_buffMoveSpeedAmount = 0f;
+				}
+			}
+			if (_buffAttackSpeedRemaining > 0f)
+			{
+				_buffAttackSpeedRemaining -= delta;
+				if (_buffAttackSpeedRemaining <= 0f)
+				{
+					AttackSpeed -= _buffAttackSpeedAmount;
+					_buffAttackSpeedAmount = 0f;
+				}
+			}
+		}
 		public void Heal(int amount) => CurrentHealth = Math.Min(CurrentHealth + amount, MaxHealth);
 		public void RestoreMp(int amount) => CurrentMp = Math.Min(CurrentMp + amount, MaxMp);
 
@@ -119,6 +163,7 @@ namespace FirstGame.Data
 			MaxMp = 50 + levelsGained * LevelUpMpBonus;
 			CritRate = 0.1f;       // CharacterStats 베이스 — affix/장비/DEX는 후속에 더해짐
 			MoveSpeed = 120.0f;    // CharacterStats 베이스
+			AttackSpeed = 1.0f;    // CharacterStats 베이스 — 장비/affix가 += 누적
 			Defense = 0;           // 장비 보너스만 더해짐
 			_exp = Mathf.Max(0, exp);
 		}

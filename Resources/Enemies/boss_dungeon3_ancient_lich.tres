@@ -8,6 +8,8 @@
 [ext_resource type="Resource" path="res://Resources/Items/shadow_ring.tres" id="6_sring"]
 [ext_resource type="Resource" path="res://Resources/Items/runic_bracelet.tres" id="7_rbrace"]
 [ext_resource type="Resource" path="res://Resources/Items/guardian_amulet.tres" id="8_gamulet"]
+[ext_resource type="Resource" uid="uid://itm_bow_drag_001" path="res://Resources/Items/dragonbone_bow.tres" id="9_drag"]
+[ext_resource type="Resource" uid="uid://itm_robe_void_001" path="res://Resources/Items/void_robe.tres" id="10_void"]
 
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/dark_orb_projectile.png" id="99_proj"]
 [resource]
@@ -29,8 +31,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.39
 CollisionScale = 2.8
-PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_mega"), ExtResource("5_core"), ExtResource("6_sring"), ExtResource("7_rbrace"), ExtResource("8_gamulet")])
-DropWeights = PackedFloat32Array(0.20, 0.20, 0.25, 0.15, 0.10, 0.10)
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_mega"), ExtResource("5_core"), ExtResource("6_sring"), ExtResource("7_rbrace"), ExtResource("8_gamulet"), ExtResource("9_drag"), ExtResource("10_void")])
+DropWeights = PackedFloat32Array(0.15, 0.15, 0.20, 0.10, 0.10, 0.10, 0.12, 0.08)
 DropChance = 1.0
 MaxHealth = 1500
 CurrentHealth = 1500

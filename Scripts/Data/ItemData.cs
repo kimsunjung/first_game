@@ -8,7 +8,8 @@ namespace FirstGame.Data
 		None,         // 효과 없음 (소비 안 됨)
 		Heal,         // HealAmount만큼 HP 회복
 		ReturnToTown, // 즉시 마을 이동
-		RestoreMana   // HealAmount만큼 MP 회복 (이름은 HP 공용이지만 enum 케이스로 분기)
+		RestoreMana,  // HealAmount만큼 MP 회복 (이름은 HP 공용이지만 enum 케이스로 분기)
+		Buff          // BuffMoveSpeed/BuffAttackSpeed/BuffDurationSec 적용 후 자동 해제
 	}
 
 	public enum ItemType
@@ -77,7 +78,18 @@ namespace FirstGame.Data
 		[Export] public float BonusMoveSpeed { get; set; } = 0f;
 		[Export] public int BonusMaxMp { get; set; } = 0;
 		[Export] public float BonusCritRate { get; set; } = 0f;
+		// 공격속도 — 1.0이 베이스. 0.15는 공격 cooldown을 15% 단축(공격 15% 더 빠름).
+		[Export] public float BonusAttackSpeed { get; set; } = 0f;
 		[Export] public WeaponAttackType AttackType { get; set; } = WeaponAttackType.Slice;
+
+		// 상점 차단 — true면 일반 상점에서 진열·판매 안 됨. 적 드랍/보스 전용 무기에 사용.
+		[Export] public bool IsShopBlocked { get; set; } = false;
+
+		// 임시 buff (소모품 — 속도 물약 등). 사용 시 N초간 효과 적용 후 자동 해제.
+		[ExportGroup("Consumable Buff")]
+		[Export] public float BuffMoveSpeed { get; set; } = 0f;
+		[Export] public float BuffAttackSpeed { get; set; } = 0f;
+		[Export] public float BuffDurationSec { get; set; } = 0f;
 
 		// 클래스 제한 — 무기에서 사용. AvailableToAllClasses=true(기본)면 누구나 장착.
 		// 무기 .tres에서 false + RequiredClass 지정으로 클래스 전용 무기 표현.
@@ -99,7 +111,8 @@ namespace FirstGame.Data
 		BonusMaxHealth,
 		BonusMaxMp,
 		BonusCritRate,
-		BonusMoveSpeed
+		BonusMoveSpeed,
+		BonusAttackSpeed
 	}
 
 	/// <summary>아이템 인스턴스에 붙는 단일 옵션. POCO — System.Text.Json으로 직접 직렬화.</summary>

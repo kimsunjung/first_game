@@ -7,6 +7,7 @@
 [ext_resource type="Resource" uid="uid://itemboots002" path="res://Resources/Items/iron_boots.tres" id="5_ib"]
 [ext_resource type="Resource" uid="uid://itembrace002" path="res://Resources/Items/silver_bracelet.tres" id="6_sb"]
 [ext_resource type="Resource" uid="uid://itemboots003" path="res://Resources/Items/traveler_boots.tres" id="7_tb"]
+[ext_resource type="Resource" uid="uid://itm_bow_elf_001" path="res://Resources/Items/elven_bow.tres" id="8_elven"]
 
 [resource]
 script = ExtResource("1_es")
@@ -20,8 +21,8 @@ GoldReward = 300
 EnemyTypeName = "SkeletonKing"
 IsBoss = true
 SpriteAtlasCoords = Vector2i(8, 8)
-PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core"), ExtResource("5_ib"), ExtResource("6_sb"), ExtResource("7_tb")])
-DropWeights = PackedFloat32Array(0.20, 0.15, 0.25, 0.15, 0.15, 0.10)
+PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core"), ExtResource("5_ib"), ExtResource("6_sb"), ExtResource("7_tb"), ExtResource("8_elven")])
+DropWeights = PackedFloat32Array(0.18, 0.13, 0.22, 0.13, 0.13, 0.08, 0.13)
 DropChance = 1.0
 MaxHealth = 1000
 CurrentHealth = 1000

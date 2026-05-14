@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1")
 ItemName = "용골 활"
-Description = "용의 뼈로 깎아 만든 전설의 활. 공격 +30, 크리 +10%, 이속 +15."
+Description = "용의 뼈로 깎아 만든 전설의 활. 공격 +30, 크리 +10%, 공속 +20%."
 Rarity = 4
 Price = 5500
 SellPrice = 2750
@@ -15,7 +15,8 @@ IsStackable = false
 MaxStack = 1
 BonusDamage = 30
 BonusCritRate = 0.10
-BonusMoveSpeed = 15.0
+BonusAttackSpeed = 0.20
 AttackType = 1
 RequiredClass = 2
 AvailableToAllClasses = false
+IsShopBlocked = true

@@ -244,6 +244,13 @@ namespace FirstGame.Data
                         RemoveItem(slotIndex, 1);
                         return;
 
+                    case ItemUseEffect.Buff:
+                        target.ApplyBuff(slot.Item.BuffMoveSpeed, slot.Item.BuffAttackSpeed, slot.Item.BuffDurationSec);
+                        GD.Print($"{slot.Item.ItemName} 사용! {slot.Item.BuffDurationSec:0}초간 효과 적용");
+                        AudioManager.Instance?.PlaySFX("potion_use.wav");
+                        RemoveItem(slotIndex, 1);
+                        return;
+
                     case ItemUseEffect.None:
                     default:
                         return;
@@ -572,6 +579,7 @@ namespace FirstGame.Data
             if (item.BonusMaxMp != 0) target.ModifyMaxMp(sign * item.BonusMaxMp);
             if (item.BonusCritRate != 0f) target.ModifyCritRate(sign * item.BonusCritRate);
             if (item.BonusMoveSpeed != 0f) target.ModifyMoveSpeed(sign * item.BonusMoveSpeed);
+            if (item.BonusAttackSpeed != 0f) target.ModifyAttackSpeed(sign * item.BonusAttackSpeed);
         }
 
         /// <summary>affix 합산 적용 (sign=+1 장착, -1 해제). 같은 type이 여러 개면 모두 누적.</summary>
@@ -588,6 +596,7 @@ namespace FirstGame.Data
                     case ItemAffixType.BonusMaxMp:     target.ModifyMaxMp(sign * (int)a.Value); break;
                     case ItemAffixType.BonusCritRate:  target.ModifyCritRate(sign * a.Value); break;
                     case ItemAffixType.BonusMoveSpeed: target.ModifyMoveSpeed(sign * a.Value); break;
+                    case ItemAffixType.BonusAttackSpeed: target.ModifyAttackSpeed(sign * a.Value); break;
                 }
             }
         }

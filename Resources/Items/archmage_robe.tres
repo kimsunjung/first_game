@@ -18,3 +18,4 @@ BonusDefense = 8
 BonusCritRate = 0.04
 RequiredClass = 1
 AvailableToAllClasses = false
+IsShopBlocked = true

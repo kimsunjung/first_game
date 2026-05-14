@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1")
 ItemName = "사냥꾼의 정예궁"
-Description = "베테랑 사냥꾼이 손에 길들인 활. 공격 +12, 크리 +6%, 이속 +10."
+Description = "베테랑 사냥꾼이 손에 길들인 활. 공격 +12, 크리 +6%, 공속 +10%."
 Rarity = 2
 Price = 750
 SellPrice = 375
@@ -15,7 +15,8 @@ IsStackable = false
 MaxStack = 1
 BonusDamage = 12
 BonusCritRate = 0.06
-BonusMoveSpeed = 10.0
+BonusAttackSpeed = 0.10
 AttackType = 1
 RequiredClass = 2
 AvailableToAllClasses = false
+IsShopBlocked = true

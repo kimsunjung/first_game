@@ -5,6 +5,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
 [ext_resource type="Resource" path="res://Resources/Items/ancient_bone.tres" id="4_ab"]
 [ext_resource type="Resource" path="res://Resources/Items/iron_armor.tres" id="5_armor"]
+[ext_resource type="Resource" uid="uid://itm_robe_void_001" path="res://Resources/Items/void_robe.tres" id="6_void"]
 
 [resource]
 script = ExtResource("1")
@@ -21,8 +22,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.3
 CollisionScale = 2.2
-PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab"), ExtResource("5_armor")])
-DropWeights = PackedFloat32Array(0.55, 0.35, 0.1)
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab"), ExtResource("5_armor"), ExtResource("6_void")])
+DropWeights = PackedFloat32Array(0.50, 0.35, 0.10, 0.05)
 DropChance = 0.5
 MaxHealth = 280
 Defense = 6

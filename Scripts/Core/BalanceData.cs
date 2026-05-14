@@ -105,7 +105,8 @@ namespace FirstGame.Core
 		{
 			PlayerKnockback = GetFloat(el, "playerKnockback", 60f),
 			EnemyKnockback = GetFloat(el, "enemyKnockback", 80f),
-			AttackRangeRatio = GetFloat(el, "attackRangeRatio", 0.85f)
+			AttackRangeRatio = GetFloat(el, "attackRangeRatio", 0.85f),
+			AutoAttackInterval = GetFloat(el, "autoAttackInterval", 0.5f)
 		};
 
 		private static RegenBalance ParseRegen(JsonElement el) => new()
@@ -200,6 +201,8 @@ namespace FirstGame.Core
 		public float PlayerKnockback { get; set; } = 60f;
 		public float EnemyKnockback { get; set; } = 80f;
 		public float AttackRangeRatio { get; set; } = 0.85f;
+		// 평타 cooldown 베이스(초). 실제 cooldown = AutoAttackInterval / Stats.AttackSpeed.
+		public float AutoAttackInterval { get; set; } = 0.5f;
 	}
 
 	public class RegenBalance

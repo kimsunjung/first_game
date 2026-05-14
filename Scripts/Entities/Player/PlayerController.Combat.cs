@@ -64,6 +64,11 @@ namespace FirstGame.Entities.Player
 		public void Attack()
 		{
 			if (IsDead || _isAnimLocked) return;
+			// 공격 cooldown — AutoAttackInterval / AttackSpeed. AttackSpeed가 1.10이면 cooldown 약 0.45초.
+			if (_attackCooldown > 0f) return;
+			float baseInterval = BalanceData.Combat.AutoAttackInterval;
+			float spd = System.Math.Max(0.1f, Stats.AttackSpeed);
+			_attackCooldown = baseInterval / spd;
 			AudioManager.Instance?.PlaySFX("player_attack.wav");
 
 			int damage = Stats.BaseDamage;

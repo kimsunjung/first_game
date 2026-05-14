@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon2/skeleton_mage.png" id="2_tex"]
 [ext_resource type="Resource" path="res://Resources/Items/mana_potion.tres" id="3_mp"]
 [ext_resource type="Resource" path="res://Resources/Items/ancient_bone.tres" id="4_ab"]
+[ext_resource type="Resource" uid="uid://itm_robe_arch_001" path="res://Resources/Items/archmage_robe.tres" id="5_arch"]
 
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/arcane_bolt_projectile.png" id="99_proj"]
 [resource]
@@ -24,8 +25,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.27
 CollisionScale = 1.9
-PossibleDrops = Array[Resource]([ExtResource("3_mp"), ExtResource("4_ab")])
-DropWeights = PackedFloat32Array(0.55, 0.45)
+PossibleDrops = Array[Resource]([ExtResource("3_mp"), ExtResource("4_ab"), ExtResource("5_arch")])
+DropWeights = PackedFloat32Array(0.52, 0.43, 0.05)
 DropChance = 0.4
 MaxHealth = 140
 Defense = 1

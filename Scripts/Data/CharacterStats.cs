@@ -18,6 +18,9 @@ namespace FirstGame.Data
 		public virtual float MoveSpeed { get; set; } = 120.0f;
 		[Export] public int   MaxHealth { get; set; } = 100;
 		[Export] public int   Defense { get; set; } = 0;
+		// 공격속도 배수 — 1.0이 베이스. 1.10이면 공격 cooldown 10% 단축(10% 더 빠름).
+		// 장비/affix/buff가 += 0.05 식으로 누적.
+		public float AttackSpeed { get; set; } = 1.0f;
 
 		private int _currentHealth = 100;
 		[Export]

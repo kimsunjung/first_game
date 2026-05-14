@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field2/zombie_walker.png" id="2_tex"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
 [ext_resource type="Resource" path="res://Resources/Items/ancient_hide.tres" id="4_ah"]
+[ext_resource type="Resource" uid="uid://itm_robe_app_001" path="res://Resources/Items/apprentice_robe.tres" id="5_apprr"]
 
 [resource]
 script = ExtResource("1")
@@ -20,8 +21,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.27
 CollisionScale = 1.9
-PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_ah")])
-DropWeights = PackedFloat32Array(0.6, 0.4)
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_ah"), ExtResource("5_apprr")])
+DropWeights = PackedFloat32Array(0.55, 0.40, 0.05)
 DropChance = 0.4
 MaxHealth = 130
 Defense = 1

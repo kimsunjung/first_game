@@ -19,3 +19,4 @@ BonusCritRate = 0.06
 BonusMaxHealth = 10
 RequiredClass = 1
 AvailableToAllClasses = false
+IsShopBlocked = true

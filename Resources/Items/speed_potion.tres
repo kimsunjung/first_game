@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_pot_speed_001"]
+
+[ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+
+
+[resource]
+script = ExtResource("1")
+ItemName = "신속의 물약"
+Description = "10초간 이동속도 +60, 공격속도 +15% 상승."
+Rarity = 1
+Price = 200
+SellPrice = 100
+Type = 0
+IsStackable = true
+MaxStack = 99
+UseEffect = 4
+BuffMoveSpeed = 60.0
+BuffAttackSpeed = 0.15
+BuffDurationSec = 10.0

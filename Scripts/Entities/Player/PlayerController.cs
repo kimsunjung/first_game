@@ -54,6 +54,10 @@ namespace FirstGame.Entities.Player
 		// 머리 위 HP바 (적과 동일 패턴, 녹색 fill로 아군 구분)
 		private ProgressBar _headHealthBar;
 
+		// 공격 cooldown — Stats.AttackSpeed가 베이스 1.0. 장비/affix가 += 누적해
+		// 실제 cooldown = AutoAttackInterval / AttackSpeed로 적용.
+		private float _attackCooldown = 0f;
+
 		// 카메라 쉐이크
 		private Camera2D _camera;
 		private float _shakeIntensity = 0f;
@@ -175,6 +179,8 @@ namespace FirstGame.Entities.Player
 			UpdateSkillCooldowns(delta);
 			UpdateDash(delta);
 			UpdateCameraShake(delta);
+			if (_attackCooldown > 0f) _attackCooldown -= (float)delta;
+			Stats?.TickBuffs((float)delta);
 		}
 
 		public override void _UnhandledInput(InputEvent @event)

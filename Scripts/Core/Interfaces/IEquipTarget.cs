@@ -14,8 +14,11 @@ namespace FirstGame.Core.Interfaces
 		void ModifyMaxMp(int delta);
 		void ModifyCritRate(float delta);
 		void ModifyMoveSpeed(float delta);
+		void ModifyAttackSpeed(float delta);
 		void Heal(int amount);
 		void RestoreMp(int amount);
 		bool LearnSkill(SkillData skill);
+		// 일시 buff — duration초 동안 MoveSpeed +moveDelta, AttackSpeed +atkDelta 적용 후 자동 복귀.
+		void ApplyBuff(float moveDelta, float atkDelta, float durationSec);
 	}
 }

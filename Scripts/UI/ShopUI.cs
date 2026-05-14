@@ -89,6 +89,8 @@ namespace FirstGame.UI
 
             foreach (var item in _shopItems)
             {
+                // 상점 차단 — 적/보스 드랍 전용 무기는 진열 자체 제외.
+                if (item != null && item.IsShopBlocked) continue;
                 var panel = CreateItemPanel(item, isBuyMode: true);
                 _buyGrid.AddChild(panel);
             }

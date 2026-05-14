@@ -4,6 +4,8 @@
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon2/skeleton_warrior.png" id="2_tex"]
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="3_hi"]
 [ext_resource type="Resource" path="res://Resources/Items/ancient_bone.tres" id="4_ab"]
+[ext_resource type="Resource" uid="uid://itm_bow_hunt_001" path="res://Resources/Items/hunter_bow.tres" id="5_hbow"]
+[ext_resource type="Resource" uid="uid://itm_bow_comp_001" path="res://Resources/Items/composite_bow.tres" id="6_cbow"]
 
 [resource]
 script = ExtResource("1")
@@ -20,8 +22,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.27
 CollisionScale = 1.9
-PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab")])
-DropWeights = PackedFloat32Array(0.55, 0.45)
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab"), ExtResource("5_hbow"), ExtResource("6_cbow")])
+DropWeights = PackedFloat32Array(0.50, 0.42, 0.04, 0.04)
 DropChance = 0.4
 MaxHealth = 180
 Defense = 3
