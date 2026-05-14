@@ -111,14 +111,16 @@ namespace FirstGame.Entities.Player
 			_isAnimLocked = true;
 			_isHitFlashing = true;
 
+			// 연타 피격 시 이전 hitTween을 Kill해 흔들기/페이드 누적 차단 (적 dedupe와 동일 패턴).
+			if (_hitTween != null && _hitTween.IsValid()) _hitTween.Kill();
 			_animSprite.Modulate = new Color(10f, 10f, 10f, 1f);
-			var hitTween = CreateTween();
-			hitTween.TweenProperty(_animSprite, "position:x", 3f, 0.03f);
-			hitTween.TweenProperty(_animSprite, "position:x", -3f, 0.03f);
-			hitTween.TweenProperty(_animSprite, "position:x", 2f, 0.03f);
-			hitTween.TweenProperty(_animSprite, "position:x", 0f, 0.03f);
-			hitTween.TweenProperty(_animSprite, "modulate", new Color(1f, 1f, 1f, 1f), 0.08f);
-			hitTween.TweenCallback(Callable.From(() =>
+			_hitTween = CreateTween();
+			_hitTween.TweenProperty(_animSprite, "position:x", 3f, 0.03f);
+			_hitTween.TweenProperty(_animSprite, "position:x", -3f, 0.03f);
+			_hitTween.TweenProperty(_animSprite, "position:x", 2f, 0.03f);
+			_hitTween.TweenProperty(_animSprite, "position:x", 0f, 0.03f);
+			_hitTween.TweenProperty(_animSprite, "modulate", new Color(1f, 1f, 1f, 1f), 0.08f);
+			_hitTween.TweenCallback(Callable.From(() =>
 			{
 				_isHitFlashing = false;
 				_isAnimLocked = false;

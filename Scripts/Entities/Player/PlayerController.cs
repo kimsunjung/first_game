@@ -30,6 +30,8 @@ namespace FirstGame.Entities.Player
 		private bool _isHitFlashing = false;
 		// Kenney 타일맵 기반 스프라이트 (정적 1프레임 + 프로그래밍 애니메이션)
 		private Tween _walkBounceTween;
+		// 진행 중 피격 시각 tween — 연타로 피격 시 새 tween 만들기 전 Kill해 흔들기/페이드 누적 차단.
+		private Tween _hitTween;
 
 		// MP 재생
 		private float _mpRegenAccum = 0f;
