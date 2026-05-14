@@ -71,8 +71,8 @@ namespace FirstGame.UI
             row.AddThemeConstantOverride("separation", 4);
             row.Alignment = BoxContainer.AlignmentMode.Center;
 
-            _quickSlotButtons = new Button[4];
-            for (int i = 0; i < 4; i++)
+            _quickSlotButtons = new Button[6];
+            for (int i = 0; i < 6; i++)
             {
                 int idx = i;
                 var btn = new Button
@@ -226,6 +226,17 @@ namespace FirstGame.UI
 
         private void RefreshGrid()
         {
+            // 무게 헤더 갱신 — %WeightLabel이 씬에 있으면 표시.
+            var weightLabel = GetNodeOrNull<Label>("%WeightLabel");
+            if (weightLabel != null)
+            {
+                float cur = _inventory.CurrentWeight;
+                float max = Inventory.GetMaxWeight();
+                weightLabel.Text = $"무게: {cur:0.0} / {max:0.0}";
+                weightLabel.AddThemeColorOverride("font_color",
+                    cur / max >= 0.8f ? new Color(1f, 0.4f, 0.2f) : new Color(0.85f, 0.85f, 0.85f));
+            }
+
             // 기존 슬롯 UI 제거
             foreach (Node child in _grid.GetChildren())
                 child.QueueFree();

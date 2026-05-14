@@ -75,7 +75,7 @@ layout_mode = 2
 
 [node name="HealthBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HBoxContainer/HealthInfo" unique_id=1954119560]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(140, 20)
+custom_minimum_size = Vector2(120, 14)
 layout_mode = 2
 value = 100.0
 show_percentage = false
@@ -91,7 +91,7 @@ layout_mode = 2
 
 [node name="MpBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HBoxContainer/MpInfo" unique_id=111111102]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 20)
+custom_minimum_size = Vector2(120, 14)
 layout_mode = 2
 max_value = 50.0
 value = 50.0
@@ -346,5 +346,53 @@ offset_bottom = 23.0
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="SlotPanel5" type="Panel" parent="HBoxContainer2"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
+
+[node name="QuickSlotIcon5" type="TextureRect" parent="HBoxContainer2/SlotPanel5"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 2.0
+offset_right = 36.0
+offset_bottom = 36.0
+
+[node name="QuickSlotQty5" type="Label" parent="HBoxContainer2/SlotPanel5"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="KeyLabel" type="Label" parent="HBoxContainer2/SlotPanel5"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "5"
+
+[node name="SlotPanel6" type="Panel" parent="HBoxContainer2"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
+
+[node name="QuickSlotIcon6" type="TextureRect" parent="HBoxContainer2/SlotPanel6"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 2.0
+offset_right = 36.0
+offset_bottom = 36.0
+
+[node name="QuickSlotQty6" type="Label" parent="HBoxContainer2/SlotPanel6"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="KeyLabel" type="Label" parent="HBoxContainer2/SlotPanel6"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "6"
 
 [node name="MobileControls" parent="." instance=ExtResource("2_mc")]
