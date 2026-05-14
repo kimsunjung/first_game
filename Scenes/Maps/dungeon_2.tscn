@@ -33,7 +33,7 @@ size = Vector2(16, 720)
 [node name="Dungeon2" type="Node2D"]
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color(0.14, 0.14, 0.22, 1)
+color = Color(0.24, 0.24, 0.37, 1)
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -10
