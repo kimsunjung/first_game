@@ -249,7 +249,9 @@ TargetScenePath = "res://Scenes/Maps/field_4_harbor.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 
 [node name="PotionShopNPC" parent="." instance=ExtResource("40_potionshop")]
-position = Vector2(490, 78)
+position = Vector2(380, 80)
+
+[node name="ShopUI" parent="PotionShopNPC" instance=ExtResource("9_shopUI")]
 
 [node name="QuestBoardUI" parent="." instance=ExtResource("36_qbui")]
 
