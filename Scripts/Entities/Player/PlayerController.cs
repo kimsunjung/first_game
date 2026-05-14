@@ -74,6 +74,22 @@ namespace FirstGame.Entities.Player
 		Vector2 ISkillTarget.FacingDirection => _facingDirection;
 		public void HealSelf(int amount) => Stats.CurrentHealth += amount;
 
+		/// <summary>스킬 전략용 — PlayerProjectile 생성·발사. 닿을 때 데미지 적용.</summary>
+		public void FireProjectile(int damage, FirstGame.Data.ElementType element, Color color, float speed = 460f)
+		{
+			var proj = new PlayerProjectile
+			{
+				Damage = damage,
+				Speed = speed,
+				Direction = _facingDirection != Vector2.Zero ? _facingDirection.Normalized() : Vector2.Right,
+				Element = element,
+				ProjectileColor = color,
+				SingleHit = true
+			};
+			GetParent().AddChild(proj);
+			proj.GlobalPosition = GlobalPosition;
+		}
+
 		// ─── 라이프사이클 ────────────────────────────────────────────
 		public override void _Ready()
 		{

@@ -1,5 +1,6 @@
 using Godot;
 using System.Collections.Generic;
+using FirstGame.Data;
 
 namespace FirstGame.Core.Interfaces
 {
@@ -19,5 +20,7 @@ namespace FirstGame.Core.Interfaces
 		void TriggerCameraShake(float intensity, float duration);
 		void HealSelf(int amount);
 		IEnumerable<(Node2D Node, IDamageable Target)> GetNearbyEnemies(float range);
+		// 원거리 스킬 — 정면 방향으로 투사체 발사. 닿을 때 데미지.
+		void FireProjectile(int damage, ElementType element, Color color, float speed = 460f);
 	}
 }

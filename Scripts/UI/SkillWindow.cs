@@ -13,9 +13,9 @@ namespace FirstGame.UI
 
 		private static readonly string[] SlotKeys = { "Q", "W", "E", "R", "T", "Y" };
 		public const int SlotCount = 6;
-		private const int SlotWidth = 276;
-		private const int SlotHeight = 48;
-		private const int IconSize = 30;
+		private const int SlotWidth = 256;
+		private const int SlotHeight = 34;
+		private const int IconSize = 26;
 
 		protected override void OnReadyInternal()
 		{
