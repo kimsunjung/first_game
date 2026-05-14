@@ -51,6 +51,9 @@ namespace FirstGame.Entities.Player
 		private float _dashTimer = 0f;
 		private const float DashSpeedMultiplier = 1.8f;
 
+		// 머리 위 HP바 (적과 동일 패턴, 녹색 fill로 아군 구분)
+		private ProgressBar _headHealthBar;
+
 		// 카메라 쉐이크
 		private Camera2D _camera;
 		private float _shakeIntensity = 0f;
@@ -87,6 +90,8 @@ namespace FirstGame.Entities.Player
 				ApplyCameraZoom();
 				ApplyCameraBounds();
 			}
+
+			SetupHeadHealthBar();
 
 			CollisionMask |= 4;
 			Inventory = new Inventory();
@@ -144,7 +149,11 @@ namespace FirstGame.Entities.Player
 
 		public override void _ExitTree()
 		{
-			if (Stats != null) Stats.OnLevelUp -= OnLevelUpHandler;
+			if (Stats != null)
+			{
+				Stats.OnLevelUp -= OnLevelUpHandler;
+				Stats.OnHealthChanged -= UpdateHeadHealthBar;
+			}
 			EventManager.OnExpGained -= GainExp;
 
 			if (GameManager.Instance != null && GameManager.Instance.Player == this)
@@ -180,6 +189,40 @@ namespace FirstGame.Entities.Player
 				else if (key == Key.E) UseSkillSlot(2);
 				else if (key == Key.R) UseSkillSlot(3);
 			}
+		}
+
+		private void SetupHeadHealthBar()
+		{
+			_headHealthBar = GetNodeOrNull<ProgressBar>("HealthBar");
+			if (_headHealthBar == null) return;
+
+			_headHealthBar.MaxValue = Stats.MaxHealth;
+			_headHealthBar.Value = Stats.CurrentHealth;
+
+			var bgStyle = new StyleBoxFlat
+			{
+				BgColor = new Color(0.1f, 0.1f, 0.1f, 0.8f),
+				CornerRadiusTopLeft = 2, CornerRadiusTopRight = 2,
+				CornerRadiusBottomRight = 2, CornerRadiusBottomLeft = 2
+			};
+			_headHealthBar.AddThemeStyleboxOverride("background", bgStyle);
+
+			var fillStyle = new StyleBoxFlat
+			{
+				BgColor = new Color(0.2f, 0.85f, 0.25f, 1.0f),
+				CornerRadiusTopLeft = 2, CornerRadiusTopRight = 2,
+				CornerRadiusBottomRight = 2, CornerRadiusBottomLeft = 2
+			};
+			_headHealthBar.AddThemeStyleboxOverride("fill", fillStyle);
+
+			Stats.OnHealthChanged += UpdateHeadHealthBar;
+		}
+
+		private void UpdateHeadHealthBar(int cur, int max)
+		{
+			if (_headHealthBar == null) return;
+			_headHealthBar.MaxValue = max;
+			_headHealthBar.Value = cur;
 		}
 
 		private void OnLevelUpHandler(int newLevel)

@@ -21,3 +21,12 @@ shape = SubResource("RectangleShape2D_j4k56")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=330163817]
 zoom = Vector2(2, 2)
 position_smoothing_enabled = true
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -12.0
+offset_top = -18.0
+offset_right = 12.0
+offset_bottom = -15.0
+max_value = 100.0
+value = 100.0
+show_percentage = false

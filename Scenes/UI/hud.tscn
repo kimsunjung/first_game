@@ -125,15 +125,16 @@ theme_override_constants/separation = 10
 unique_name_in_owner = true
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 14
 text = "Lv.1"
 vertical_alignment = 1
 
-[node name="ExpBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/LevelRow" unique_id=111111105]
+[node name="ExpBar" type="ProgressBar" parent="." unique_id=111111105]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(140, 14)
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+offset_bottom = 3.0
 max_value = 100.0
 value = 0.0
 show_percentage = false
