@@ -9,6 +9,9 @@ namespace FirstGame.Entities.Enemies
 		public float Speed { get; set; } = 120f;
 		public Vector2 Direction { get; set; } = Vector2.Right;
 		public Color ProjectileColor { get; set; } = new Color(0.6f, 0.2f, 1f);
+		// 지정 시 Sprite2D 텍스처 렌더링으로 전환. null이면 기존 DrawCircle 폴백.
+		public Texture2D Texture { get; set; }
+		public float TextureScale { get; set; } = 0.5f;
 
 		private float _lifetime = 3f;
 		private float _trailTimer = 0f;
@@ -25,12 +28,26 @@ namespace FirstGame.Entities.Enemies
 			shape.Shape = circle;
 			AddChild(shape);
 
+			if (Texture != null)
+			{
+				var sprite = new Sprite2D
+				{
+					Texture = Texture,
+					Scale = new Vector2(TextureScale, TextureScale),
+					TextureFilter = TextureFilterEnum.Nearest,
+				};
+				AddChild(sprite);
+				Rotation = Direction.Angle();
+			}
+
 			BodyEntered += OnBodyEntered;
 			QueueRedraw();
 		}
 
 		public override void _Draw()
 		{
+			if (Texture != null) return; // 스프라이트 렌더링 사용 시 폴백 그리기 생략
+
 			// 글로우 (외곽)
 			DrawCircle(Vector2.Zero, 9f, new Color(ProjectileColor.R, ProjectileColor.G, ProjectileColor.B, 0.15f));
 			// 중간 광채

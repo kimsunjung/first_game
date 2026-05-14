@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://b3goldpickup002a"]
+
+[ext_resource type="Script" path="res://Scripts/Objects/GoldPickup.cs" id="1_gp"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Loot/small_gold_pile.png" id="2_small"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Loot/large_gold_pile.png" id="3_large"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 20.0
+
+[node name="GoldPickup" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_gp")
+SmallTexture = ExtResource("2_small")
+LargeTexture = ExtResource("3_large")
+LargeThreshold = 50
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1

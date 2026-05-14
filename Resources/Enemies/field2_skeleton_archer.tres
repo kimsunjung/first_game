@@ -5,9 +5,12 @@
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
 [ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="4_bd"]
 
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/bone_arrow_projectile.png" id="99_proj"]
 [resource]
 script = ExtResource("1")
-MoveSpeed = 85.0
+ProjectileTexture = ExtResource("99_proj")
+ProjectileScale = 0.2
+MoveSpeed = 59.5
 DetectionRange = 260.0
 AttackRange = 220.0
 PreferredRange = 200.0
@@ -19,7 +22,7 @@ Behavior = 1
 EnemyTypeName = "SkeletonArcher"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.40
+SpriteScale = 0.24
 CollisionScale = 1.7
 PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_bd")])
 DropWeights = PackedFloat32Array(0.55, 0.45)

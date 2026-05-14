@@ -42,6 +42,36 @@ namespace FirstGame.Core
 			label.Init(damage, isCrit, isPlayerDamage);
 		}
 
+		public static void SpawnGoldLabel(Vector2 worldPos, int amount)
+		{
+			if (FloatingLabelScene == null) return;
+			var scene = Engine.GetMainLoop() as SceneTree;
+			if (scene?.CurrentScene == null) return;
+
+			FloatingLabel label;
+			if (_pool.Count > 0)
+			{
+				label = _pool.Dequeue();
+				if (!IsInstanceValid(label))
+				{
+					label = FloatingLabelScene.Instantiate<FloatingLabel>();
+					scene.CurrentScene.AddChild(label);
+				}
+				else
+				{
+					label.Visible = true;
+				}
+			}
+			else
+			{
+				label = FloatingLabelScene.Instantiate<FloatingLabel>();
+				scene.CurrentScene.AddChild(label);
+			}
+
+			label.GlobalPosition = worldPos + new Vector2(0, -20);
+			label.InitGold(amount);
+		}
+
 		public static void ReleaseFloatingLabel(FloatingLabel label)
 		{
 			if (!IsInstanceValid(label)) return;

@@ -5,9 +5,12 @@
 [ext_resource type="Resource" path="res://Resources/Items/mana_potion.tres" id="3_mp"]
 [ext_resource type="Resource" path="res://Resources/Items/ancient_bone.tres" id="4_ab"]
 
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/arcane_bolt_projectile.png" id="99_proj"]
 [resource]
 script = ExtResource("1")
-MoveSpeed = 75.0
+ProjectileTexture = ExtResource("99_proj")
+ProjectileScale = 0.2
+MoveSpeed = 52.5
 DetectionRange = 270.0
 AttackRange = 230.0
 PreferredRange = 210.0
@@ -19,7 +22,7 @@ Behavior = 1
 EnemyTypeName = "Dungeon2SkeletonMage"
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.45
+SpriteScale = 0.27
 CollisionScale = 1.9
 PossibleDrops = Array[Resource]([ExtResource("3_mp"), ExtResource("4_ab")])
 DropWeights = PackedFloat32Array(0.55, 0.45)

@@ -9,9 +9,12 @@
 [ext_resource type="Resource" path="res://Resources/Items/runic_bracelet.tres" id="7_rbrace"]
 [ext_resource type="Resource" path="res://Resources/Items/guardian_amulet.tres" id="8_gamulet"]
 
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/dark_orb_projectile.png" id="99_proj"]
 [resource]
 script = ExtResource("1_es")
-MoveSpeed = 70.0
+ProjectileTexture = ExtResource("99_proj")
+ProjectileScale = 0.3
+MoveSpeed = 49.0
 DetectionRange = 330.0
 AttackRange = 250.0
 PreferredRange = 220.0
@@ -24,7 +27,7 @@ EnemyTypeName = "AncientLichNamed"
 IsBoss = true
 SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
-SpriteScale = 0.65
+SpriteScale = 0.39
 CollisionScale = 2.8
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_mega"), ExtResource("5_core"), ExtResource("6_sring"), ExtResource("7_rbrace"), ExtResource("8_gamulet")])
 DropWeights = PackedFloat32Array(0.18, 0.18, 0.24, 0.15, 0.13, 0.12)

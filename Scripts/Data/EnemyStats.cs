@@ -41,6 +41,12 @@ namespace FirstGame.Data
 		// 14×14 기본 콜리전 기준으로 배수 적용 — root Scale 미사용이라 elite scale과 독립적으로 동작.
 		[Export] public float CollisionScale { get; set; } = 1.0f;
 
+		// ─── 투사체 (Ranged 전용) ───────────────────────────────────
+		[ExportGroup("Projectile")]
+		// Ranged 적의 투사체 텍스처. null이면 EnemyProjectile이 기존 DrawCircle 폴백 렌더링 사용.
+		[Export] public Texture2D ProjectileTexture { get; set; }
+		[Export] public float ProjectileScale { get; set; } = 0.5f;
+
 		// ─── 드롭 테이블 ─────────────────────────────────────────────
 		[ExportGroup("Drop Table")]
 		[Export] public ItemData[] PossibleDrops { get; set; }

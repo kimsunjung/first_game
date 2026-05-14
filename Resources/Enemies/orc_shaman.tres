@@ -5,8 +5,11 @@
 [ext_resource type="Resource" uid="uid://lq1ay338edtn" path="res://Resources/Items/hi_potion.tres" id="3_hip"]
 [ext_resource type="Resource" path="res://Resources/Items/orc_leather.tres" id="4_leather"]
 
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/poison_glob_projectile.png" id="99_proj"]
 [resource]
 script = ExtResource("1")
+ProjectileTexture = ExtResource("99_proj")
+ProjectileScale = 0.2
 MoveSpeed = 75.0
 DetectionRange = 300.0
 BaseDamage = 4

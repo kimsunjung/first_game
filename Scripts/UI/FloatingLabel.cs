@@ -31,6 +31,23 @@ namespace FirstGame.UI
 				label.AddThemeFontSizeOverride("font_size", 14);
 			}
 
+			StartTween(label);
+		}
+
+		/// <summary>골드 파밍량 표시 — 금색 "+amount G".</summary>
+		public void InitGold(int amount)
+		{
+			Visible = true;
+			var label = GetNode<Label>("Label");
+			label.Modulate = new Color(label.Modulate, 1f);
+			label.Text = $"+{amount} G";
+			label.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.2f));
+			label.AddThemeFontSizeOverride("font_size", 14);
+			StartTween(label);
+		}
+
+		private void StartTween(Label label)
+		{
 			float randX = (float)GD.RandRange(-20.0, 20.0);
 			var tween = CreateTween();
 			tween.SetParallel(true);

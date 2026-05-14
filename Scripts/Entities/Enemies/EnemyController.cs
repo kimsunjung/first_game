@@ -161,7 +161,7 @@ namespace FirstGame.Entities.Enemies
 			float detectionMult = 1.0f;
 
 			if (_animSprite != null)
-				_animSprite.FlipH = direction.X < 0;
+				_animSprite.FlipH = direction.X > 0;
 
 			// 행동 패턴별 상태 결정
 			DetermineState(distance, detectionMult);
@@ -388,7 +388,12 @@ namespace FirstGame.Entities.Enemies
 			proj.Direction = direction;
 			proj.Damage = Stats.BaseDamage;
 			proj.Speed = 130f;
-			proj.ProjectileColor = new Color(0.6f, 0.2f, 1f); // 보라색 마법탄
+			proj.ProjectileColor = new Color(0.6f, 0.2f, 1f); // 보라색 마법탄 (텍스처 없을 때 폴백)
+			if (Stats.ProjectileTexture != null)
+			{
+				proj.Texture = Stats.ProjectileTexture;
+				proj.TextureScale = Stats.ProjectileScale;
+			}
 			GetTree().CurrentScene.AddChild(proj);
 		}
 
@@ -469,9 +474,23 @@ namespace FirstGame.Entities.Enemies
 			EventManager.TriggerEnemyKilled();
 			EventManager.TriggerEnemyKilledTyped(Stats.EnemyTypeName);
 
-			// 골드 보상
+			// 골드 보상 — 일반 적은 바닥 드롭(파밍 연출), 보스는 트랜잭션 일관성을 위해 직접 지급 + 즉시 표시
 			if (GameManager.Instance != null)
-				GameManager.Instance.PlayerGold += Stats.GoldReward * BalanceData.Enemy.GoldMultiplier;
+			{
+				int goldAmount = Stats.GoldReward * BalanceData.Enemy.GoldMultiplier;
+				if (goldAmount > 0)
+				{
+					if (Stats.IsBoss)
+					{
+						GameManager.Instance.PlayerGold += goldAmount;
+						UIEffectManager.SpawnGoldLabel(GlobalPosition, goldAmount);
+					}
+					else
+					{
+						SpawnGoldDrop(goldAmount);
+					}
+				}
+			}
 
 			// 경험치 지급 (이벤트 방식)
 			EventManager.TriggerExpGained(Stats.ExperienceReward);
@@ -526,6 +545,23 @@ namespace FirstGame.Entities.Enemies
 			{
 				QueueFree();
 			}
+		}
+
+		private void SpawnGoldDrop(int amount)
+		{
+			var prefab = GD.Load<PackedScene>("res://Scenes/Objects/gold_pickup.tscn");
+			if (prefab == null)
+			{
+				// 씬 로드 실패 시 안전망: 즉시 지급 + 표시
+				GameManager.Instance.PlayerGold += amount;
+				UIEffectManager.SpawnGoldLabel(GlobalPosition, amount);
+				return;
+			}
+			var pickup = prefab.Instantiate<FirstGame.Objects.GoldPickup>();
+			pickup.Amount = amount;
+			GetTree().CurrentScene.AddChild(pickup);
+			Vector2 dropDir = new Vector2((float)GD.RandRange(-1, 1), -1).Normalized();
+			pickup.Drop(GlobalPosition, dropDir, (float)GD.RandRange(60, 130));
 		}
 
 		private void SpawnFieldDrop(ItemData item, float minForce, float maxForce)
