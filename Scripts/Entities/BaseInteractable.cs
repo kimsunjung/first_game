@@ -39,6 +39,13 @@ namespace FirstGame.Entities
 				if (string.IsNullOrEmpty(_promptLabel.Text))
 					_promptLabel.Text = "[F] 상호작용";
 				_promptLabel.Visible = false;
+				// 프롬프트 위치를 NPC 아래로(요청: "조금 아래로"). 어두운 배경 + 작은 폰트로 가독성.
+				_promptLabel.OffsetTop = 18;
+				_promptLabel.OffsetBottom = 34;
+				_promptLabel.AddThemeFontSizeOverride("font_size", 9);
+				_promptLabel.AddThemeColorOverride("font_color", new Color(1f, 0.95f, 0.4f));
+				_promptLabel.AddThemeColorOverride("font_outline_color", new Color(0, 0, 0, 1));
+				_promptLabel.AddThemeConstantOverride("outline_size", 4);
 			}
 
 			SetupPromptIcon();

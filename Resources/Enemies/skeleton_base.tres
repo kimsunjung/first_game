@@ -7,7 +7,7 @@
 
 [resource]
 script = ExtResource("1")
-MoveSpeed = 90.0
+MoveSpeed = 67.5
 AttackRange = 35.0
 BaseDamage = 3
 ExperienceReward = 18

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_gath_004"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://bi1c1fctcod6o" path="res://Resources/Items/mana_potion.tres" id="2_item"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_gather_04"
+QuestTitle = "마나 물약 조달"
+Description = "마나 물약 3개를 가져다라."
+Type = 1
+TargetCount = 3
+TargetItem = ExtResource("2_item")
+GiverNpcId = "marta_innkeeper"
+GoldReward = 150
+ExpReward = 75
+IsRepeatable = true

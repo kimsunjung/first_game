@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cloak_storm01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/storm_cloak.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "폭풍의 망토"
+Description = "번개를 품은 짙은 청색 망토. 폭풍 세트."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 1100
+SellPrice = 360
+Type = 11
+IsStackable = false
+MaxStack = 1
+BonusDefense = 5
+BonusMoveSpeed = 0.03
+BonusAttackSpeed = 0.05
+AvailableToAllClasses = true
+Weight = 2.5

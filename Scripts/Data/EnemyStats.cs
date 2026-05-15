@@ -54,6 +54,11 @@ namespace FirstGame.Data
 		[Export] public Texture2D ProjectileTexture { get; set; }
 		[Export] public float ProjectileScale { get; set; } = 0.5f;
 
+		// ─── 보스 패턴 (BossController 전용) ───────────────────────────
+		[ExportGroup("Boss Patterns")]
+		// IsBoss=true 또는 명명 미니보스에 패턴 배열 지정. null이면 패턴 없음.
+		[Export] public FirstGame.Entities.Enemies.BossPatternData[] Patterns { get; set; }
+
 		// ─── 드롭 테이블 ─────────────────────────────────────────────
 		[ExportGroup("Drop Table")]
 		[Export] public ItemData[] PossibleDrops { get; set; }

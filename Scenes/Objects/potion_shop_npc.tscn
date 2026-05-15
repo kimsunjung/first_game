@@ -1,0 +1,84 @@
+[gd_scene format=3 uid="uid://d3lvwh1py4eqq"]
+
+[ext_resource type="Script" path="res://Scripts/Entities/Shop/ShopNPC.cs" id="1_shop"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/NPCs/Town/healer.png" id="2_npc_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/npc_dialogue.png" id="3_prompt"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="4_hp"]
+[ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="5_hi"]
+[ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="6_mega"]
+[ext_resource type="Resource" path="res://Resources/Items/mana_potion.tres" id="7_mp"]
+[ext_resource type="Resource" uid="uid://cons_mega_hp01" path="res://Resources/Items/mega_health_potion.tres" id="8_mhp"]
+[ext_resource type="Resource" uid="uid://cons_mega_mp01" path="res://Resources/Items/mega_mana_potion.tres" id="9_mmp"]
+[ext_resource type="Resource" uid="uid://cons_atk_pot01" path="res://Resources/Items/attack_potion.tres" id="10_atk"]
+[ext_resource type="Resource" uid="uid://cons_def_pot01" path="res://Resources/Items/defense_potion.tres" id="11_def"]
+[ext_resource type="Resource" uid="uid://cons_crit_pot01" path="res://Resources/Items/crit_potion.tres" id="12_crit"]
+[ext_resource type="Resource" path="res://Resources/Items/swift_potion.tres" id="13_swift"]
+[ext_resource type="Resource" path="res://Resources/Items/antidote.tres" id="14_anti"]
+[ext_resource type="Resource" uid="uid://bi02gfux88d6o" path="res://Resources/Items/return_scroll.tres" id="15_rscroll"]
+[ext_resource type="Resource" uid="uid://scroll_town01" path="res://Resources/Items/scroll_town.tres" id="16_stown"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pshop"]
+radius = 80.0
+
+[sub_resource type="CircleShape2D" id="body_shape"]
+radius = 10.0
+
+[node name="PotionShopNPC" type="Area2D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_shop")
+PromptIcon = ExtResource("3_prompt")
+ShopItems = Array[Resource]([ExtResource("4_hp"), ExtResource("5_hi"), ExtResource("6_mega"), ExtResource("7_mp"), ExtResource("8_mhp"), ExtResource("9_mmp"), ExtResource("10_atk"), ExtResource("11_def"), ExtResource("12_crit"), ExtResource("13_swift"), ExtResource("14_anti"), ExtResource("15_rscroll"), ExtResource("16_stown")])
+ShopName = "포션 상점"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_pshop")
+
+[node name="Body" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="BodyCollision" type="CollisionShape2D" parent="Body"]
+shape = SubResource("body_shape")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_npc_tex")
+
+[node name="ShopIcon" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -22.0
+offset_right = 24.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 7
+theme_override_colors/font_color = Color(1, 0.92, 0.45, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+text = "[포션]"
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="."]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = 20.0
+offset_right = 50.0
+offset_bottom = 36.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 8
+text = "F - 포션 상점"
+horizontal_alignment = 1

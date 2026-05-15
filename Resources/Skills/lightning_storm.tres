@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://skl_lstorm01"]
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/fire_bolt.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+SkillName = "번개 폭풍"
+Description = "10초간 매 2초마다 가장 가까운 적에게 번개가 떨어진다."
+Icon = ExtResource("2_icon")
+Type = 8
+MpCost = 35
+Cooldown = 18.0
+RequiredLevel = 5
+RequiredClass = 1
+AvailableToAllClasses = false
+DurationSeconds = 10.0
+IsPassive = false

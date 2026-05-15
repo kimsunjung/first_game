@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_gath_007"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/bone_dust.tres" id="2_item"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_gather_07"
+QuestTitle = "뼛가루 수집"
+Description = "뼛가루 5개를 모아라."
+Type = 1
+TargetCount = 5
+TargetItem = ExtResource("2_item")
+GiverNpcId = "quest_board"
+GoldReward = 160
+ExpReward = 80
+IsRepeatable = true

@@ -21,6 +21,15 @@ namespace FirstGame.Entities.Player
 
 		public bool IsDead { get; private set; } = false;
 		private Vector2 _facingDirection = Vector2.Down;
+		// 자동 타겟팅 — Mage/Archer 평타·스킬이 가리키는 적. 죽거나 너무 멀어지면 갱신.
+		private Node2D _targetEnemy;
+		private Node2D _targetIndicator;
+		public Node2D TargetEnemy => _targetEnemy;
+
+		// LightningStorm 상태 — duration > 0이면 active. tickInterval마다 가까운 적에 번개.
+		private float _stormDuration = 0f;
+		private float _stormInterval = 2f;
+		private float _stormTickTimer = 0f;
 
 		// 애니메이션
 		private AnimatedSprite2D _animSprite;
@@ -73,6 +82,22 @@ namespace FirstGame.Entities.Player
 		float ISkillTarget.CritMultiplier => Stats.CritMultiplier;
 		Vector2 ISkillTarget.FacingDirection => _facingDirection;
 		public void HealSelf(int amount) => Stats.CurrentHealth += amount;
+
+		/// <summary>스킬 전략용 — PlayerProjectile 생성·발사. 닿을 때 데미지 적용.</summary>
+		public void FireProjectile(int damage, FirstGame.Data.ElementType element, Color color, float speed = 460f)
+		{
+			var proj = new PlayerProjectile
+			{
+				Damage = damage,
+				Speed = speed,
+				Direction = GetAimDirection(),
+				Element = element,
+				ProjectileColor = color,
+				SingleHit = true
+			};
+			GetParent().AddChild(proj);
+			proj.GlobalPosition = GlobalPosition;
+		}
 
 		// ─── 라이프사이클 ────────────────────────────────────────────
 		public override void _Ready()
@@ -181,6 +206,112 @@ namespace FirstGame.Entities.Player
 			UpdateCameraShake(delta);
 			if (_attackCooldown > 0f) _attackCooldown -= (float)delta;
 			Stats?.TickBuffs((float)delta);
+			UpdateAutoTarget();
+			UpdateLightningStorm((float)delta);
+		}
+
+		private void UpdateLightningStorm(float delta)
+		{
+			if (_stormDuration <= 0f) return;
+			_stormDuration -= delta;
+			_stormTickTimer -= delta;
+			if (_stormTickTimer <= 0f)
+			{
+				StrikeLightningOnNearestEnemy();
+				_stormTickTimer = _stormInterval;
+			}
+		}
+
+		private void StrikeLightningOnNearestEnemy()
+		{
+			var enemies = GameManager.Instance?.ActiveEnemies;
+			if (enemies == null) return;
+			Node2D best = null;
+			float bestDist = 400f;
+			foreach (Node2D e in enemies)
+			{
+				if (e is not IDamageable) continue;
+				float d = GlobalPosition.DistanceTo(e.GlobalPosition);
+				if (d < bestDist) { bestDist = d; best = e; }
+			}
+			if (best == null) return;
+			int dmg = Stats.BaseDamage * 2;
+			(best as IDamageable)?.TakeDamage(dmg, FirstGame.Data.ElementType.Lightning);
+			// 번개 시각 — 흰색 라인 flash
+			var bolt = new LightningBolt(GlobalPosition, best.GlobalPosition);
+			GetParent().AddChild(bolt);
+			TriggerCameraShake(2.5f, 0.12f);
+		}
+
+		public void StartLightningStorm(float duration, float interval)
+		{
+			_stormDuration = duration;
+			_stormInterval = interval;
+			_stormTickTimer = 0f; // 즉시 첫 타격
+		}
+
+		public void ApplyTempBuff(int dmgDelta, int defDelta, float critDelta, float duration)
+		{
+			Stats?.ApplyBuffEx(0f, 0f, dmgDelta, defDelta, critDelta, duration);
+		}
+
+		// 자동 타겟팅 — Mage/Archer만 적용. Warrior는 근접이라 불필요.
+		// 현재 타겟이 죽거나 600px 밖이면 가장 가까운 적으로 갱신.
+		private void UpdateAutoTarget()
+		{
+			if (Stats == null || Stats.PlayerClass == Data.PlayerClass.Warrior)
+			{
+				ClearTarget();
+				return;
+			}
+			const float maxRange = 600f;
+			// 현재 타겟 유효성 확인
+			if (_targetEnemy != null && IsInstanceValid(_targetEnemy) && _targetEnemy is IDamageable dmg)
+			{
+				float d = GlobalPosition.DistanceTo(_targetEnemy.GlobalPosition);
+				if (d <= maxRange) { UpdateTargetIndicator(); return; }
+			}
+			// 새 타겟 선택 — 가장 가까운 적
+			var enemies = GameManager.Instance?.ActiveEnemies;
+			if (enemies == null) { ClearTarget(); return; }
+			Node2D best = null;
+			float bestDist = maxRange;
+			foreach (Node2D e in enemies)
+			{
+				if (e is not IDamageable) continue;
+				if (!IsInstanceValid(e)) continue;
+				float d = GlobalPosition.DistanceTo(e.GlobalPosition);
+				if (d < bestDist) { bestDist = d; best = e; }
+			}
+			_targetEnemy = best;
+			UpdateTargetIndicator();
+		}
+
+		private void ClearTarget()
+		{
+			_targetEnemy = null;
+			if (_targetIndicator != null && IsInstanceValid(_targetIndicator))
+				_targetIndicator.QueueFree();
+			_targetIndicator = null;
+		}
+
+		private void UpdateTargetIndicator()
+		{
+			if (_targetEnemy == null) { ClearTarget(); return; }
+			if (_targetIndicator == null || !IsInstanceValid(_targetIndicator))
+			{
+				_targetIndicator = new TargetIndicator();
+				GetParent().AddChild(_targetIndicator);
+			}
+			_targetIndicator.GlobalPosition = _targetEnemy.GlobalPosition + Vector2.Up * 28f;
+		}
+
+		/// <summary>현재 타겟의 방향(타겟이 있으면 그쪽, 없으면 facing). 죽으면 facing 폴백.</summary>
+		public Vector2 GetAimDirection()
+		{
+			if (_targetEnemy != null && IsInstanceValid(_targetEnemy))
+				return GlobalPosition.DirectionTo(_targetEnemy.GlobalPosition);
+			return _facingDirection != Vector2.Zero ? _facingDirection.Normalized() : Vector2.Right;
 		}
 
 		public override void _UnhandledInput(InputEvent @event)
@@ -194,9 +325,13 @@ namespace FirstGame.Entities.Player
 				else if (key == Key.Key2) Inventory.UseQuickSlot(1, Stats);
 				else if (key == Key.Key3) Inventory.UseQuickSlot(2, Stats);
 				else if (key == Key.Key4) Inventory.UseQuickSlot(3, Stats);
+				else if (key == Key.Key5) Inventory.UseQuickSlot(4, Stats);
+				else if (key == Key.Key6) Inventory.UseQuickSlot(5, Stats);
 				else if (key == Key.Q) UseSkillSlot(0);
 				else if (key == Key.W && !IsMoving()) UseSkillSlot(1);
 				else if (key == Key.E) UseSkillSlot(2);
+				else if (key == Key.T) UseSkillSlot(4);
+				else if (key == Key.Y) UseSkillSlot(5);
 				else if (key == Key.R) UseSkillSlot(3);
 			}
 		}
@@ -242,6 +377,7 @@ namespace FirstGame.Entities.Player
 			var cls = SaveManager.PendingNewGameClass ?? FirstGame.Data.PlayerClass.Warrior;
 			SaveManager.PendingNewGameClass = null;
 			Stats.PlayerClass = cls;
+			FirstGame.Core.DayNightCycle.ResetForNewGame();
 
 			string weaponPath = cls switch
 			{
@@ -313,6 +449,8 @@ namespace FirstGame.Entities.Player
 			try
 			{
 				GlobalPosition = new Vector2(data.PlayerPosX, data.PlayerPosY);
+				// 게임 시간 복원 — v10 이하 누락 시 기본(06:00 / Day 1)
+				FirstGame.Core.DayNightCycle.RestoreFromSave(data.DayTime, data.GameDay);
 
 				// 스탯 재계산: 레벨 → STR/CON/INT → 장비(RestoreEquipment) 순서로 결정론적 재계산
 				// data.PlayerMaxHealth 직접 신뢰 금지: RestoreEquipment가 장비 보너스를 더하므로 이중 카운팅 발생
@@ -323,13 +461,22 @@ namespace FirstGame.Entities.Player
 				GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses ?? new());
 				GameManager.Instance.PlayerGold = data.PlayerGold;
 
-				// 인벤토리 복원
+				// 인벤토리 복원 — 직렬화된 슬롯 순서대로 그대로 추가, IsEquipped 보존.
 				if (data.InventoryItems != null)
 				{
 					foreach (var savedSlot in data.InventoryItems)
 					{
 						var item = GD.Load<ItemData>(savedSlot.ItemPath);
-						if (item != null) Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel, fireAcquired: false, savedSlot.Affixes);
+						if (item == null) continue;
+						bool added = Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel,
+							fireAcquired: false, savedSlot.Affixes);
+						// AddItem 직후 마지막 슬롯에 IsEquipped 마킹 (AddItem이 stack했을 경우 마킹 안 됨)
+						if (added && savedSlot.IsEquipped && Inventory.Slots.Count > 0)
+						{
+							var last = Inventory.Slots[Inventory.Slots.Count - 1];
+							if (last.Item.ResourcePath == savedSlot.ItemPath)
+								last.IsEquipped = true;
+						}
 					}
 				}
 
@@ -355,8 +502,8 @@ namespace FirstGame.Entities.Player
 
 				if (data.QuickSlotPaths != null)
 				{
-					var qsItems = new ItemData[4];
-					for (int i = 0; i < data.QuickSlotPaths.Count && i < 4; i++)
+					var qsItems = new ItemData[6];
+					for (int i = 0; i < data.QuickSlotPaths.Count && i < 6; i++)
 					{
 						if (!string.IsNullOrEmpty(data.QuickSlotPaths[i]))
 							qsItems[i] = GD.Load<ItemData>(data.QuickSlotPaths[i]);

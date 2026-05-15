@@ -38,6 +38,9 @@ namespace FirstGame.Data
 		// 부여자 NPC (이 ID를 가진 NPC가 퀘스트를 줌)
 		[Export] public string GiverNpcId { get; set; } = "";
 
+		// 반복 가능 여부 — true면 완료 후 다시 수락 가능 (사이드 퀘스트 전용)
+		[Export] public bool IsRepeatable { get; set; } = false;
+
 		// 보상
 		[ExportGroup("Rewards")]
 		[Export] public int GoldReward { get; set; } = 100;

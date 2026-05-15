@@ -26,19 +26,23 @@ namespace FirstGame.UI
 
 		private IPlayer _player;
 
-		private enum EquipKey { Weapon, Armor, Helmet, Boots, Necklace, Ring1, Ring2, Bracelet }
+		private enum EquipKey { Weapon, Armor, Helmet, Boots, Necklace, Ring1, Ring2, Bracelet, Cloak, Belt, Gloves }
 		private const int SlotSize = 44;
-		// 사람 모양 슬롯 배치 (180x250 EquipmentArea 기준)
+		// 사람 모양 슬롯 배치 (220x290 EquipmentArea 기준)
+		// 기존 8 + 신규 3(Cloak/Belt/Gloves)
 		private static readonly (EquipKey key, Vector2 pos, string placeholder)[] _slotLayout =
 		{
-			(EquipKey.Helmet,   new Vector2( 68,   4), "모자"),
+			(EquipKey.Helmet,   new Vector2( 88,   4), "모자"),
 			(EquipKey.Necklace, new Vector2( 20,  52), "목걸이"),
-			(EquipKey.Ring1,    new Vector2(116,  52), "반지"),
+			(EquipKey.Ring1,    new Vector2(136,  52), "반지1"),
 			(EquipKey.Weapon,   new Vector2( 20, 100), "무기"),
-			(EquipKey.Armor,    new Vector2( 68, 100), "갑옷"),
-			(EquipKey.Bracelet, new Vector2(116, 100), "팔찌"),
-			(EquipKey.Ring2,    new Vector2(116, 148), "반지"),
-			(EquipKey.Boots,    new Vector2( 68, 196), "신발"),
+			(EquipKey.Armor,    new Vector2( 88, 100), "갑옷"),
+			(EquipKey.Cloak,    new Vector2(136, 100), "망토"),
+			(EquipKey.Bracelet, new Vector2( 20, 148), "팔찌"),
+			(EquipKey.Belt,     new Vector2( 88, 148), "벨트"),
+			(EquipKey.Ring2,    new Vector2(136, 148), "반지2"),
+			(EquipKey.Gloves,   new Vector2( 20, 196), "장갑"),
+			(EquipKey.Boots,    new Vector2( 88, 196), "신발"),
 		};
 		private readonly Dictionary<EquipKey, Panel> _slotPanels = new();
 
@@ -125,14 +129,17 @@ namespace FirstGame.UI
 		{
 			if (_player?.Inventory == null) return;
 			var inv = _player.Inventory;
-			SetSlotItem(EquipKey.Weapon, inv.EquippedWeapon);
-			SetSlotItem(EquipKey.Armor, inv.EquippedArmor);
-			SetSlotItem(EquipKey.Helmet, inv.EquippedHelmet);
-			SetSlotItem(EquipKey.Boots, inv.EquippedBoots);
+			SetSlotItem(EquipKey.Weapon,   inv.EquippedWeapon);
+			SetSlotItem(EquipKey.Armor,    inv.EquippedArmor);
+			SetSlotItem(EquipKey.Helmet,   inv.EquippedHelmet);
+			SetSlotItem(EquipKey.Boots,    inv.EquippedBoots);
 			SetSlotItem(EquipKey.Necklace, inv.EquippedNecklace);
-			SetSlotItem(EquipKey.Ring1, inv.EquippedRing1);
-			SetSlotItem(EquipKey.Ring2, inv.EquippedRing2);
+			SetSlotItem(EquipKey.Ring1,    inv.EquippedRing1);
+			SetSlotItem(EquipKey.Ring2,    inv.EquippedRing2);
 			SetSlotItem(EquipKey.Bracelet, inv.EquippedBracelet);
+			SetSlotItem(EquipKey.Cloak,    inv.EquippedCloak);
+			SetSlotItem(EquipKey.Belt,     inv.EquippedBelt);
+			SetSlotItem(EquipKey.Gloves,   inv.EquippedGloves);
 		}
 
 		private void SetSlotItem(EquipKey key, ItemData item)
@@ -183,24 +190,86 @@ namespace FirstGame.UI
 			}
 		}
 
+		private EquipKey? _selectedSlot = null;
+
 		private void OnSlotClicked(EquipKey key)
 		{
 			if (_player?.Inventory == null) return;
 			var inv = _player.Inventory;
-			switch (key)
+
+			// 1번째 클릭: 슬롯 강조 + 정보 표시 / 2번째 클릭(같은 슬롯): 해제
+			if (_selectedSlot == key)
 			{
-				case EquipKey.Weapon: inv.UnequipWeapon(_player.Stats); break;
-				case EquipKey.Armor: inv.UnequipArmor(_player.Stats); break;
-				case EquipKey.Helmet: inv.UnequipExtra(Inventory.ExtraSlot.Helmet, _player.Stats); break;
-				case EquipKey.Boots: inv.UnequipExtra(Inventory.ExtraSlot.Boots, _player.Stats); break;
-				case EquipKey.Necklace: inv.UnequipExtra(Inventory.ExtraSlot.Necklace, _player.Stats); break;
-				case EquipKey.Ring1: inv.UnequipExtra(Inventory.ExtraSlot.Ring1, _player.Stats); break;
-				case EquipKey.Ring2: inv.UnequipExtra(Inventory.ExtraSlot.Ring2, _player.Stats); break;
-				case EquipKey.Bracelet: inv.UnequipExtra(Inventory.ExtraSlot.Bracelet, _player.Stats); break;
+				// 2번째 클릭 — 해제
+				_selectedSlot = null;
+				UpdateSlotHighlight();
+				switch (key)
+				{
+					case EquipKey.Weapon:   inv.UnequipWeapon(_player.Stats); break;
+					case EquipKey.Armor:    inv.UnequipArmor(_player.Stats); break;
+					case EquipKey.Helmet:   inv.UnequipExtra(Inventory.ExtraSlot.Helmet,   _player.Stats); break;
+					case EquipKey.Boots:    inv.UnequipExtra(Inventory.ExtraSlot.Boots,    _player.Stats); break;
+					case EquipKey.Necklace: inv.UnequipExtra(Inventory.ExtraSlot.Necklace, _player.Stats); break;
+					case EquipKey.Ring1:    inv.UnequipExtra(Inventory.ExtraSlot.Ring1,    _player.Stats); break;
+					case EquipKey.Ring2:    inv.UnequipExtra(Inventory.ExtraSlot.Ring2,    _player.Stats); break;
+					case EquipKey.Bracelet: inv.UnequipExtra(Inventory.ExtraSlot.Bracelet, _player.Stats); break;
+					case EquipKey.Cloak:    inv.UnequipExtra(Inventory.ExtraSlot.Cloak,    _player.Stats); break;
+					case EquipKey.Belt:     inv.UnequipExtra(Inventory.ExtraSlot.Belt,     _player.Stats); break;
+					case EquipKey.Gloves:   inv.UnequipExtra(Inventory.ExtraSlot.Gloves,   _player.Stats); break;
+				}
+			}
+			else
+			{
+				// 1번째 클릭 — 강조만
+				_selectedSlot = key;
+				UpdateSlotHighlight();
 			}
 		}
 
-		/// <summary>장착 슬롯 hover 툴팁 — 장신구면 affix 라인 동봉.</summary>
+		private void UpdateSlotHighlight()
+		{
+			foreach (var kv in _slotPanels)
+			{
+				bool isSelected = _selectedSlot.HasValue && kv.Key == _selectedSlot.Value;
+				var item = GetEquippedForKey(kv.Key);
+				if (isSelected)
+				{
+					var s = new StyleBoxFlat();
+					s.BgColor = new Color(0.13f, 0.13f, 0.15f, 0.92f);
+					s.BorderColor = new Color(0.9f, 0.75f, 0.1f, 1f); // 노란 강조
+					s.SetBorderWidthAll(2);
+					s.SetCornerRadiusAll(3);
+					kv.Value.AddThemeStyleboxOverride("panel", s);
+				}
+				else
+				{
+					kv.Value.AddThemeStyleboxOverride("panel", CreateSlotStyle(item != null));
+				}
+			}
+		}
+
+		private ItemData GetEquippedForKey(EquipKey key)
+		{
+			var inv = _player?.Inventory;
+			if (inv == null) return null;
+			return key switch
+			{
+				EquipKey.Weapon   => inv.EquippedWeapon,
+				EquipKey.Armor    => inv.EquippedArmor,
+				EquipKey.Helmet   => inv.EquippedHelmet,
+				EquipKey.Boots    => inv.EquippedBoots,
+				EquipKey.Necklace => inv.EquippedNecklace,
+				EquipKey.Ring1    => inv.EquippedRing1,
+				EquipKey.Ring2    => inv.EquippedRing2,
+				EquipKey.Bracelet => inv.EquippedBracelet,
+				EquipKey.Cloak    => inv.EquippedCloak,
+				EquipKey.Belt     => inv.EquippedBelt,
+				EquipKey.Gloves   => inv.EquippedGloves,
+				_ => null
+			};
+		}
+
+		/// <summary>장착 슬롯 hover 툴팁 — affix 라인 동봉.</summary>
 		private string BuildSlotTooltip(EquipKey key, ItemData item)
 		{
 			string baseName = item.ItemName;
@@ -210,6 +279,9 @@ namespace FirstGame.UI
 				EquipKey.Ring1    => _player?.Inventory?.EquippedRing1Affixes,
 				EquipKey.Ring2    => _player?.Inventory?.EquippedRing2Affixes,
 				EquipKey.Bracelet => _player?.Inventory?.EquippedBraceletAffixes,
+				EquipKey.Cloak    => _player?.Inventory?.EquippedCloakAffixes,
+				EquipKey.Belt     => _player?.Inventory?.EquippedBeltAffixes,
+				EquipKey.Gloves   => _player?.Inventory?.EquippedGlovesAffixes,
 				_ => null
 			};
 			if (affixes == null || affixes.Count == 0) return baseName;
@@ -253,6 +325,9 @@ namespace FirstGame.UI
 			foreach (var a in inv.EquippedRing1Affixes)    if (a.Type == type) sum += a.Value;
 			foreach (var a in inv.EquippedRing2Affixes)    if (a.Type == type) sum += a.Value;
 			foreach (var a in inv.EquippedBraceletAffixes) if (a.Type == type) sum += a.Value;
+			foreach (var a in inv.EquippedCloakAffixes)    if (a.Type == type) sum += a.Value;
+			foreach (var a in inv.EquippedBeltAffixes)     if (a.Type == type) sum += a.Value;
+			foreach (var a in inv.EquippedGlovesAffixes)   if (a.Type == type) sum += a.Value;
 			return sum;
 		}
 

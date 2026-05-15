@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://d4_sailor01"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field2/zombie_walker.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[resource]
+script = ExtResource("1")
+MoveSpeed = 52.5
+DetectionRange = 200
+AttackRange = 45
+BaseDamage = 14
+AttackCooldown = 2.2
+ExperienceReward = 45
+GoldReward = 28
+Behavior = 0
+EnemyTypeName = "DrownedSailor"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.27
+CollisionScale = 2.0
+PossibleDrops = Array[Resource]([ExtResource("3_hp")])
+DropWeights = PackedFloat32Array(1.0)
+DropChance = 0.3
+MaxHealth = 150
+Defense = 0

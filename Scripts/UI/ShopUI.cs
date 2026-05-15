@@ -34,6 +34,9 @@ namespace FirstGame.UI
             _goldLabel = GetNode<Label>("%ShopGoldLabel");
             _messageLabel = GetNode<Label>("%ShopMessageLabel");
             _closeButton = GetNode<Button>("%CloseButton");
+            // 탭 폰트 축소 — 화면에 더 많은 아이템 보이도록
+            _tabContainer.AddThemeFontSizeOverride("font_size", 10);
+            _goldLabel.AddThemeFontSizeOverride("font_size", 10);
 
             _quantityPanel = GetNode<Control>("%QuantityPanel");
             _quantityLabel = GetNode<Label>("%QuantityItemLabel");
@@ -212,7 +215,7 @@ namespace FirstGame.UI
         private PanelContainer CreateItemPanel(ItemData item, bool isBuyMode)
         {
             var panel = new PanelContainer();
-            panel.CustomMinimumSize = new Vector2(260, 36);
+            panel.CustomMinimumSize = new Vector2(260, 20);
             panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
             var hbox = new HBoxContainer();
@@ -224,7 +227,7 @@ namespace FirstGame.UI
             {
                 var icon = new TextureRect();
                 icon.Texture = item.Icon;
-                icon.CustomMinimumSize = new Vector2(24, 24);
+                icon.CustomMinimumSize = new Vector2(16, 16);
                 icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
                 icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
                 icon.MouseFilter = Control.MouseFilterEnum.Ignore;
@@ -237,6 +240,7 @@ namespace FirstGame.UI
             vbox.MouseFilter = Control.MouseFilterEnum.Pass;
             var nameLabel = new Label();
             nameLabel.Text = item.ItemName;
+            nameLabel.AddThemeFontSizeOverride("font_size", 10);
             nameLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
             vbox.AddChild(nameLabel);
 
@@ -245,7 +249,7 @@ namespace FirstGame.UI
             {
                 var specLabel = new Label();
                 specLabel.Text = spec;
-                specLabel.AddThemeFontSizeOverride("font_size", 10);
+                specLabel.AddThemeFontSizeOverride("font_size", 8);
                 specLabel.AddThemeColorOverride("font_color", new Color(0.7f, 0.9f, 1f));
                 specLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
                 vbox.AddChild(specLabel);
@@ -282,7 +286,7 @@ namespace FirstGame.UI
         private PanelContainer CreateSellPanel(InventorySlot slot, int slotIndex)
         {
             var panel = new PanelContainer();
-            panel.CustomMinimumSize = new Vector2(260, 36);
+            panel.CustomMinimumSize = new Vector2(260, 20);
             panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
             var hbox = new HBoxContainer();
@@ -294,7 +298,7 @@ namespace FirstGame.UI
             {
                 var icon = new TextureRect();
                 icon.Texture = slot.Item.Icon;
-                icon.CustomMinimumSize = new Vector2(24, 24);
+                icon.CustomMinimumSize = new Vector2(16, 16);
                 icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
                 icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
                 icon.MouseFilter = Control.MouseFilterEnum.Ignore;
@@ -330,6 +334,31 @@ namespace FirstGame.UI
         private static string BuildSpecText(ItemData item)
         {
             var parts = new System.Collections.Generic.List<string>();
+            // 소모품 — Heal/Mana/Buff 설명
+            if (item.Type == ItemType.Consumable)
+            {
+                switch (item.UseEffect)
+                {
+                    case ItemUseEffect.Heal:        if (item.HealAmount > 0) parts.Add($"HP {item.HealAmount} 회복"); break;
+                    case ItemUseEffect.RestoreMana: if (item.HealAmount > 0) parts.Add($"MP {item.HealAmount} 회복"); break;
+                    case ItemUseEffect.Buff:
+                        if (item.BuffMoveSpeed   > 0) parts.Add($"이속 +{item.BuffMoveSpeed:0.##}");
+                        if (item.BuffAttackSpeed > 0) parts.Add($"공속 +{item.BuffAttackSpeed * 100:0}%");
+                        if (item.BuffBaseDamage  > 0) parts.Add($"공격 +{item.BuffBaseDamage}");
+                        if (item.BuffDefense     > 0) parts.Add($"방어 +{item.BuffDefense}");
+                        if (item.BuffCritRate    > 0) parts.Add($"치명 +{item.BuffCritRate * 100:0}%");
+                        if (item.BuffDurationSec > 0) parts.Add($"{item.BuffDurationSec:0}초");
+                        break;
+                    case ItemUseEffect.ReturnToTown: parts.Add("마을 귀환"); break;
+                    case ItemUseEffect.Teleport:     parts.Add("순간이동"); break;
+                    case ItemUseEffect.ReviveOnDeath: parts.Add("사망 시 자동 부활"); break;
+                    case ItemUseEffect.CureStatus:   parts.Add("상태이상 해제"); break;
+                }
+                // 설명 텍스트도 있으면 짧게 첨부
+                if (parts.Count == 0 && !string.IsNullOrEmpty(item.Description))
+                    parts.Add(item.Description);
+            }
+            // 장비 보너스
             if (item.BonusDamage != 0)      parts.Add($"공격+{item.BonusDamage}");
             if (item.BonusMaxHealth != 0)   parts.Add($"HP+{item.BonusMaxHealth}");
             if (item.BonusDefense != 0)     parts.Add($"방어+{item.BonusDefense}");

@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/boss_health_bar.tscn" id="6_bosshp"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/settings_ui.tscn" id="7_settings"]
 [ext_resource type="PackedScene" uid="uid://b3qstdlg2025u" path="res://Scenes/UI/quest_dialog.tscn" id="17_qdlg"]
+[ext_resource type="PackedScene" uid="uid://b3qboard2025u" path="res://Scenes/UI/quest_board_ui.tscn" id="36_qbui"]
 [ext_resource type="PackedScene" uid="uid://d4k8m2w7v3p1" path="res://Scenes/Objects/shop_npc.tscn" id="8_shop"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/shop_ui.tscn" id="9_shopUI"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/skill_shop_npc.tscn" id="10_skillnpc"]
@@ -19,6 +20,13 @@
 [ext_resource type="PackedScene" uid="uid://bauilbfctdypk" path="res://Scenes/Objects/teleport_npc.tscn" id="18_tpNpc"]
 [ext_resource type="PackedScene" uid="uid://dwxwdg3tlpiyy" path="res://Scenes/UI/teleport_ui.tscn" id="19_tpUI"]
 [ext_resource type="PackedScene" uid="uid://matshop001" path="res://Scenes/Objects/material_shop_npc.tscn" id="20_matshop"]
+[ext_resource type="PackedScene" uid="uid://potionshop001" path="res://Scenes/Objects/potion_shop_npc.tscn" id="40_potionshop"]
+[ext_resource type="PackedScene" uid="uid://npc_marta01"  path="res://Scenes/Objects/marta_innkeeper_npc.tscn" id="30_marta"]
+[ext_resource type="PackedScene" uid="uid://npc_hansen01" path="res://Scenes/Objects/hansen_miner_npc.tscn"    id="31_hansen"]
+[ext_resource type="PackedScene" uid="uid://npc_lily01"   path="res://Scenes/Objects/lily_florist_npc.tscn"     id="32_lily"]
+[ext_resource type="PackedScene" uid="uid://npc_garret01" path="res://Scenes/Objects/garret_guard_npc.tscn"     id="33_garret"]
+[ext_resource type="PackedScene" uid="uid://npc_ivan01"   path="res://Scenes/Objects/ivan_bard_npc.tscn"        id="34_ivan"]
+[ext_resource type="PackedScene" uid="uid://npc_qboard01" path="res://Scenes/Objects/quest_board_npc.tscn"      id="35_qboard"]
 [ext_resource type="Texture2D" path="res://Resources/Kenney/Tiles/tile_0024.png" id="16_stone"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Town/shop_sign.png" id="21_shopsign"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Town/potion_shelf.png" id="22_potionshelf"]
@@ -234,6 +242,36 @@ TargetSpawnPosition = Vector2(80, 360)
 position = Vector2(40, 180)
 TargetScenePath = "res://Scenes/Maps/field_outpost.tscn"
 TargetSpawnPosition = Vector2(560, 180)
+
+[node name="PortalToField4Harbor" parent="." instance=ExtResource("15_portal")]
+position = Vector2(600, 300)
+TargetScenePath = "res://Scenes/Maps/field_4_harbor.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+
+[node name="PotionShopNPC" parent="." instance=ExtResource("40_potionshop")]
+position = Vector2(380, 80)
+
+[node name="ShopUI" parent="PotionShopNPC" instance=ExtResource("9_shopUI")]
+
+[node name="QuestBoardUI" parent="." instance=ExtResource("36_qbui")]
+
+[node name="QuestBoardNpc" parent="." instance=ExtResource("35_qboard")]
+position = Vector2(260, 140)
+
+[node name="MartaInnkeeperNpc" parent="." instance=ExtResource("30_marta")]
+position = Vector2(420, 140)
+
+[node name="HansenMinerNpc" parent="." instance=ExtResource("31_hansen")]
+position = Vector2(150, 80)
+
+[node name="LilyFloristNpc" parent="." instance=ExtResource("32_lily")]
+position = Vector2(360, 250)
+
+[node name="GarretGuardNpc" parent="." instance=ExtResource("33_garret")]
+position = Vector2(550, 180)
+
+[node name="IvanBardNpc" parent="." instance=ExtResource("34_ivan")]
+position = Vector2(200, 280)
 
 [node name="Walls" type="StaticBody2D" parent="."]
 collision_layer = 4

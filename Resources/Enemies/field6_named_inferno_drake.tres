@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://f6_drake01"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/graveyard_wight.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/fire_bolt_projectile.png" id="3_proj"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="4_hp"]
+[ext_resource type="Resource" uid="uid://wpn_infstaff01" path="res://Resources/Items/inferno_staff.tres" id="5_istaff"]
+[ext_resource type="Resource" uid="uid://cloak_ember01" path="res://Resources/Items/ember_cloak.tres" id="6_ecloak"]
+[ext_resource type="Resource" uid="uid://bpat_bm03" path="res://Resources/BossPatterns/pat_beam_fire.tres" id="7_p1"]
+[ext_resource type="Resource" uid="uid://bpat_vol02" path="res://Resources/BossPatterns/pat_volley_large.tres" id="8_p2"]
+[ext_resource type="Resource" uid="uid://bpat_aoe02" path="res://Resources/BossPatterns/pat_aoe_large.tres" id="9_p3"]
+[resource]
+script = ExtResource("1")
+ProjectileTexture = ExtResource("3_proj")
+ProjectileScale = 0.3
+MoveSpeed = 60.0
+DetectionRange = 320
+AttackRange = 60
+BaseDamage = 32
+AttackCooldown = 2.8
+ExperienceReward = 130
+GoldReward = 90
+Behavior = 0
+EnemyTypeName = "InfernoDrake"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.35
+CollisionScale = 3.0
+Patterns = Array[Resource]([ExtResource("7_p1"), ExtResource("8_p2"), ExtResource("9_p3")])
+PossibleDrops = Array[Resource]([ExtResource("4_hp"), ExtResource("5_istaff"), ExtResource("6_ecloak")])
+DropWeights = PackedFloat32Array(0.5, 0.3, 0.2)
+DropChance = 0.7
+MaxHealth = 900
+Defense = 8
+IsBoss = true

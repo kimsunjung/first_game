@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cloak_warrior01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/iron_armor.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "전사의 투박한 망토"
+Description = "전장을 누빈 전사의 붉은 망토."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 380
+SellPrice = 120
+Type = 11
+IsStackable = false
+MaxStack = 1
+BonusDefense = 5
+BonusMaxHealth = 15
+RequiredClass = 0
+AvailableToAllClasses = false
+Weight = 2.5

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wpn_magmahammer01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/magma_hammer.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "용암 해머"
+Description = "용암으로 주조한 대형 해머. ATK+24"
+Rarity = 3
+Icon = ExtResource("2_icon")
+Price = 0
+SellPrice = 1800
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 24
+AttackType = 2
+RequiredClass = 0
+AvailableToAllClasses = false
+IsShopBlocked = true
+Weight = 5.0

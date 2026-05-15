@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wpn_cutlass01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/scimitar.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "커틀러스"
+Description = "해적이 즐겨 쓰는 곡선형 단검. ATK+10"
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 480
+SellPrice = 155
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 10
+BonusAttackSpeed = 0.0
+BonusCritRate = 0.0
+BonusLifesteal = 0.0
+AttackType = 0
+RequiredClass = 0
+AvailableToAllClasses = false
+
+Weight = 2.5

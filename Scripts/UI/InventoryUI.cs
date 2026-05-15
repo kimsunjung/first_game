@@ -71,8 +71,8 @@ namespace FirstGame.UI
             row.AddThemeConstantOverride("separation", 4);
             row.Alignment = BoxContainer.AlignmentMode.Center;
 
-            _quickSlotButtons = new Button[4];
-            for (int i = 0; i < 4; i++)
+            _quickSlotButtons = new Button[6];
+            for (int i = 0; i < 6; i++)
             {
                 int idx = i;
                 var btn = new Button
@@ -226,6 +226,17 @@ namespace FirstGame.UI
 
         private void RefreshGrid()
         {
+            // 무게 헤더 갱신 — %WeightLabel이 씬에 있으면 표시.
+            var weightLabel = GetNodeOrNull<Label>("%WeightLabel");
+            if (weightLabel != null)
+            {
+                float cur = _inventory.CurrentWeight;
+                float max = Inventory.GetMaxWeight();
+                weightLabel.Text = $"무게: {cur:0.0} / {max:0.0}";
+                weightLabel.AddThemeColorOverride("font_color",
+                    cur / max >= 0.8f ? new Color(1f, 0.4f, 0.2f) : new Color(0.85f, 0.85f, 0.85f));
+            }
+
             // 기존 슬롯 UI 제거
             foreach (Node child in _grid.GetChildren())
                 child.QueueFree();
@@ -264,7 +275,8 @@ namespace FirstGame.UI
                 {
                     var (origIdx, slot) = filtered[i];
                     bool isSelected = origIdx == _selectedSlot;
-                    slotPanel.AddThemeStyleboxOverride("panel", CreateSlotStyle(true, isSelected, GetRarityColor(slot.Item.Rarity)));
+                    slotPanel.AddThemeStyleboxOverride("panel",
+                        CreateSlotStyle(true, isSelected, GetRarityColor(slot.Item.Rarity), slot.IsEquipped));
 
                     // 아이콘 또는 이름 (Icon or Name)
                     if (slot.Item.Icon != null)
@@ -300,6 +312,18 @@ namespace FirstGame.UI
                         qtyLabel.AddThemeColorOverride("font_color", new Color(0.95f, 0.9f, 0.7f));
                         qtyLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
                         vbox.AddChild(qtyLabel);
+                    }
+
+                    // 장착중 라벨
+                    if (slot.IsEquipped)
+                    {
+                        var eqLabel = new Label();
+                        eqLabel.Text = "장착중";
+                        eqLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        eqLabel.AddThemeFontSizeOverride("font_size", 8);
+                        eqLabel.AddThemeColorOverride("font_color", new Color(0.4f, 0.95f, 0.4f));
+                        eqLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
+                        vbox.AddChild(eqLabel);
                     }
 
                     // 강화 수치 표시
@@ -422,10 +446,12 @@ namespace FirstGame.UI
 
             _itemInfoLabel.Text = info;
             _useButton.Visible = true;
-            _useButton.Text = item.Type == ItemType.Consumable ? "사용"
+            // 장착 중인 슬롯 클릭: "해제" 버튼으로 표시 (UseItem 직접 호출 대신 InventoryUI가 명시 분기)
+            _useButton.Text = slot.IsEquipped ? "해제"
+                : item.Type == ItemType.Consumable ? "사용"
                 : item.Type == ItemType.Material ? "사용 불가" : "장착";
             if (_quickSlotPanel != null)
-                _quickSlotPanel.Visible = item.Type == ItemType.Consumable;
+                _quickSlotPanel.Visible = item.Type == ItemType.Consumable && !slot.IsEquipped;
             RefreshGrid();
         }
 
@@ -457,8 +483,30 @@ namespace FirstGame.UI
         {
             if (_selectedSlot < 0) return;
             var slot = _inventory.Slots[_selectedSlot];
+
+            // 장착중 슬롯 → 해제 처리. UseItem은 IsEquipped 슬롯에서 동작 안 함(보호).
+            if (slot.IsEquipped)
+            {
+                var t = slot.Item.Type;
+                if (t == ItemType.Weapon) _inventory.UnequipWeapon(_player.Stats);
+                else if (t == ItemType.Armor) _inventory.UnequipArmor(_player.Stats);
+                else if (t == ItemType.Accessory) _inventory.UnequipAccessory(_player.Stats);
+                else if (Inventory.IsExtraEquipType(t))
+                {
+                    // 어느 ExtraSlot에 장착됐는지 매칭해 해제
+                    foreach (Inventory.ExtraSlot es in System.Enum.GetValues(typeof(Inventory.ExtraSlot)))
+                    {
+                        if (_inventory.GetExtraSlot(es) == slot.Item)
+                        {
+                            _inventory.UnequipExtra(es, _player.Stats);
+                            break;
+                        }
+                    }
+                }
+                return;
+            }
+
             // 반지는 슬롯이 두 개라 둘 다 차 있으면 어디에 교체할지 사용자가 직접 선택.
-            // 비어 있는 슬롯이 있으면 기본 EquipItem이 자동으로 그 자리로 채워준다.
             if (slot.Item.Type == ItemType.Ring
                 && _inventory.EquippedRing1 != null
                 && _inventory.EquippedRing2 != null)
@@ -521,7 +569,7 @@ namespace FirstGame.UI
             };
         }
 
-        private static StyleBoxFlat CreateSlotStyle(bool occupied, bool selected, Color rarityColor)
+        private static StyleBoxFlat CreateSlotStyle(bool occupied, bool selected, Color rarityColor, bool equipped = false)
         {
             var style = new StyleBoxFlat();
             style.BgColor = occupied
@@ -529,10 +577,12 @@ namespace FirstGame.UI
                 : new Color(0.055f, 0.055f, 0.07f, 0.72f);
             style.BorderColor = selected
                 ? new Color(1.0f, 0.82f, 0.28f, 1.0f)
-                : (occupied && rarityColor != Colors.White
-                    ? rarityColor
-                    : new Color(0.28f, 0.26f, 0.22f, 0.95f));
-            style.SetBorderWidthAll(selected ? 3 : 1);
+                : equipped
+                    ? new Color(0.3f, 0.9f, 0.3f, 1.0f) // 장착중: 녹색 외곽선
+                    : (occupied && rarityColor != Colors.White
+                        ? rarityColor
+                        : new Color(0.28f, 0.26f, 0.22f, 0.95f));
+            style.SetBorderWidthAll(selected ? 3 : (equipped ? 2 : 1));
             style.SetCornerRadiusAll(3);
             style.ContentMarginLeft = 4;
             style.ContentMarginTop = 4;

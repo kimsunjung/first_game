@@ -12,6 +12,9 @@ namespace FirstGame.Data
 		Whirlwind,   // 전사 — 자신 주변 광역
 		IceShard,    // 마법사 — 원거리 단일 공격(아이스)
 		MultiShot,   // 궁수 — 전방 콘 광역
+		LightningStorm, // 마법사 — 10초간 2초마다 가장 가까운 적에 번개
+		PreciseAim,     // 궁수 — 10초간 크리율 +30%
+		IronStance,     // 전사 — 10초간 방어력 일시 증가
 		// 패시브 — IsPassive=true. 학습 시 즉시 효과 적용.
 		LifestealPassive,  // 공격 시 데미지의 N% HP 회복
 		HpRegenPassive,    // 매초 N HP 자동 회복

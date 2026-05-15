@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cloak_flame01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/flame_cloak.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "화염의 망토"
+Description = "화염을 담은 붉은 망토. 마법사 세트의 일부."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 1200
+SellPrice = 400
+Type = 11
+IsStackable = false
+MaxStack = 1
+BonusDefense = 6
+BonusDamage = 4
+RequiredClass = 1
+AvailableToAllClasses = false
+Weight = 2.5

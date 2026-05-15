@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://armor_frostvest01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/frost_vest.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "냉기 조끼"
+Description = "빙하 가죽으로 만든 조끼. 냉기 세트."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 1100
+SellPrice = 360
+Type = 2
+IsStackable = false
+MaxStack = 1
+BonusDefense = 10
+BonusMaxHealth = 30
+BonusMaxMp = 0
+BonusMoveSpeed = 0.0
+RequiredClass = 2
+AvailableToAllClasses = false
+
+Weight = 5.0

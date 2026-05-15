@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://armor_dark01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/dark_armor.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "암흑의 갑옷"
+Description = "그림자에서 태어난 갑옷. 최강의 방어."
+Rarity = 3
+Icon = ExtResource("2_icon")
+Price = 0
+SellPrice = 2000
+Type = 2
+IsStackable = false
+MaxStack = 1
+BonusDefense = 18
+BonusMaxHealth = 60
+BonusMaxMp = 0
+BonusMoveSpeed = 0.0
+RequiredClass = 0
+AvailableToAllClasses = false
+IsShopBlocked = true
+Weight = 5.0

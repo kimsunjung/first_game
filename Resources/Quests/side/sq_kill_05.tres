@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_kill_005"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_kill_05"
+QuestTitle = "서리 늑대 사냥"
+Description = "서리 늑대 8마리를 처치하라."
+Type = 0
+TargetCount = 8
+TargetEnemyType = "FrostWolf"
+GiverNpcId = "quest_board"
+GoldReward = 180
+ExpReward = 95
+IsRepeatable = true

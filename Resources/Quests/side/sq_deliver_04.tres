@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_deliv_004"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_deliver_04"
+QuestTitle = "음유시인의 메시지"
+Description = "이반의 악보를 릴리에게 전달하라."
+Type = 2
+TargetNpcId = "lily_florist"
+GiverNpcId = "ivan_bard"
+GoldReward = 100
+ExpReward = 50
+IsRepeatable = false

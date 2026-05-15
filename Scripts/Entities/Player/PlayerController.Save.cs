@@ -13,6 +13,8 @@ namespace FirstGame.Entities.Player
 		{
 			data.PlayerPosX = GlobalPosition.X;
 			data.PlayerPosY = GlobalPosition.Y;
+			data.DayTime = FirstGame.Core.DayNightCycle.NormalizedTime;
+			data.GameDay = FirstGame.Core.DayNightCycle.Day;
 
 			// 월드 상태
 			data.CurrentScene = GetTree().CurrentScene.SceneFilePath;
@@ -40,7 +42,8 @@ namespace FirstGame.Entities.Player
 					ItemPath = invSlot.Item.ResourcePath,
 					Quantity = invSlot.Quantity,
 					EnhancementLevel = invSlot.EnhancementLevel,
-					Affixes = invSlot.Affixes != null ? new List<ItemAffix>(invSlot.Affixes) : new List<ItemAffix>()
+					Affixes = invSlot.Affixes != null ? new List<ItemAffix>(invSlot.Affixes) : new List<ItemAffix>(),
+					IsEquipped = invSlot.IsEquipped
 				});
 			}
 
@@ -64,11 +67,19 @@ namespace FirstGame.Entities.Player
 			data.EquippedRing2Path = Inventory.EquippedRing2?.ResourcePath ?? "";
 			data.EquippedBraceletPath = Inventory.EquippedBracelet?.ResourcePath ?? "";
 
-			// 장신구 슬롯의 affix — 4슬롯만(Helmet/Boots는 이번 PR affix 미대상이라 빈 리스트 유지).
+			// 장신구 슬롯의 affix
 			data.EquippedNecklaceAffixes = new List<ItemAffix>(Inventory.EquippedNecklaceAffixes);
 			data.EquippedRing1Affixes    = new List<ItemAffix>(Inventory.EquippedRing1Affixes);
 			data.EquippedRing2Affixes    = new List<ItemAffix>(Inventory.EquippedRing2Affixes);
 			data.EquippedBraceletAffixes = new List<ItemAffix>(Inventory.EquippedBraceletAffixes);
+
+			// v11: 망토/벨트/장갑 슬롯
+			data.EquippedCloakPath   = Inventory.EquippedCloak?.ResourcePath   ?? "";
+			data.EquippedBeltPath    = Inventory.EquippedBelt?.ResourcePath     ?? "";
+			data.EquippedGlovesPath  = Inventory.EquippedGloves?.ResourcePath   ?? "";
+			data.EquippedCloakAffixes  = new List<ItemAffix>(Inventory.EquippedCloakAffixes);
+			data.EquippedBeltAffixes   = new List<ItemAffix>(Inventory.EquippedBeltAffixes);
+			data.EquippedGlovesAffixes = new List<ItemAffix>(Inventory.EquippedGlovesAffixes);
 
 			// 퀘스트 상태
 			var qm = GameManager.Instance?.QuestManager;

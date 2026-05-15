@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_gath_008"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_item"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_gather_08"
+QuestTitle = "물약 재보급"
+Description = "회복 물약 10개를 모아라."
+Type = 1
+TargetCount = 10
+TargetItem = ExtResource("2_item")
+GiverNpcId = "marta_innkeeper"
+GoldReward = 180
+ExpReward = 90
+IsRepeatable = true

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wpn_harpoon01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/iron_spear.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "작살"
+Description = "던지기와 찌르기에 최적화된 작살. ATK+14, 공속+8%"
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 950
+SellPrice = 310
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 14
+BonusAttackSpeed = 0.08
+BonusCritRate = 0.0
+BonusLifesteal = 0.0
+AttackType = 1
+RequiredClass = 0
+AvailableToAllClasses = false
+
+Weight = 3.0

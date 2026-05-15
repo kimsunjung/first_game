@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_kill_003"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_kill_03"
+QuestTitle = "구울 퇴치"
+Description = "구울 10마리를 처치하라."
+Type = 0
+TargetCount = 10
+TargetEnemyType = "Ghoul"
+GiverNpcId = "quest_board"
+GoldReward = 160
+ExpReward = 85
+IsRepeatable = true

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cons_revive01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/revive_scroll.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "부활 주문서"
+Description = "사망 시 자동으로 HP 50%로 부활한다."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 800
+SellPrice = 250
+Type = 0
+IsStackable = false
+MaxStack = 1
+UseEffect = 7
+HealAmount = 0
+Weight = 0.1

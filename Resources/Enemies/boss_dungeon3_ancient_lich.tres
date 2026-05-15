@@ -10,13 +10,17 @@
 [ext_resource type="Resource" path="res://Resources/Items/guardian_amulet.tres" id="8_gamulet"]
 [ext_resource type="Resource" uid="uid://itm_bow_drag_001" path="res://Resources/Items/dragonbone_bow.tres" id="9_drag"]
 [ext_resource type="Resource" uid="uid://itm_robe_void_001" path="res://Resources/Items/void_robe.tres" id="10_void"]
+[ext_resource type="Resource" uid="uid://bpat_bm01" path="res://Resources/BossPatterns/pat_beam_basic.tres" id="11_p1"]
+[ext_resource type="Resource" uid="uid://bpat_vol01" path="res://Resources/BossPatterns/pat_volley_basic.tres" id="12_p2"]
+[ext_resource type="Resource" uid="uid://bpat_tp01" path="res://Resources/BossPatterns/pat_teleport.tres" id="13_p3"]
+[ext_resource type="Resource" uid="uid://bpat_sum01" path="res://Resources/BossPatterns/pat_summon_basic.tres" id="14_p4"]
 
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/dark_orb_projectile.png" id="99_proj"]
 [resource]
 script = ExtResource("1_es")
 ProjectileTexture = ExtResource("99_proj")
 ProjectileScale = 0.3
-MoveSpeed = 49.0
+MoveSpeed = 36.8
 DetectionRange = 320.0
 AttackRange = 250.0
 PreferredRange = 220.0
@@ -31,6 +35,7 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.39
 CollisionScale = 2.8
+Patterns = Array[Resource]([ExtResource("11_p1"), ExtResource("12_p2"), ExtResource("13_p3"), ExtResource("14_p4")])
 PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_mega"), ExtResource("5_core"), ExtResource("6_sring"), ExtResource("7_rbrace"), ExtResource("8_gamulet"), ExtResource("9_drag"), ExtResource("10_void")])
 DropWeights = PackedFloat32Array(0.15, 0.15, 0.20, 0.10, 0.10, 0.10, 0.12, 0.08)
 DropChance = 1.0

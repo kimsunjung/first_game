@@ -224,16 +224,33 @@ namespace FirstGame.Core
 		public QuestData FindNextQuestForNpc(string npcId)
 		{
 			if (HasActiveQuest) return null;
-			// quest_manifest.tres에 명시된 순서로 검색.
-			// (DirAccess + .tres 디렉터리 열거는 Android export의 .remap 처리와 충돌 가능)
 			var manifest = GD.Load<QuestManifest>("res://Resources/Quests/quest_manifest.tres");
-			if (manifest?.MainQuests == null) return null;
-			foreach (var quest in manifest.MainQuests)
+			if (manifest == null) return null;
+
+			// 1) 메인 퀘스트 — chain 순서 우선. 첫 미완료가 이 NPC꺼면 반환.
+			if (manifest.MainQuests != null)
 			{
-				if (quest == null) continue;
-				if (CompletedQuestIds.Contains(quest.QuestId)) continue;
-				// 첫 미완료 퀘스트 — 이 NPC가 부여자면 반환, 아니면 null
-				return quest.GiverNpcId == npcId ? quest : null;
+				foreach (var quest in manifest.MainQuests)
+				{
+					if (quest == null) continue;
+					if (CompletedQuestIds.Contains(quest.QuestId)) continue;
+					if (quest.GiverNpcId == npcId) return quest;
+					return null; // 선행 퀘스트 다른 NPC면 이 NPC는 부여 불가
+				}
+			}
+
+			// 2) 사이드 퀘스트 — 메인 chain이 모두 끝났거나 진행 중에도 병행 가능.
+			// 이 NPC가 부여자이고, IsRepeatable이거나 아직 완료 안 한 사이드 퀘스트를 우선 반환.
+			if (manifest.SideQuests != null)
+			{
+				foreach (var quest in manifest.SideQuests)
+				{
+					if (quest == null) continue;
+					if (quest.GiverNpcId != npcId) continue;
+					bool done = CompletedQuestIds.Contains(quest.QuestId);
+					if (done && !quest.IsRepeatable) continue;
+					return quest;
+				}
 			}
 			return null;
 		}

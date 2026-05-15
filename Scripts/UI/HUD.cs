@@ -19,14 +19,16 @@ namespace FirstGame.UI
 		private Label _saveNotification;
 		private Label _itemPickupNotification;
 
-		// 퀵슬롯 UI
-		private TextureRect[] _quickSlotIcons = new TextureRect[4];
-		private Label[] _quickSlotQtys = new Label[4];
+		// 퀵슬롯 UI — 6슬롯
+		private const int QuickSlotCount = 6;
+		private TextureRect[] _quickSlotIcons = new TextureRect[QuickSlotCount];
+		private Label[] _quickSlotQtys = new Label[QuickSlotCount];
 
-		// MP / 레벨 / EXP (없을 수 있으므로 null-safe)
+		// MP / 레벨 / EXP / 시간 (없을 수 있으므로 null-safe)
 		private ProgressBar _mpBar;
 		private Label _mpLabel;
 		private Label _levelLabel;
+		private Label _timeLabel;
 		private ProgressBar _expBar;
 		private Label _levelUpLabel;
 		private Label _questLabel;
@@ -48,16 +50,22 @@ namespace FirstGame.UI
 			_itemPickupNotification = GetNode<Label>("%ItemPickupNotification");
 			_itemPickupNotification.Visible = false;
 
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < QuickSlotCount; i++)
 			{
-				_quickSlotIcons[i] = GetNode<TextureRect>($"%QuickSlotIcon{i + 1}");
-				_quickSlotQtys[i] = GetNode<Label>($"%QuickSlotQty{i + 1}");
+				_quickSlotIcons[i] = GetNodeOrNull<TextureRect>($"%QuickSlotIcon{i + 1}");
+				_quickSlotQtys[i] = GetNodeOrNull<Label>($"%QuickSlotQty{i + 1}");
 			}
 
 			// null-safe: 씬에 노드가 없어도 크래시 없음
 			_mpBar = GetNodeOrNull<ProgressBar>("%MpBar");
 			_mpLabel = GetNodeOrNull<Label>("%MpLabel");
 			_levelLabel = GetNodeOrNull<Label>("%LevelLabel");
+			_timeLabel = GetNodeOrNull<Label>("%TimeLabel");
+			if (_timeLabel != null)
+			{
+				_timeLabel.Text = DayNightCycle.FormatTime();
+				DayNightCycle.OnTimeChanged += UpdateTimeDisplay;
+			}
 			_expBar = GetNodeOrNull<ProgressBar>("%ExpBar");
 			_levelUpLabel = GetNodeOrNull<Label>("%LevelUpLabel");
 			if (_levelUpLabel != null) _levelUpLabel.Visible = false;
@@ -108,6 +116,11 @@ namespace FirstGame.UI
 			UpdateQuickSlotDisplay();
 		}
 
+		private void UpdateTimeDisplay()
+		{
+			if (_timeLabel != null) _timeLabel.Text = DayNightCycle.FormatTime();
+		}
+
 		public override void _ExitTree()
 		{
 			if (GameManager.Instance != null)
@@ -130,6 +143,7 @@ namespace FirstGame.UI
 			EventManager.OnPlayerDeath -= ShowGameOver;
 			EventManager.OnLevelUp -= ShowLevelUp;
 			SaveManager.OnGameSaved -= ShowSaveNotification;
+			DayNightCycle.OnTimeChanged -= UpdateTimeDisplay;
 			if (GameManager.Instance != null)
 			{
 				GameManager.Instance.QuestManager.OnQuestStateChanged -= UpdateQuestDisplay;
@@ -388,7 +402,7 @@ namespace FirstGame.UI
 		{
 			_healthBar.MaxValue = maxHp;
 			_healthBar.Value = currentHp;
-			_healthLabel.Text = $"{currentHp} / {maxHp}";
+			_healthLabel.Text = $"{currentHp}/{maxHp}";
 		}
 
 		private void UpdateMpDisplay(int currentMp, int maxMp)
@@ -415,26 +429,28 @@ namespace FirstGame.UI
 
 		private void UpdateGoldDisplay(int gold)
 		{
-			_goldLabel.Text = $"골드: {gold}";
+			_goldLabel.Text = $"{gold}G";
 		}
 
 		private void UpdateQuickSlotDisplay()
 		{
 			if (_player == null) return;
 
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < QuickSlotCount; i++)
 			{
-				var item = _player.Inventory.QuickSlots[i];
+				if (_quickSlotIcons[i] == null) continue;
+				var item = i < _player.Inventory.QuickSlots.Length ? _player.Inventory.QuickSlots[i] : null;
 				if (item != null)
 				{
 					_quickSlotIcons[i].Texture = item.Icon;
 					var slot = _player.Inventory.Slots.Find(s => s.Item.ResourcePath == item.ResourcePath);
-					_quickSlotQtys[i].Text = slot != null ? $"x{slot.Quantity}" : "x0";
+					if (_quickSlotQtys[i] != null)
+						_quickSlotQtys[i].Text = slot != null ? $"x{slot.Quantity}" : "x0";
 				}
 				else
 				{
 					_quickSlotIcons[i].Texture = null;
-					_quickSlotQtys[i].Text = "";
+					if (_quickSlotQtys[i] != null) _quickSlotQtys[i].Text = "";
 				}
 			}
 		}

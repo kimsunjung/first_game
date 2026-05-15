@@ -42,9 +42,33 @@ namespace FirstGame.Entities.Player
 			}
 
 			if (Stats.CurrentHealth <= 0)
+			{
+				// ReviveOnDeath 자동 소비 — 인벤에 있으면 1개 사용해 HP 50% 부활.
+				if (TryAutoRevive()) return;
 				Die();
+			}
 			else
 				PlayHitAnimation();
+		}
+
+		/// <summary>인벤에 ReviveOnDeath 효과 아이템이 있으면 1개 소비 → HP 50% 회복. 반환 true=부활 성공.</summary>
+		private bool TryAutoRevive()
+		{
+			if (Inventory == null) return false;
+			for (int i = 0; i < Inventory.Slots.Count; i++)
+			{
+				var slot = Inventory.Slots[i];
+				if (slot.Item == null) continue;
+				if (slot.Item.Type != ItemType.Consumable) continue;
+				if (slot.Item.UseEffect != ItemUseEffect.ReviveOnDeath) continue;
+
+				Inventory.RemoveItem(i, 1);
+				Stats.CurrentHealth = Mathf.Max(1, Stats.MaxHealth / 2);
+				AudioManager.Instance?.PlaySFX("potion_use.wav");
+				GD.Print($"[부활] {slot.Item.ItemName} 자동 소비! HP 50%로 부활");
+				return true;
+			}
+			return false;
 		}
 
 		public void GainExp(int amount)
@@ -91,26 +115,21 @@ namespace FirstGame.Entities.Player
 
 			bool hitAny = false;
 
-			// 클래스별 평타 분기 — Warrior=근접, Mage=Fire 마법 원거리, Archer=무속성 화살 원거리.
-			// 데미지는 동일(BaseDamage) — 클래스별 차별은 사거리·속성·시각만. 평타라 MP 0.
-			float effectiveRange;
-			ElementType atkElement = ElementType.None;
-			switch (Stats.PlayerClass)
+			// 클래스별 평타 분기:
+			// Warrior=근접 즉시타격 / Mage·Archer=투사체 발사 (적중 시 데미지)
+			if (Stats.PlayerClass == PlayerClass.Mage)
 			{
-				case PlayerClass.Mage:
-					effectiveRange = 250f;
-					atkElement = ElementType.Fire;
-					break;
-				case PlayerClass.Archer:
-					effectiveRange = 220f;
-					break;
-				default: // Warrior
-					effectiveRange = Stats.AttackRange;
-					break;
+				FireRangedAttack(damage, ElementType.Fire, new Color(1.0f, 0.55f, 0.15f), 460f);
+				return;
+			}
+			if (Stats.PlayerClass == PlayerClass.Archer)
+			{
+				FireRangedAttack(damage, ElementType.None, new Color(0.85f, 0.85f, 0.6f), 520f);
+				return;
 			}
 
-			// 적 공격 — 단일 타격: 정면 콘(dot>0.5) + 사거리 내 후보 중 가장 가까운 적 1마리만 타격.
-			// AoE 결함(한 번 휘둘러서 다수 적이 동시 피해)을 제거하고 1:1 액션 RPG 감각으로 통일.
+			// Warrior 근접 — 단일 타격: 정면 콘(dot>0.5) + 사거리 내 후보 중 가장 가까운 적 1마리만 타격.
+			float effectiveRange = Stats.AttackRange;
 			Node2D bestTarget = null;
 			float bestDistance = float.MaxValue;
 			Vector2 bestKnockDir = _facingDirection;
@@ -123,10 +142,8 @@ namespace FirstGame.Entities.Player
 					float distance = GlobalPosition.DistanceTo(enemyNode.GlobalPosition);
 					if (distance > effectiveRange) continue;
 					Vector2 dirToEnemy = (enemyNode.GlobalPosition - GlobalPosition).Normalized();
-					// Warrior 근접에선 매우 가까우면 방향 체크 생략(겹쳤을 때 공격 가능).
-					// Mage/Archer 원거리는 거리에 무관하게 항상 정면 콘 유지.
-					bool isMelee = Stats.PlayerClass == PlayerClass.Warrior;
-					if (!(isMelee && distance < 20f) && _facingDirection.Dot(dirToEnemy) <= 0.5f) continue;
+					// 매우 가까우면 방향 체크 생략(겹쳤을 때 공격 가능).
+					if (distance >= 20f && _facingDirection.Dot(dirToEnemy) <= 0.5f) continue;
 					if (distance < bestDistance)
 					{
 						bestDistance = distance;
@@ -138,14 +155,11 @@ namespace FirstGame.Entities.Player
 
 			if (bestTarget != null && bestTarget is IDamageable damageableEnemy)
 			{
-				damageableEnemy.TakeDamage(damage, atkElement);
+				damageableEnemy.TakeDamage(damage, ElementType.None);
 				hitAny = true;
 				if (bestTarget is IKnockbackable knockable)
 					knockable.ApplyKnockback(bestKnockDir, BalanceData.Combat.EnemyKnockback);
-				if (isCrit)
-					TriggerCameraShake(3f, 0.15f);
-				else
-					TriggerCameraShake(2f, 0.1f);
+				TriggerCameraShake(isCrit ? 3f : 2f, isCrit ? 0.15f : 0.1f);
 				// Lifesteal 패시브 — 적중 데미지의 N%를 자신 HP로 회복. 최소 1HP 보장.
 				if (Stats.LifestealPercent > 0f)
 				{
@@ -154,9 +168,25 @@ namespace FirstGame.Entities.Player
 				}
 			}
 
-			// 히트스톱: 적중 시 짧은 프리즈. 크리는 조금 더 길게.
 			if (hitAny)
 				UIEffectManager.HitStop(isCrit ? 0.10f : 0.06f, 0.05f);
+		}
+
+		/// <summary>Mage/Archer 평타용 — _facingDirection 쪽으로 PlayerProjectile 발사.</summary>
+		private void FireRangedAttack(int damage, ElementType element, Color color, float speed)
+		{
+			var proj = new PlayerProjectile
+			{
+				Damage = damage,
+				Speed = speed,
+				Direction = GetAimDirection(),
+				Element = element,
+				ProjectileColor = color,
+				SingleHit = true
+			};
+			GetParent().AddChild(proj);
+			proj.GlobalPosition = GlobalPosition;
+			TriggerCameraShake(1.5f, 0.06f);
 		}
 	}
 }

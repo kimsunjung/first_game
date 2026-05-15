@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_kill_002"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_kill_02"
+QuestTitle = "해골 정리"
+Description = "해골 전사 8마리를 처치하라."
+Type = 0
+TargetCount = 8
+TargetEnemyType = "SkeletonWarrior"
+GiverNpcId = "quest_board"
+GoldReward = 130
+ExpReward = 70
+IsRepeatable = true

@@ -44,39 +44,14 @@ namespace FirstGame.Data.Skills
 	{
 		public void Execute(ISkillTarget target, SkillData skill)
 		{
-			var enemies = target.GetNearbyEnemies(350f);
-			float bestDist = 350f;
-			IDamageable hitTarget = null;
-
-			foreach (var (node, damageable) in enemies)
-			{
-				float d = target.GlobalPosition.DistanceTo(node.GlobalPosition);
-				if (d < bestDist)
-				{
-					bestDist = d;
-					hitTarget = damageable;
-				}
-			}
-
-			if (hitTarget != null)
-			{
-				bool fbCrit = GD.Randf() < target.CritRate;
-				int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
-				long rawDmg = (long)target.BaseDamage * multiplier;
-				if (fbCrit) rawDmg = (long)(rawDmg * target.CritMultiplier);
-				int dmg = (int)Math.Min(rawDmg, int.MaxValue);
-				// FireBolt 기본 속성 Fire — 스킬 .tres에서 명시되면 그 값 사용.
-				ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.Fire;
-				hitTarget.TakeDamage(dmg, element);
-				target.TriggerCameraShake(7f, 0.3f);
-				// 스킬 명중 시 히트 스톱(크리는 더 길게) — 일반 공격보다 살짝 강한 인상.
-				FirstGame.Core.UIEffectManager.HitStop(fbCrit ? 0.12f : 0.08f, 0.05f);
-				GD.Print($"파이어볼트 명중! ({dmg} 데미지{(fbCrit ? " CRIT!" : "")})");
-			}
-			else
-			{
-				GD.Print("파이어볼트: 대상 없음");
-			}
+			bool fbCrit = GD.Randf() < target.CritRate;
+			int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			long rawDmg = (long)target.BaseDamage * multiplier;
+			if (fbCrit) rawDmg = (long)(rawDmg * target.CritMultiplier);
+			int dmg = (int)Math.Min(rawDmg, int.MaxValue);
+			ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.Fire;
+			target.FireProjectile(dmg, element, new Color(1.0f, 0.4f, 0.1f), 540f);
+			target.TriggerCameraShake(3f, 0.12f);
 		}
 	}
 
@@ -89,26 +64,13 @@ namespace FirstGame.Data.Skills
 	{
 		public void Execute(ISkillTarget target, SkillData skill)
 		{
-			const float range = 280f;
-			var enemies = target.GetNearbyEnemies(range);
-			float bestDist = range;
-			IDamageable hitTarget = null;
-			foreach (var (node, damageable) in enemies)
-			{
-				float d = target.GlobalPosition.DistanceTo(node.GlobalPosition);
-				if (d < bestDist) { bestDist = d; hitTarget = damageable; }
-			}
-			if (hitTarget != null)
-			{
-				bool crit = GD.Randf() < target.CritRate;
-				int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
-				long raw = (long)target.BaseDamage * multiplier;
-				if (crit) raw = (long)(raw * target.CritMultiplier);
-				int dmg = (int)Math.Min(raw, int.MaxValue);
-				hitTarget.TakeDamage(dmg, skill.Element);
-				target.TriggerCameraShake(4f, 0.2f);
-				FirstGame.Core.UIEffectManager.HitStop(crit ? 0.10f : 0.06f, 0.05f);
-			}
+			bool crit = GD.Randf() < target.CritRate;
+			int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			long raw = (long)target.BaseDamage * multiplier;
+			if (crit) raw = (long)(raw * target.CritMultiplier);
+			int dmg = (int)Math.Min(raw, int.MaxValue);
+			target.FireProjectile(dmg, skill.Element, new Color(0.95f, 0.9f, 0.55f), 620f);
+			target.TriggerCameraShake(2f, 0.10f);
 		}
 	}
 
@@ -140,32 +102,55 @@ namespace FirstGame.Data.Skills
 
 	/// <summary>IceShard (마법사) — FireBolt와 유사한 단일 원거리. 속성 Ice 기본.
 	/// 슬로우 효과는 후속 작업 — 현재 데미지만.</summary>
+	/// <summary>LightningStorm (마법사) — 10초간 매 2초마다 가장 가까운 적에 번개.
+	/// 능동 발동 시 PlayerStats에 stormDuration 누적, PlayerController가 매 프레임 tick.</summary>
+	[SkillStrategy(SkillType.LightningStorm)]
+	public class LightningStormStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			float duration = skill.DurationSeconds > 0f ? skill.DurationSeconds : 10f;
+			target.StartLightningStorm(duration, 2f);
+			target.TriggerCameraShake(4f, 0.2f);
+		}
+	}
+
+	/// <summary>PreciseAim (궁수) — 10초간 크리율 +30%. ApplyBuffEx 사용.</summary>
+	[SkillStrategy(SkillType.PreciseAim)]
+	public class PreciseAimStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			float dur = skill.DurationSeconds > 0f ? skill.DurationSeconds : 10f;
+			target.ApplyTempBuff(0, 0, 0.30f, dur);
+		}
+	}
+
+	/// <summary>IronStance (전사) — 10초간 방어력 +N. ApplyBuffEx 사용.</summary>
+	[SkillStrategy(SkillType.IronStance)]
+	public class IronStanceStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			float dur = skill.DurationSeconds > 0f ? skill.DurationSeconds : 10f;
+			int defBonus = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 10;
+			target.ApplyTempBuff(0, defBonus, 0f, dur);
+		}
+	}
+
 	[SkillStrategy(SkillType.IceShard)]
 	public class IceShardStrategy : ISkillStrategy
 	{
 		public void Execute(ISkillTarget target, SkillData skill)
 		{
-			const float range = 320f;
-			var enemies = target.GetNearbyEnemies(range);
-			float bestDist = range;
-			IDamageable hitTarget = null;
-			foreach (var (node, damageable) in enemies)
-			{
-				float d = target.GlobalPosition.DistanceTo(node.GlobalPosition);
-				if (d < bestDist) { bestDist = d; hitTarget = damageable; }
-			}
-			if (hitTarget != null)
-			{
-				bool crit = GD.Randf() < target.CritRate;
-				int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
-				long raw = (long)target.BaseDamage * multiplier;
-				if (crit) raw = (long)(raw * target.CritMultiplier);
-				int dmg = (int)Math.Min(raw, int.MaxValue);
-				ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.Ice;
-				hitTarget.TakeDamage(dmg, element);
-				target.TriggerCameraShake(5f, 0.25f);
-				FirstGame.Core.UIEffectManager.HitStop(crit ? 0.10f : 0.07f, 0.05f);
-			}
+			bool crit = GD.Randf() < target.CritRate;
+			int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			long raw = (long)target.BaseDamage * multiplier;
+			if (crit) raw = (long)(raw * target.CritMultiplier);
+			int dmg = (int)Math.Min(raw, int.MaxValue);
+			ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.Ice;
+			target.FireProjectile(dmg, element, new Color(0.6f, 0.85f, 1.0f), 500f);
+			target.TriggerCameraShake(3f, 0.12f);
 		}
 	}
 

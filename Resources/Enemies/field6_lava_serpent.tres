@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://f6_serpent01"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field2/cursed_wolf.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[resource]
+script = ExtResource("1")
+MoveSpeed = 66.0
+DetectionRange = 220
+AttackRange = 42
+BaseDamage = 21
+AttackCooldown = 1.8
+ExperienceReward = 50
+GoldReward = 32
+Behavior = 0
+EnemyTypeName = "LavaSerpent"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.27
+CollisionScale = 2.2
+PossibleDrops = Array[Resource]([ExtResource("3_hp")])
+DropWeights = PackedFloat32Array(1.0)
+DropChance = 0.3
+MaxHealth = 260
+Defense = 3

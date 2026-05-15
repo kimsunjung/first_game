@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_expl_004"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_explore_04"
+QuestTitle = "광산 깊숙이"
+Description = "mine_3에 방문하라."
+Type = 3
+TargetScene = "res://Scenes/Maps/mine_3.tscn"
+GiverNpcId = "quest_board"
+GoldReward = 300
+ExpReward = 150
+IsRepeatable = false

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cloak_traveler01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/leather_armor.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "나그네의 망토"
+Description = "가벼운 천 망토. 여행자들이 즐겨 입는다."
+Rarity = 0
+Icon = ExtResource("2_icon")
+Price = 120
+SellPrice = 40
+Type = 11
+IsStackable = false
+MaxStack = 1
+BonusMoveSpeed = 0.02
+AvailableToAllClasses = true
+Weight = 2.0

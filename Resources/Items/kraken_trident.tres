@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wpn_ktrident01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/kraken_trident.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "크라켄의 삼지창"
+Description = "바다 괴물에서 얻은 전설의 삼지창. ATK+35, HP흡수+2%"
+Rarity = 4
+Icon = ExtResource("2_icon")
+Price = 0
+SellPrice = 3000
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 35
+BonusLifesteal = 0.02
+AttackType = 1
+RequiredClass = 0
+AvailableToAllClasses = false
+IsShopBlocked = true
+Weight = 5.0

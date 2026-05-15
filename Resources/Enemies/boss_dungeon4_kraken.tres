@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://boss_kraken01"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/ancient_lich.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/arcane_bolt_projectile.png" id="3_proj"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="4_hp"]
+[ext_resource type="Resource" uid="uid://wpn_ktrident01" path="res://Resources/Items/kraken_trident.tres" id="5_trident"]
+[ext_resource type="Resource" uid="uid://armor_dark01" path="res://Resources/Items/dark_armor.tres" id="6_darmor"]
+[ext_resource type="Resource" uid="uid://bpat_bm01" path="res://Resources/BossPatterns/pat_beam_basic.tres" id="7_p1"]
+[ext_resource type="Resource" uid="uid://bpat_aoe02" path="res://Resources/BossPatterns/pat_aoe_large.tres" id="8_p2"]
+[ext_resource type="Resource" uid="uid://bpat_sum01" path="res://Resources/BossPatterns/pat_summon_basic.tres" id="9_p3"]
+[resource]
+script = ExtResource("1")
+ProjectileTexture = ExtResource("3_proj")
+ProjectileScale = 0.3
+MoveSpeed = 41.2
+DetectionRange = 400.0
+AttackRange = 300.0
+PreferredRange = 200.0
+BaseDamage = 35
+AttackCooldown = 3.0
+ExperienceReward = 500
+GoldReward = 300
+Behavior = 1
+EnemyTypeName = "Kraken"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.4
+CollisionScale = 3.5
+Patterns = Array[Resource]([ExtResource("7_p1"), ExtResource("8_p2"), ExtResource("9_p3")])
+PossibleDrops = Array[Resource]([ExtResource("4_hp"), ExtResource("5_trident"), ExtResource("6_darmor")])
+DropWeights = PackedFloat32Array(0.4, 0.35, 0.25)
+DropChance = 1.0
+MaxHealth = 1800
+Defense = 12
+IsBoss = true

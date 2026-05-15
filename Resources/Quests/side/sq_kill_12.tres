@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_kill_012"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_kill_12"
+QuestTitle = "사이렌의 위협"
+Description = "사이렌 4마리를 처치하라."
+Type = 0
+TargetCount = 4
+TargetEnemyType = "Siren"
+GiverNpcId = "quest_board"
+GoldReward = 350
+ExpReward = 180
+IsRepeatable = true

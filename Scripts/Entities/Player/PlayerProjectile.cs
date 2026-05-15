@@ -1,0 +1,100 @@
+using Godot;
+using FirstGame.Core.Interfaces;
+using FirstGame.Data;
+
+namespace FirstGame.Entities.Player
+{
+	/// <summary>
+	/// 플레이어가 발사하는 투사체. 적과 충돌 시 데미지 + 소멸.
+	/// Mage/Archer 평타·원거리 스킬에서 즉시 데미지 대신 사용.
+	/// </summary>
+	public partial class PlayerProjectile : Area2D
+	{
+		public int Damage { get; set; } = 5;
+		public float Speed { get; set; } = 420f;
+		public Vector2 Direction { get; set; } = Vector2.Right;
+		public ElementType Element { get; set; } = ElementType.None;
+		public Color ProjectileColor { get; set; } = new Color(1.0f, 0.6f, 0.2f);
+		public Texture2D Texture { get; set; }
+		public float TextureScale { get; set; } = 0.5f;
+		// 단일 타겟 보장 — 한 번 적중하면 즉시 소멸.
+		public bool SingleHit { get; set; } = true;
+
+		private float _lifetime = 1.5f;
+		private bool _consumed = false;
+
+		public override void _Ready()
+		{
+			// 적과 충돌 검출 — 적 collision_layer=2.
+			CollisionLayer = 0;
+			CollisionMask = 2;
+			Monitoring = true;
+
+			var shape = new CollisionShape2D();
+			var circle = new CircleShape2D { Radius = 6f };
+			shape.Shape = circle;
+			AddChild(shape);
+
+			if (Texture != null)
+			{
+				var sprite = new Sprite2D
+				{
+					Texture = Texture,
+					Scale = new Vector2(TextureScale, TextureScale),
+					TextureFilter = TextureFilterEnum.Nearest
+				};
+				AddChild(sprite);
+				Rotation = Direction.Angle();
+			}
+
+			AreaEntered += OnAreaEntered;
+			BodyEntered += OnBodyEntered;
+			QueueRedraw();
+		}
+
+		public override void _Draw()
+		{
+			if (Texture != null) return;
+			DrawCircle(Vector2.Zero, 10f, new Color(ProjectileColor.R, ProjectileColor.G, ProjectileColor.B, 0.15f));
+			DrawCircle(Vector2.Zero, 6f,  new Color(ProjectileColor.R, ProjectileColor.G, ProjectileColor.B, 0.45f));
+			DrawCircle(Vector2.Zero, 3.5f, ProjectileColor);
+			DrawCircle(Vector2.Zero, 1.6f, new Color(1f, 1f, 1f, 0.85f));
+		}
+
+		public override void _PhysicsProcess(double delta)
+		{
+			Position += Direction * Speed * FirstGame.Core.BalanceData.Movement.ProjectileSpeedMultiplier * (float)delta;
+			_lifetime -= (float)delta;
+			if (_lifetime <= 0f) QueueFree();
+		}
+
+		private void OnAreaEntered(Area2D area)
+		{
+			TryHit(area);
+		}
+
+		private void OnBodyEntered(Node2D body)
+		{
+			TryHit(body);
+		}
+
+		private void TryHit(Node2D node)
+		{
+			if (_consumed) return;
+			if (node is IDamageable target)
+			{
+				target.TakeDamage(Damage, Element);
+				_consumed = true;
+				SpawnHitEffect();
+				if (SingleHit) QueueFree();
+			}
+		}
+
+		private void SpawnHitEffect()
+		{
+			var flash = new FirstGame.Entities.Enemies.HitFlash { GlobalPosition = GlobalPosition };
+			GetTree()?.CurrentScene?.AddChild(flash);
+			flash.Play(ProjectileColor);
+		}
+	}
+}

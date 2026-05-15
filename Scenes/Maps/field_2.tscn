@@ -18,6 +18,7 @@
 [ext_resource type="Resource" uid="uid://bf2cursedwolf005" path="res://Resources/Enemies/field2_cursed_wolf.tres" id="24_wolf"]
 [ext_resource type="Script" uid="uid://dmf0bg8r5ncbd" path="res://Scripts/Maps/MapGenerator.cs" id="15_5m0au"]
 [ext_resource type="TileSet" uid="uid://qg8y8romnyuy" path="res://Resources/Tilesets/field_tileset.tres" id="16_tileset"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/dungeon_entrance.png" id="17_dent"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -62,8 +63,13 @@ position = Vector2(640, 25)
 TargetScenePath = "res://Scenes/Maps/field_1.tscn"
 TargetSpawnPosition = Vector2(640, 640)
 
+[node name="DungeonEntranceMarker2" type="Sprite2D" parent="."]
+position = Vector2(640, 360)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("17_dent")
+
 [node name="PortalToDungeon2" parent="." instance=ExtResource("9_portal")]
-position = Vector2(1220, 360)
+position = Vector2(640, 360)
 TargetScenePath = "res://Scenes/Maps/dungeon_2.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 

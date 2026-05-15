@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://gloves_mage01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/bracelet.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "마법사 장갑"
+Description = "마력 집중을 돕는 가벼운 장갑."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 370
+SellPrice = 118
+Type = 13
+IsStackable = false
+MaxStack = 1
+BonusMaxMp = 15
+BonusDamage = 3
+RequiredClass = 1
+AvailableToAllClasses = false
+Weight = 1.0

@@ -18,6 +18,7 @@
 [ext_resource type="Resource" uid="uid://b1fld1boar0005" path="res://Resources/Enemies/field1_wild_boar.tres" id="16_boar"]
 [ext_resource type="Script" uid="uid://dmf0bg8r5ncbd" path="res://Scripts/Maps/MapGenerator.cs" id="15_5m0au"]
 [ext_resource type="TileSet" uid="uid://qg8y8romnyuy" path="res://Resources/Tilesets/field_tileset.tres" id="16_tileset"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/dungeon_entrance.png" id="17_dent"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -62,8 +63,13 @@ position = Vector2(50, 360)
 TargetScenePath = "res://Scenes/Maps/town.tscn"
 TargetSpawnPosition = Vector2(550, 180)
 
+[node name="DungeonEntranceMarker1" type="Sprite2D" parent="."]
+position = Vector2(640, 360)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("17_dent")
+
 [node name="PortalToDungeon1" parent="." unique_id=685043628 instance=ExtResource("9_portal")]
-position = Vector2(1220, 360)
+position = Vector2(640, 360)
 TargetScenePath = "res://Scenes/Maps/dungeon_1.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 

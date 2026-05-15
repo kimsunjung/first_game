@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cons_crit_pot01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/crit_potion.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "치명타 물약"
+Description = "30초간 치명타율이 20% 증가한다."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 320
+SellPrice = 95
+Type = 0
+IsStackable = true
+MaxStack = 10
+UseEffect = 4
+BuffAttackSpeed = 0.0
+BuffMoveSpeed = 0.0
+BuffCritRate = 0.20
+BuffDurationSec = 30.0
+HealAmount = 0
+Weight = 0.1

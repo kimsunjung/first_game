@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://wpn_infstaff01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/inferno_staff.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "지옥불 지팡이"
+Description = "화산의 핵심에서 태어난 강력한 마법 지팡이. ATK+20"
+Rarity = 3
+Icon = ExtResource("2_icon")
+Price = 0
+SellPrice = 1600
+Type = 1
+IsStackable = false
+MaxStack = 1
+BonusDamage = 20
+AttackType = 1
+RequiredClass = 1
+AvailableToAllClasses = false
+IsShopBlocked = true
+Weight = 2.5

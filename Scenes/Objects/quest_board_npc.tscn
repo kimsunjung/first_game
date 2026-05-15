@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://npc_qboard01"]
+
+[ext_resource type="Script" path="res://Scripts/Entities/CivilianNpc.cs" id="1_npc"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/quest.png" id="2_sprite"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/npc_dialogue.png" id="3_prompt"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_npc"]
+size = Vector2(30, 30)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_block"]
+size = Vector2(24, 24)
+
+
+[node name="QuestBoardNpc" type="Area2D" groups=["NPC"]]
+collision_layer = 8
+collision_mask = 1
+script = ExtResource("1_npc")
+NpcId = "quest_board"
+PromptIcon = ExtResource("3_prompt")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_sprite")
+scale = Vector2(0.2, 0.2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_npc")
+
+[node name="PromptLabel" type="Label" parent="."]
+visible = false
+offset_left = -36.0
+offset_top = -36.0
+offset_right = 36.0
+offset_bottom = -22.0
+text = "[F] 퀘스트 보드"
+horizontal_alignment = 1
+
+[node name="NpcBlocker" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NpcBlocker"]
+shape = SubResource("RectangleShape2D_block")

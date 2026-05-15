@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_expl_002"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_explore_02"
+QuestTitle = "설원 탐험"
+Description = "설원 지역에 방문하라."
+Type = 3
+TargetScene = "res://Scenes/Maps/field_5_snowfield.tscn"
+GiverNpcId = "quest_board"
+GoldReward = 400
+ExpReward = 200
+IsRepeatable = false

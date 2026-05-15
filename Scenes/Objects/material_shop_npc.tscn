@@ -7,8 +7,6 @@
 [ext_resource type="Resource" uid="uid://bsv2ore7l1m04" path="res://Resources/Items/silver_ore.tres" id="3_silver"]
 [ext_resource type="Resource" uid="uid://bgo2ore7l2m05" path="res://Resources/Items/gold_ore.tres" id="4_gold"]
 [ext_resource type="Resource" uid="uid://bcp2ore7l4m07" path="res://Resources/Items/copper_ore.tres" id="5_copper"]
-[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="6_hp"]
-[ext_resource type="Resource" path="res://Resources/Items/mana_potion.tres" id="7_mp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_matshop"]
 radius = 80.0
@@ -21,7 +19,7 @@ collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_shop")
 PromptIcon = ExtResource("prompt_icon")
-ShopItems = Array[Resource]([ExtResource("5_copper"), ExtResource("2_iron"), ExtResource("3_silver"), ExtResource("4_gold"), ExtResource("6_hp"), ExtResource("7_mp")])
+ShopItems = Array[Resource]([ExtResource("5_copper"), ExtResource("2_iron"), ExtResource("3_silver"), ExtResource("4_gold")])
 ShopName = "재료 상점"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -54,6 +52,10 @@ offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 7
+theme_override_colors/font_color = Color(1, 0.92, 0.45, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
 text = "[광물상]"
 horizontal_alignment = 1
 

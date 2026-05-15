@@ -10,7 +10,7 @@
 script = ExtResource("1")
 ProjectileTexture = ExtResource("99_proj")
 ProjectileScale = 0.2
-MoveSpeed = 56.0
+MoveSpeed = 42.0
 DetectionRange = 270.0
 AttackRange = 220.0
 PreferredRange = 200.0

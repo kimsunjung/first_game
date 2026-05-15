@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://m3_warlock01"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Mine/crystal_warlock.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[resource]
+script = ExtResource("1")
+MoveSpeed = 48.8
+DetectionRange = 280
+AttackRange = 240
+BaseDamage = 18
+AttackCooldown = 2.5
+ExperienceReward = 50
+GoldReward = 32
+Behavior = 1
+EnemyTypeName = "CrystalWarlock"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.25
+CollisionScale = 1.9
+PossibleDrops = Array[Resource]([ExtResource("3_hp")])
+DropWeights = PackedFloat32Array(1.0)
+DropChance = 0.3
+MaxHealth = 160
+Defense = 0

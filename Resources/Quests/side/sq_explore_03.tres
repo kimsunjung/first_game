@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_expl_003"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_explore_03"
+QuestTitle = "화산 탐험"
+Description = "화산계곡에 방문하라."
+Type = 3
+TargetScene = "res://Scenes/Maps/field_6_volcano.tscn"
+GiverNpcId = "quest_board"
+GoldReward = 400
+ExpReward = 200
+IsRepeatable = false

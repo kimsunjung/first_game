@@ -14,6 +14,9 @@ namespace FirstGame.UI
 		private Label _goldLabel;
 		private Label _messageLabel;
 		private Button _closeButton;
+		private HBoxContainer _tabBar;
+		private readonly System.Collections.Generic.Dictionary<PlayerClass, Button> _tabButtons = new();
+		private PlayerClass _currentTab = PlayerClass.Warrior;
 
 		private IPlayer _player;
 
@@ -26,6 +29,41 @@ namespace FirstGame.UI
 
 			_closeButton.Pressed += Close;
 			_messageLabel.Visible = false;
+			BuildTabBar();
+		}
+
+		private void BuildTabBar()
+		{
+			var listParent = _skillList?.GetParent();
+			if (listParent is not VBoxContainer parentVbox) return;
+			_tabBar = new HBoxContainer();
+			_tabBar.AddThemeConstantOverride("separation", 2);
+			_tabBar.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			AddTab(PlayerClass.Warrior, "전사");
+			AddTab(PlayerClass.Mage, "마법사");
+			AddTab(PlayerClass.Archer, "궁수");
+			parentVbox.AddChild(_tabBar);
+			parentVbox.MoveChild(_tabBar, _skillList.GetIndex());
+		}
+
+		private void AddTab(PlayerClass cls, string label)
+		{
+			var btn = new Button { Text = label, ToggleMode = true, CustomMinimumSize = new Vector2(60, 22) };
+			btn.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			btn.AddThemeFontSizeOverride("font_size", 10);
+			btn.Pressed += () => { _currentTab = cls; RefreshList(); UpdateTabStyles(); };
+			_tabBar.AddChild(btn);
+			_tabButtons[cls] = btn;
+		}
+
+		private void UpdateTabStyles()
+		{
+			foreach (var kv in _tabButtons)
+			{
+				kv.Value.ButtonPressed = kv.Key == _currentTab;
+				kv.Value.AddThemeColorOverride("font_color",
+					kv.Key == _currentTab ? new Color(1f, 0.85f, 0.3f) : new Color(0.65f, 0.65f, 0.65f));
+			}
 		}
 
 		// --- 스킬 상점 진입점 (NPC 상호작용에서 호출) ---
@@ -35,6 +73,7 @@ namespace FirstGame.UI
 			var player = GameManager.Instance?.Player;
 			if (player == null) return;
 			_player = player;
+			_currentTab = player.Stats.PlayerClass;
 
 			if (Visible) OnOpened();
 			else Open();
@@ -44,6 +83,7 @@ namespace FirstGame.UI
 		{
 			RefreshList();
 			UpdateGold();
+			UpdateTabStyles();
 		}
 
 		protected override void OnExitTreeInternal()
@@ -58,13 +98,23 @@ namespace FirstGame.UI
 
 			if (SkillBooks == null) return;
 
+			// 현재 탭 클래스에 맞는 스킬북만 필터 + 레벨순 정렬
+			var items = new System.Collections.Generic.List<ItemData>();
 			foreach (var item in SkillBooks)
 			{
 				if (item?.LearnedSkill == null) continue;
+				var s = item.LearnedSkill;
+				bool match = s.AvailableToAllClasses || s.RequiredClass == _currentTab;
+				if (match) items.Add(item);
+			}
+			items.Sort((a, b) => a.LearnedSkill.RequiredLevel.CompareTo(b.LearnedSkill.RequiredLevel));
+
+			foreach (var item in items)
+			{
 				var skill = item.LearnedSkill;
 
 				var panel = new PanelContainer();
-				panel.CustomMinimumSize = new Vector2(260, 40);
+				panel.CustomMinimumSize = new Vector2(260, 22);
 				panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
 				var hbox = new HBoxContainer();
@@ -76,7 +126,7 @@ namespace FirstGame.UI
 				{
 					var icon = new TextureRect();
 					icon.Texture = skill.Icon;
-					icon.CustomMinimumSize = new Vector2(24, 24);
+					icon.CustomMinimumSize = new Vector2(18, 18);
 					icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
 					icon.MouseFilter = Control.MouseFilterEnum.Ignore;
 					hbox.AddChild(icon);
@@ -89,14 +139,14 @@ namespace FirstGame.UI
 
 				var nameLabel = new Label();
 				nameLabel.Text = $"{skill.SkillName}";
-				nameLabel.AddThemeFontSizeOverride("font_size", 12);
+				nameLabel.AddThemeFontSizeOverride("font_size", 10);
 				nameLabel.ClipText = true;
 				nameLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
 				vbox.AddChild(nameLabel);
 
 				var descLabel = new Label();
 				descLabel.Text = $"{skill.Description}  MP:{skill.MpCost}  쿨:{skill.Cooldown}s";
-				descLabel.AddThemeFontSizeOverride("font_size", 10);
+				descLabel.AddThemeFontSizeOverride("font_size", 8);
 				descLabel.ClipText = true;
 				descLabel.MouseFilter = Control.MouseFilterEnum.Ignore;
 				vbox.AddChild(descLabel);

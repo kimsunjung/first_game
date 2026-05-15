@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://f4_sniper01"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon1/orc_rogue.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
+[resource]
+script = ExtResource("1")
+MoveSpeed = 56.2
+DetectionRange = 280
+AttackRange = 220
+BaseDamage = 15
+AttackCooldown = 2.5
+ExperienceReward = 38
+GoldReward = 24
+Behavior = 1
+EnemyTypeName = "PirateSniper"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.27
+CollisionScale = 1.8
+PossibleDrops = Array[Resource]([ExtResource("3_hp")])
+DropWeights = PackedFloat32Array(1.0)
+DropChance = 0.3
+MaxHealth = 100
+Defense = 0

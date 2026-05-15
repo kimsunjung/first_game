@@ -10,7 +10,7 @@
 
 [resource]
 script = ExtResource("1_es")
-MoveSpeed = 52.5
+MoveSpeed = 39.4
 DetectionRange = 310.0
 AttackRange = 48.0
 BaseDamage = 17

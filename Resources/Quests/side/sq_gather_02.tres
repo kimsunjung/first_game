@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_gath_002"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://bi00e3dsa8d6o" path="res://Resources/Items/ancient_bone.tres" id="2_item"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_gather_02"
+QuestTitle = "고대 뼈 수집"
+Description = "고대 뼈 3개를 구해라."
+Type = 1
+TargetCount = 3
+TargetItem = ExtResource("2_item")
+GiverNpcId = "hansen_miner"
+GoldReward = 180
+ExpReward = 90
+IsRepeatable = true

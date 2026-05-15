@@ -16,6 +16,7 @@
 [ext_resource type="Resource" uid="uid://bf3shadowbat003" path="res://Resources/Enemies/field3_shadow_bat.tres" id="22_bat"]
 [ext_resource type="Resource" uid="uid://bf3bonehound004" path="res://Resources/Enemies/field3_bone_hound.tres" id="23_hound"]
 [ext_resource type="Resource" uid="uid://bf3plaguegh0005" path="res://Resources/Enemies/field3_plague_ghoul.tres" id="24_ghoul"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/dungeon_entrance.png" id="25_dent"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -60,9 +61,24 @@ position = Vector2(640, 25)
 TargetScenePath = "res://Scenes/Maps/field_2.tscn"
 TargetSpawnPosition = Vector2(640, 640)
 
+[node name="DungeonEntranceMarker3" type="Sprite2D" parent="."]
+position = Vector2(640, 360)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("25_dent")
+
 [node name="PortalToDungeon3" parent="." instance=ExtResource("9_portal")]
-position = Vector2(1220, 360)
+position = Vector2(640, 360)
 TargetScenePath = "res://Scenes/Maps/dungeon_3.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+
+[node name="PortalToSnowfield" parent="." instance=ExtResource("9_portal")]
+position = Vector2(1220, 200)
+TargetScenePath = "res://Scenes/Maps/field_5_snowfield.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+
+[node name="PortalToVolcano" parent="." instance=ExtResource("9_portal")]
+position = Vector2(1220, 520)
+TargetScenePath = "res://Scenes/Maps/field_6_volcano.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 
 [node name="EnemySpawner" type="Node2D" parent="."]

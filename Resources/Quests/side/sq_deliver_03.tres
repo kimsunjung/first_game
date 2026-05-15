@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://sq_deliv_003"]
+[ext_resource type="Script" path="res://Scripts/Data/QuestData.cs" id="1"]
+[resource]
+script = ExtResource("1")
+QuestId = "sq_deliver_03"
+QuestTitle = "경비 보고"
+Description = "가렛에게 순찰 보고서를 전달하라."
+Type = 2
+TargetNpcId = "garret_guard"
+GiverNpcId = "quest_board"
+GoldReward = 120
+ExpReward = 60
+IsRepeatable = false

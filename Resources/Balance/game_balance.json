@@ -25,7 +25,7 @@
     "revivePosY": 200,
     "playerKnockback": 60,
     "enemyKnockback": 35,
-    "autoAttackInterval": 0.5,
+    "autoAttackInterval": 0.7,
     "attackRangeRatio": 0.85
   },
   "regen": {

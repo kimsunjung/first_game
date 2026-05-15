@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cloak_dark01"]
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/dark_cloak.png" id="2_icon"]
+[resource]
+script = ExtResource("1")
+ItemName = "암흑의 망토"
+Description = "그림자 속에서 태어난 망토. 보스 드랍 전용."
+Rarity = 3
+Icon = ExtResource("2_icon")
+Price = 0
+SellPrice = 1200
+Type = 11
+IsStackable = false
+MaxStack = 1
+BonusDefense = 10
+BonusDamage = 6
+BonusLifesteal = 0.005
+IsShopBlocked = true
+AvailableToAllClasses = true
+Weight = 3.0

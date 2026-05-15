@@ -36,8 +36,8 @@ collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_shop")
 PromptIcon = ExtResource("prompt_icon")
-ShopItems = Array[Resource]([ExtResource("2_potion"), ExtResource("3_hipotion"), ExtResource("4_megapotion"), ExtResource("23_rscroll"), ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow"), ExtResource("17_lcap"), ExtResource("18_ihelm"), ExtResource("19_lboots"), ExtResource("20_iboots"), ExtResource("21_bbrace"), ExtResource("22_sbrace")])
-ShopName = "상점"
+ShopItems = Array[Resource]([ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow"), ExtResource("17_lcap"), ExtResource("18_ihelm"), ExtResource("19_lboots"), ExtResource("20_iboots"), ExtResource("21_bbrace"), ExtResource("22_sbrace")])
+ShopName = "무기/방어구 상점"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_shop")
@@ -69,6 +69,10 @@ offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 6
+theme_override_font_sizes/font_size = 7
+theme_override_colors/font_color = Color(1, 0.92, 0.45, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
 text = "[SHOP]"
 horizontal_alignment = 1
 

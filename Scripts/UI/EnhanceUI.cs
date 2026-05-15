@@ -138,7 +138,7 @@ namespace FirstGame.UI
 		private PanelContainer CreateEntryPanel(EnhanceEntry entry)
 		{
 			var panel = new PanelContainer();
-			panel.CustomMinimumSize = new Vector2(260, 36);
+			panel.CustomMinimumSize = new Vector2(260, 24);
 			panel.MouseFilter = Control.MouseFilterEnum.Pass;
 
 			var hbox = new HBoxContainer();
@@ -150,7 +150,7 @@ namespace FirstGame.UI
 			{
 				var icon = new TextureRect();
 				icon.Texture = entry.Item.Icon;
-				icon.CustomMinimumSize = new Vector2(24, 24);
+				icon.CustomMinimumSize = new Vector2(18, 18);
 				icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
 				icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
 				icon.MouseFilter = Control.MouseFilterEnum.Ignore;
