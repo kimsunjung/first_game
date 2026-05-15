@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TeleportDestinationData" format=3 uid="uid://tpdest011"]
+
+[ext_resource type="Script" path="res://Scripts/Data/TeleportDestinationData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ScenePath = "res://Scenes/Maps/ruined_crossroad.tscn"
+DisplayName = "폐허 교차로"
+Cost = 800
+SpawnPosition = Vector2(80, 360)

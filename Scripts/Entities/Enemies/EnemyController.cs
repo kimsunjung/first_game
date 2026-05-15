@@ -408,7 +408,7 @@ namespace FirstGame.Entities.Enemies
 			if (_attackTimer <= 0f && IsInstanceValid(_target) && _target is IDamageable target)
 			{
 				_isAttacking = true;
-				_attackTimer = Stats.AttackCooldown;
+				_attackTimer = Stats.AttackCooldown * (Stats.HasStatus(FirstGame.Data.StatusEffect.Shock) ? 1.5f : 1.0f);
 
 				// 공격 방향 계산
 				Vector2 attackDir = (_target.GlobalPosition - GlobalPosition).Normalized();
@@ -459,7 +459,7 @@ namespace FirstGame.Entities.Enemies
 			if (_attackTimer <= 0f && IsInstanceValid(_target))
 			{
 				_isAttacking = true;
-				_attackTimer = Stats.AttackCooldown;
+				_attackTimer = Stats.AttackCooldown * (Stats.HasStatus(FirstGame.Data.StatusEffect.Shock) ? 1.5f : 1.0f);
 
 				Vector2 attackDir = (_target.GlobalPosition - GlobalPosition).Normalized();
 				if (attackDir == Vector2.Zero) attackDir = Vector2.Right;
@@ -558,6 +558,13 @@ namespace FirstGame.Entities.Enemies
 		}
 
 		public void TakeDamage(int damage) => TakeDamage(damage, FirstGame.Data.ElementType.None);
+
+		// 플레이어 스킬/투사체가 적에게 상태이상을 거는 통합 경로.
+		public void ApplyStatusEffect(FirstGame.Data.StatusEffect status, float duration)
+		{
+			if (_isDying || Stats == null) return;
+			Stats.ApplyStatus(status, duration);
+		}
 
 		// 속성 인식 오버로드 — 공격자 속성이 적 Weakness면 1.5x, Element와 같으면 0.75x.
 		public void TakeDamage(int damage, FirstGame.Data.ElementType attackerElement)

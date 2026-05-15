@@ -8,6 +8,20 @@ using FirstGame.Data;
 
 namespace FirstGame.Data.Skills
 {
+	/// <summary>광역/투사체 스킬 적중 시 적에게 상태이상을 거는 헬퍼.
+	/// SkillData.InflictedStatus가 None이면 no-op이므로 기존 .tres 안전.</summary>
+	internal static class SkillStatusHelpers
+	{
+		public static void TryInflictStatus(IDamageable target, SkillData skill)
+		{
+			if (skill == null || target == null) return;
+			if (skill.InflictedStatus == StatusEffect.None) return;
+			if (skill.InflictedStatusChance <= 0f) return;
+			if (GD.Randf() > skill.InflictedStatusChance) return;
+			target.ApplyStatusEffect(skill.InflictedStatus, skill.InflictedStatusDuration);
+		}
+	}
+
 	[SkillStrategy(SkillType.PowerStrike)]
 	public class PowerStrikeStrategy : ISkillStrategy
 	{
@@ -90,6 +104,7 @@ namespace FirstGame.Data.Skills
 				if (crit) raw = (long)(raw * target.CritMultiplier);
 				int dmg = (int)Math.Min(raw, int.MaxValue);
 				damageable.TakeDamage(dmg, skill.Element);
+				SkillStatusHelpers.TryInflictStatus(damageable, skill);
 				anyHit = true;
 			}
 			if (anyHit)
@@ -175,6 +190,7 @@ namespace FirstGame.Data.Skills
 				if (crit) raw = (long)(raw * target.CritMultiplier);
 				int dmg = (int)Math.Min(raw, int.MaxValue);
 				damageable.TakeDamage(dmg, skill.Element);
+				SkillStatusHelpers.TryInflictStatus(damageable, skill);
 				hits++;
 			}
 			if (hits > 0)
@@ -208,6 +224,7 @@ namespace FirstGame.Data.Skills
 				if (crit) raw = (long)(raw * target.CritMultiplier);
 				int dmg = (int)Math.Min(raw, int.MaxValue);
 				damageable.TakeDamage(dmg, skill.Element);
+				SkillStatusHelpers.TryInflictStatus(damageable, skill);
 				hits++;
 			}
 			if (hits > 0)
@@ -235,6 +252,7 @@ namespace FirstGame.Data.Skills
 				if (crit) raw = (long)(raw * target.CritMultiplier);
 				int dmg = (int)Math.Min(raw, int.MaxValue);
 				damageable.TakeDamage(dmg, skill.Element);
+				SkillStatusHelpers.TryInflictStatus(damageable, skill);
 				anyHit = true;
 			}
 			if (anyHit)
@@ -304,6 +322,7 @@ namespace FirstGame.Data.Skills
 				if (crit) raw = (long)(raw * target.CritMultiplier);
 				int dmg = (int)Math.Min(raw, int.MaxValue);
 				damageable.TakeDamage(dmg, elem);
+				SkillStatusHelpers.TryInflictStatus(damageable, skill);
 				hits++;
 			}
 			if (hits > 0)
@@ -331,6 +350,7 @@ namespace FirstGame.Data.Skills
 				if (crit) raw = (long)(raw * target.CritMultiplier);
 				int dmg = (int)Math.Min(raw, int.MaxValue);
 				damageable.TakeDamage(dmg, elem);
+				SkillStatusHelpers.TryInflictStatus(damageable, skill);
 				anyHit = true;
 			}
 			if (anyHit)
@@ -434,6 +454,7 @@ namespace FirstGame.Data.Skills
 				if (crit) raw = (long)(raw * target.CritMultiplier);
 				int dmg = (int)Math.Min(raw, int.MaxValue);
 				damageable.TakeDamage(dmg, elem);
+				SkillStatusHelpers.TryInflictStatus(damageable, skill);
 				anyHit = true;
 			}
 			if (anyHit)

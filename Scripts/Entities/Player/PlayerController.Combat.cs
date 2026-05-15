@@ -7,6 +7,13 @@ namespace FirstGame.Entities.Player
 {
 	public partial class PlayerController
 	{
+		// 적 공격/투사체가 플레이어에게 상태이상을 거는 통합 경로 (IDamageable).
+		public void ApplyStatusEffect(StatusEffect status, float duration)
+		{
+			if (IsDead || Stats == null) return;
+			Stats.ApplyStatus(status, duration);
+		}
+
 		// ─── 피격 / 사망 ────────────────────────────────────────────
 		public void TakeDamage(int damage)
 		{

@@ -94,6 +94,10 @@ namespace FirstGame.Data
 		// 상점 차단 — true면 일반 상점에서 진열·판매 안 됨. 적 드랍/보스 전용 무기에 사용.
 		[Export] public bool IsShopBlocked { get; set; } = false;
 
+		// 챕터 게이트 — 일반 상점이 GameManager.CurrentChapter >= MinRequiredChapter 인 경우에만 진열.
+		// 기본값 Prologue(0)이면 게이트 없음(처음부터 진열). 고급 소모품/스크롤에 진행도 게이트를 걸 때 사용.
+		[Export] public Chapter MinRequiredChapter { get; set; } = Chapter.Prologue;
+
 		// 임시 buff (소모품 — 속도 물약 등). 사용 시 N초간 효과 적용 후 자동 해제.
 		[ExportGroup("Consumable Buff")]
 		[Export] public float BuffMoveSpeed { get; set; } = 0f;

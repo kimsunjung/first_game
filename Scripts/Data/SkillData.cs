@@ -70,6 +70,12 @@ namespace FirstGame.Data
 		[Export] public int BonusDamageMultiplier { get; set; } = 2; // PowerStrike배율
 		[Export] public ElementType Element { get; set; } = ElementType.None; // 속성 데미지 (None이면 무속성)
 
+		// 적에게 부여할 상태이상 (광역/투사체 스킬이 적중 시 적용). None이면 비활성.
+		[ExportGroup("Status Effect")]
+		[Export] public StatusEffect InflictedStatus { get; set; } = StatusEffect.None;
+		[Export] public float InflictedStatusDuration { get; set; } = 3.0f;
+		[Export] public float InflictedStatusChance { get; set; } = 0f;
+
 		// ─── 패시브 ──────────────────────────────────────────────────
 		// IsPassive=true면 능동 발동 없이 학습 즉시 PlayerStats가 효과 적용.
 		// SkillShopUI/SkillWindow가 능동 슬롯에 등록하지 않고 별도 패시브 영역에 표시.

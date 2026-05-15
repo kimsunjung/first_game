@@ -9,6 +9,20 @@
 [ext_resource type="Resource" uid="uid://tpdest004" path="res://Resources/Teleport/dest_dungeon_1.tres" id="7_d1"]
 [ext_resource type="Resource" uid="uid://tpdest005" path="res://Resources/Teleport/dest_dungeon_2.tres" id="8_d2"]
 [ext_resource type="Resource" uid="uid://tpdest006" path="res://Resources/Teleport/dest_dungeon_3.tres" id="9_d3"]
+[ext_resource type="Resource" uid="uid://tpdest007" path="res://Resources/Teleport/dest_town_outskirts.tres" id="10_to"]
+[ext_resource type="Resource" uid="uid://tpdest008" path="res://Resources/Teleport/dest_green_meadow.tres" id="11_gm"]
+[ext_resource type="Resource" uid="uid://tpdest009" path="res://Resources/Teleport/dest_goblin_woods.tres" id="12_gw"]
+[ext_resource type="Resource" uid="uid://tpdest010" path="res://Resources/Teleport/dest_old_orc_road.tres" id="13_oor"]
+[ext_resource type="Resource" uid="uid://tpdest011" path="res://Resources/Teleport/dest_ruined_crossroad.tres" id="14_rc"]
+[ext_resource type="Resource" uid="uid://tpdest012" path="res://Resources/Teleport/dest_harbor_village.tres" id="15_hv"]
+[ext_resource type="Resource" uid="uid://tpdest013" path="res://Resources/Teleport/dest_harbor_outskirts.tres" id="16_ho"]
+[ext_resource type="Resource" uid="uid://tpdest014" path="res://Resources/Teleport/dest_crab_beach.tres" id="17_cb"]
+[ext_resource type="Resource" uid="uid://tpdest015" path="res://Resources/Teleport/dest_pirate_camp.tres" id="18_pc"]
+[ext_resource type="Resource" uid="uid://tpdest016" path="res://Resources/Teleport/dest_mountain_refuge.tres" id="19_mr"]
+[ext_resource type="Resource" uid="uid://tpdest017" path="res://Resources/Teleport/dest_snowfield_edge.tres" id="20_se"]
+[ext_resource type="Resource" uid="uid://tpdest018" path="res://Resources/Teleport/dest_frozen_valley.tres" id="21_fv"]
+[ext_resource type="Resource" uid="uid://tpdest019" path="res://Resources/Teleport/dest_volcano_approach.tres" id="22_va"]
+[ext_resource type="Resource" uid="uid://tpdest020" path="res://Resources/Teleport/dest_lava_field.tres" id="23_lf"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tp"]
 radius = 80.0
@@ -22,7 +36,7 @@ collision_mask = 1
 script = ExtResource("1_tpNpc")
 PromptIcon = ExtResource("3_prompt")
 NpcName = "텔레포트"
-Destinations = Array[Resource]([ExtResource("4_f1"), ExtResource("5_f2"), ExtResource("6_f3"), ExtResource("7_d1"), ExtResource("8_d2"), ExtResource("9_d3")])
+Destinations = Array[Resource]([ExtResource("4_f1"), ExtResource("5_f2"), ExtResource("6_f3"), ExtResource("7_d1"), ExtResource("8_d2"), ExtResource("9_d3"), ExtResource("10_to"), ExtResource("11_gm"), ExtResource("12_gw"), ExtResource("13_oor"), ExtResource("14_rc"), ExtResource("15_hv"), ExtResource("16_ho"), ExtResource("17_cb"), ExtResource("18_pc"), ExtResource("19_mr"), ExtResource("20_se"), ExtResource("21_fv"), ExtResource("22_va"), ExtResource("23_lf")])
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_tp")

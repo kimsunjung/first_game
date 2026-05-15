@@ -17,3 +17,6 @@ AvailableToAllClasses = false
 BonusDamageMultiplier = 2
 Element = 2
 IsPassive = false
+InflictedStatus = 2
+InflictedStatusDuration = 3.0
+InflictedStatusChance = 0.5

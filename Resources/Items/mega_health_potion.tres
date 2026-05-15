@@ -15,3 +15,4 @@ MaxStack = 5
 UseEffect = 1
 HealAmount = 200
 Weight = 0.1
+MinRequiredChapter = 2

@@ -98,11 +98,13 @@ namespace FirstGame.UI
 
 			if (SkillBooks == null) return;
 
-			// 현재 탭 클래스에 맞는 스킬북만 필터 + 레벨순 정렬
+			// 현재 탭 클래스에 맞는 스킬북만 필터 + 챕터 게이트 + 레벨순 정렬
+			var chapter = GameManager.Instance?.CurrentChapter ?? FirstGame.Data.Chapter.Prologue;
 			var items = new System.Collections.Generic.List<ItemData>();
 			foreach (var item in SkillBooks)
 			{
 				if (item?.LearnedSkill == null) continue;
+				if ((int)chapter < (int)item.MinRequiredChapter) continue;
 				var s = item.LearnedSkill;
 				bool match = s.AvailableToAllClasses || s.RequiredClass == _currentTab;
 				if (match) items.Add(item);

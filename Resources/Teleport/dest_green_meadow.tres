@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TeleportDestinationData" format=3 uid="uid://tpdest008"]
+
+[ext_resource type="Script" path="res://Scripts/Data/TeleportDestinationData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ScenePath = "res://Scenes/Maps/green_meadow.tscn"
+DisplayName = "푸른 초원"
+Cost = 350
+SpawnPosition = Vector2(80, 360)

@@ -19,3 +19,4 @@ BuffDefense = 20
 BuffDurationSec = 90.0
 HealAmount = 0
 Weight = 0.1
+MinRequiredChapter = 4

@@ -21,12 +21,30 @@ namespace FirstGame.Entities.Shop
             var shopUI = GetNodeOrNull<ShopUI>("ShopUI");
             if (shopUI != null)
             {
-                shopUI.OpenShop(ShopItems, ShopName);
+                shopUI.OpenShop(FilterByChapter(ShopItems), ShopName);
             }
             else
             {
                 GD.PrintErr("ShopNPC: ShopUI node not found!");
             }
+        }
+
+        /// <summary>
+        /// GameManager.CurrentChapter < item.MinRequiredChapter 인 아이템은 진열 제외.
+        /// 기본값 Prologue(0)이면 항상 진열되므로 기존 .tres 대부분은 영향 없음.
+        /// </summary>
+        private static ItemData[] FilterByChapter(ItemData[] items)
+        {
+            if (items == null || items.Length == 0) return items;
+            var chapter = GameManager.Instance?.CurrentChapter ?? Chapter.Prologue;
+            var filtered = new System.Collections.Generic.List<ItemData>(items.Length);
+            foreach (var it in items)
+            {
+                if (it == null) continue;
+                if ((int)chapter >= (int)it.MinRequiredChapter)
+                    filtered.Add(it);
+            }
+            return filtered.ToArray();
         }
     }
 }

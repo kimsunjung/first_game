@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TeleportDestinationData" format=3 uid="uid://tpdest017"]
+
+[ext_resource type="Script" path="res://Scripts/Data/TeleportDestinationData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+ScenePath = "res://Scenes/Maps/snowfield_edge.tscn"
+DisplayName = "설원 변경"
+Cost = 2000
+SpawnPosition = Vector2(80, 360)
