@@ -12,11 +12,14 @@
 [ext_resource type="Resource" path="res://Resources/Items/skillbook_hp_regen.tres" id="10_hpreg"]
 [ext_resource type="Resource" path="res://Resources/Items/skillbook_crit_boost.tres" id="11_crit"]
 [ext_resource type="Resource" path="res://Resources/Items/skillbook_speed_boost.tres" id="12_speed"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_lightning_storm.tres" id="13_lstorm"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_precise_aim.tres" id="14_paim"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_iron_stance.tres" id="15_istance"]
 
 [node name="SkillShopUI" type="CanvasLayer"]
 process_mode = 3
 script = ExtResource("1_skillshop")
-SkillBooks = Array[Resource]([ExtResource("2_ps"), ExtResource("3_heal"), ExtResource("4_dash"), ExtResource("5_fb"), ExtResource("6_whirl"), ExtResource("7_ice"), ExtResource("8_multi"), ExtResource("9_lifest"), ExtResource("10_hpreg"), ExtResource("11_crit"), ExtResource("12_speed")])
+SkillBooks = Array[Resource]([ExtResource("2_ps"), ExtResource("3_heal"), ExtResource("4_dash"), ExtResource("5_fb"), ExtResource("6_whirl"), ExtResource("7_ice"), ExtResource("8_multi"), ExtResource("9_lifest"), ExtResource("10_hpreg"), ExtResource("11_crit"), ExtResource("12_speed"), ExtResource("13_lstorm"), ExtResource("14_paim"), ExtResource("15_istance")])
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 texture_filter = 2

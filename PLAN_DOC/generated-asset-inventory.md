@@ -59,7 +59,7 @@
 | `sapphire_ore` | `Resources/Generated/GPT/Icons/Ores/sapphire_ore.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
 | `silver_ore` | `Resources/Generated/GPT/Icons/Ores/silver_ore.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
 
-## Weapons (38개)
+## Weapons (46개)
 
 | asset id | PNG 경로 | `.tres` | Rarity | 상태 |
 |---|---|---|---|---|
@@ -101,6 +101,21 @@
 | `war_hammer` | `Resources/Generated/GPT/Icons/Items/war_hammer.png` | ✅ | Rare | 사용 중 |
 | `wooden_club` | `Resources/Generated/GPT/Icons/Items/wooden_club.png` | ✅ | Common | 사용 중 |
 | `wooden_staff` | `Resources/Generated/GPT/Icons/Items/wooden_staff.png` | ✅ | Common | 사용 중 |
+
+#### 2026-05-15 신규 등록 — 해안·설원 확장 무기 8종
+
+**소스 시트**: `Resources/Generated/GPT/SourceSheets/Items/source_weapon_icons_coast_snow_2026_05_15.png` (1774×887, 4열×2행)
+
+| asset id | PNG 경로 | `.tres` | Rarity | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `cutlass` | `Icons/Items/cutlass.png` | `Resources/Items/cutlass.tres` | Uncommon | **사용 중** | 기존 `scimitar.png` → 전용 아이콘으로 교체 |
+| `harpoon` | `Icons/Items/harpoon.png` | `Resources/Items/harpoon.tres` | Rare | **사용 중** | 기존 `iron_spear.png` → 전용 아이콘으로 교체 |
+| `tide_staff` | `Icons/Items/tide_staff.png` | `Resources/Items/tide_staff.tres` | Rare | **사용 중** | 기존 `crystal_staff.png` → 전용 아이콘으로 교체 |
+| `coral_bow` | `Icons/Items/coral_bow.png` | `Resources/Items/coral_bow.tres` | Rare | **사용 중** | 기존 `dragonbone_bow.png` → 전용 아이콘으로 교체 |
+| `frost_blade` | `Icons/Items/frost_blade.png` | `Resources/Items/frost_blade.tres` | Rare | **사용 중** | 기존 `steel_sword.png` → 전용 아이콘으로 교체 |
+| `winter_bow` | `Icons/Items/winter_bow.png` | `Resources/Items/winter_bow.tres` | Rare | **사용 중** | 기존 `composite_bow.png` → 전용 아이콘으로 교체 |
+| `glacier_axe` | `Icons/Items/glacier_axe.png` | `Resources/Items/glacier_axe.tres` | Epic | **사용 중** | 기존 `great_axe.png` → 전용 아이콘으로 교체 |
+| `frostfang_staff` | `Icons/Items/frostfang_staff.png` | `Resources/Items/frostfang_staff.tres` | Rare | **사용 중** | 기존 `frost_staff.png` → 전용 아이콘으로 교체 |
 
 ## Armor (몸통) (19개)
 
@@ -209,14 +224,73 @@
 | `silver_bracelet` | `` | ✅ | Rare | 사용 중 |
 | `warrior_bracelet` | `Resources/Generated/GPT/Icons/Equipment/warrior_bracelet.png` | ✅ | Rare | 사용 중 ⚠️**중복주의** |
 
-## Skill Books (4개)
+## Skill Icons (16개)
 
-| asset id | PNG 경로 | `.tres` | Rarity | 상태 |
+`Resources/Generated/GPT/Icons/Skills/` — SkillData.Icon에 연결되는 스킬 아이콘.
+
+**소스 시트**: `Resources/Generated/GPT/SourceSheets/Icons/source_skill_icons_combat_set_2026_05_15.png` (1774×887, 4열×2행)
+
+| asset id | sliced PNG | SkillData `.tres` | 상태 |
+|---|---|---|---|
+| `lightning_storm` | `Icons/Skills/lightning_storm.png` | `Resources/Skills/lightning_storm.tres` | **사용 중** |
+| `precise_aim` | `Icons/Skills/precise_aim.png` | `Resources/Skills/precise_aim.tres` | **사용 중** |
+| `iron_stance` | `Icons/Skills/iron_stance.png` | `Resources/Skills/iron_stance.tres` | **사용 중** |
+| `arrow_shot` | `Icons/Skills/arrow_shot.png` | `Resources/Skills/arrow_shot.tres` | **사용 중** |
+| `multi_shot` | `Icons/Skills/multi_shot.png` | `Resources/Skills/multi_shot.tres` | **사용 중** |
+| `ice_shard` | `Icons/Skills/ice_shard.png` | `Resources/Skills/ice_shard.tres` | **사용 중** |
+| `whirlwind` | `Icons/Skills/whirlwind.png` | `Resources/Skills/whirlwind.tres` | **사용 중** |
+| `lifesteal_passive` | `Icons/Skills/lifesteal_passive.png` | `Resources/Skills/lifesteal_passive.tres` | **사용 중** |
+
+#### 2026-05-15 코어 리프레시 (8개)
+
+**소스 시트**: `Resources/Generated/GPT/SourceSheets/Icons/source_skill_icons_core_refresh_2026_05_15.png` (1774×887, 4열×2행)
+
+| asset id | sliced PNG | SkillData `.tres` | 상태 | 교체 메모 |
 |---|---|---|---|---|
-| `skillbook_dash` | `Resources/Generated/GPT/Icons/Items/skillbook_dash.png` | ✅ | Common | 사용 중 |
-| `skillbook_fire_bolt` | `Resources/Generated/GPT/Icons/Items/skillbook_fire_bolt.png` | ✅ | Common | 사용 중 |
-| `skillbook_heal` | `Resources/Generated/GPT/Icons/Items/skillbook_heal.png` | ✅ | Common | 사용 중 |
-| `skillbook_power_strike` | `Resources/Generated/GPT/Icons/Items/skillbook_power_strike.png` | ✅ | Common | 사용 중 |
+| `fire_bolt_v2` | `Icons/Skills/fire_bolt_v2.png` | `Resources/Skills/fire_bolt.tres` | **사용 중** | 기존 `fire_bolt.png` → v2로 교체 |
+| `power_strike_v2` | `Icons/Skills/power_strike_v2.png` | `Resources/Skills/power_strike.tres` | **사용 중** | 기존 `power_strike.png` → v2로 교체 |
+| `heal_self_v2` | `Icons/Skills/heal_self_v2.png` | `Resources/Skills/heal_self.tres` | **사용 중** | 기존 `heal_self.png` → v2로 교체 |
+| `dash_v2` | `Icons/Skills/dash_v2.png` | `Resources/Skills/dash.tres` | **사용 중** | 기존 `dash.png` → v2로 교체 |
+| `hp_regen_passive` | `Icons/Skills/hp_regen_passive.png` | `Resources/Skills/hp_regen_passive.tres` | **사용 중** | 기존 `heal_self.png` 재사용 → 전용 아이콘으로 교체 |
+| `crit_boost_passive` | `Icons/Skills/crit_boost_passive.png` | `Resources/Skills/crit_boost_passive.tres` | **사용 중** | 기존 `heal_self.png` 재사용 → 전용 아이콘으로 교체 |
+| `speed_boost_passive` | `Icons/Skills/speed_boost_passive.png` | `Resources/Skills/speed_boost_passive.tres` | **사용 중** | 기존 `dash.png` 재사용 → 전용 아이콘으로 교체 |
+| `generic_passive_placeholder` | `Icons/Skills/generic_passive_placeholder.png` | (연결 없음) | 리소스만 등록 | 추후 신규 패시브 스킬 임시 아이콘용 |
+
+## Skill Books (19개)
+
+`Resources/Generated/GPT/Icons/Items/skillbook_*.png` — ItemData.Icon에 연결.
+
+#### 기존 4개 코어 리프레시 (2026-05-15)
+
+**소스 시트**: `Resources/Generated/GPT/SourceSheets/Items/source_skillbook_icons_core_refresh_2026_05_15.png` (1774×887, 4열×2행)
+
+| asset id | sliced PNG | ItemData `.tres` | 상태 | 교체 메모 |
+|---|---|---|---|---|
+| `skillbook_fire_bolt_v2` | `Icons/Items/skillbook_fire_bolt_v2.png` | `Resources/Items/skillbook_fire_bolt.tres` | **사용 중** | 기존 `skillbook_fire_bolt.png` → v2로 교체 |
+| `skillbook_power_strike_v2` | `Icons/Items/skillbook_power_strike_v2.png` | `Resources/Items/skillbook_power_strike.tres` | **사용 중** | 기존 `skillbook_power_strike.png` → v2로 교체 |
+| `skillbook_heal_v2` | `Icons/Items/skillbook_heal_v2.png` | `Resources/Items/skillbook_heal.tres` | **사용 중** | 기존 `skillbook_heal.png` → v2로 교체 |
+| `skillbook_dash_v2` | `Icons/Items/skillbook_dash_v2.png` | `Resources/Items/skillbook_dash.tres` | **사용 중** | 기존 `skillbook_dash.png` → v2로 교체 |
+| `skillbook_hp_regen` | `Icons/Items/skillbook_hp_regen.png` | `Resources/Items/skillbook_hp_regen.tres` | **사용 중** | 기존 `skillbook_heal.png` 재사용 → 전용 아이콘으로 교체 |
+| `skillbook_crit_boost` | `Icons/Items/skillbook_crit_boost.png` | `Resources/Items/skillbook_crit_boost.tres` | **사용 중** | 기존 `skillbook_power_strike.png` 재사용 → 전용 아이콘으로 교체 |
+| `skillbook_speed_boost` | `Icons/Items/skillbook_speed_boost.png` | `Resources/Items/skillbook_speed_boost.tres` | **사용 중** | 기존 `skillbook_dash.png` 재사용 → 전용 아이콘으로 교체 |
+| `skillbook_generic_passive` | `Icons/Items/skillbook_generic_passive.png` | (연결 없음) | 리소스만 등록 | 추후 신규 패시브 스킬북 임시 아이콘용 |
+
+#### 2026-05-15 신규 등록 (8개 — 스킬북 확장 세트)
+
+**소스 시트**: `Resources/Generated/GPT/SourceSheets/Items/source_skillbook_icons_expanded_set_2026_05_15.png` (1774×887, 4열×2행)
+
+| asset id | sliced PNG | ItemData `.tres` | 상태 | 교체 메모 |
+|---|---|---|---|---|
+| `skillbook_lightning_storm` | `Icons/Items/skillbook_lightning_storm.png` | `Resources/Items/skillbook_lightning_storm.tres` | **사용 중** | 기존 `skillbook_fire_bolt.png` 재사용 → 전용 아이콘으로 교체 |
+| `skillbook_precise_aim` | `Icons/Items/skillbook_precise_aim.png` | `Resources/Items/skillbook_precise_aim.tres` | **사용 중** | 기존 `skillbook_fire_bolt.png` 재사용 → 전용 아이콘으로 교체 |
+| `skillbook_iron_stance` | `Icons/Items/skillbook_iron_stance.png` | `Resources/Items/skillbook_iron_stance.tres` | **사용 중** | 기존 `skillbook_fire_bolt.png` 재사용 → 전용 아이콘으로 교체 |
+| `skillbook_arrow_shot` | `Icons/Items/skillbook_arrow_shot.png` | (연결 없음 — `.tres` 미존재) | 리소스만 등록 | 궁수 기본 스킬 arrow_shot은 시작 지급 방식 — 별도 스킬북 불필요 |
+| `skillbook_multi_shot` | `Icons/Items/skillbook_multi_shot.png` | `Resources/Items/skillbook_multi_shot.tres` | **사용 중** | 기존 `skillbook_fire_bolt.png` 재사용 → 전용 아이콘으로 교체 |
+| `skillbook_ice_shard` | `Icons/Items/skillbook_ice_shard.png` | `Resources/Items/skillbook_ice_shard.tres` | **사용 중** | 기존 `skillbook_fire_bolt.png` 재사용 → 전용 아이콘으로 교체 |
+| `skillbook_whirlwind` | `Icons/Items/skillbook_whirlwind.png` | `Resources/Items/skillbook_whirlwind.tres` | **사용 중** | 기존 `skillbook_power_strike.png` 재사용 → 전용 아이콘으로 교체 |
+| `skillbook_lifesteal` | `Icons/Items/skillbook_lifesteal.png` | `Resources/Items/skillbook_lifesteal.tres` | **사용 중** | 기존 `skillbook_heal.png` 재사용 → 전용 아이콘으로 교체 |
+
+---
 
 ## UI 아이콘 (16개)
 
@@ -297,9 +371,65 @@ mine_3 신규 4종 (2026-05-15, `Resources/Generated/GPT/SourceSheets/Enemies/so
 
 `abyss_hound`, `abyss_wraith`, `ancient_lich`, `bone_golem`, `cursed_warlock`, `death_knight`, `dungeon_guardian`, `shadow_assassin`
 
-### NamedBosses (8개)
+### Field4 + Dungeon4 (항구·해안) (8개) — 2026-05-15 신규
+
+**소스 시트**: `Resources/Generated/GPT/SourceSheets/Enemies/source_enemies_field4_dungeon4_coast_2026_05_15.png` (1774×887, 4열×2행)
+
+| asset id | category | sliced PNG | `.tres` 연결 | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `pirate_grunt` | Field4 | `Enemies/Field4/pirate_grunt.png` | `Resources/Enemies/field4_pirate_grunt.tres` | **사용 중** | 기존 `Dungeon1/orc_club.png` → 전용 이미지로 교체 |
+| `pirate_brute` | Field4 | `Enemies/Field4/pirate_brute.png` | `Resources/Enemies/field4_pirate_brute.tres` | **사용 중** | 기존 `Dungeon1/orc_brute.png` → 전용 이미지로 교체 |
+| `pirate_sniper` | Field4 | `Enemies/Field4/pirate_sniper.png` | `Resources/Enemies/field4_pirate_sniper.tres` | **사용 중** | 기존 `Dungeon1/orc_rogue.png` → 전용 이미지로 교체 |
+| `giant_crab` | Field4 | `Enemies/Field4/giant_crab.png` | `Resources/Enemies/field4_giant_crab.tres` | **사용 중** | 기존 `Field3/ruin_golem.png` → 전용 이미지로 교체 |
+| `seagull_swarm` | Field4 | `Enemies/Field4/seagull_swarm.png` | `Resources/Enemies/field4_seagull_swarm.tres` | **사용 중** | 기존 `Field1/forest_spider.png` → 전용 이미지로 교체 |
+| `drowned_sailor` | Dungeon4 | `Enemies/Dungeon4/drowned_sailor.png` | `Resources/Enemies/dungeon4_drowned_sailor.tres` | **사용 중** | 기존 `Field2/zombie_walker.png` → 전용 이미지로 교체 |
+| `siren` | Dungeon4 | `Enemies/Dungeon4/siren.png` | `Resources/Enemies/dungeon4_siren.tres` | **사용 중** | 기존 `Dungeon2/skeleton_mage.png` → 전용 이미지로 교체 |
+| `deep_lurker` | Dungeon4 | `Enemies/Dungeon4/deep_lurker.png` | `Resources/Enemies/dungeon4_deep_lurker.tres` | **사용 중** | 기존 `Field3/shadow_bat.png` → 전용 이미지로 교체 |
+
+### Dungeon4 추가 (1개) + Field5 설원 (7개) — 2026-05-15 신규
+
+**소스 시트**: `Resources/Generated/GPT/SourceSheets/Enemies/source_enemies_dungeon4_field5_snow_2026_05_15.png` (1774×887, 4열×2행)
+
+| asset id | category | sliced PNG | `.tres` 연결 | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `coral_golem` | Dungeon4 | `Enemies/Dungeon4/coral_golem.png` | `Resources/Enemies/dungeon4_coral_golem.tres` | **사용 중** | 기존 `Dungeon3/bone_golem.png` → 전용 이미지로 교체 |
+| `frost_wolf` | Field5 | `Enemies/Field5/frost_wolf.png` | `Resources/Enemies/field5_frost_wolf.tres` | **사용 중** | 기존 `Field1/wild_wolf.png` → 전용 이미지로 교체 |
+| `yeti` | Field5 | `Enemies/Field5/yeti.png` | `Resources/Enemies/field5_yeti.tres` | **사용 중** | 기존 `Field3/ruin_golem.png` → 전용 이미지로 교체 |
+| `ice_imp` | Field5 | `Enemies/Field5/ice_imp.png` | `Resources/Enemies/field5_ice_imp.tres` | **사용 중** | 기존 `Field1/goblin_scout.png` → 전용 이미지로 교체 |
+| `snow_witch` | Field5 | `Enemies/Field5/snow_witch.png` | `Resources/Enemies/field5_snow_witch.tres` | **사용 중** | 기존 `Dungeon2/skeleton_mage.png` → 전용 이미지로 교체 |
+| `polar_bear` | Field5 | `Enemies/Field5/polar_bear.png` | `Resources/Enemies/field5_polar_bear.tres` | **사용 중** | 기존 `Field1/wild_boar.png` → 전용 이미지로 교체 |
+| `frost_archer` | Field5 | `Enemies/Field5/frost_archer.png` | `Resources/Enemies/field5_frost_archer.tres` | **사용 중** | 기존 `Field2/skeleton_archer.png` → 전용 이미지로 교체 |
+| `icicle_elemental` | Field5 | `Enemies/Field5/icicle_elemental.png` | `Resources/Enemies/field5_icicle_elemental.tres` | **사용 중** | 기존 `Dungeon3/abyss_wraith.png` → 전용 이미지로 교체 |
+
+### Field6 화산 (7개) + Mine3 수정 광산 추가 (1개) — 2026-05-15 신규
+
+**소스 시트**: `Resources/Generated/GPT/SourceSheets/Enemies/source_enemies_field6_mine3_volcanic_crystal_2026_05_15.png` (1774×887, 4열×2행)
+
+| asset id | category | sliced PNG | `.tres` 연결 | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `lava_slime` | Field6 | `Enemies/Field6/lava_slime.png` | `Resources/Enemies/field6_lava_slime.tres` | **사용 중** | 기존 `Field2/grave_slime.png` → 전용 이미지로 교체 |
+| `fire_imp` | Field6 | `Enemies/Field6/fire_imp.png` | `Resources/Enemies/field6_fire_imp.tres` | **사용 중** | 기존 `Field1/goblin_scout.png` → 전용 이미지로 교체 |
+| `salamander` | Field6 | `Enemies/Field6/salamander.png` | `Resources/Enemies/field6_salamander.tres` | **사용 중** | 기존 `Field1/forest_spider.png` → 전용 이미지로 교체 |
+| `magma_golem` | Field6 | `Enemies/Field6/magma_golem.png` | `Resources/Enemies/field6_magma_golem.tres` | **사용 중** | 기존 `Field3/ruin_golem.png` → 전용 이미지로 교체 |
+| `phoenix_chick` | Field6 | `Enemies/Field6/phoenix_chick.png` | `Resources/Enemies/field6_phoenix_chick.tres` | **사용 중** | 기존 `Field1/forest_spirit.png` → 전용 이미지로 교체 |
+| `ember_archer` | Field6 | `Enemies/Field6/ember_archer.png` | `Resources/Enemies/field6_ember_archer.tres` | **사용 중** | 기존 `Field2/skeleton_archer.png` → 전용 이미지로 교체 |
+| `lava_serpent` | Field6 | `Enemies/Field6/lava_serpent.png` | `Resources/Enemies/field6_lava_serpent.tres` | **사용 중** | 기존 `Field2/cursed_wolf.png` → 전용 이미지로 교체 |
+| `crystal_grunt` | Mine3 | `Enemies/Mine/crystal_grunt.png` | `Resources/Enemies/mine_crystal_grunt.tres` | **사용 중** | 기존 `Mine/zombie_basic.png` → 전용 이미지로 교체 |
+
+### NamedBosses (12개)
 
 `ancient_lich`, `crystal_guardian`, `forest_alpha_wolf`, `graveyard_wight`, `mine_golem`, `orc_warlord`, `plague_brute`, `skeleton_king`
+
+#### 2026-05-15 신규 등록 (4개 — 보스 교체 시트)
+
+**소스 시트**: `Resources/Generated/GPT/SourceSheets/Enemies/source_enemies_boss_replacements_2026_05_15.png`
+
+| asset id | category | sliced PNG | `.tres` 연결 | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `kraken` | NamedBoss | `Enemies/NamedBosses/kraken.png` | `Resources/Enemies/boss_dungeon4_kraken.tres` | **사용 중** | 기존 `ancient_lich.png` 재사용 스프라이트 → 전용 이미지로 교체 |
+| `glacier_titan` | NamedBoss | `Enemies/NamedBosses/glacier_titan.png` | `Resources/Enemies/field5_named_glacier_titan.tres` | **사용 중** | 기존 `plague_brute.png` 재사용 스프라이트 → 전용 이미지로 교체 |
+| `inferno_drake` | NamedBoss | `Enemies/NamedBosses/inferno_drake.png` | `Resources/Enemies/field6_named_inferno_drake.tres` | **사용 중** | 기존 `graveyard_wight.png` 재사용 스프라이트 → 전용 이미지로 교체 |
+| `crystal_lord` | NamedBoss | `Enemies/NamedBosses/crystal_lord.png` | `Resources/Enemies/boss_mine3_crystal_lord.tres` | **사용 중** | 기존 `crystal_guardian.png` 재사용 스프라이트 → 전용 이미지로 교체 |
 
 ## NPCs (Generated PNG) (8개)
 

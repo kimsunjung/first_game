@@ -26,42 +26,42 @@
 
 | 신규 적 | 임시 path | 교체 후 path |
 |---|---|---|
-| field4_pirate_grunt | (코덱스가 입력) | `Resources/Generated/GPT/Enemies/Field4/pirate_grunt.png` |
-| field4_pirate_brute |  | `Field4/pirate_brute.png` |
-| field4_pirate_sniper |  | `Field4/pirate_sniper.png` |
-| field4_giant_crab |  | `Field4/giant_crab.png` |
-| field4_seagull_swarm |  | `Field4/seagull_swarm.png` |
-| dungeon4_drowned_sailor |  | `Enemies/Dungeon4/drowned_sailor.png` |
-| dungeon4_siren |  | `Dungeon4/siren.png` |
-| dungeon4_deep_lurker |  | `Dungeon4/deep_lurker.png` |
-| dungeon4_coral_golem |  | `Dungeon4/coral_golem.png` |
-| boss_dungeon4_kraken |  | `Enemies/NamedBosses/kraken.png` |
+| field4_pirate_grunt | `Dungeon1/orc_club.png` (재사용) | `Enemies/Field4/pirate_grunt.png` ✅ **교체 완료 2026-05-15** |
+| field4_pirate_brute | `Dungeon1/orc_brute.png` (재사용) | `Field4/pirate_brute.png` ✅ **교체 완료 2026-05-15** |
+| field4_pirate_sniper | `Dungeon1/orc_rogue.png` (재사용) | `Field4/pirate_sniper.png` ✅ **교체 완료 2026-05-15** |
+| field4_giant_crab | `Field3/ruin_golem.png` (재사용) | `Field4/giant_crab.png` ✅ **교체 완료 2026-05-15** |
+| field4_seagull_swarm | `Field1/forest_spider.png` (재사용) | `Field4/seagull_swarm.png` ✅ **교체 완료 2026-05-15** |
+| dungeon4_drowned_sailor | `Field2/zombie_walker.png` (재사용) | `Dungeon4/drowned_sailor.png` ✅ **교체 완료 2026-05-15** |
+| dungeon4_siren | `Dungeon2/skeleton_mage.png` (재사용) | `Dungeon4/siren.png` ✅ **교체 완료 2026-05-15** |
+| dungeon4_deep_lurker | `Field3/shadow_bat.png` (재사용) | `Dungeon4/deep_lurker.png` ✅ **교체 완료 2026-05-15** |
+| dungeon4_coral_golem | `Dungeon3/bone_golem.png` (재사용) | `Dungeon4/coral_golem.png` ✅ **교체 완료 2026-05-15** |
+| boss_dungeon4_kraken | `NamedBosses/ancient_lich.png` (재사용) | `Enemies/NamedBosses/kraken.png` ✅ **교체 완료 2026-05-15** |
 
 ### 적 스프라이트 — 설원 (8개)
 
 | 신규 적 | 임시 path | 교체 후 path |
 |---|---|---|
-| field5_frost_wolf |  | `Field5/frost_wolf.png` |
-| field5_yeti |  | `Field5/yeti.png` |
-| field5_ice_imp |  | `Field5/ice_imp.png` |
-| field5_snow_witch |  | `Field5/snow_witch.png` |
-| field5_polar_bear |  | `Field5/polar_bear.png` |
-| field5_frost_archer |  | `Field5/frost_archer.png` |
-| field5_icicle_elemental |  | `Field5/icicle_elemental.png` |
-| field5_named_glacier_titan |  | `NamedBosses/glacier_titan.png` |
+| field5_frost_wolf | `Field1/wild_wolf.png` (재사용) | `Field5/frost_wolf.png` ✅ **교체 완료 2026-05-15** |
+| field5_yeti | `Field3/ruin_golem.png` (재사용) | `Field5/yeti.png` ✅ **교체 완료 2026-05-15** |
+| field5_ice_imp | `Field1/goblin_scout.png` (재사용) | `Field5/ice_imp.png` ✅ **교체 완료 2026-05-15** |
+| field5_snow_witch | `Dungeon2/skeleton_mage.png` (재사용) | `Field5/snow_witch.png` ✅ **교체 완료 2026-05-15** |
+| field5_polar_bear | `Field1/wild_boar.png` (재사용) | `Field5/polar_bear.png` ✅ **교체 완료 2026-05-15** |
+| field5_frost_archer | `Field2/skeleton_archer.png` (재사용) | `Field5/frost_archer.png` ✅ **교체 완료 2026-05-15** |
+| field5_icicle_elemental | `Dungeon3/abyss_wraith.png` (재사용) | `Field5/icicle_elemental.png` ✅ **교체 완료 2026-05-15** |
+| field5_named_glacier_titan | `NamedBosses/plague_brute.png` (재사용) | `NamedBosses/glacier_titan.png` ✅ **교체 완료 2026-05-15** |
 
 ### 적 스프라이트 — 화산 (8개)
 
 | 신규 적 | 임시 path | 교체 후 path |
 |---|---|---|
-| field6_lava_slime |  | `Field6/lava_slime.png` |
-| field6_fire_imp |  | `Field6/fire_imp.png` |
-| field6_salamander |  | `Field6/salamander.png` |
-| field6_magma_golem |  | `Field6/magma_golem.png` |
-| field6_phoenix_chick |  | `Field6/phoenix_chick.png` |
-| field6_ember_archer |  | `Field6/ember_archer.png` |
-| field6_lava_serpent |  | `Field6/lava_serpent.png` |
-| field6_named_inferno_drake |  | `NamedBosses/inferno_drake.png` |
+| field6_lava_slime | `Field2/grave_slime.png` (재사용) | `Field6/lava_slime.png` ✅ **교체 완료 2026-05-15** |
+| field6_fire_imp | `Field1/goblin_scout.png` (재사용) | `Field6/fire_imp.png` ✅ **교체 완료 2026-05-15** |
+| field6_salamander | `Field1/forest_spider.png` (재사용) | `Field6/salamander.png` ✅ **교체 완료 2026-05-15** |
+| field6_magma_golem | `Field3/ruin_golem.png` (재사용) | `Field6/magma_golem.png` ✅ **교체 완료 2026-05-15** |
+| field6_phoenix_chick | `Field1/forest_spirit.png` (재사용) | `Field6/phoenix_chick.png` ✅ **교체 완료 2026-05-15** |
+| field6_ember_archer | `Field2/skeleton_archer.png` (재사용) | `Field6/ember_archer.png` ✅ **교체 완료 2026-05-15** |
+| field6_lava_serpent | `Field2/cursed_wolf.png` (재사용) | `Field6/lava_serpent.png` ✅ **교체 완료 2026-05-15** |
+| field6_named_inferno_drake | `NamedBosses/graveyard_wight.png` (재사용) | `NamedBosses/inferno_drake.png` ✅ **교체 완료 2026-05-15** |
 
 ### 적 스프라이트 — mine_3 (6개)
 
@@ -69,21 +69,30 @@
 
 | 신규 적 | 임시 path | 교체 후 path | 비고 |
 |---|---|---|---|
-| mine_crystal_grunt |  | `Mine/crystal_grunt.png` | 미완료 — 본 시트에 미포함, 후속 시트 필요 |
+| mine_crystal_grunt | `Mine/zombie_basic.png` (재사용 중) | `Mine/crystal_grunt.png` | 미완료 — 본 시트에 미포함, 임시 재사용 중. 후속 시트 필요 |
 | mine_crystal_archer |  | `Mine/crystal_archer.png` | ✅ 완료 (2026-05-15) — `Resources/Enemies/mine_crystal_archer.tres` Sprite 연결 |
 | mine_crystal_warlock |  | `Mine/crystal_warlock.png` | ✅ 완료 (2026-05-15) — `Resources/Enemies/mine_crystal_warlock.tres` Sprite 연결 |
 | mine_crystal_brute |  | `Mine/crystal_brute.png` | ✅ 완료 (2026-05-15) — `Resources/Enemies/mine_crystal_brute.tres` Sprite 연결 |
 | mine_corrupted_miner |  | `Mine/corrupted_miner.png` | ✅ 완료 (2026-05-15) — `Resources/Enemies/mine_corrupted_miner.tres` Sprite 연결 |
-| boss_mine3_crystal_lord |  | `NamedBosses/crystal_lord.png` | 미완료 — 본 시트에 미포함, 후속 시트 필요 |
+| boss_mine3_crystal_lord | `NamedBosses/crystal_guardian.png` (재사용 중) | `NamedBosses/crystal_lord.png` | 미완료 — 본 시트에 미포함, 임시 재사용 중. 후속 시트 필요 |
 
-### 무기 아이콘 (~18개 신규)
+### 무기 아이콘 (8개 완료 / 나머지 미완료)
 
-항구 6 + 설원 4 + 화산 4 + (필요 시) 추가. 예시:
+**소스 시트**: `SourceSheets/Items/source_weapon_icons_coast_snow_2026_05_15.png`
+
 | 신규 무기 | 임시 path | 교체 후 path |
 |---|---|---|
-| cutlass |  | `Icons/Items/cutlass.png` |
-| harpoon |  | `Icons/Items/harpoon.png` |
-| ... |  | ... |
+| cutlass | `scimitar.png` (재사용) | `Icons/Items/cutlass.png` ✅ **교체 완료 2026-05-15** |
+| harpoon | `iron_spear.png` (재사용) | `Icons/Items/harpoon.png` ✅ **교체 완료 2026-05-15** |
+| tide_staff | `crystal_staff.png` (재사용) | `Icons/Items/tide_staff.png` ✅ **교체 완료 2026-05-15** |
+| coral_bow | `dragonbone_bow.png` (재사용) | `Icons/Items/coral_bow.png` ✅ **교체 완료 2026-05-15** |
+| frost_blade | `steel_sword.png` (재사용) | `Icons/Items/frost_blade.png` ✅ **교체 완료 2026-05-15** |
+| winter_bow | `composite_bow.png` (재사용) | `Icons/Items/winter_bow.png` ✅ **교체 완료 2026-05-15** |
+| glacier_axe | `great_axe.png` (재사용) | `Icons/Items/glacier_axe.png` ✅ **교체 완료 2026-05-15** |
+| frostfang_staff | `frost_staff.png` (재사용) | `Icons/Items/frostfang_staff.png` ✅ **교체 완료 2026-05-15** |
+| kraken_trident | (미완료) | `Icons/Items/kraken_trident.png` ⬜ |
+| inferno_staff | (미완료) | `Icons/Items/inferno_staff.png` ⬜ |
+| ... (화산·기타 신규) |  | ... |
 
 #### 화산/보스 보상/고급 무기 8종 (2026-05-15 완료)
 

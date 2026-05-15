@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://f5_titan01"]
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
-[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/plague_brute.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/glacier_titan.png" id="2_tex"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
 [ext_resource type="Resource" uid="uid://wpn_glacieraxe01" path="res://Resources/Items/glacier_axe.tres" id="4_gaxe"]
 [ext_resource type="Resource" uid="uid://cloak_frost01" path="res://Resources/Items/frost_cloak.tres" id="5_fcloak"]

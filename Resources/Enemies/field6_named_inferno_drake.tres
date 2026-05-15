@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://f6_drake01"]
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
-[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/graveyard_wight.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/inferno_drake.png" id="2_tex"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/fire_bolt_projectile.png" id="3_proj"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="4_hp"]
 [ext_resource type="Resource" uid="uid://wpn_infstaff01" path="res://Resources/Items/inferno_staff.tres" id="5_istaff"]

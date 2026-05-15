@@ -4,22 +4,23 @@ namespace FirstGame.Data
 {
 	public enum SkillType
 	{
-		PowerStrike, // 전사 — 다음 공격 N배 데미지
-		HealSelf,    // 공통 — HP 회복
-		Dash,        // 공통(궁수 가능) — 일시 속도 증가
-		FireBolt,    // 마법사 — 원거리 단일 공격(파이어)
-		ArrowShot,   // 궁수 시작 — 원거리 단일 공격(중간 사거리)
-		Whirlwind,   // 전사 — 자신 주변 광역
-		IceShard,    // 마법사 — 원거리 단일 공격(아이스)
-		MultiShot,   // 궁수 — 전방 콘 광역
-		LightningStorm, // 마법사 — 10초간 2초마다 가장 가까운 적에 번개
-		PreciseAim,     // 궁수 — 10초간 크리율 +30%
-		IronStance,     // 전사 — 10초간 방어력 일시 증가
-		// 패시브 — IsPassive=true. 학습 시 즉시 효과 적용.
-		LifestealPassive,  // 공격 시 데미지의 N% HP 회복
-		HpRegenPassive,    // 매초 N HP 자동 회복
-		CritBoostPassive,  // 크리율 +N%
-		SpeedBoostPassive  // 이속 +N
+		PowerStrike   = 0, // 전사 — 다음 공격 N배 데미지
+		HealSelf      = 1, // 공통 — HP 회복
+		Dash          = 2, // 공통(궁수 가능) — 일시 속도 증가
+		FireBolt      = 3, // 마법사 — 원거리 단일 공격(파이어)
+		ArrowShot     = 4, // 궁수 시작 — 원거리 단일 공격(중간 사거리)
+		Whirlwind     = 5, // 전사 — 자신 주변 광역
+		IceShard      = 6, // 마법사 — 원거리 단일 공격(아이스)
+		MultiShot     = 7, // 궁수 — 전방 콘 광역
+		// 패시브 — IsPassive=true. 학습 시 즉시 효과 적용. 기존 .tres 번호(8~11) 유지.
+		LifestealPassive  = 8,  // 공격 시 데미지의 N% HP 회복
+		HpRegenPassive    = 9,  // 매초 N HP 자동 회복
+		CritBoostPassive  = 10, // 크리율 +N%
+		SpeedBoostPassive = 11, // 이속 +N
+		// 능동 스킬 후속 추가 — 12+ 예약하여 패시브 범위(8~11)와 충돌 방지.
+		LightningStorm = 12, // 마법사 — 10초간 2초마다 가장 가까운 적에 번개
+		PreciseAim     = 13, // 궁수 — 10초간 크리율 +30%
+		IronStance     = 14, // 전사 — 10초간 방어력 일시 증가
 	}
 
 	public enum PassiveType

@@ -125,9 +125,9 @@ namespace FirstGame.UI
                     continue;
                 }
 
-                var skill = player.Stats.LearnedSkills[i];
-                btn.Icon = skill.Icon;
-                btn.Text = skill.Icon != null ? "" : SlotKeys[i];
+                var skill = player.Stats.GetActiveSkillAt(i);
+                btn.Icon = skill?.Icon;
+                btn.Text = skill?.Icon != null ? "" : SlotKeys[i];
 
                 float remaining = player.GetSkillCooldownRemaining(i);
                 int mpCost = player.GetSkillMpCost(i);

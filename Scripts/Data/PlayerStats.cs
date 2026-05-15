@@ -297,6 +297,23 @@ namespace FirstGame.Data
 		private readonly List<SkillData> _learnedSkills = new();
 		public IReadOnlyList<SkillData> LearnedSkills => _learnedSkills;
 
+		// 능동 스킬만 (IsPassive=false). 슬롯 인덱스는 이 목록 기준으로 계산.
+		public int ActiveSkillCount
+		{
+			get { int n = 0; foreach (var s in _learnedSkills) if (!s.IsPassive) n++; return n; }
+		}
+		public SkillData GetActiveSkillAt(int slot)
+		{
+			int n = 0;
+			foreach (var s in _learnedSkills)
+			{
+				if (s.IsPassive) continue;
+				if (n == slot) return s;
+				n++;
+			}
+			return null;
+		}
+
 		public bool LearnSkill(SkillData skill)
 		{
 			if (skill == null) return false;

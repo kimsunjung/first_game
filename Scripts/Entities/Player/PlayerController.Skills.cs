@@ -22,10 +22,8 @@ namespace FirstGame.Entities.Player
 
 		private void UseSkillSlot(int slot)
 		{
-			var skills = Stats.LearnedSkills;
-			if (slot >= skills.Count) { GD.Print($"슬롯 {slot + 1}에 스킬이 없습니다."); return; }
-
-			var skill = skills[slot];
+			var skill = Stats.GetActiveSkillAt(slot);
+			if (skill == null) { GD.Print($"슬롯 {slot + 1}에 스킬이 없습니다."); return; }
 			float remaining = _skillCooldowns.TryGetValue(skill.Type, out var v) ? v : 0f;
 			if (remaining > 0f) { GD.Print($"{skill.SkillName} 쿨타임: {remaining:F1}s"); return; }
 			if (Stats.CurrentMp < skill.MpCost) { GD.Print("MP 부족!"); return; }
@@ -45,24 +43,24 @@ namespace FirstGame.Entities.Player
 		// 모바일 스킬 버튼에서 직접 호출
 		public void TriggerSkill(int slot) => UseSkillSlot(slot);
 
-		// 모바일 UI용 쿨타임/MP 정보 조회 — 슬롯 인덱스를 SkillType으로 변환 후 조회
+		// 모바일 UI용 쿨타임/MP 정보 조회 — 능동 슬롯(패시브 제외) 인덱스 기준
 		public float GetSkillCooldownRemaining(int slot)
 		{
-			var skills = Stats.LearnedSkills;
-			if (slot >= skills.Count) return 0f;
-			return _skillCooldowns.TryGetValue(skills[slot].Type, out var v) ? v : 0f;
+			var skill = Stats.GetActiveSkillAt(slot);
+			if (skill == null) return 0f;
+			return _skillCooldowns.TryGetValue(skill.Type, out var v) ? v : 0f;
 		}
 		public float GetSkillMaxCooldown(int slot)
 		{
-			var skills = Stats.LearnedSkills;
-			return slot < skills.Count ? skills[slot].Cooldown : 0f;
+			var skill = Stats.GetActiveSkillAt(slot);
+			return skill?.Cooldown ?? 0f;
 		}
 		public int GetSkillMpCost(int slot)
 		{
-			var skills = Stats.LearnedSkills;
-			return slot < skills.Count ? skills[slot].MpCost : 0;
+			var skill = Stats.GetActiveSkillAt(slot);
+			return skill?.MpCost ?? 0;
 		}
-		public bool HasSkillInSlot(int slot) => slot < Stats.LearnedSkills.Count;
+		public bool HasSkillInSlot(int slot) => Stats.GetActiveSkillAt(slot) != null;
 
 		// ISkillTarget 메서드 (Strategy에서 호출)
 		private Tween _powerStrikeTween;

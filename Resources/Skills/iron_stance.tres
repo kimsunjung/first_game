@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://skl_istance01"]
 [ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
-[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/power_strike.png" id="2_icon"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/iron_stance.png" id="2_icon"]
 [resource]
 script = ExtResource("1")
 SkillName = "강철 방어"
 Description = "10초간 방어력이 12 증가하여 적의 공격을 막아낸다."
 Icon = ExtResource("2_icon")
-Type = 10
+Type = 14
 MpCost = 15
 Cooldown = 12.0
 RequiredLevel = 3
