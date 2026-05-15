@@ -101,24 +101,61 @@ namespace FirstGame.UI
 			if (_player == null) _player = GameManager.Instance?.Player;
 			if (_player == null) return;
 
-			// 학습 스킬을 클래스 필터 + 레벨순으로 정렬
-			var learned = new List<SkillData>(_player.Stats.LearnedSkills);
-			var filtered = new List<SkillData>();
-			foreach (var s in learned)
-			{
-				bool match = s.AvailableToAllClasses || s.RequiredClass == _currentTab;
-				if (match) filtered.Add(s);
-			}
-			filtered.Sort((a, b) => a.RequiredLevel.CompareTo(b.RequiredLevel));
+			bool isOwnTab = _player.Stats.PlayerClass == _currentTab;
 
-			// 행 표시 — 학습한 갯수만큼만
-			for (int i = 0; i < filtered.Count; i++)
+			// 능동 스킬 — 플레이어 본인 탭일 때만 GetActiveSkillAt(슬롯) 기준으로 Q/W/E/R/T/Y 표시.
+			// 실제 발동/모바일 버튼과 동일한 함수를 써서 라벨이 어긋나지 않게 보장.
+			int activeRowCount = 0;
+			if (isOwnTab)
 			{
-				var skill = filtered[i];
-				BuildSkillRow(skill, i < SlotCount ? SlotKeys[i] : "·", i);
+				int activeCount = _player.Stats.ActiveSkillCount;
+				if (activeCount > 0)
+				{
+					AddSectionHeader("능동 스킬");
+				}
+				for (int i = 0; i < activeCount; i++)
+				{
+					var skill = _player.Stats.GetActiveSkillAt(i);
+					if (skill == null) continue;
+					BuildSkillRow(skill, i < SlotCount ? SlotKeys[i] : "·");
+					activeRowCount++;
+				}
 			}
 
-			if (filtered.Count == 0)
+			// 패시브 — 별도 섹션. 능동 슬롯 인덱스를 차지하지 않으므로 슬롯 키 없이 표시.
+			// 다른 클래스 탭에서는 해당 탭 클래스의 학습 가능 스킬(주로 AvailableToAllClasses) 미리보기로 함께 표시.
+			var passiveRows = new List<SkillData>();
+			var otherTabRows = new List<SkillData>();
+			foreach (var s in _player.Stats.LearnedSkills)
+			{
+				if (s == null) continue;
+				bool tabMatch = s.AvailableToAllClasses || s.RequiredClass == _currentTab;
+				if (!tabMatch) continue;
+				if (isOwnTab)
+				{
+					if (s.IsPassive) passiveRows.Add(s);
+				}
+				else
+				{
+					otherTabRows.Add(s);
+				}
+			}
+			passiveRows.Sort((a, b) => a.RequiredLevel.CompareTo(b.RequiredLevel));
+			otherTabRows.Sort((a, b) => a.RequiredLevel.CompareTo(b.RequiredLevel));
+
+			if (passiveRows.Count > 0)
+			{
+				AddSectionHeader("패시브");
+				foreach (var s in passiveRows) BuildSkillRow(s, "·");
+			}
+
+			if (!isOwnTab)
+			{
+				if (otherTabRows.Count > 0) AddSectionHeader($"{PlayerClassUtil.DisplayName(_currentTab)} 공유 스킬");
+				foreach (var s in otherTabRows) BuildSkillRow(s, "·");
+			}
+
+			if (activeRowCount == 0 && passiveRows.Count == 0 && otherTabRows.Count == 0)
 			{
 				var hint = new Label
 				{
@@ -129,6 +166,18 @@ namespace FirstGame.UI
 				hint.AddThemeFontSizeOverride("font_size", 10);
 				_slotContainer.AddChild(hint);
 			}
+		}
+
+		private void AddSectionHeader(string text)
+		{
+			var label = new Label
+			{
+				Text = text,
+				HorizontalAlignment = HorizontalAlignment.Left
+			};
+			label.AddThemeFontSizeOverride("font_size", 10);
+			label.AddThemeColorOverride("font_color", new Color(0.85f, 0.75f, 0.45f));
+			_slotContainer.AddChild(label);
 		}
 
 		private void UpdateTabStyles()
@@ -143,7 +192,7 @@ namespace FirstGame.UI
 			}
 		}
 
-		private void BuildSkillRow(SkillData skill, string keyText, int slotIdx)
+		private void BuildSkillRow(SkillData skill, string keyText)
 		{
 			var panel = new PanelContainer();
 			panel.CustomMinimumSize = new Vector2(SlotWidth, SlotHeight);

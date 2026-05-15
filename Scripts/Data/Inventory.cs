@@ -214,20 +214,23 @@ namespace FirstGame.Data
             return ReferenceEquals(a, b);
         }
 
-        public void RemoveItem(int slotIndex, int amount = 1)
+        // 반환값 — 골드 지급 후 제거 실패로 인한 무한 골드 버그 차단용.
+        // 판매/소비처럼 mutation 결과에 의존하는 호출자는 반드시 true 확인 후 다음 단계 진행.
+        public bool RemoveItem(int slotIndex, int amount = 1)
         {
-            if (slotIndex < 0 || slotIndex >= Slots.Count) return;
+            if (slotIndex < 0 || slotIndex >= Slots.Count) return false;
             // 장착 슬롯 보호 — 외부 호출자가 실수로 장착 아이템을 제거하지 않게 차단.
             // 장비 해제는 UnequipXxx 경유 필수.
             if (Slots[slotIndex].IsEquipped)
             {
                 GD.PrintErr("[Inventory] 장착 중인 아이템은 제거할 수 없습니다 — 먼저 해제하세요.");
-                return;
+                return false;
             }
             Slots[slotIndex].Quantity = Math.Max(0, Slots[slotIndex].Quantity - amount);
             if (Slots[slotIndex].Quantity <= 0)
                 Slots.RemoveAt(slotIndex);
             OnInventoryChanged?.Invoke();
+            return true;
         }
 
         // --- 아이템 사용 ---

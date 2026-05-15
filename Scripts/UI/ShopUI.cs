@@ -181,9 +181,9 @@ namespace FirstGame.UI
             for (int i = 0; i < _inventory.Slots.Count; i++)
             {
                 var slot = _inventory.Slots[i];
-                // 장착 장비는 인벤에서 이미 빠져 있으므로 별도 필터 불필요. 동일 .tres
-                // 복제품(예: 같은 무기 2개)을 가지고 있을 때 본 비교가 판매 가능한 사본까지
-                // 숨겨버리던 결함 제거.
+                // 장착 중인 슬롯은 판매 목록에서 제외 — RemoveItem이 이미 차단하지만
+                // 골드를 먼저 지급한 뒤 제거 실패하면 무한 골드 취득 버그 발생.
+                if (slot.IsEquipped) continue;
                 int slotIndex = i;  // 클로저용 캡처
                 var panel = CreateSellPanel(slot, slotIndex);
                 _sellGrid.AddChild(panel);
@@ -194,16 +194,27 @@ namespace FirstGame.UI
         {
             if (slotIndex < 0 || slotIndex >= _inventory.Slots.Count) return;
             var slot = _inventory.Slots[slotIndex];
-            // 장착 장비는 인벤에서 빠져 있으므로 슬롯에 같은 .tres가 있다는 건 별도 사본.
-            // ItemData 참조 비교는 .tres 공유 자원 특성상 사본도 막아버려 판매 불가 결함을 만든다.
-            // → 슬롯 존재 자체가 "이건 판매 가능한 사본"임을 보장.
+
+            // mutation 경계 방어 — RefreshSellTab이 장착 슬롯을 숨기지만 stale UI/추가 guard에서
+            // 골드 선지급 후 제거 실패가 다시 살아날 수 있어 여기서 한 번 더 차단.
+            if (slot.IsEquipped)
+            {
+                ShowMessage("장착 중인 아이템은 판매할 수 없습니다.");
+                return;
+            }
 
             int sellPrice = slot.Item.SellPrice;
             string itemName = slot.Item.ItemName;
 
+            // 반드시 제거 성공 후에 골드 지급 — 무한 골드 exploit 차단의 핵심.
+            if (!_inventory.RemoveItem(slotIndex, 1))
+            {
+                ShowMessage("아이템을 판매할 수 없습니다.");
+                return;
+            }
+
             GameManager.Instance.PlayerGold += sellPrice;
             AudioManager.Instance?.PlaySFX("shop_sell.wav");
-            _inventory.RemoveItem(slotIndex, 1);
 
             ShowMessage($"{itemName} 판매! (+{sellPrice}G)");
             UpdateGoldDisplay();
