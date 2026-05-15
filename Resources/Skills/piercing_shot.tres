@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://skl_prcshot_001"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/piercing_shot.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "관통 사격"
+Description = "고속으로 3배 데미지의 화살을 발사한다"
+Icon = ExtResource("2_icon")
+Type = 23
+MpCost = 20
+Cooldown = 6.0
+RequiredLevel = 8
+RequiredClass = 2
+AvailableToAllClasses = false
+BonusDamageMultiplier = 3
+IsPassive = false

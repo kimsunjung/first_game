@@ -21,3 +21,7 @@ CollisionScale = 1.5
 DropChance = 0.0
 MaxHealth = 35
 Defense = 0
+
+InflictedStatus = 1
+InflictedStatusDuration = 5.0
+InflictedStatusChance = 0.3

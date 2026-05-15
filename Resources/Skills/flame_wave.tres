@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://skl_flwave_001"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/flame_wave.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "플레임 웨이브"
+Description = "전방 부채꼴로 화염파를 발사해 범위 내 적에게 2배 화염 데미지"
+Icon = ExtResource("2_icon")
+Type = 19
+MpCost = 28
+Cooldown = 7.0
+RequiredLevel = 10
+RequiredClass = 1
+AvailableToAllClasses = false
+BonusDamageMultiplier = 2
+Element = 1
+IsPassive = false

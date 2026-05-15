@@ -122,6 +122,11 @@ namespace FirstGame.Data
 
 		public void TickBuffs(float delta)
 		{
+			if (_manaShieldRemaining > 0f)
+			{
+				_manaShieldRemaining -= delta;
+				if (_manaShieldRemaining <= 0f) IsManaShieldActive = false;
+			}
 			if (_buffMoveSpeedRemaining > 0f)
 			{
 				_buffMoveSpeedRemaining -= delta;
@@ -158,6 +163,19 @@ namespace FirstGame.Data
 		}
 		public void Heal(int amount) => CurrentHealth = Math.Min(CurrentHealth + amount, MaxHealth);
 		public void RestoreMp(int amount) => CurrentMp = Math.Min(CurrentMp + amount, MaxMp);
+
+		// ─── ManaShield ─────────────────────────────────────────────
+		public bool IsManaShieldActive { get; private set; } = false;
+		private float _manaShieldRemaining = 0f;
+
+		public void ActivateManaShield(float duration)
+		{
+			IsManaShieldActive = true;
+			_manaShieldRemaining = Mathf.Max(_manaShieldRemaining, duration);
+		}
+
+		// ─── IEquipTarget.CureStatuses 명시 구현 ─────────────────────
+		void Core.Interfaces.IEquipTarget.CureStatuses(int mask) => CureStatuses(mask);
 
 		// ─── 레벨/경험치 ─────────────────────────────────────────────
 		private int _level = 1;

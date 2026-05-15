@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://skl_mnshld_001"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/mana_shield.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "마나 실드"
+Description = "10초간 마나를 방어막으로 전환해 방어력 +20"
+Icon = ExtResource("2_icon")
+Type = 22
+MpCost = 20
+Cooldown = 20.0
+RequiredLevel = 10
+RequiredClass = 1
+AvailableToAllClasses = false
+DurationSeconds = 10.0
+BonusDamageMultiplier = 20
+IsPassive = false

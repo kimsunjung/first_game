@@ -78,6 +78,18 @@ position = Vector2(640, 695)
 TargetScenePath = "res://Scenes/Maps/field_3.tscn"
 TargetSpawnPosition = Vector2(640, 80)
 
+[node name="PortalToRuinedCrossroad" parent="." instance=ExtResource("9_portal")]
+position = Vector2(1220, 360)
+TargetScenePath = "res://Scenes/Maps/ruined_crossroad.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+DestinationName = "폐허 교차로"
+
+[node name="PortalToOutpost" parent="." instance=ExtResource("9_portal")]
+position = Vector2(60, 360)
+TargetScenePath = "res://Scenes/Maps/field_outpost.tscn"
+TargetSpawnPosition = Vector2(560, 280)
+DestinationName = "전초기지"
+
 [node name="EnemySpawner" type="Node2D" parent="."]
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")

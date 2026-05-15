@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_con_mhextr_001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/mana_herb_extract.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "마나 초근 추출액"
+Description = "MP를 120 회복한다. 희귀 마나 허브에서 정제한 고급 마나 회복제."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 200
+SellPrice = 75
+Type = 0
+IsStackable = true
+MaxStack = 10
+UseEffect = 3
+HealAmount = 120
+Weight = 0.1

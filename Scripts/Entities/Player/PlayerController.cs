@@ -58,6 +58,7 @@ namespace FirstGame.Entities.Player
 		private bool _powerStrikeActive = false;
 		private bool _dashActive = false;
 		private float _dashTimer = 0f;
+		private Vector2 _dashForcedDir = Vector2.Zero;
 		private const float DashSpeedMultiplier = 1.8f;
 
 		// 머리 위 HP바 (적과 동일 패턴, 녹색 fill로 아군 구분)
@@ -208,6 +209,26 @@ namespace FirstGame.Entities.Player
 			Stats?.TickBuffs((float)delta);
 			UpdateAutoTarget();
 			UpdateLightningStorm((float)delta);
+			TickStatusEffects((float)delta);
+		}
+
+		private void TickStatusEffects(float delta)
+		{
+			if (Stats == null || IsDead) return;
+			int poisonDmg = Stats.TickStatuses(delta);
+			if (poisonDmg > 0)
+			{
+				Stats.CurrentHealth -= poisonDmg;
+				SpawnFloatingLabel(GlobalPosition, poisonDmg, false, true);
+				if (Stats.CurrentHealth <= 0)
+				{
+					if (!TryAutoRevive()) Die();
+					return;
+				}
+			}
+			// 상태 색조 — hit flash 중이 아닐 때만 적용
+			if (!_isHitFlashing)
+				Modulate = Stats.GetStatusModulate();
 		}
 
 		private void UpdateLightningStorm(float delta)
@@ -253,6 +274,31 @@ namespace FirstGame.Entities.Player
 		public void ApplyTempBuff(int dmgDelta, int defDelta, float critDelta, float duration)
 		{
 			Stats?.ApplyBuffEx(0f, 0f, dmgDelta, defDelta, critDelta, duration);
+		}
+
+		public void ActivateManaShield(float duration) => Stats?.ActivateManaShield(duration);
+
+		public void ActivateDashInDirection(float duration, Vector2 direction)
+		{
+			_dashActive = true;
+			_dashTimer = duration;
+			_dashForcedDir = direction.LengthSquared() > 0.01f ? direction.Normalized() : -_facingDirection;
+		}
+
+		public void FireProjectileEx(int damage, FirstGame.Data.ElementType element, Color color, float speed, int pierceCount)
+		{
+			var proj = new PlayerProjectile
+			{
+				Damage = damage,
+				Speed = speed,
+				Direction = GetAimDirection(),
+				Element = element,
+				ProjectileColor = color,
+				SingleHit = pierceCount <= 0,
+				PierceCount = System.Math.Max(0, pierceCount),
+			};
+			GetParent().AddChild(proj);
+			proj.GlobalPosition = GlobalPosition;
 		}
 
 		// 자동 타겟팅 — Mage/Archer만 적용. Warrior는 근접이라 불필요.

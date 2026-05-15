@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_mat_deye_001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/drake_eye.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "드레이크의 눈"
+Description = "인페르노 드레이크의 눈. 내부에서 화염이 살아 숨쉬는 전설급 소재."
+Rarity = 3
+Icon = ExtResource("2_icon")
+Price = 1500
+SellPrice = 600
+Type = 4
+IsStackable = true
+MaxStack = 5
+IsShopBlocked = true
+UseEffect = 0
+HealAmount = 0
+Weight = 0.5

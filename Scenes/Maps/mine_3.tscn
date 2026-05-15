@@ -60,6 +60,12 @@ position = Vector2(50, 360)
 TargetScenePath = "res://Scenes/Maps/mine_2.tscn"
 TargetSpawnPosition = Vector2(1200, 360)
 
+[node name="PortalToField6Volcano" parent="." instance=ExtResource("9_portal")]
+position = Vector2(640, 60)
+TargetScenePath = "res://Scenes/Maps/field_6_volcano.tscn"
+TargetSpawnPosition = Vector2(1150, 360)
+DestinationName = "화산 (필드6)"
+
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="WallTop" type="StaticBody2D" parent="Walls"]
@@ -87,17 +93,13 @@ position = Vector2(1272, 360)
 shape = SubResource("wall_right")
 
 [node name="EnemySpawner" type="Node2D" parent="."]
+position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-EnemyStatsList = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5")])
-SpawnCount = 10
-SpawnAreaSize = Vector2(700, 500)
-SpawnAreaOffset = Vector2(300, 110)
-
-[node name="BossSpawner" type="Node2D" parent="."]
-script = ExtResource("11_spawner")
-EnemyScene = ExtResource("10_enemy")
-EnemyStatsList = Array[Resource]([ExtResource("17_boss")])
-SpawnCount = 1
-SpawnAreaSize = Vector2(80, 80)
-SpawnAreaOffset = Vector2(1150, 330)
+StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5")])
+SpawnInterval = 2.8
+MaxEnemies = 7
+SpawnRadius = 340.0
+BossStatVariant = ExtResource("17_boss")
+BossId = "crystal_lord_m3"
+RepeatableBoss = true

@@ -349,7 +349,7 @@ namespace FirstGame.Data
                     }
 
                     case ItemUseEffect.CureStatus:
-                        // HealAmount 비트마스크: 1=중독 해제, 2=빙결 해제 (PlayerStats 확장 시 연동)
+                        target.CureStatuses(slot.Item.HealAmount);
                         GD.Print($"{slot.Item.ItemName} 사용! 상태이상 해제");
                         AudioManager.Instance?.PlaySFX("potion_use.wav");
                         RemoveItem(slotIndex, 1);

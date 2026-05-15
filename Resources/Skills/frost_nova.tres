@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://skl_frnova_001"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/frost_nova.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "프로스트 노바"
+Description = "자신 주변에 얼음 폭발을 일으켜 범위 내 모든 적에게 2배 냉기 데미지"
+Icon = ExtResource("2_icon")
+Type = 20
+MpCost = 22
+Cooldown = 8.0
+RequiredLevel = 8
+RequiredClass = 1
+AvailableToAllClasses = false
+BonusDamageMultiplier = 2
+Element = 2
+IsPassive = false

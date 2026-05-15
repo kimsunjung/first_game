@@ -13,6 +13,22 @@
 [ext_resource type="Script" uid="uid://c784p60c4nhvc" path="res://Scripts/Entities/Enemies/EnemySpawner.cs" id="11_spawner"]
 [ext_resource type="Resource" uid="uid://b1fld1slime01" path="res://Resources/Enemies/field1_slime.tres" id="12_slime"]
 [ext_resource type="Resource" uid="uid://b1fld1wolf002" path="res://Resources/Enemies/field1_wild_wolf.tres" id="13_wolf"]
+[ext_resource type="PackedScene" uid="uid://d4k8m2w7v3p1" path="res://Scenes/Objects/shop_npc.tscn" id="14_shopnpc"]
+[ext_resource type="PackedScene" uid="uid://d5q7n4yar2s1" path="res://Scenes/UI/shop_ui.tscn" id="15_shopUI"]
+[ext_resource type="Resource" uid="uid://lq1ay338edtn" path="res://Resources/Items/hi_potion.tres" id="16_hipot"]
+[ext_resource type="Resource" uid="uid://i13rutlbykcm" path="res://Resources/Items/swift_potion.tres" id="17_swift"]
+[ext_resource type="Resource" uid="uid://iit3xdkgjkcm" path="res://Resources/Items/antidote.tres" id="18_anti"]
+[ext_resource type="Resource" uid="uid://cons_def_pot01" path="res://Resources/Items/defense_potion.tres" id="19_defpot"]
+[ext_resource type="Resource" uid="uid://cons_revive01" path="res://Resources/Items/revive_scroll.tres" id="20_revive"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/skill_shop_npc.tscn" id="30_skillnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/skill_shop_ui.tscn" id="31_skillshopUI"]
+[ext_resource type="Resource" uid="uid://itm_skb_cleave_001" path="res://Resources/Items/skillbook_cleave.tres" id="40_skb_cleave"]
+[ext_resource type="Resource" uid="uid://itm_skb_whirl_001" path="res://Resources/Items/skillbook_whirlwind.tres" id="41_skb_whirl"]
+[ext_resource type="Resource" uid="uid://itm_skb_gslam_001" path="res://Resources/Items/skillbook_ground_slam.tres" id="42_skb_gslam"]
+[ext_resource type="Resource" uid="uid://itm_skb_btlcry_001" path="res://Resources/Items/skillbook_battle_cry.tres" id="43_skb_btlcry"]
+[ext_resource type="Resource" uid="uid://itm_skb_lstorm01" path="res://Resources/Items/skillbook_lightning_storm.tres" id="44_skb_lstorm"]
+[ext_resource type="Resource" uid="uid://itm_skb_paim01" path="res://Resources/Items/skillbook_precise_aim.tres" id="45_skb_paim"]
+[ext_resource type="Resource" uid="uid://itm_skb_lifest_001" path="res://Resources/Items/skillbook_lifesteal.tres" id="46_skb_lifest"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(640, 16)
@@ -49,6 +65,20 @@ position = Vector2(80, 180)
 
 [node name="SettingsUI" parent="." instance=ExtResource("7_settings")]
 
+[node name="TravelMerchant" parent="." instance=ExtResource("14_shopnpc")]
+position = Vector2(220, 100)
+ShopName = "여행 상인"
+ShopItems = Array[Resource]([ExtResource("16_hipot"), ExtResource("17_swift"), ExtResource("18_anti"), ExtResource("19_defpot"), ExtResource("20_revive")])
+
+[node name="ShopUI" parent="TravelMerchant" instance=ExtResource("15_shopUI")]
+
+[node name="OutpostSkillNPC" parent="." instance=ExtResource("30_skillnpc")]
+position = Vector2(420, 100)
+NpcId = "outpost_skill_shop"
+
+[node name="SkillShopUI" parent="OutpostSkillNPC" instance=ExtResource("31_skillshopUI")]
+SkillBooks = Array[Resource]([ExtResource("40_skb_cleave"), ExtResource("41_skb_whirl"), ExtResource("42_skb_gslam"), ExtResource("43_skb_btlcry"), ExtResource("44_skb_lstorm"), ExtResource("45_skb_paim"), ExtResource("46_skb_lifest")])
+
 [node name="SavePoint" parent="." instance=ExtResource("8_save")]
 position = Vector2(100, 100)
 
@@ -56,6 +86,31 @@ position = Vector2(100, 100)
 position = Vector2(40, 180)
 TargetScenePath = "res://Scenes/Maps/town.tscn"
 TargetSpawnPosition = Vector2(560, 180)
+DestinationName = "마을"
+
+[node name="PortalToOldOrcRoad" parent="." instance=ExtResource("9_portal")]
+position = Vector2(600, 180)
+TargetScenePath = "res://Scenes/Maps/old_orc_road.tscn"
+TargetSpawnPosition = Vector2(1150, 360)
+DestinationName = "옛 오크 길"
+
+[node name="PortalToField2" parent="." instance=ExtResource("9_portal")]
+position = Vector2(600, 280)
+TargetScenePath = "res://Scenes/Maps/field_2.tscn"
+TargetSpawnPosition = Vector2(640, 80)
+DestinationName = "묘지 변경"
+
+[node name="PortalToHarborVillage" parent="." instance=ExtResource("9_portal")]
+position = Vector2(320, 330)
+TargetScenePath = "res://Scenes/Maps/harbor_village.tscn"
+TargetSpawnPosition = Vector2(80, 180)
+DestinationName = "항구마을"
+
+[node name="PortalToMountainRefuge" parent="." instance=ExtResource("9_portal")]
+position = Vector2(320, 30)
+TargetScenePath = "res://Scenes/Maps/mountain_refuge.tscn"
+TargetSpawnPosition = Vector2(80, 180)
+DestinationName = "산악 피난처"
 
 [node name="EnemySpawner" type="Node2D" parent="."]
 position = Vector2(420, 180)

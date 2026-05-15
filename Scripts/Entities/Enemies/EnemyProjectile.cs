@@ -1,5 +1,6 @@
 using Godot;
 using FirstGame.Core.Interfaces;
+using FirstGame.Data;
 
 namespace FirstGame.Entities.Enemies
 {
@@ -12,6 +13,12 @@ namespace FirstGame.Entities.Enemies
 		// 지정 시 Sprite2D 텍스처 렌더링으로 전환. null이면 기존 DrawCircle 폴백.
 		public Texture2D Texture { get; set; }
 		public float TextureScale { get; set; } = 0.5f;
+
+		// 원거리 상태이상 — EnemyController.SpawnProjectile()에서 Stats 값으로 채움.
+		// 플레이어에 적중 시 InflictedStatusChance 확률로 InflictedStatus를 InflictedStatusDuration 동안 부여.
+		public StatusEffect InflictedStatus { get; set; } = StatusEffect.None;
+		public float InflictedStatusDuration { get; set; } = 3.0f;
+		public float InflictedStatusChance { get; set; } = 0f;
 
 		private float _lifetime = 3f;
 
@@ -69,6 +76,15 @@ namespace FirstGame.Entities.Enemies
 			if (body is IDamageable target)
 			{
 				target.TakeDamage(Damage);
+			}
+
+			// 플레이어에 적중 시 원거리 상태이상 적용 (확률 체크).
+			if (InflictedStatus != StatusEffect.None
+			    && body is FirstGame.Entities.Player.PlayerController player
+			    && GD.Randf() <= InflictedStatusChance)
+			{
+				player.Stats?.ApplyStatus(InflictedStatus, InflictedStatusDuration);
+				GD.Print($"[상태이상/원거리] 플레이어에게 {InflictedStatus} {InflictedStatusDuration}초 부여");
 			}
 
 			// 플레이어든 벽이든 무언가에 맞으면 투사체는 소멸

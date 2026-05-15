@@ -11,7 +11,24 @@ namespace FirstGame.Entities.Player
 		public void TakeDamage(int damage)
 		{
 			if (IsDead) return;
-			int finalDamage = System.Math.Max(1, damage - Stats.Defense);
+			// 저주: 방어력 10 감소
+			int curseDefPenalty = Stats.HasStatus(Data.StatusEffect.Curse) ? 10 : 0;
+			int effectiveDefense = System.Math.Max(0, Stats.Defense - curseDefPenalty);
+			int finalDamage = System.Math.Max(1, damage - effectiveDefense);
+
+			// ManaShield: 데미지를 HP 대신 MP로 흡수
+			if (Stats.IsManaShieldActive && Stats.CurrentMp > 0)
+			{
+				int mpAbsorb = System.Math.Min(finalDamage, Stats.CurrentMp);
+				Stats.CurrentMp -= mpAbsorb;
+				finalDamage -= mpAbsorb;
+				if (finalDamage <= 0)
+				{
+					SpawnFloatingLabel(GlobalPosition, mpAbsorb, false, true);
+					AudioManager.Instance?.PlaySFX("player_hit.wav");
+					return; // 완전 흡수
+				}
+			}
 			Stats.CurrentHealth -= finalDamage;
 			_lastDamageTime = Time.GetTicksMsec() / 1000.0;
 			AudioManager.Instance?.PlaySFX("player_hit.wav");

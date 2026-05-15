@@ -25,3 +25,7 @@ DropWeights = PackedFloat32Array(0.55, 0.45)
 DropChance = 0.45
 MaxHealth = 200
 Defense = 3
+
+InflictedStatus = 4
+InflictedStatusDuration = 4.0
+InflictedStatusChance = 0.3

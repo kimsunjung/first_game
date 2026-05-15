@@ -20,13 +20,21 @@ namespace FirstGame.Entities.Player
 			if (inputDir == Vector2.Zero)
 				inputDir = VirtualInput.JoystickDirection;
 
-			if (inputDir != Vector2.Zero)
+			float freezeMul = (Stats?.HasStatus(FirstGame.Data.StatusEffect.Freeze) == true) ? 0.5f : 1.0f;
+
+			if (_dashActive && _dashForcedDir != Vector2.Zero)
+			{
+				// BackstepShot 강제 대시 — 입력과 무관하게 지정 방향으로 이동
+				float forcedSpeed = Stats.MoveSpeed * FirstGame.Core.BalanceData.Movement.PlayerSpeedMultiplier * DashSpeedMultiplier;
+				Velocity = _dashForcedDir * forcedSpeed;
+			}
+			else if (inputDir != Vector2.Zero)
 			{
 				inputDir = inputDir.Normalized();
 				// 무게 페널티 업데이트 (매 이동 프레임마다 — 아이템 pick/drop 즉시 반영)
 				Stats.UpdateWeightPenalty(Inventory.CurrentWeight, Data.Inventory.GetMaxWeight());
 				float speed = Stats.MoveSpeed * FirstGame.Core.BalanceData.Movement.PlayerSpeedMultiplier
-					* Stats.WeightPenaltyMultiplier
+					* Stats.WeightPenaltyMultiplier * freezeMul
 					* (_dashActive ? DashSpeedMultiplier : 1.0f);
 				Velocity = Velocity.MoveToward(inputDir * speed, Acceleration * (float)delta);
 				_facingDirection = inputDir;
@@ -53,7 +61,7 @@ namespace FirstGame.Entities.Player
 		{
 			if (!_dashActive) return;
 			_dashTimer -= (float)delta;
-			if (_dashTimer <= 0f) _dashActive = false;
+			if (_dashTimer <= 0f) { _dashActive = false; _dashForcedDir = Vector2.Zero; }
 		}
 
 		// ─── MP 재생 ────────────────────────────────────────────────

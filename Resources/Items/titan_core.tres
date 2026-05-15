@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_mat_tcore_001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/titan_core.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "빙하 타이탄 핵"
+Description = "빙하 타이탄의 심장부에서 추출한 얼음 정수. 전설급 제작 소재."
+Rarity = 3
+Icon = ExtResource("2_icon")
+Price = 1200
+SellPrice = 480
+Type = 4
+IsStackable = true
+MaxStack = 5
+IsShopBlocked = true
+UseEffect = 0
+HealAmount = 0
+Weight = 0.5

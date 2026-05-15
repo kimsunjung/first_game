@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://skl_btlcry_001"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/battle_cry.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "배틀 크라이"
+Description = "30초간 공격력 +15, 방어력 +8 동시 강화"
+Icon = ExtResource("2_icon")
+Type = 17
+MpCost = 20
+Cooldown = 45.0
+RequiredLevel = 10
+RequiredClass = 0
+AvailableToAllClasses = false
+DurationSeconds = 30.0
+BonusDamageMultiplier = 15
+IsPassive = false

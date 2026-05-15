@@ -26,5 +26,11 @@ namespace FirstGame.Core.Interfaces
 		void StartLightningStorm(float duration, float interval);
 		// 일시 buff — duration초 동안 dmg/def/crit. ApplyBuffEx 래퍼.
 		void ApplyTempBuff(int dmgDelta, int defDelta, float critDelta, float duration);
+		// ManaShield — duration초 동안 받는 데미지를 HP 대신 MP로 흡수.
+		void ActivateManaShield(float duration);
+		// BackstepShot 전용 — 지정 방향으로 강제 대시 (facing 반대 방향 등).
+		void ActivateDashInDirection(float duration, Vector2 direction);
+		// PiercingShot 전용 — pierceCount번 관통하는 투사체 발사.
+		void FireProjectileEx(int damage, ElementType element, Color color, float speed, int pierceCount);
 	}
 }

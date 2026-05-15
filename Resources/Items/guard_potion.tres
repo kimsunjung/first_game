@@ -6,14 +6,17 @@
 
 [resource]
 script = ExtResource("1")
-ItemName = "방어 물약"
-Description = "(밸런스 미정 — UseEffect 코드 작업 후 방어력 버프 연결)"
-Rarity = 0
+ItemName = "강화 방어 물약"
+Description = "90초간 방어력 +15 상승."
+Rarity = 1
 Icon = ExtResource("2_icon")
-Price = 0
-SellPrice = 0
+Price = 380
+SellPrice = 115
 Type = 0
 IsStackable = true
-MaxStack = 99
-UseEffect = 0
+MaxStack = 10
+UseEffect = 4
+BuffDefense = 15
+BuffDurationSec = 90.0
 HealAmount = 0
+Weight = 0.1

@@ -197,6 +197,16 @@ namespace FirstGame.Entities.Enemies
 		{
 			if (_isDying) return;
 
+			// 상태이상 tick — 독 데미지 자체 적용
+			int poisonDmg = Stats.TickStatuses((float)delta);
+			if (poisonDmg > 0)
+			{
+				Stats.CurrentHealth -= poisonDmg;
+				if (_healthBar != null) _healthBar.Value = Stats.CurrentHealth;
+				if (Stats.CurrentHealth <= 0) { Die(); return; }
+			}
+			UpdateStatusTint();
+
 			// Vampiric elite 자가 재생 — MaxHealth 비율로 매초 누적, 1HP 단위로 적용.
 			if (_regenRatePerSec > 0f && Stats.CurrentHealth < Stats.MaxHealth)
 			{
@@ -424,6 +434,7 @@ namespace FirstGame.Entities.Enemies
 						if (IsInstanceValid(this) && IsInstanceValid(_target))
 						{
 							((IDamageable)_target).TakeDamage(Stats.BaseDamage);
+							TryInflictStatus(_target);
 							AudioManager.Instance?.PlaySFX("enemy_attack.wav");
 							SpawnAttackEffect(attackDir);
 						}
@@ -498,6 +509,10 @@ namespace FirstGame.Entities.Enemies
 				proj.Texture = Stats.ProjectileTexture;
 				proj.TextureScale = Stats.ProjectileScale;
 			}
+			// Stats의 상태이상 값을 투사체에 위임 — Ranged 적도 적중 시 상태이상 부여 가능.
+			proj.InflictedStatus = Stats.InflictedStatus;
+			proj.InflictedStatusDuration = Stats.InflictedStatusDuration;
+			proj.InflictedStatusChance = Stats.InflictedStatusChance;
 			GetTree().CurrentScene.AddChild(proj);
 		}
 
@@ -517,6 +532,24 @@ namespace FirstGame.Entities.Enemies
 			{
 				if (IsInstanceValid(slash)) slash.QueueFree();
 			}));
+		}
+
+		private void UpdateStatusTint()
+		{
+			if (_animSprite == null) return;
+			// hit flash 중(R>1.2)이면 상태 색조 덮어쓰기 생략
+			if (_animSprite.Modulate.R > 1.2f) return;
+			_animSprite.Modulate = Stats.GetStatusModulate();
+		}
+
+		private void TryInflictStatus(Node2D target)
+		{
+			if (Stats.InflictedStatus == FirstGame.Data.StatusEffect.None) return;
+			if (GD.Randf() > Stats.InflictedStatusChance) return;
+			var player = target as FirstGame.Entities.Player.PlayerController;
+			if (player == null) return;
+			player.Stats?.ApplyStatus(Stats.InflictedStatus, Stats.InflictedStatusDuration);
+			GD.Print($"[상태이상] {Stats.EnemyTypeName} → 플레이어에게 {Stats.InflictedStatus} {Stats.InflictedStatusDuration}초 부여");
 		}
 
 		private void FindTarget()
@@ -571,7 +604,7 @@ namespace FirstGame.Entities.Enemies
 				_hitTween.TweenProperty(_animSprite, "position:x", 2f, 0.03f);
 				_hitTween.TweenProperty(_animSprite, "position:x", 0f, 0.03f);
 				_hitTween.TweenProperty(_animSprite, "modulate",
-					new Color(1f, 1f, 1f, 1f), 0.08f);
+					Stats.GetStatusModulate(), 0.08f);
 			}
 
 			if (Stats.CurrentHealth <= 0)

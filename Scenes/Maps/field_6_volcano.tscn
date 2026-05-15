@@ -18,6 +18,12 @@
 [ext_resource type="Resource" uid="uid://f6_earcher01" path="res://Resources/Enemies/field6_ember_archer.tres" id="17_e6"]
 [ext_resource type="Resource" uid="uid://f6_serpent01" path="res://Resources/Enemies/field6_lava_serpent.tres" id="18_e7"]
 [ext_resource type="Resource" uid="uid://f6_drake01" path="res://Resources/Enemies/field6_named_inferno_drake.tres" id="19_boss"]
+[ext_resource type="PackedScene" uid="uid://d4k8m2w7v3p1" path="res://Scenes/Objects/shop_npc.tscn" id="20_shopnpc"]
+[ext_resource type="PackedScene" uid="uid://d5q7n4yar2s1" path="res://Scenes/UI/shop_ui.tscn" id="21_shopUI"]
+[ext_resource type="Resource" uid="uid://itm_con_firelx_001" path="res://Resources/Items/fire_resist_elixir.tres" id="22_firelx"]
+[ext_resource type="Resource" uid="uid://itm_con_mgbrew_001" path="res://Resources/Items/magma_brew.tres" id="23_mgbrew"]
+[ext_resource type="Resource" uid="uid://cons_mega_hp01" path="res://Resources/Items/mega_health_potion.tres" id="24_megahp"]
+[ext_resource type="Resource" uid="uid://itm_con_btlelx_001" path="res://Resources/Items/battle_elixir.tres" id="25_btlelx"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -57,10 +63,29 @@ position = Vector2(80, 360)
 
 [node name="SettingsUI" parent="." instance=ExtResource("7_settings")]
 
+[node name="VolcanoMerchant" parent="." instance=ExtResource("20_shopnpc")]
+position = Vector2(250, 80)
+ShopName = "화산 상인"
+ShopItems = Array[Resource]([ExtResource("22_firelx"), ExtResource("23_mgbrew"), ExtResource("24_megahp"), ExtResource("25_btlelx")])
+
+[node name="ShopUI" parent="VolcanoMerchant" instance=ExtResource("21_shopUI")]
+
 [node name="PortalToField3" parent="." instance=ExtResource("9_portal")]
 position = Vector2(50, 360)
 TargetScenePath = "res://Scenes/Maps/field_3.tscn"
 TargetSpawnPosition = Vector2(640, 360)
+
+[node name="PortalToLavaField" parent="." instance=ExtResource("9_portal")]
+position = Vector2(640, 60)
+TargetScenePath = "res://Scenes/Maps/lava_field.tscn"
+TargetSpawnPosition = Vector2(1150, 360)
+DestinationName = "용암 평원"
+
+[node name="PortalToMine3" parent="." instance=ExtResource("9_portal")]
+position = Vector2(1220, 360)
+TargetScenePath = "res://Scenes/Maps/mine_3.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+DestinationName = "광산 3"
 
 [node name="Walls" type="Node2D" parent="."]
 
@@ -89,17 +114,13 @@ position = Vector2(1272, 360)
 shape = SubResource("wall_right")
 
 [node name="EnemySpawner" type="Node2D" parent="."]
+position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-EnemyStatsList = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5"), ExtResource("17_e6"), ExtResource("18_e7")])
-SpawnCount = 14
-SpawnAreaSize = Vector2(900, 550)
-SpawnAreaOffset = Vector2(200, 100)
-
-[node name="NamedBossSpawner" type="Node2D" parent="."]
-script = ExtResource("11_spawner")
-EnemyScene = ExtResource("10_enemy")
-EnemyStatsList = Array[Resource]([ExtResource("19_boss")])
-SpawnCount = 1
-SpawnAreaSize = Vector2(100, 100)
-SpawnAreaOffset = Vector2(1100, 310)
+StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5"), ExtResource("17_e6"), ExtResource("18_e7")])
+SpawnInterval = 2.5
+MaxEnemies = 8
+SpawnRadius = 360.0
+BossStatVariant = ExtResource("19_boss")
+BossId = "inferno_drake_f6"
+RepeatableBoss = true

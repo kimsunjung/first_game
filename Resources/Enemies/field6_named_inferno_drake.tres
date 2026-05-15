@@ -5,9 +5,11 @@
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="4_hp"]
 [ext_resource type="Resource" uid="uid://wpn_infstaff01" path="res://Resources/Items/inferno_staff.tres" id="5_istaff"]
 [ext_resource type="Resource" uid="uid://cloak_ember01" path="res://Resources/Items/ember_cloak.tres" id="6_ecloak"]
-[ext_resource type="Resource" uid="uid://bpat_bm03" path="res://Resources/BossPatterns/pat_beam_fire.tres" id="7_p1"]
-[ext_resource type="Resource" uid="uid://bpat_vol02" path="res://Resources/BossPatterns/pat_volley_large.tres" id="8_p2"]
-[ext_resource type="Resource" uid="uid://bpat_aoe02" path="res://Resources/BossPatterns/pat_aoe_large.tres" id="9_p3"]
+[ext_resource type="Resource" uid="uid://itm_mat_dscale_001" path="res://Resources/Items/drake_scale.tres" id="7_dscale"]
+[ext_resource type="Resource" uid="uid://itm_mat_deye_001" path="res://Resources/Items/drake_eye.tres" id="8_deye"]
+[ext_resource type="Resource" uid="uid://bpat_bm03" path="res://Resources/BossPatterns/pat_beam_fire.tres" id="9_p1"]
+[ext_resource type="Resource" uid="uid://bpat_vol02" path="res://Resources/BossPatterns/pat_volley_large.tres" id="10_p2"]
+[ext_resource type="Resource" uid="uid://bpat_aoe02" path="res://Resources/BossPatterns/pat_aoe_large.tres" id="11_p3"]
 [resource]
 script = ExtResource("1")
 ProjectileTexture = ExtResource("3_proj")
@@ -25,10 +27,10 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.35
 CollisionScale = 3.0
-Patterns = Array[Resource]([ExtResource("7_p1"), ExtResource("8_p2"), ExtResource("9_p3")])
-PossibleDrops = Array[Resource]([ExtResource("4_hp"), ExtResource("5_istaff"), ExtResource("6_ecloak")])
-DropWeights = PackedFloat32Array(0.5, 0.3, 0.2)
-DropChance = 0.7
+Patterns = Array[Resource]([ExtResource("9_p1"), ExtResource("10_p2"), ExtResource("11_p3")])
+PossibleDrops = Array[Resource]([ExtResource("4_hp"), ExtResource("5_istaff"), ExtResource("6_ecloak"), ExtResource("7_dscale"), ExtResource("8_deye")])
+DropWeights = PackedFloat32Array(0.25, 0.18, 0.12, 0.30, 0.15)
+DropChance = 1.0
 MaxHealth = 900
 Defense = 8
 IsBoss = true

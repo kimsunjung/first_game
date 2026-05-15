@@ -24,5 +24,7 @@ namespace FirstGame.Core.Interfaces
 		// 확장 buff — Damage/Defense/Crit 추가. 기본 구현은 좁은 ApplyBuff로 fallback.
 		void ApplyBuffEx(float moveDelta, float atkDelta, int dmgDelta, int defDelta, float critDelta, float durationSec)
 			=> ApplyBuff(moveDelta, atkDelta, durationSec);
+		// 상태이상 해제 — mask 비트: 1=독, 2=빙결, 4=저주. 기본 no-op.
+		void CureStatuses(int mask) { }
 	}
 }

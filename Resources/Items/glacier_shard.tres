@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_mat_gshard_001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/glacier_shard.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "빙하 파편"
+Description = "설원 빙하에서 채취한 얼음 조각. 냉기 무기 강화에 사용된다."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 60
+SellPrice = 22
+Type = 4
+IsStackable = true
+MaxStack = 99
+UseEffect = 0
+HealAmount = 0
+Weight = 0.5

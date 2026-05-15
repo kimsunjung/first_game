@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_mat_kink_001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/kraken_ink.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "크라켄 먹물"
+Description = "수몰 신전 보스 크라켄의 먹물. 어둠 속성 강화에 사용하는 희귀 소재."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 350
+SellPrice = 140
+Type = 4
+IsStackable = true
+MaxStack = 20
+IsShopBlocked = true
+UseEffect = 0
+HealAmount = 0
+Weight = 0.5

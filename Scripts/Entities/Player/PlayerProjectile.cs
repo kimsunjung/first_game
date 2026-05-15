@@ -19,9 +19,12 @@ namespace FirstGame.Entities.Player
 		public float TextureScale { get; set; } = 0.5f;
 		// 단일 타겟 보장 — 한 번 적중하면 즉시 소멸.
 		public bool SingleHit { get; set; } = true;
+		// 관통 횟수 — 0이면 첫 적중 시 소멸. N이면 최대 N+1 적 관통.
+		public int PierceCount { get; set; } = 0;
 
 		private float _lifetime = 1.5f;
 		private bool _consumed = false;
+		private readonly System.Collections.Generic.HashSet<ulong> _hitIds = new();
 
 		public override void _Ready()
 		{
@@ -83,10 +86,20 @@ namespace FirstGame.Entities.Player
 			if (_consumed) return;
 			if (node is IDamageable target)
 			{
+				ulong id = node.GetInstanceId();
+				if (_hitIds.Contains(id)) return;
+				_hitIds.Add(id);
 				target.TakeDamage(Damage, Element);
-				_consumed = true;
 				SpawnHitEffect();
-				if (SingleHit) QueueFree();
+				if (PierceCount <= 0)
+				{
+					_consumed = true;
+					QueueFree();
+				}
+				else
+				{
+					PierceCount--;
+				}
 			}
 		}
 

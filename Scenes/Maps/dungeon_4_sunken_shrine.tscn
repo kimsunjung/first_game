@@ -86,17 +86,13 @@ position = Vector2(1272, 360)
 shape = SubResource("wall_right")
 
 [node name="EnemySpawner" type="Node2D" parent="."]
+position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-EnemyStatsList = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4")])
-SpawnCount = 10
-SpawnAreaSize = Vector2(700, 500)
-SpawnAreaOffset = Vector2(300, 110)
-
-[node name="BossSpawner" type="Node2D" parent="."]
-script = ExtResource("11_spawner")
-EnemyScene = ExtResource("10_enemy")
-EnemyStatsList = Array[Resource]([ExtResource("16_boss")])
-SpawnCount = 1
-SpawnAreaSize = Vector2(100, 100)
-SpawnAreaOffset = Vector2(1100, 310)
+StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4")])
+SpawnInterval = 2.5
+MaxEnemies = 7
+SpawnRadius = 340.0
+BossStatVariant = ExtResource("16_boss")
+BossId = "kraken_d4"
+RepeatableBoss = true

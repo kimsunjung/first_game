@@ -59,6 +59,12 @@ namespace FirstGame.Data
 		// IsBoss=true 또는 명명 미니보스에 패턴 배열 지정. null이면 패턴 없음.
 		[Export] public FirstGame.Entities.Enemies.BossPatternData[] Patterns { get; set; }
 
+		// ─── 상태이상 부여 (공격 시 확률적으로 플레이어에게 적용) ───────
+		[ExportGroup("Status Effect")]
+		[Export] public StatusEffect InflictedStatus { get; set; } = StatusEffect.None;
+		[Export] public float InflictedStatusDuration { get; set; } = 3.0f;
+		[Export] public float InflictedStatusChance { get; set; } = 0.25f;
+
 		// ─── 드롭 테이블 ─────────────────────────────────────────────
 		[ExportGroup("Drop Table")]
 		[Export] public ItemData[] PossibleDrops { get; set; }

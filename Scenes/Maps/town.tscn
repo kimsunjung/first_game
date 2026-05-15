@@ -38,6 +38,32 @@
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/street_lantern.png" id="28_vlantern"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/flower_planter.png" id="29_vflower"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/barrel_group.png" id="30_vbarrel"]
+[ext_resource type="Resource" uid="uid://itm_skb_arcmsl_001" path="res://Resources/Items/skillbook_arcane_missile.tres" id="50_skb_arcmsl"]
+[ext_resource type="Resource" uid="uid://itm_skb_bkshot_001" path="res://Resources/Items/skillbook_backstep_shot.tres" id="51_skb_bkshot"]
+[ext_resource type="Resource" uid="uid://itm_skb_btlcry_001" path="res://Resources/Items/skillbook_battle_cry.tres" id="52_skb_btlcry"]
+[ext_resource type="Resource" uid="uid://itm_skb_cleave_001" path="res://Resources/Items/skillbook_cleave.tres" id="53_skb_cleave"]
+[ext_resource type="Resource" uid="uid://itm_skb_crit_001" path="res://Resources/Items/skillbook_crit_boost.tres" id="54_skb_crit"]
+[ext_resource type="Resource" uid="uid://c53l1416o3joe" path="res://Resources/Items/skillbook_dash.tres" id="55_skb_dash"]
+[ext_resource type="Resource" uid="uid://itm_skb_execute_001" path="res://Resources/Items/skillbook_execute.tres" id="56_skb_exec"]
+[ext_resource type="Resource" uid="uid://ncn0aj6e1xu4" path="res://Resources/Items/skillbook_fire_bolt.tres" id="57_skb_fbolt"]
+[ext_resource type="Resource" uid="uid://itm_skb_flwave_001" path="res://Resources/Items/skillbook_flame_wave.tres" id="58_skb_flwave"]
+[ext_resource type="Resource" uid="uid://itm_skb_frnova_001" path="res://Resources/Items/skillbook_frost_nova.tres" id="59_skb_frnova"]
+[ext_resource type="Resource" uid="uid://itm_skb_gslam_001" path="res://Resources/Items/skillbook_ground_slam.tres" id="60_skb_gslam"]
+[ext_resource type="Resource" uid="uid://l2csfh01cf36" path="res://Resources/Items/skillbook_heal.tres" id="61_skb_heal"]
+[ext_resource type="Resource" uid="uid://itm_skb_hpreg_001" path="res://Resources/Items/skillbook_hp_regen.tres" id="62_skb_hpreg"]
+[ext_resource type="Resource" uid="uid://itm_skb_hntfcs_001" path="res://Resources/Items/skillbook_hunter_focus.tres" id="63_skb_hntfcs"]
+[ext_resource type="Resource" uid="uid://itm_skb_ice_001" path="res://Resources/Items/skillbook_ice_shard.tres" id="64_skb_ice"]
+[ext_resource type="Resource" uid="uid://itm_skb_istance01" path="res://Resources/Items/skillbook_iron_stance.tres" id="65_skb_istan"]
+[ext_resource type="Resource" uid="uid://itm_skb_lifest_001" path="res://Resources/Items/skillbook_lifesteal.tres" id="66_skb_lifest"]
+[ext_resource type="Resource" uid="uid://itm_skb_lstorm01" path="res://Resources/Items/skillbook_lightning_storm.tres" id="67_skb_lstorm"]
+[ext_resource type="Resource" uid="uid://itm_skb_mnshld_001" path="res://Resources/Items/skillbook_mana_shield.tres" id="68_skb_mnshld"]
+[ext_resource type="Resource" uid="uid://itm_skb_multi_001" path="res://Resources/Items/skillbook_multi_shot.tres" id="69_skb_multi"]
+[ext_resource type="Resource" uid="uid://itm_skb_prcshot_001" path="res://Resources/Items/skillbook_piercing_shot.tres" id="70_skb_prcshot"]
+[ext_resource type="Resource" uid="uid://bx4hrwqxvsbf3" path="res://Resources/Items/skillbook_power_strike.tres" id="71_skb_pstr"]
+[ext_resource type="Resource" uid="uid://itm_skb_paim01" path="res://Resources/Items/skillbook_precise_aim.tres" id="72_skb_paim"]
+[ext_resource type="Resource" uid="uid://itm_skb_rainoa_001" path="res://Resources/Items/skillbook_rain_of_arrows.tres" id="73_skb_rainoa"]
+[ext_resource type="Resource" uid="uid://itm_skb_speed_001" path="res://Resources/Items/skillbook_speed_boost.tres" id="74_skb_speed"]
+[ext_resource type="Resource" uid="uid://itm_skb_whirl_001" path="res://Resources/Items/skillbook_whirlwind.tres" id="75_skb_whirl"]
 
 [sub_resource type="RectangleShape2D" id="deco_small"]
 size = Vector2(16, 16)
@@ -210,6 +236,7 @@ position = Vector2(520, 80)
 NpcId = "skill_shop"
 
 [node name="SkillShopUI" parent="SkillShopNPC" instance=ExtResource("11_skillshopUI")]
+SkillBooks = Array[Resource]([ExtResource("61_skb_heal"), ExtResource("55_skb_dash"), ExtResource("71_skb_pstr"), ExtResource("57_skb_fbolt"), ExtResource("64_skb_ice"), ExtResource("62_skb_hpreg"), ExtResource("74_skb_speed"), ExtResource("65_skb_istan"), ExtResource("69_skb_multi"), ExtResource("54_skb_crit")])
 
 [node name="BlacksmithNPC" parent="." instance=ExtResource("12_smith")]
 position = Vector2(120, 240)
@@ -247,6 +274,12 @@ TargetSpawnPosition = Vector2(560, 180)
 position = Vector2(600, 300)
 TargetScenePath = "res://Scenes/Maps/field_4_harbor.tscn"
 TargetSpawnPosition = Vector2(80, 360)
+
+[node name="PortalToTownOutskirts" parent="." instance=ExtResource("15_portal")]
+position = Vector2(600, 60)
+TargetScenePath = "res://Scenes/Maps/town_outskirts.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+DestinationName = "마을 외곽"
 
 [node name="PotionShopNPC" parent="." instance=ExtResource("40_potionshop")]
 position = Vector2(380, 80)

@@ -185,6 +185,278 @@ namespace FirstGame.Data.Skills
 		}
 	}
 
+	// ═══════════════════════════════════════════════════════════════
+	// Content Expansion v1 — 전사 신규 스킬
+	// ═══════════════════════════════════════════════════════════════
+
+	/// <summary>Cleave (전사) — 전방 콘(±70도) 내 모든 적에 1.8배 데미지.
+	/// MultiShot과 유사하지만 근접 범위(140f)로 전사 근접 특화.</summary>
+	[SkillStrategy(SkillType.Cleave)]
+	public class CleaveStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float range = 140f;
+			float mul = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			int hits = 0;
+			foreach (var (node, damageable) in target.GetNearbyEnemies(range))
+			{
+				Vector2 dir = (node.GlobalPosition - target.GlobalPosition).Normalized();
+				if (target.FacingDirection.Dot(dir) <= 0.25f) continue; // ±75도 콘
+				bool crit = GD.Randf() < target.CritRate;
+				long raw = (long)(target.BaseDamage * mul);
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				damageable.TakeDamage(dmg, skill.Element);
+				hits++;
+			}
+			if (hits > 0)
+			{
+				target.TriggerCameraShake(5f, 0.20f);
+				FirstGame.Core.UIEffectManager.HitStop(0.08f, 0.05f);
+			}
+		}
+	}
+
+	/// <summary>GroundSlam (전사) — 자신 주변 150f 반경 모든 적에 2.5배 광역 데미지.
+	/// Whirlwind보다 범위 크고 배율 높지만 쿨타임도 긺.</summary>
+	[SkillStrategy(SkillType.GroundSlam)]
+	public class GroundSlamStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float radius = 150f;
+			float mul = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 3;
+			bool anyHit = false;
+			foreach (var (_, damageable) in target.GetNearbyEnemies(radius))
+			{
+				bool crit = GD.Randf() < target.CritRate;
+				long raw = (long)(target.BaseDamage * mul);
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				damageable.TakeDamage(dmg, skill.Element);
+				anyHit = true;
+			}
+			if (anyHit)
+			{
+				target.TriggerCameraShake(9f, 0.35f);
+				FirstGame.Core.UIEffectManager.HitStop(0.12f, 0.06f);
+			}
+			else
+			{
+				target.TriggerCameraShake(4f, 0.15f);
+			}
+		}
+	}
+
+	/// <summary>BattleCry (전사) — 30초간 공격력+방어력 동시 버프. 전투 개시 전 사용.</summary>
+	[SkillStrategy(SkillType.BattleCry)]
+	public class BattleCryStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			float dur = skill.DurationSeconds > 0f ? skill.DurationSeconds : 30f;
+			int dmgBonus = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 15;
+			target.ApplyTempBuff(dmgBonus, 8, 0f, dur);
+			GD.Print($"[BattleCry] 공격+{dmgBonus} 방어+8 {dur}초 발동");
+		}
+	}
+
+	/// <summary>Execute (전사) — 단일 대상에게 3배 강타. 처형 일격 컨셉.</summary>
+	[SkillStrategy(SkillType.Execute)]
+	public class ExecuteStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 3;
+			bool crit = GD.Randf() < target.CritRate;
+			long raw = (long)target.BaseDamage * multiplier;
+			if (crit) raw = (long)(raw * target.CritMultiplier);
+			int dmg = (int)Math.Min(raw, int.MaxValue);
+			ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.None;
+			target.FireProjectile(dmg, element, new Color(0.8f, 0.1f, 0.1f), 480f);
+			target.TriggerCameraShake(8f, 0.30f);
+			FirstGame.Core.UIEffectManager.HitStop(0.15f, 0.08f);
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════
+	// Content Expansion v1 — 마법사 신규 스킬
+	// ═══════════════════════════════════════════════════════════════
+
+	/// <summary>FlameWave (마법사) — 전방 콘(±75도) 200f 내 적에 1.8배 화염 광역.
+	/// FireBolt의 광역 버전 컨셉.</summary>
+	[SkillStrategy(SkillType.FlameWave)]
+	public class FlameWaveStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float range = 200f;
+			float mul = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			ElementType elem = skill.Element != ElementType.None ? skill.Element : ElementType.Fire;
+			int hits = 0;
+			foreach (var (node, damageable) in target.GetNearbyEnemies(range))
+			{
+				Vector2 dir = (node.GlobalPosition - target.GlobalPosition).Normalized();
+				if (target.FacingDirection.Dot(dir) <= 0.25f) continue;
+				bool crit = GD.Randf() < target.CritRate;
+				long raw = (long)(target.BaseDamage * mul);
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				damageable.TakeDamage(dmg, elem);
+				hits++;
+			}
+			if (hits > 0)
+			{
+				target.TriggerCameraShake(5f, 0.20f);
+				FirstGame.Core.UIEffectManager.HitStop(0.08f, 0.05f);
+			}
+		}
+	}
+
+	/// <summary>FrostNova (마법사) — 자신 주변 90f 반경 얼음 폭발. IceShard의 광역 버전.</summary>
+	[SkillStrategy(SkillType.FrostNova)]
+	public class FrostNovaStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float radius = 90f;
+			float mul = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			ElementType elem = skill.Element != ElementType.None ? skill.Element : ElementType.Ice;
+			bool anyHit = false;
+			foreach (var (_, damageable) in target.GetNearbyEnemies(radius))
+			{
+				bool crit = GD.Randf() < target.CritRate;
+				long raw = (long)(target.BaseDamage * mul);
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				damageable.TakeDamage(dmg, elem);
+				anyHit = true;
+			}
+			if (anyHit)
+			{
+				target.TriggerCameraShake(5f, 0.22f);
+				FirstGame.Core.UIEffectManager.HitStop(0.08f, 0.05f);
+			}
+		}
+	}
+
+	/// <summary>ArcaneMissile (마법사) — 전방으로 3발 연속 발사 (각 1배 데미지 → 합산 3배).
+	/// 동일 방향 3발이므로 근접 단일 대상에 집중 화력.</summary>
+	[SkillStrategy(SkillType.ArcaneMissile)]
+	public class ArcaneMissileStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 1;
+			ElementType elem = skill.Element != ElementType.None ? skill.Element : ElementType.None;
+			Color color = new Color(0.7f, 0.4f, 1.0f);
+			for (int i = 0; i < 3; i++)
+			{
+				bool crit = GD.Randf() < target.CritRate;
+				long raw = (long)target.BaseDamage * multiplier;
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				target.FireProjectile(dmg, elem, color, 580f);
+			}
+			target.TriggerCameraShake(4f, 0.15f);
+		}
+	}
+
+	/// <summary>ManaShield (마법사) — duration초 동안 받는 데미지를 HP 대신 MP로 흡수.</summary>
+	[SkillStrategy(SkillType.ManaShield)]
+	public class ManaShieldStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			float dur = skill.DurationSeconds > 0f ? skill.DurationSeconds : 10f;
+			target.ActivateManaShield(dur);
+			GD.Print($"[ManaShield] {dur}초간 MP로 데미지 흡수");
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════
+	// Content Expansion v1 — 궁수 신규 스킬
+	// ═══════════════════════════════════════════════════════════════
+
+	/// <summary>PiercingShot (궁수) — 고속 3배 강타 + 최대 3적 관통.</summary>
+	[SkillStrategy(SkillType.PiercingShot)]
+	public class PiercingShotStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 3;
+			bool crit = GD.Randf() < target.CritRate;
+			long raw = (long)target.BaseDamage * multiplier;
+			if (crit) raw = (long)(raw * target.CritMultiplier);
+			int dmg = (int)Math.Min(raw, int.MaxValue);
+			ElementType elem = skill.Element != ElementType.None ? skill.Element : ElementType.None;
+			target.FireProjectileEx(dmg, elem, new Color(1.0f, 0.85f, 0.3f), 700f, 2); // 최대 3적 관통
+			target.TriggerCameraShake(4f, 0.15f);
+		}
+	}
+
+	/// <summary>BackstepShot (궁수) — 전방 사격 후 후방으로 강제 대시. 거리 유지 포지셔닝 스킬.</summary>
+	[SkillStrategy(SkillType.BackstepShot)]
+	public class BackstepShotStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			int multiplier = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			bool crit = GD.Randf() < target.CritRate;
+			long raw = (long)target.BaseDamage * multiplier;
+			if (crit) raw = (long)(raw * target.CritMultiplier);
+			int dmg = (int)Math.Min(raw, int.MaxValue);
+			ElementType elem = skill.Element != ElementType.None ? skill.Element : ElementType.None;
+			target.FireProjectile(dmg, elem, new Color(0.95f, 0.9f, 0.55f), 580f);
+			// facing 반대 방향으로 강제 대시 (적 반대 방향으로 물러남)
+			float dashDur = skill.DurationSeconds > 0f ? skill.DurationSeconds : 0.35f;
+			target.ActivateDashInDirection(dashDur, -target.FacingDirection);
+			target.TriggerCameraShake(3f, 0.12f);
+		}
+	}
+
+	/// <summary>RainOfArrows (궁수) — 자신 주변 180f 반경 모든 적에 1.5배 광역 화살.
+	/// 넓은 범위로 다수 처리에 강함.</summary>
+	[SkillStrategy(SkillType.RainOfArrows)]
+	public class RainOfArrowsStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float radius = 180f;
+			float mul = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			ElementType elem = skill.Element != ElementType.None ? skill.Element : ElementType.None;
+			bool anyHit = false;
+			foreach (var (_, damageable) in target.GetNearbyEnemies(radius))
+			{
+				bool crit = GD.Randf() < target.CritRate;
+				long raw = (long)(target.BaseDamage * mul);
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Min(raw, int.MaxValue);
+				damageable.TakeDamage(dmg, elem);
+				anyHit = true;
+			}
+			if (anyHit)
+			{
+				target.TriggerCameraShake(5f, 0.20f);
+				FirstGame.Core.UIEffectManager.HitStop(0.07f, 0.05f);
+			}
+		}
+	}
+
+	/// <summary>HunterFocus (궁수) — 15초간 공격력+치명타 버프. 사냥 집중 상태 컨셉.</summary>
+	[SkillStrategy(SkillType.HunterFocus)]
+	public class HunterFocusStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			float dur = skill.DurationSeconds > 0f ? skill.DurationSeconds : 15f;
+			int dmgBonus = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 8;
+			target.ApplyTempBuff(dmgBonus, 0, 0.20f, dur);
+			GD.Print($"[HunterFocus] 공격+{dmgBonus} 크리+20% {dur}초 발동");
+		}
+	}
+
 	/// <summary>
 	/// Reflection 기반 스킬 전략 팩토리.
 	/// [SkillStrategy(SkillType.X)] 어트리뷰트가 붙은 클래스를 자동 등록.

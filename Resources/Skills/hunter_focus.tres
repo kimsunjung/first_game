@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://skl_hntfcs_001"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/hunter_focus.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "헌터 포커스"
+Description = "15초간 공격력 +8, 치명타율 +20% 집중 상태 발동"
+Icon = ExtResource("2_icon")
+Type = 26
+MpCost = 18
+Cooldown = 30.0
+RequiredLevel = 10
+RequiredClass = 2
+AvailableToAllClasses = false
+DurationSeconds = 15.0
+BonusDamageMultiplier = 8
+IsPassive = false

@@ -4,8 +4,10 @@
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
 [ext_resource type="Resource" uid="uid://wpn_glacieraxe01" path="res://Resources/Items/glacier_axe.tres" id="4_gaxe"]
 [ext_resource type="Resource" uid="uid://cloak_frost01" path="res://Resources/Items/frost_cloak.tres" id="5_fcloak"]
-[ext_resource type="Resource" uid="uid://bpat_chg01" path="res://Resources/BossPatterns/pat_charge_basic.tres" id="6_p1"]
-[ext_resource type="Resource" uid="uid://bpat_aoe01" path="res://Resources/BossPatterns/pat_aoe_basic.tres" id="7_p2"]
+[ext_resource type="Resource" uid="uid://itm_mat_tscale_001" path="res://Resources/Items/titan_scale.tres" id="6_tscale"]
+[ext_resource type="Resource" uid="uid://itm_mat_tcore_001" path="res://Resources/Items/titan_core.tres" id="7_tcore"]
+[ext_resource type="Resource" uid="uid://bpat_chg01" path="res://Resources/BossPatterns/pat_charge_basic.tres" id="8_p1"]
+[ext_resource type="Resource" uid="uid://bpat_aoe01" path="res://Resources/BossPatterns/pat_aoe_basic.tres" id="9_p2"]
 [resource]
 script = ExtResource("1")
 MoveSpeed = 48.8
@@ -21,10 +23,10 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.35
 CollisionScale = 3.0
-Patterns = Array[Resource]([ExtResource("6_p1"), ExtResource("7_p2")])
-PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_gaxe"), ExtResource("5_fcloak")])
-DropWeights = PackedFloat32Array(0.5, 0.3, 0.2)
-DropChance = 0.7
+Patterns = Array[Resource]([ExtResource("8_p1"), ExtResource("9_p2")])
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_gaxe"), ExtResource("5_fcloak"), ExtResource("6_tscale"), ExtResource("7_tcore")])
+DropWeights = PackedFloat32Array(0.3, 0.2, 0.15, 0.25, 0.1)
+DropChance = 1.0
 MaxHealth = 800
 Defense = 10
 IsBoss = true

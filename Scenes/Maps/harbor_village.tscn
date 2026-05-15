@@ -1,0 +1,158 @@
+[gd_scene format=3 uid="uid://scene_harbor_village_001"]
+
+[ext_resource type="PackedScene" uid="uid://ycuqlv4685cv" path="res://Scenes/Characters/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://c8qj0y5x4k3l" path="res://Scenes/UI/hud.tscn" id="2_hud"]
+[ext_resource type="PackedScene" uid="uid://c5v8q2m1n0qa" path="res://Scenes/UI/inventory_ui.tscn" id="3_invUI"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/skill_window.tscn" id="4_skillwin"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/character_window.tscn" id="5_charwin"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/boss_health_bar.tscn" id="6_bosshp"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/settings_ui.tscn" id="7_settings"]
+[ext_resource type="PackedScene" uid="uid://b8x4y2z5w4v0" path="res://Scenes/Objects/save_point.tscn" id="8_save"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/portal.tscn" id="9_portal"]
+[ext_resource type="PackedScene" uid="uid://d4k8m2w7v3p1" path="res://Scenes/Objects/shop_npc.tscn" id="10_shopnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/shop_ui.tscn" id="11_shopUI"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/skill_shop_npc.tscn" id="12_skillnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/skill_shop_ui.tscn" id="13_skillshopUI"]
+[ext_resource type="Resource" uid="uid://lq1ay338edtn" path="res://Resources/Items/hi_potion.tres" id="20_hipot"]
+[ext_resource type="Resource" uid="uid://bi1c1fctcod6o" path="res://Resources/Items/mana_potion.tres" id="21_mpot"]
+[ext_resource type="Resource" uid="uid://cons_mega_hp01" path="res://Resources/Items/mega_health_potion.tres" id="22_megahp"]
+[ext_resource type="Resource" uid="uid://itm_con_ttonic_001" path="res://Resources/Items/tidal_tonic.tres" id="23_ttonic"]
+[ext_resource type="Resource" uid="uid://itm_con_mhextr_001" path="res://Resources/Items/mana_herb_extract.tres" id="24_mhextr"]
+[ext_resource type="Resource" uid="uid://bi02gfux88d6o" path="res://Resources/Items/return_scroll.tres" id="25_rscroll"]
+[ext_resource type="Resource" uid="uid://i13rutlbykcm" path="res://Resources/Items/swift_potion.tres" id="26_swift"]
+[ext_resource type="Resource" uid="uid://itm_skb_prcshot_001" path="res://Resources/Items/skillbook_piercing_shot.tres" id="30_skb_prc"]
+[ext_resource type="Resource" uid="uid://itm_skb_bkshot_001" path="res://Resources/Items/skillbook_backstep_shot.tres" id="31_skb_bk"]
+[ext_resource type="Resource" uid="uid://itm_skb_rainoa_001" path="res://Resources/Items/skillbook_rain_of_arrows.tres" id="32_skb_rain"]
+[ext_resource type="Resource" uid="uid://itm_skb_hntfcs_001" path="res://Resources/Items/skillbook_hunter_focus.tres" id="33_skb_hnt"]
+[ext_resource type="Resource" uid="uid://itm_skb_frnova_001" path="res://Resources/Items/skillbook_frost_nova.tres" id="34_skb_fnova"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/water_well.png" id="40_well"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/barrel_group.png" id="41_barrel"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/street_lantern.png" id="42_lantern"]
+
+[sub_resource type="RectangleShape2D" id="wall_top"]
+size = Vector2(640, 16)
+
+[sub_resource type="RectangleShape2D" id="wall_bottom"]
+size = Vector2(640, 16)
+
+[sub_resource type="RectangleShape2D" id="wall_left"]
+size = Vector2(16, 360)
+
+[sub_resource type="RectangleShape2D" id="wall_right"]
+size = Vector2(16, 360)
+
+[node name="HarborVillage" type="Node2D"]
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.24, 0.36, 0.42, 1)
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.92, 0.95, 1.0, 1)
+
+[node name="Decorations" type="Node2D" parent="."]
+z_index = -1
+
+[node name="WaterWell" type="Sprite2D" parent="Decorations"]
+position = Vector2(220, 180)
+scale = Vector2(0.28, 0.28)
+texture = ExtResource("40_well")
+texture_filter = 1
+
+[node name="Barrels" type="Sprite2D" parent="Decorations"]
+position = Vector2(420, 220)
+scale = Vector2(0.28, 0.28)
+texture = ExtResource("41_barrel")
+texture_filter = 1
+
+[node name="Lantern" type="Sprite2D" parent="Decorations"]
+position = Vector2(120, 60)
+scale = Vector2(0.28, 0.28)
+texture = ExtResource("42_lantern")
+texture_filter = 1
+
+[node name="ZoneLabel" type="Label" parent="."]
+offset_left = 230.0
+offset_top = 16.0
+offset_right = 410.0
+offset_bottom = 36.0
+text = "항구마을 (Harbor Village)"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(80, 180)
+
+[node name="HUD" parent="." instance=ExtResource("2_hud")]
+
+[node name="InventoryUI" parent="." instance=ExtResource("3_invUI")]
+
+[node name="SkillWindow" parent="." instance=ExtResource("4_skillwin")]
+
+[node name="CharacterWindow" parent="." instance=ExtResource("5_charwin")]
+
+[node name="BossHealthBar" parent="." instance=ExtResource("6_bosshp")]
+
+[node name="SettingsUI" parent="." instance=ExtResource("7_settings")]
+
+[node name="SavePoint" parent="." instance=ExtResource("8_save")]
+position = Vector2(140, 100)
+NpcId = "save_point"
+
+[node name="HarborMerchant" parent="." instance=ExtResource("10_shopnpc")]
+position = Vector2(320, 90)
+NpcId = "harbor_shop"
+ShopName = "항구마을 종합상점"
+ShopItems = Array[Resource]([ExtResource("20_hipot"), ExtResource("21_mpot"), ExtResource("22_megahp"), ExtResource("23_ttonic"), ExtResource("24_mhextr"), ExtResource("25_rscroll"), ExtResource("26_swift")])
+
+[node name="ShopUI" parent="HarborMerchant" instance=ExtResource("11_shopUI")]
+
+[node name="HarborSkillNPC" parent="." instance=ExtResource("12_skillnpc")]
+position = Vector2(500, 90)
+NpcId = "harbor_skill_shop"
+
+[node name="SkillShopUI" parent="HarborSkillNPC" instance=ExtResource("13_skillshopUI")]
+SkillBooks = Array[Resource]([ExtResource("30_skb_prc"), ExtResource("31_skb_bk"), ExtResource("32_skb_rain"), ExtResource("33_skb_hnt"), ExtResource("34_skb_fnova")])
+
+[node name="PortalToOutpost" parent="." instance=ExtResource("9_portal")]
+position = Vector2(40, 180)
+TargetScenePath = "res://Scenes/Maps/field_outpost.tscn"
+TargetSpawnPosition = Vector2(320, 180)
+DestinationName = "전초기지"
+
+[node name="PortalToHarborOutskirts" parent="." instance=ExtResource("9_portal")]
+position = Vector2(600, 180)
+TargetScenePath = "res://Scenes/Maps/harbor_outskirts.tscn"
+TargetSpawnPosition = Vector2(80, 360)
+DestinationName = "항구 외곽"
+
+[node name="PortalToMountainRefuge" parent="." instance=ExtResource("9_portal")]
+position = Vector2(320, 330)
+TargetScenePath = "res://Scenes/Maps/mountain_refuge.tscn"
+TargetSpawnPosition = Vector2(80, 180)
+DestinationName = "산악 피난처"
+
+[node name="Walls" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="TopWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(320, -8)
+shape = SubResource("wall_top")
+
+[node name="BottomWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(320, 368)
+shape = SubResource("wall_bottom")
+
+[node name="LeftWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(-8, 180)
+shape = SubResource("wall_left")
+
+[node name="RightWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(648, 180)
+shape = SubResource("wall_right")

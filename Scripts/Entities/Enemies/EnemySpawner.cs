@@ -25,6 +25,14 @@ namespace FirstGame.Entities.Enemies
 		/// </summary>
 		[Export] public string BossId { get; set; } = "";
 
+		/// <summary>
+		/// true면 GameManager.IsBossDefeated 기록과 무관하게 BossKillThreshold마다 보스를 재스폰.
+		/// 메인 챕터 던전(dungeon_1/2/3)은 false로 두어 1회 처치 후 사라지게 하고,
+		/// 야외/광산 Named 보스(field_5/field_6/mine_3/dungeon_4)는 true로 두어 파밍 가능하게 한다.
+		/// 어느 경우든 GameManager.RecordBossDefeat은 항상 호출되어 first-kill 기록은 영구 유지된다.
+		/// </summary>
+		[Export] public bool RepeatableBoss { get; set; } = false;
+
 		// 보스 스폰 카운터 (씬 재로드 시 초기화됨)
 		private int _killCount = 0;
 		private bool _bossAlive = false;
@@ -320,7 +328,8 @@ namespace FirstGame.Entities.Enemies
 		{
 			if (EnemyScene == null) return;
 			string bossKey = ResolveBossId();
-			if (GameManager.Instance?.IsBossDefeated(bossKey) == true) return;
+			// 1회용 보스만 처치 기록으로 재스폰 차단. 반복 보스는 기록과 무관하게 재출현.
+			if (!RepeatableBoss && GameManager.Instance?.IsBossDefeated(bossKey) == true) return;
 			_bossAlive = true;
 			var boss = EnemyScene.Instantiate<EnemyController>();
 			var bossStats = (EnemyStats)BossStatVariant.Duplicate();

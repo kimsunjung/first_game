@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_mat_dscale_001"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/drake_scale.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "인페르노 드레이크 비늘"
+Description = "화산 보스 인페르노 드레이크의 비늘. 화염 무기 최고급 강화 소재."
+Rarity = 2
+Icon = ExtResource("2_icon")
+Price = 450
+SellPrice = 180
+Type = 4
+IsStackable = true
+MaxStack = 20
+IsShopBlocked = true
+UseEffect = 0
+HealAmount = 0
+Weight = 0.5

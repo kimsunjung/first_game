@@ -16,7 +16,11 @@
       {"itemPath": "res://Resources/Items/silver_ore.tres",     "quantity": 2},
       {"itemPath": "res://Resources/Items/silver_ore.tres",     "quantity": 3},
       {"itemPath": "res://Resources/Items/enhance_stone.tres", "quantity": 1},
-      {"itemPath": "res://Resources/Items/enhance_stone.tres", "quantity": 2}
+      {"itemPath": "res://Resources/Items/enhance_stone.tres", "quantity": 2},
+      {"itemPath": "res://Resources/Items/titan_scale.tres",   "quantity": 1},
+      {"itemPath": "res://Resources/Items/titan_core.tres",    "quantity": 1},
+      {"itemPath": "res://Resources/Items/drake_scale.tres",   "quantity": 1},
+      {"itemPath": "res://Resources/Items/drake_eye.tres",     "quantity": 1}
     ]
   },
   "combat": {
@@ -55,7 +59,28 @@
     "field_2":  { "hpMul": 2.5, "atkMul": 1.8, "expMul": 2.0 },
     "dungeon_2": { "hpMul": 3.5, "atkMul": 2.3, "expMul": 3.0 },
     "field_3":  { "hpMul": 5.0, "atkMul": 3.0, "expMul": 4.5 },
-    "dungeon_3": { "hpMul": 7.0, "atkMul": 4.0, "expMul": 6.5 }
+    "dungeon_3": { "hpMul": 7.0, "atkMul": 4.0, "expMul": 6.5 },
+    "field_outpost": { "hpMul": 1.2, "atkMul": 1.1, "expMul": 1.2 },
+    "field_4_harbor":    { "hpMul": 3.5, "atkMul": 2.5, "expMul": 3.2 },
+    "dungeon_4_sunken_shrine": { "hpMul": 5.5, "atkMul": 3.5, "expMul": 5.0 },
+    "field_5_snowfield": { "hpMul": 6.0, "atkMul": 3.8, "expMul": 5.5 },
+    "field_6_volcano":   { "hpMul": 8.0, "atkMul": 5.0, "expMul": 7.0 },
+    "mine_3":   { "hpMul": 3.0, "atkMul": 2.0, "expMul": 2.5 },
+
+    "town_outskirts":    { "hpMul": 0.9, "atkMul": 0.9, "expMul": 1.0 },
+    "green_meadow":      { "hpMul": 1.05, "atkMul": 1.0, "expMul": 1.2 },
+    "goblin_woods":      { "hpMul": 1.2, "atkMul": 1.1, "expMul": 1.3 },
+    "old_orc_road":      { "hpMul": 1.4, "atkMul": 1.25, "expMul": 1.5 },
+    "ruined_crossroad":  { "hpMul": 2.2, "atkMul": 1.7, "expMul": 2.2 },
+    "harbor_outskirts":  { "hpMul": 3.0, "atkMul": 2.2, "expMul": 2.8 },
+    "crab_beach":        { "hpMul": 3.2, "atkMul": 2.3, "expMul": 3.0 },
+    "pirate_camp":       { "hpMul": 3.8, "atkMul": 2.6, "expMul": 3.5 },
+    "snowfield_edge":    { "hpMul": 5.0, "atkMul": 3.2, "expMul": 4.5 },
+    "frozen_valley":     { "hpMul": 6.5, "atkMul": 4.0, "expMul": 6.0 },
+    "volcano_approach":  { "hpMul": 7.0, "atkMul": 4.5, "expMul": 6.5 },
+    "lava_field":        { "hpMul": 8.5, "atkMul": 5.2, "expMul": 7.5 },
+    "harbor_village":    { "hpMul": 1.0, "atkMul": 1.0, "expMul": 1.0 },
+    "mountain_refuge":   { "hpMul": 1.0, "atkMul": 1.0, "expMul": 1.0 }
   },
   "elite": {
     "spawnChance": 0.10,
