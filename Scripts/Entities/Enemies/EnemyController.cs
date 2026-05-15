@@ -358,10 +358,14 @@ namespace FirstGame.Entities.Enemies
 			PlayAnim("idle");
 		}
 
+		// 빙결 상태면 이동속도 0.5배 (PlayerController.Movement와 동일 배율).
+		private float FreezeSpeedMul =>
+			Stats.HasStatus(FirstGame.Data.StatusEffect.Freeze) ? 0.5f : 1.0f;
+
 		private void ExecuteChase(Vector2 direction, float distance)
 		{
 			float stopBuffer = 30.0f;
-			float speed = Stats.MoveSpeed * FirstGame.Core.BalanceData.Movement.EnemySpeedMultiplier;
+			float speed = Stats.MoveSpeed * FirstGame.Core.BalanceData.Movement.EnemySpeedMultiplier * FreezeSpeedMul;
 			if (distance <= Stats.AttackRange + stopBuffer)
 			{
 				float ratio = Mathf.Max(0.15f, (distance - Stats.AttackRange) / stopBuffer);
@@ -377,7 +381,7 @@ namespace FirstGame.Entities.Enemies
 		private void ExecuteFlee(Vector2 directionToTarget)
 		{
 			// 플레이어 반대 방향으로 도주
-			float speed = Stats.MoveSpeed * FirstGame.Core.BalanceData.Movement.EnemySpeedMultiplier;
+			float speed = Stats.MoveSpeed * FirstGame.Core.BalanceData.Movement.EnemySpeedMultiplier * FreezeSpeedMul;
 			Velocity = -directionToTarget * speed * 0.9f;
 			PlayAnim("run");
 		}
