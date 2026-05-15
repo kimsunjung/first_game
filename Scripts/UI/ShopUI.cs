@@ -206,15 +206,23 @@ namespace FirstGame.UI
             int sellPrice = slot.Item.SellPrice;
             string itemName = slot.Item.ItemName;
 
-            // 반드시 제거 성공 후에 골드 지급 — 무한 골드 exploit 차단의 핵심.
-            if (!_inventory.RemoveItem(slotIndex, 1))
+            // 트랜잭션으로 묶어 "아이템 제거 ↔ 골드 지급" 중간 상태 저장을 차단.
+            // RemoveItem이 OnInventoryChanged → RequestAutoSave를 트리거할 때 throttle이 지난
+            // 상태면 "아이템 없음 + 골드 미증가"가 디스크에 박혀 종료 타이밍에 판매 금액 유실.
+            // 트랜잭션 종료 후 명시적 SaveGame으로 일관 상태 즉시 보존(throttle 우회).
+            using (GameTransaction.Begin())
             {
-                ShowMessage("아이템을 판매할 수 없습니다.");
-                return;
-            }
+                // 반드시 제거 성공 후에 골드 지급 — 무한 골드 exploit 차단의 핵심.
+                if (!_inventory.RemoveItem(slotIndex, 1))
+                {
+                    ShowMessage("아이템을 판매할 수 없습니다.");
+                    return;
+                }
 
-            GameManager.Instance.PlayerGold += sellPrice;
-            AudioManager.Instance?.PlaySFX("shop_sell.wav");
+                GameManager.Instance.PlayerGold += sellPrice;
+                AudioManager.Instance?.PlaySFX("shop_sell.wav");
+            }
+            SaveManager.SaveGame();
 
             ShowMessage($"{itemName} 판매! (+{sellPrice}G)");
             UpdateGoldDisplay();
