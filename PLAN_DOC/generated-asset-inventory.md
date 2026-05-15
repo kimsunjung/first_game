@@ -11,17 +11,25 @@
 
 ---
 
-## Consumables (8개)
+## Consumables (16개)
 
 | asset id | PNG 경로 | `.tres` | Rarity | 상태 |
 |---|---|---|---|---|
 | `antidote` | `Resources/Generated/GPT/Icons/Items/antidote.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
+| `antidote_plus` | `Resources/Generated/GPT/Icons/Items/antidote_plus.png` | ✅ | Uncommon | 사용 중 |
+| `attack_potion` | `Resources/Generated/GPT/Icons/Items/attack_potion.png` | ✅ | Uncommon | 사용 중 |
+| `crit_potion` | `Resources/Generated/GPT/Icons/Items/crit_potion.png` | ✅ | Uncommon | 사용 중 |
+| `defense_potion` | `Resources/Generated/GPT/Icons/Items/defense_potion.png` | ✅ | Uncommon | 사용 중 |
 | `guard_potion` | `Resources/Generated/GPT/Icons/Items/guard_potion.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
 | `health_potion` | `Resources/Generated/GPT/Icons/Items/health_potion.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
 | `hi_potion` | `Resources/Generated/GPT/Icons/Items/hi_potion.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
+| `holy_water` | `Resources/Generated/GPT/Icons/Items/holy_water.png` | ✅ | Uncommon | 사용 중 |
 | `mana_potion` | `Resources/Generated/GPT/Icons/Items/mana_potion.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
+| `mega_health_potion` | `Resources/Generated/GPT/Icons/Items/mega_health_potion.png` | ✅ | Rare | 사용 중 |
+| `mega_mana_potion` | `Resources/Generated/GPT/Icons/Items/mega_mana_potion.png` | ✅ | Rare | 사용 중 |
 | `mega_potion` | `Resources/Generated/GPT/Icons/Items/mega_potion.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
 | `return_scroll` | `Resources/Generated/GPT/Icons/Items/return_scroll.png` | ✅ | Uncommon | 사용 중 ⚠️**중복주의** |
+| `revive_scroll` | `Resources/Generated/GPT/Icons/Items/revive_scroll.png` | ✅ | Rare | 사용 중 |
 | `swift_potion` | `Resources/Generated/GPT/Icons/Items/swift_potion.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
 
 ## Materials (광물 제외) (9개)
@@ -51,7 +59,7 @@
 | `sapphire_ore` | `Resources/Generated/GPT/Icons/Ores/sapphire_ore.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
 | `silver_ore` | `Resources/Generated/GPT/Icons/Ores/silver_ore.png` | ✅ | Common | 사용 중 ⚠️**중복주의** |
 
-## Weapons (33개)
+## Weapons (38개)
 
 | asset id | PNG 경로 | `.tres` | Rarity | 상태 |
 |---|---|---|---|---|
@@ -59,10 +67,11 @@
 | `arcane_hammer` | `Resources/Generated/GPT/Icons/Items/arcane_hammer.png` | ✅ | Rare | 사용 중 |
 | `battle_axe` | `Resources/Generated/GPT/Icons/Items/battle_axe.png` | ✅ | Common | 사용 중 |
 | `crossed_blades` | `Resources/Generated/GPT/Icons/Items/crossed_blades.png` | ✅ | Rare | 사용 중 |
-| `crystal_staff` | `Resources/Generated/GPT/Icons/Items/crystal_staff.png` | ✅ | Rare | 사용 중 |
+| `crystal_staff` | `Resources/Generated/GPT/Icons/Items/crystal_staff_v2.png` | ✅ | Rare | 사용 중 |
 | `dagger` | `Resources/Generated/GPT/Icons/Items/dagger.png` | ✅ | Common | 사용 중 |
-| `dread_blade` | `Resources/Generated/GPT/Icons/Items/dread_blade.png` | ✅ | Rare | 사용 중 |
+| `dread_blade` | `Resources/Generated/GPT/Icons/Items/dread_blade_v2.png` | ✅ | Rare | 사용 중 |
 | `executioner_axe` | `Resources/Generated/GPT/Icons/Items/executioner_axe.png` | ✅ | Rare | 사용 중 |
+| `flame_sword` | `Resources/Generated/GPT/Icons/Items/flame_sword.png` | ✅ | Rare | 사용 중 |
 | `frost_staff` | `Resources/Generated/GPT/Icons/Items/frost_staff.png` | ✅ | Uncommon | 사용 중 |
 | `golden_mace` | `Resources/Generated/GPT/Icons/Items/golden_mace.png` | ✅ | Rare | 사용 중 |
 | `golden_sword` | `Resources/Generated/GPT/Icons/Items/golden_sword.png` | ✅ | Rare | 사용 중 |
@@ -73,10 +82,14 @@
 | `heavy_cleaver` | `Resources/Generated/GPT/Icons/Items/heavy_cleaver.png` | ✅ | Rare | 사용 중 |
 | `heavy_mace` | `Resources/Generated/GPT/Icons/Items/heavy_mace.png` | ✅ | Rare | 사용 중 |
 | `hero_sword` | `Resources/Generated/GPT/Icons/Items/hero_sword.png` | ✅ | Legendary | 사용 중 |
+| `inferno_staff` | `Resources/Generated/GPT/Icons/Items/inferno_staff.png` | ✅ | Epic | 사용 중 |
 | `iron_spear` | `Resources/Generated/GPT/Icons/Items/iron_spear.png` | ✅ | Common | 사용 중 |
 | `iron_sword` | `Resources/Generated/GPT/Icons/Items/iron_sword.png` | ✅ | Common | 사용 중 |
+| `kraken_trident` | `Resources/Generated/GPT/Icons/Items/kraken_trident.png` | ✅ | Legendary | 사용 중 |
+| `magma_hammer` | `Resources/Generated/GPT/Icons/Items/magma_hammer.png` | ✅ | Epic | 사용 중 |
 | `nature_staff` | `Resources/Generated/GPT/Icons/Items/nature_staff.png` | ✅ | Uncommon | 사용 중 |
 | `ornate_sword` | `Resources/Generated/GPT/Icons/Items/ornate_sword.png` | ✅ | Common | 사용 중 |
+| `phoenix_bow` | `Resources/Generated/GPT/Icons/Items/phoenix_bow.png` | ✅ | Rare | 사용 중 |
 | `royal_halberd` | `Resources/Generated/GPT/Icons/Items/royal_halberd.png` | ✅ | Epic | 사용 중 |
 | `scimitar` | `Resources/Generated/GPT/Icons/Items/scimitar.png` | ✅ | Rare | 사용 중 |
 | `shadow_staff` | `Resources/Generated/GPT/Icons/Items/shadow_staff.png` | ✅ | Rare | 사용 중 |
@@ -84,47 +97,85 @@
 | `starlight_staff` | `Resources/Generated/GPT/Icons/Items/starlight_staff.png` | ✅ | Epic | 사용 중 |
 | `steel_sword` | `Resources/Generated/GPT/Icons/Items/steel_sword.png` | ✅ | Common | 사용 중 |
 | `twin_blades` | `Resources/Generated/GPT/Icons/Items/twin_blades.png` | ✅ | Rare | 사용 중 |
-| `void_scepter` | `Resources/Generated/GPT/Icons/Items/void_scepter.png` | ✅ | Epic | 사용 중 |
+| `void_scepter` | `Resources/Generated/GPT/Icons/Items/void_scepter_v2.png` | ✅ | Epic | 사용 중 |
 | `war_hammer` | `Resources/Generated/GPT/Icons/Items/war_hammer.png` | ✅ | Rare | 사용 중 |
 | `wooden_club` | `Resources/Generated/GPT/Icons/Items/wooden_club.png` | ✅ | Common | 사용 중 |
 | `wooden_staff` | `Resources/Generated/GPT/Icons/Items/wooden_staff.png` | ✅ | Common | 사용 중 |
 
-## Armor (몸통) (8개)
+## Armor (몸통) (19개)
 
 | asset id | PNG 경로 | `.tres` | Rarity | 상태 |
 |---|---|---|---|---|
 | `chainmail_armor` | `Resources/Generated/GPT/Icons/Equipment/chainmail_armor.png` | ✅ | Uncommon | 사용 중 ⚠️**중복주의** |
+| `dark_armor` | `Resources/Generated/GPT/Icons/Equipment/dark_armor.png` | ✅ | Epic | 사용 중 |
+| `dark_robe` | `Resources/Generated/GPT/Icons/Equipment/dark_robe.png` | ✅ | Epic | 사용 중 |
+| `dark_vest` | `Resources/Generated/GPT/Icons/Equipment/dark_vest.png` | ✅ | Epic | 사용 중 |
+| `flame_armor` | `Resources/Generated/GPT/Icons/Equipment/flame_armor.png` | ✅ | Rare | 사용 중 |
+| `frost_armor` | `Resources/Generated/GPT/Icons/Equipment/frost_armor.png` | ✅ | Rare | 사용 중 |
+| `frost_robe` | `Resources/Generated/GPT/Icons/Equipment/frost_robe.png` | ✅ | Rare | 사용 중 |
+| `frost_vest` | `Resources/Generated/GPT/Icons/Equipment/frost_vest.png` | ✅ | Rare | 사용 중 |
 | `iron_armor` | `Resources/Generated/GPT/Icons/Items/iron_armor.png` | ✅ | Common | 사용 중 |
 | `knight_plate_armor` | `Resources/Generated/GPT/Icons/Equipment/knight_plate_armor.png` | ✅ | Rare | 사용 중 ⚠️**중복주의** |
 | `leather_armor` | `Resources/Generated/GPT/Icons/Items/leather_armor.png` | ✅ | Common | 사용 중 |
 | `mystic_robe` | `Resources/Generated/GPT/Icons/Equipment/mystic_robe.png` | ✅ | Rare | 사용 중 ⚠️**중복주의** |
+| `phoenix_vest` | `Resources/Generated/GPT/Icons/Equipment/phoenix_vest.png` | ✅ | Rare | 사용 중 |
 | `ranger_vest` | `Resources/Generated/GPT/Icons/Equipment/ranger_vest.png` | ✅ | Uncommon | 사용 중 ⚠️**중복주의** |
 | `steel_armor` | `Resources/Generated/GPT/Icons/Items/steel_armor.png` | ✅ | Common | 사용 중 |
+| `storm_armor` | `Resources/Generated/GPT/Icons/Equipment/storm_armor.png` | ✅ | Rare | 사용 중 |
+| `storm_robe` | `Resources/Generated/GPT/Icons/Equipment/storm_robe.png` | ✅ | Rare | 사용 중 |
+| `storm_vest` | `Resources/Generated/GPT/Icons/Equipment/storm_vest.png` | ✅ | Rare | 사용 중 |
 | `wooden_shield` | `Resources/Generated/GPT/Icons/Items/wooden_shield.png` | ✅ | Common | 사용 중 |
 
-## Helmets (8개)
+## Helmets (11개)
 
 | asset id | PNG 경로 | `.tres` | Rarity | 상태 |
 |---|---|---|---|---|
 | `battle_helm` | `Resources/Generated/GPT/Icons/Equipment/battle_helm.png` | ✅ | Epic | 사용 중 ⚠️**중복주의** |
-| `dark_helm` | `Resources/Generated/GPT/Icons/Items/dark_helm.png` | ✅ | Common | 사용 중 |
+| `dark_helm` | `Resources/Generated/GPT/Icons/Equipment/dark_helm.png` | ✅ | Epic | 사용 중 |
+| `flame_helm` | `Resources/Generated/GPT/Icons/Equipment/flame_helm.png` | ✅ | Uncommon | 사용 중 |
+| `frost_helm` | `Resources/Generated/GPT/Icons/Equipment/frost_helm.png` | ✅ | Uncommon | 사용 중 |
 | `iron_helm` | `` | ✅ | Uncommon | 사용 중 |
 | `knight_helm` | `Resources/Generated/GPT/Icons/Items/helmet.png` | ✅ | Common | 사용 중 |
 | `leather_cap` | `Resources/Generated/GPT/Icons/Items/leather_cap.png` | ✅ | Common | 사용 중 |
 | `ranger_hood` | `Resources/Generated/GPT/Icons/Equipment/ranger_hood.png` | ✅ | Uncommon | 사용 중 ⚠️**중복주의** |
 | `steel_helm` | `Resources/Generated/GPT/Icons/Equipment/steel_helm.png` | ✅ | Rare | 사용 중 ⚠️**중복주의** |
+| `storm_helm` | `Resources/Generated/GPT/Icons/Equipment/storm_helm.png` | ✅ | Uncommon | 사용 중 |
 | `wizard_hat` | `Resources/Generated/GPT/Icons/Items/wizard_hat.png` | ✅ | Rare | 사용 중 |
 
-## Boots (6개)
+## Boots (10개)
 
 | asset id | PNG 경로 | `.tres` | Rarity | 상태 |
 |---|---|---|---|---|
+| `dark_boots` | `Resources/Generated/GPT/Icons/Equipment/dark_boots.png` | ✅ | Epic | 사용 중 |
+| `flame_boots` | `Resources/Generated/GPT/Icons/Equipment/flame_boots.png` | ✅ | Rare | 사용 중 |
+| `glacier_boots` | `Resources/Generated/GPT/Icons/Equipment/glacier_boots.png` | ✅ | Rare | 사용 중 |
 | `iron_boots` | `Resources/Generated/GPT/Icons/Items/iron_boots.png` | ✅ | Uncommon | 사용 중 |
 | `knight_boots` | `Resources/Generated/GPT/Icons/Equipment/knight_boots.png` | ✅ | Rare | 사용 중 ⚠️**중복주의** |
 | `leather_boots` | `Resources/Generated/GPT/Icons/Items/boots.png` | ✅ | Common | 사용 중 |
 | `shadow_boots` | `Resources/Generated/GPT/Icons/Equipment/shadow_boots.png` | ✅ | Rare | 사용 중 ⚠️**중복주의** |
+| `storm_boots` | `Resources/Generated/GPT/Icons/Equipment/storm_boots.png` | ✅ | Rare | 사용 중 |
 | `swift_boots` | `Resources/Generated/GPT/Icons/Equipment/swift_boots.png` | ✅ | Uncommon | 사용 중 ⚠️**중복주의** |
 | `traveler_boots` | `Resources/Generated/GPT/Icons/Items/traveler_boots.png` | ✅ | Rare | 사용 중 |
+
+## Gloves / Belts / Cloaks (13개)
+
+화염/서리/폭풍/암흑 세트로 신규 등록된 항목만 기재. 나머지 동일 카테고리 `.tres`는 본 문서 미수록(추후 일괄 등록 시 갱신).
+
+| asset id | PNG 경로 | `.tres` | Rarity | 상태 |
+|---|---|---|---|---|
+| `flame_gloves` | `Resources/Generated/GPT/Icons/Equipment/flame_gloves.png` | ✅ | Rare | 사용 중 |
+| `frost_gloves` | `Resources/Generated/GPT/Icons/Equipment/frost_gloves.png` | ✅ | Rare | 사용 중 |
+| `storm_gloves` | `Resources/Generated/GPT/Icons/Equipment/storm_gloves.png` | ✅ | Rare | 사용 중 |
+| `dark_gloves` | `Resources/Generated/GPT/Icons/Equipment/dark_gloves.png` | ✅ | Epic | 사용 중 |
+| `flame_belt` | `Resources/Generated/GPT/Icons/Equipment/flame_belt.png` | ✅ | Rare | 사용 중 |
+| `frost_belt` | `Resources/Generated/GPT/Icons/Equipment/frost_belt.png` | ✅ | Rare | 사용 중 |
+| `storm_belt` | `Resources/Generated/GPT/Icons/Equipment/storm_belt.png` | ✅ | Rare | 사용 중 |
+| `dark_belt` | `Resources/Generated/GPT/Icons/Equipment/dark_belt.png` | ✅ | Epic | 사용 중 |
+| `flame_cloak` | `Resources/Generated/GPT/Icons/Equipment/flame_cloak.png` | ✅ | Rare | 사용 중 |
+| `ember_cloak` | `Resources/Generated/GPT/Icons/Equipment/ember_cloak.png` | ✅ | Epic | 사용 중 |
+| `frost_cloak` | `Resources/Generated/GPT/Icons/Equipment/frost_cloak.png` | ✅ | Epic | 사용 중 |
+| `storm_cloak` | `Resources/Generated/GPT/Icons/Equipment/storm_cloak.png` | ✅ | Rare | 사용 중 |
+| `dark_cloak` | `Resources/Generated/GPT/Icons/Equipment/dark_cloak.png` | ✅ | Epic | 사용 중 |
 
 ## Rings (6개)
 
@@ -221,9 +272,18 @@
 
 `bone_hound`, `cursed_banner_wraith`, `cursed_soldier`, `dark_wolf`, `fallen_knight`, `plague_ghoul`, `ruin_golem`, `shadow_bat`
 
-### Mine (8개)
+### Mine (12개)
 
-`cave_bat`, `mine_wraith`, `rock_golem`, `skeleton_miner`, `zombie_armored`, `zombie_basic`, `zombie_brute`, `zombie_fast`
+기존 8종: `cave_bat`, `mine_wraith`, `rock_golem`, `skeleton_miner`, `zombie_armored`, `zombie_basic`, `zombie_brute`, `zombie_fast`
+
+mine_3 신규 4종 (2026-05-15, `Resources/Generated/GPT/SourceSheets/Enemies/source_enemies_mine3_crystal_final_2026_05_15.png`, 2×2): `crystal_archer`, `crystal_warlock`, `crystal_brute`, `corrupted_miner`
+
+| asset id | PNG | `.tres` | 상태 |
+|---|---|---|---|
+| `crystal_archer` | `Enemies/Mine/crystal_archer.png` | `Resources/Enemies/mine_crystal_archer.tres` | 사용 중 |
+| `crystal_warlock` | `Enemies/Mine/crystal_warlock.png` | `Resources/Enemies/mine_crystal_warlock.tres` | 사용 중 |
+| `crystal_brute` | `Enemies/Mine/crystal_brute.png` | `Resources/Enemies/mine_crystal_brute.tres` | 사용 중 |
+| `corrupted_miner` | `Enemies/Mine/corrupted_miner.png` | `Resources/Enemies/mine_corrupted_miner.tres` | 사용 중 |
 
 ### Dungeon1 (8개)
 
@@ -403,6 +463,34 @@
 | `hay_bale_stack` | `Objects/Village/hay_bale_stack.png` | — | 리소스만 등록 | 농촌/필드 분위기에 맞춰 필드 맵에 배치 후보 — 현 town 컨셉(석조 광장)과 톤 차이 |
 | `campfire_ring` | `Objects/Village/campfire_ring.png` | — | 리소스만 등록 | 야영지 분위기 — 필드 휴식 포인트/던전 입구 외부 등에 후속 배치 후보 |
 | `market_cloth_stall` | `Objects/Village/market_cloth_stall.png` | — | 리소스만 등록 | 노점 부스 — town 기존 ShopNPC와 컨셉 중복 위험. 별도 시장 맵 도입 시 사용 |
+
+## Expansion Environment Objects (16개)
+
+`Resources/Generated/GPT/Objects/{Coast,Snowfield,Volcano,Dungeon,Mine,Field}/` — 확장 지역(항구/설원/화산/던전/광산/필드)용 환경 오브젝트. **이번 작업에서는 PNG 리소스 등록만**. `.tscn` 배치, CollisionShape2D/Area2D, 채집·포털·퀘스트·상호작용 로직 미추가.
+
+**시트 #1 (확장 지역, 2026-05-15)**: `Resources/Generated/GPT/SourceSheets/Objects/source_environment_objects_expansion_2026_05_15.png` (4×2, 1774×887, Codex 생성)
+**슬라이서 #1**: `Resources/Generated/GPT/SourceSheets/Objects/slice_environment_objects_expansion_2026_05_15.py` (4×2, 128×128 canvas)
+**시트 #2 (광산/던전/필드, 2026-05-15)**: `Resources/Generated/GPT/SourceSheets/Objects/source_environment_objects_mine_dungeon_field_2026_05_15.png` (4×2, 1774×887, Codex 생성)
+**슬라이서 #2**: `Resources/Generated/GPT/SourceSheets/Objects/slice_environment_objects_mine_dungeon_field_2026_05_15.py` (4×2, 128×128 canvas)
+
+| asset id | category | sliced PNG | 상태 | 실제 연결 위치 | 중복/주의 |
+|---|---|---|---|---|---|
+| `broken_ship` | Coast | `Objects/Coast/broken_ship.png` | 리소스만 등록 | 없음 | — |
+| `lighthouse` | Coast | `Objects/Coast/lighthouse.png` | 리소스만 등록 | 없음 | — |
+| `coral_outcrop` | Coast | `Objects/Coast/coral_outcrop.png` | 리소스만 등록 | 없음 | — |
+| `snow_drift` | Snowfield | `Objects/Snowfield/snow_drift.png` | 리소스만 등록 | 없음 | — |
+| `ice_pillar` | Snowfield | `Objects/Snowfield/ice_pillar.png` | 리소스만 등록 | 없음 | — |
+| `lava_pool` | Volcano | `Objects/Volcano/lava_pool.png` | 리소스만 등록 | 없음 | — |
+| `ember_rock` | Volcano | `Objects/Volcano/ember_rock.png` | 리소스만 등록 | 없음 | — |
+| `dungeon_entrance` | Dungeon | `Objects/Dungeon/dungeon_entrance.png` | 리소스만 등록 | 없음 | ⚠️ 동명 자산 3종 별도 관리: 본 환경 오브젝트(`Objects/Dungeon/dungeon_entrance.png`) / 상호작용 아이콘(`Icons/Interaction/dungeon_entrance.png`) / 월드 게이트(`Objects/World/dungeon_entrance_gate.png`). 셋 모두 별도 용도, 교체·삭제 금지. |
+| `crystal_vein` | Mine | `Objects/Mine/crystal_vein.png` | 리소스만 등록 | 없음 | 광맥 채집 시스템 추가 시 `mine_1`/`mine_2.tscn`에 Sprite 배치 후보. 기존 `Objects/World/mining_ore_vein.png`(런타임에 OreItem.Icon 사용)와 별도 — 본 신규 자산은 일반 장식/시각 마커용. |
+| `mine_cart` | Mine | `Objects/Mine/mine_cart.png` | 리소스만 등록 | 없음 | `mine_1`/`mine_2` 맵 장식 후보 — 광산 분위기 연출용. |
+| `ore_crates` | Mine | `Objects/Mine/ore_crates.png` | 리소스만 등록 | 없음 | 광산 입구·저장소 장식 후보. |
+| `dungeon_brazier` | Dungeon | `Objects/Dungeon/dungeon_brazier.png` | 리소스만 등록 | 없음 | `dungeon_1~3.tscn` 통로·보스 챔버 장식 후보 — 화염 이펙트 연결 시 후속 시스템 필요. |
+| `broken_pillar` | Dungeon | `Objects/Dungeon/broken_pillar.png` | 리소스만 등록 | 없음 | 던전 폐허 장식 후보. |
+| `rune_stone` | Dungeon | `Objects/Dungeon/rune_stone.png` | 리소스만 등록 | 없음 | 보스 봉인/챕터 플래그 표식 후보 — 상호작용 시스템 미추가. |
+| `field_camp_tent` | Field | `Objects/Field/field_camp_tent.png` | 리소스만 등록 | 없음 | `field_outpost`/`field_1~3` 휴식 포인트 장식 후보. |
+| `signpost_waypoint` | Field | `Objects/Field/signpost_waypoint.png` | 리소스만 등록 | 없음 | 필드 분기점 표지 장식 후보 — 텍스트/툴팁 시스템 별도. |
 
 ## 참고
 
