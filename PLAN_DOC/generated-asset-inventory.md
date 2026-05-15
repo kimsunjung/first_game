@@ -628,3 +628,95 @@ mine_3 신규 4종 (2026-05-15, `Resources/Generated/GPT/SourceSheets/Enemies/so
 - Equipment 폴더 신규 PNG: 16개 — `Resources/Generated/GPT/Icons/Equipment/` (최근 추가)
 - Equipment 폴더와 Items 폴더에 같은 이름의 PNG가 모두 있을 경우, `.tres`의 Icon 경로가 어느 쪽을 가리키는지 확인 필요. 이번 인벤토리는 `.tres`의 실제 참조 경로를 기준으로 표기.
 - 새 PNG 생성 전: 본 문서 + `Resources/Items/` 디렉터리 + 위 ⚠️중복주의 리스트 3중 확인.
+
+---
+
+## Expansion v1 전용 아이콘 등록 (2026-05-15, 40개)
+
+Codex가 v1 신규 시트 6장을 생성. 슬라이스 후 임시 재사용 아이콘 → 전용 아이콘으로 교체. 모든 항목 64×64 PNG 캔버스 (largest_blob isolation + bbox trim + LANCZOS).
+
+### Skill Icons (12개)
+
+**시트**: `Resources/Generated/GPT/SourceSheets/Icons/source_skill_icons_expansion_v1_combat_magic_2026_05_15.png` (1774×887, 4×2)
+**슬라이서**: `Resources/Generated/GPT/SourceSheets/Icons/slice_skill_icons_expansion_v1_combat_magic_2026_05_15.py`
+
+| asset id | category | sliced PNG | 연결 `.tres` | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `cleave` | Skill Icons | `Icons/Skills/cleave.png` | `Resources/Skills/cleave.tres` | 사용 중 | whirlwind.png → cleave.png |
+| `ground_slam` | Skill Icons | `Icons/Skills/ground_slam.png` | `Resources/Skills/ground_slam.tres` | 사용 중 | power_strike_v2.png → ground_slam.png |
+| `battle_cry` | Skill Icons | `Icons/Skills/battle_cry.png` | `Resources/Skills/battle_cry.tres` | 사용 중 | iron_stance.png → battle_cry.png |
+| `execute` | Skill Icons | `Icons/Skills/execute.png` | `Resources/Skills/execute.tres` | 사용 중 | power_strike.png → execute.png |
+| `flame_wave` | Skill Icons | `Icons/Skills/flame_wave.png` | `Resources/Skills/flame_wave.tres` | 사용 중 | fire_bolt_v2.png → flame_wave.png |
+| `frost_nova` | Skill Icons | `Icons/Skills/frost_nova.png` | `Resources/Skills/frost_nova.tres` | 사용 중 | ice_shard.png → frost_nova.png |
+| `arcane_missile` | Skill Icons | `Icons/Skills/arcane_missile.png` | `Resources/Skills/arcane_missile.tres` | 사용 중 | lightning_storm.png → arcane_missile.png |
+| `mana_shield` | Skill Icons | `Icons/Skills/mana_shield.png` | `Resources/Skills/mana_shield.tres` | 사용 중 | generic_passive_placeholder.png → mana_shield.png |
+
+**시트**: `Resources/Generated/GPT/SourceSheets/Icons/source_skill_icons_expansion_v1_archer_2026_05_15.png` (1254×1254, 2×2)
+**슬라이서**: `Resources/Generated/GPT/SourceSheets/Icons/slice_skill_icons_expansion_v1_archer_2026_05_15.py`
+
+| asset id | category | sliced PNG | 연결 `.tres` | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `piercing_shot` | Skill Icons | `Icons/Skills/piercing_shot.png` | `Resources/Skills/piercing_shot.tres` | 사용 중 | arrow_shot.png → piercing_shot.png |
+| `backstep_shot` | Skill Icons | `Icons/Skills/backstep_shot.png` | `Resources/Skills/backstep_shot.tres` | 사용 중 | dash.png → backstep_shot.png |
+| `rain_of_arrows` | Skill Icons | `Icons/Skills/rain_of_arrows.png` | `Resources/Skills/rain_of_arrows.tres` | 사용 중 | multi_shot.png → rain_of_arrows.png |
+| `hunter_focus` | Skill Icons | `Icons/Skills/hunter_focus.png` | `Resources/Skills/hunter_focus.tres` | 사용 중 | precise_aim.png → hunter_focus.png |
+
+### Skill Books (12개)
+
+**시트**: `Resources/Generated/GPT/SourceSheets/Items/source_skillbook_icons_expansion_v1_combat_magic_2026_05_15.png` (1774×887, 4×2)
+**슬라이서**: `Resources/Generated/GPT/SourceSheets/Items/slice_skillbook_icons_expansion_v1_combat_magic_2026_05_15.py`
+
+| asset id | category | sliced PNG | 연결 `.tres` | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `skillbook_cleave` | Skill Books | `Icons/Items/skillbook_cleave.png` | `Resources/Items/skillbook_cleave.tres` | 사용 중 | skillbook_whirlwind.png → skillbook_cleave.png |
+| `skillbook_ground_slam` | Skill Books | `Icons/Items/skillbook_ground_slam.png` | `Resources/Items/skillbook_ground_slam.tres` | 사용 중 | skillbook_power_strike.png → skillbook_ground_slam.png |
+| `skillbook_battle_cry` | Skill Books | `Icons/Items/skillbook_battle_cry.png` | `Resources/Items/skillbook_battle_cry.tres` | 사용 중 | skillbook_iron_stance.png → skillbook_battle_cry.png |
+| `skillbook_execute` | Skill Books | `Icons/Items/skillbook_execute.png` | `Resources/Items/skillbook_execute.tres` | 사용 중 | skillbook_power_strike_v2.png → skillbook_execute.png |
+| `skillbook_flame_wave` | Skill Books | `Icons/Items/skillbook_flame_wave.png` | `Resources/Items/skillbook_flame_wave.tres` | 사용 중 | skillbook_fire_bolt.png → skillbook_flame_wave.png |
+| `skillbook_frost_nova` | Skill Books | `Icons/Items/skillbook_frost_nova.png` | `Resources/Items/skillbook_frost_nova.tres` | 사용 중 | skillbook_ice_shard.png → skillbook_frost_nova.png |
+| `skillbook_arcane_missile` | Skill Books | `Icons/Items/skillbook_arcane_missile.png` | `Resources/Items/skillbook_arcane_missile.tres` | 사용 중 | skillbook_lightning_storm.png → skillbook_arcane_missile.png |
+| `skillbook_mana_shield` | Skill Books | `Icons/Items/skillbook_mana_shield.png` | `Resources/Items/skillbook_mana_shield.tres` | 사용 중 | skillbook_generic_passive.png → skillbook_mana_shield.png |
+
+**시트**: `Resources/Generated/GPT/SourceSheets/Items/source_skillbook_icons_expansion_v1_archer_2026_05_15.png` (1254×1254, 2×2)
+**슬라이서**: `Resources/Generated/GPT/SourceSheets/Items/slice_skillbook_icons_expansion_v1_archer_2026_05_15.py`
+
+| asset id | category | sliced PNG | 연결 `.tres` | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `skillbook_piercing_shot` | Skill Books | `Icons/Items/skillbook_piercing_shot.png` | `Resources/Items/skillbook_piercing_shot.tres` | 사용 중 | skillbook_arrow_shot.png → skillbook_piercing_shot.png |
+| `skillbook_backstep_shot` | Skill Books | `Icons/Items/skillbook_backstep_shot.png` | `Resources/Items/skillbook_backstep_shot.tres` | 사용 중 | skillbook_dash.png → skillbook_backstep_shot.png |
+| `skillbook_rain_of_arrows` | Skill Books | `Icons/Items/skillbook_rain_of_arrows.png` | `Resources/Items/skillbook_rain_of_arrows.tres` | 사용 중 | skillbook_multi_shot.png → skillbook_rain_of_arrows.png |
+| `skillbook_hunter_focus` | Skill Books | `Icons/Items/skillbook_hunter_focus.png` | `Resources/Items/skillbook_hunter_focus.tres` | 사용 중 | skillbook_precise_aim.png → skillbook_hunter_focus.png |
+
+### Consumables (8개)
+
+**시트**: `Resources/Generated/GPT/SourceSheets/Items/source_consumable_icons_regional_expansion_v1_2026_05_15.png` (1774×887, 4×2)
+**슬라이서**: `Resources/Generated/GPT/SourceSheets/Items/slice_consumable_icons_regional_expansion_v1_2026_05_15.py`
+
+| asset id | category | sliced PNG | 연결 `.tres` | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `tidal_tonic` | Consumables | `Icons/Items/tidal_tonic.png` | `Resources/Items/tidal_tonic.tres` | 사용 중 | hi_potion.png → tidal_tonic.png |
+| `warming_draught` | Consumables | `Icons/Items/warming_draught.png` | `Resources/Items/warming_draught.tres` | 사용 중 | health_potion.png → warming_draught.png |
+| `defrost_potion` | Consumables | `Icons/Items/defrost_potion.png` | `Resources/Items/defrost_potion.tres` | 사용 중 | antidote_plus.png → defrost_potion.png |
+| `fire_resist_elixir` | Consumables | `Icons/Items/fire_resist_elixir.png` | `Resources/Items/fire_resist_elixir.tres` | 사용 중 | defense_potion.png → fire_resist_elixir.png |
+| `magma_brew` | Consumables | `Icons/Items/magma_brew.png` | `Resources/Items/magma_brew.tres` | 사용 중 | attack_potion.png → magma_brew.png |
+| `battle_elixir` | Consumables | `Icons/Items/battle_elixir.png` | `Resources/Items/battle_elixir.tres` | 사용 중 | mega_potion.png → battle_elixir.png |
+| `curse_water` | Consumables | `Icons/Items/curse_water.png` | `Resources/Items/curse_water.tres` | 사용 중 | holy_water.png → curse_water.png |
+| `mana_herb_extract` | Consumables | `Icons/Items/mana_herb_extract.png` | `Resources/Items/mana_herb_extract.tres` | 사용 중 | herb_leaf.png → mana_herb_extract.png |
+
+### Materials (8개)
+
+**시트**: `Resources/Generated/GPT/SourceSheets/Items/source_material_icons_regional_expansion_v1_2026_05_15.png` (1774×887, 4×2)
+**슬라이서**: `Resources/Generated/GPT/SourceSheets/Items/slice_material_icons_regional_expansion_v1_2026_05_15.py`
+
+| asset id | category | sliced PNG | 연결 `.tres` | 상태 | 교체 메모 |
+|---|---|---|---|---|---|
+| `sea_kelp` | Materials | `Icons/Items/sea_kelp.png` | `Resources/Items/sea_kelp.tres` | 사용 중 | material_wood.png → sea_kelp.png |
+| `glacier_shard` | Materials | `Icons/Items/glacier_shard.png` | `Resources/Items/glacier_shard.tres` | 사용 중 | stone_ore.png → glacier_shard.png |
+| `lava_stone` | Materials | `Icons/Items/lava_stone.png` | `Resources/Items/lava_stone.tres` | 사용 중 | stone_ore.png → lava_stone.png |
+| `titan_scale` | Materials | `Icons/Items/titan_scale.png` | `Resources/Items/titan_scale.tres` | 사용 중 | ancient_hide.png → titan_scale.png |
+| `titan_core` | Materials | `Icons/Items/titan_core.png` | `Resources/Items/titan_core.tres` | 사용 중 | boss_core.png → titan_core.png |
+| `drake_scale` | Materials | `Icons/Items/drake_scale.png` | `Resources/Items/drake_scale.tres` | 사용 중 | ancient_hide.png → drake_scale.png |
+| `drake_eye` | Materials | `Icons/Items/drake_eye.png` | `Resources/Items/drake_eye.tres` | 사용 중 | boss_trophy.png → drake_eye.png |
+| `kraken_ink` | Materials | `Icons/Items/kraken_ink.png` | `Resources/Items/kraken_ink.tres` | 사용 중 | boss_core.png → kraken_ink.png |
+
+**참고**: 신규 40개 PNG는 `.import` 파일을 동반하지 않는다 (Godot 에디터가 처음 열릴 때 자동 생성). 기존 임시 아이콘 PNG/`.import` 및 원본 시트 6장은 보존됨.
