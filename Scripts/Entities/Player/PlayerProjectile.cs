@@ -21,8 +21,12 @@ namespace FirstGame.Entities.Player
 		public bool SingleHit { get; set; } = true;
 		// 관통 횟수 — 0이면 첫 적중 시 소멸. N이면 최대 N+1 적 관통.
 		public int PierceCount { get; set; } = 0;
+		// 최대 비거리(px) — 화면 밖 적까지 평타/스킬이 길게 닿지 않도록 제한.
+		// 자동 조준 사거리보다 약간 길게 두어 움직이는 적을 따라잡을 여지만 남긴다.
+		public float MaxTravel { get; set; } = 320f;
 
-		private float _lifetime = 1.5f;
+		private float _traveled = 0f;
+		private float _lifetime = 1.0f;
 		private bool _consumed = false;
 		private readonly System.Collections.Generic.HashSet<ulong> _hitIds = new();
 
@@ -66,7 +70,10 @@ namespace FirstGame.Entities.Player
 
 		public override void _PhysicsProcess(double delta)
 		{
-			Position += Direction * Speed * FirstGame.Core.BalanceData.Movement.ProjectileSpeedMultiplier * (float)delta;
+			float step = Speed * FirstGame.Core.BalanceData.Movement.ProjectileSpeedMultiplier * (float)delta;
+			Position += Direction * step;
+			_traveled += step;
+			if (_traveled >= MaxTravel) { QueueFree(); return; }
 			_lifetime -= (float)delta;
 			if (_lifetime <= 0f) QueueFree();
 		}

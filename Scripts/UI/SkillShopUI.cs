@@ -128,7 +128,8 @@ namespace FirstGame.UI
 				{
 					var icon = new TextureRect();
 					icon.Texture = skill.Icon;
-					icon.CustomMinimumSize = new Vector2(18, 18);
+					icon.CustomMinimumSize = new Vector2(12, 12);
+					icon.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
 					icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
 					icon.MouseFilter = Control.MouseFilterEnum.Ignore;
 					hbox.AddChild(icon);

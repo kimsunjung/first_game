@@ -248,7 +248,7 @@ namespace FirstGame.Entities.Player
 			var enemies = GameManager.Instance?.ActiveEnemies;
 			if (enemies == null) return;
 			Node2D best = null;
-			float bestDist = 400f;
+			float bestDist = TargetMaxRange;
 			foreach (Node2D e in enemies)
 			{
 				if (e is not IDamageable) continue;
@@ -301,8 +301,12 @@ namespace FirstGame.Entities.Player
 			proj.GlobalPosition = GlobalPosition;
 		}
 
+		// 자동 타겟팅 사거리 — 기본 640x360 / zoom 1.6 화면 기준으로 화면 밖 조준을 줄인다.
+		// PlayerProjectile.MaxTravel은 움직이는 적 보정분만큼 조금 더 길다.
+		private const float TargetMaxRange = 280f;
+
 		// 자동 타겟팅 — Mage/Archer만 적용. Warrior는 근접이라 불필요.
-		// 현재 타겟이 죽거나 600px 밖이면 가장 가까운 적으로 갱신.
+		// 현재 타겟이 죽거나 사거리 밖이면 가장 가까운 적으로 갱신.
 		private void UpdateAutoTarget()
 		{
 			if (Stats == null || Stats.PlayerClass == Data.PlayerClass.Warrior)
@@ -310,18 +314,24 @@ namespace FirstGame.Entities.Player
 				ClearTarget();
 				return;
 			}
-			const float maxRange = 600f;
 			// 현재 타겟 유효성 확인
-			if (_targetEnemy != null && IsInstanceValid(_targetEnemy) && _targetEnemy is IDamageable dmg)
+			if (_targetEnemy != null && IsInstanceValid(_targetEnemy) && _targetEnemy is IDamageable)
 			{
 				float d = GlobalPosition.DistanceTo(_targetEnemy.GlobalPosition);
-				if (d <= maxRange) { UpdateTargetIndicator(); return; }
+				if (d <= TargetMaxRange) { UpdateTargetIndicator(); return; }
 			}
-			// 새 타겟 선택 — 가장 가까운 적
+			AcquireNearestTarget();
+		}
+
+		// 가장 가까운 적을 즉시 타겟으로 확보. UpdateAutoTarget(매 프레임)뿐 아니라
+		// 첫 공격/스킬 직전 GetAimDirection에서도 호출 — 스폰 직후 1프레임 갭으로
+		// 첫 발이 엉뚱한 방향(facing)으로 나가는 문제를 제거한다.
+		private void AcquireNearestTarget()
+		{
 			var enemies = GameManager.Instance?.ActiveEnemies;
 			if (enemies == null) { ClearTarget(); return; }
 			Node2D best = null;
-			float bestDist = maxRange;
+			float bestDist = TargetMaxRange;
 			foreach (Node2D e in enemies)
 			{
 				if (e is not IDamageable) continue;
@@ -355,6 +365,13 @@ namespace FirstGame.Entities.Player
 		/// <summary>현재 타겟의 방향(타겟이 있으면 그쪽, 없으면 facing). 죽으면 facing 폴백.</summary>
 		public Vector2 GetAimDirection()
 		{
+			// 스폰 직후 첫 프레임이거나 기존 타겟이 사거리 밖이면 발사 직전 즉시 갱신한다.
+			bool targetOutOfRange = _targetEnemy != null
+				&& IsInstanceValid(_targetEnemy)
+				&& GlobalPosition.DistanceTo(_targetEnemy.GlobalPosition) > TargetMaxRange;
+			if ((_targetEnemy == null || !IsInstanceValid(_targetEnemy) || targetOutOfRange)
+				&& Stats != null && Stats.PlayerClass != Data.PlayerClass.Warrior)
+				AcquireNearestTarget();
 			if (_targetEnemy != null && IsInstanceValid(_targetEnemy))
 				return GlobalPosition.DirectionTo(_targetEnemy.GlobalPosition);
 			return _facingDirection != Vector2.Zero ? _facingDirection.Normalized() : Vector2.Right;

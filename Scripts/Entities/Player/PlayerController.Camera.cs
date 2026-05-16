@@ -4,13 +4,15 @@ namespace FirstGame.Entities.Player
 {
 	public partial class PlayerController
 	{
-		// ─── 카메라 줌 테스트 (F5: 1.5배 / F6: 2.0배 / F7: 2.5배) ───
+		// ─── 카메라 줌 (F5: 1.3배 / F6: 1.6배 / F7: 2.0배) ───
+		// 모바일에서 한 화면에 더 많은 상황이 들어오도록 기본 줌을 1.6배로 낮춤.
+		// (충돌/공격 판정은 월드 좌표라 불변 — 시각 표시 범위만 넓어짐.)
 		private static readonly Vector2[] ZoomPresets = {
-			new(1.5f, 1.5f),
+			new(1.3f, 1.3f),
+			new(1.6f, 1.6f),
 			new(2.0f, 2.0f),
-			new(2.5f, 2.5f),
 		};
-		private int _currentZoomIndex = 1; // 기본 2.0배
+		private int _currentZoomIndex = 1; // 기본 1.6배
 
 		private void ApplyCameraZoom()
 		{

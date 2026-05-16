@@ -16,7 +16,7 @@ BonusDamage = 13
 BonusAttackSpeed = 0.0
 BonusCritRate = 0.0
 BonusLifesteal = 0.0
-AttackType = 1
+AttackType = 2
 RequiredClass = 1
 AvailableToAllClasses = false
 

@@ -18,7 +18,7 @@
 [ext_resource type="Resource" uid="uid://scroll_town01" path="res://Resources/Items/scroll_town.tres" id="16_stown"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_pshop"]
-radius = 80.0
+radius = 56.0
 
 [sub_resource type="CircleShape2D" id="body_shape"]
 radius = 10.0
@@ -29,7 +29,7 @@ collision_mask = 1
 script = ExtResource("1_shop")
 PromptIcon = ExtResource("3_prompt")
 ShopItems = Array[Resource]([ExtResource("4_hp"), ExtResource("5_hi"), ExtResource("6_mega"), ExtResource("7_mp"), ExtResource("8_mhp"), ExtResource("9_mmp"), ExtResource("10_atk"), ExtResource("11_def"), ExtResource("12_crit"), ExtResource("13_swift"), ExtResource("14_anti"), ExtResource("15_rscroll"), ExtResource("16_stown")])
-ShopName = "포션 상점"
+ShopName = "소모품 상점"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_pshop")
@@ -43,7 +43,7 @@ shape = SubResource("body_shape")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.24, 0.24)
 texture = ExtResource("2_npc_tex")
 
 [node name="ShopIcon" type="Label" parent="."]
@@ -63,7 +63,7 @@ theme_override_font_sizes/font_size = 7
 theme_override_colors/font_color = Color(1, 0.92, 0.45, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
-text = "[포션]"
+text = "[소모품]"
 horizontal_alignment = 1
 
 [node name="PromptLabel" type="Label" parent="."]
@@ -80,5 +80,5 @@ offset_bottom = 36.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 8
-text = "F - 포션 상점"
+text = "F - 소모품 상점"
 horizontal_alignment = 1

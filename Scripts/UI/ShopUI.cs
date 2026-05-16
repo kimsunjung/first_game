@@ -7,6 +7,7 @@ namespace FirstGame.UI
 {
     public partial class ShopUI : BaseUIWindow
     {
+        private Label _titleLabel;
         private TabContainer _tabContainer;
         private GridContainer _buyGrid;
         private GridContainer _sellGrid;
@@ -28,6 +29,7 @@ namespace FirstGame.UI
 
         protected override void OnReadyInternal()
         {
+            _titleLabel = GetNode<Label>("%ShopTitleLabel");
             _tabContainer = GetNode<TabContainer>("%TabContainer");
             _buyGrid = GetNode<GridContainer>("%BuyGrid");
             _sellGrid = GetNode<GridContainer>("%SellGrid");
@@ -62,6 +64,8 @@ namespace FirstGame.UI
             _shopItems = shopItems;
             _player = player;
             _inventory = player.Inventory;
+            if (_titleLabel != null && !string.IsNullOrEmpty(shopName))
+                _titleLabel.Text = BuildShopHeader(shopName);
 
             if (Visible) OnOpened(); // 이미 열린 상태면 내용만 갱신
             else Open();
@@ -90,10 +94,19 @@ namespace FirstGame.UI
 
             if (_shopItems == null) return;
 
+            // 현재 플레이어 클래스 — 타 직업 전용 무기는 진열에서 제외(필터).
+            var playerCls = GameManager.Instance?.Player?.Stats.PlayerClass;
+
             foreach (var item in _shopItems)
             {
+                if (item == null) continue;
                 // 상점 차단 — 적/보스 드랍 전용 무기는 진열 자체 제외.
-                if (item != null && item.IsShopBlocked) continue;
+                if (item.IsShopBlocked) continue;
+                // 클래스 전용 무기는 현재 직업과 일치할 때만 진열.
+                // 방어구/장신구는 AvailableToAllClasses=true라 항상 노출.
+                if (item.Type == ItemType.Weapon && !item.AvailableToAllClasses
+                    && playerCls.HasValue && item.RequiredClass != playerCls.Value)
+                    continue;
                 var panel = CreateItemPanel(item, isBuyMode: true);
                 _buyGrid.AddChild(panel);
             }
@@ -384,6 +397,13 @@ namespace FirstGame.UI
             if (item.BonusMoveSpeed != 0)   parts.Add($"이동+{item.BonusMoveSpeed:0}");
             if (item.BonusCritRate != 0)    parts.Add($"치명+{item.BonusCritRate * 100:0}%");
             return parts.Count > 0 ? string.Join("  ", parts) : "";
+        }
+
+        private static string BuildShopHeader(string shopName)
+        {
+            if (shopName.Contains("무기/방어구")) return "장비";
+            if (shopName.Contains("소모품")) return "소모품";
+            return shopName;
         }
 
         private void UpdateGoldDisplay()

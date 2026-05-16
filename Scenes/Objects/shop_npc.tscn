@@ -24,9 +24,13 @@
 [ext_resource type="Resource" uid="uid://itemboots002" path="res://Resources/Items/iron_boots.tres" id="20_iboots"]
 [ext_resource type="Resource" uid="uid://itembrace001" path="res://Resources/Items/bronze_bracelet.tres" id="21_bbrace"]
 [ext_resource type="Resource" uid="uid://itembrace002" path="res://Resources/Items/silver_bracelet.tres" id="22_sbrace"]
+[ext_resource type="Resource" uid="uid://itm_bow_long_001" path="res://Resources/Items/long_bow.tres" id="24_longbow"]
+[ext_resource type="Resource" uid="uid://wpn_fishbow01" path="res://Resources/Items/fishermans_bow.tres" id="25_fishbow"]
+[ext_resource type="Resource" uid="uid://wpn_froststaff01" path="res://Resources/Items/frostfang_staff.tres" id="26_frostfang"]
+[ext_resource type="Resource" uid="uid://wpn_tidestaff01" path="res://Resources/Items/tide_staff.tres" id="27_tide"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_shop"]
-radius = 80.0
+radius = 56.0
 
 [sub_resource type="CircleShape2D" id="body_shape"]
 radius = 10.0
@@ -36,7 +40,7 @@ collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_shop")
 PromptIcon = ExtResource("prompt_icon")
-ShopItems = Array[Resource]([ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow"), ExtResource("17_lcap"), ExtResource("18_ihelm"), ExtResource("19_lboots"), ExtResource("20_iboots"), ExtResource("21_bbrace"), ExtResource("22_sbrace")])
+ShopItems = Array[Resource]([ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("24_longbow"), ExtResource("25_fishbow"), ExtResource("26_frostfang"), ExtResource("27_tide"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow"), ExtResource("17_lcap"), ExtResource("18_ihelm"), ExtResource("19_lboots"), ExtResource("20_iboots"), ExtResource("21_bbrace"), ExtResource("22_sbrace")])
 ShopName = "무기/방어구 상점"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -52,7 +56,7 @@ shape = SubResource("body_shape")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
-scale = Vector2(0.25, 0.25)
+scale = Vector2(0.24, 0.24)
 modulate = Color(1, 1, 1, 1)
 texture = ExtResource("16_npc_tex")
 
@@ -73,7 +77,7 @@ theme_override_font_sizes/font_size = 7
 theme_override_colors/font_color = Color(1, 0.92, 0.45, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
-text = "[SHOP]"
+text = "[장비]"
 horizontal_alignment = 1
 
 [node name="PromptLabel" type="Label" parent="."]
@@ -90,5 +94,5 @@ offset_bottom = 28.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 6
-text = "F - 상점"
+text = "F - 장비 상점"
 horizontal_alignment = 1
