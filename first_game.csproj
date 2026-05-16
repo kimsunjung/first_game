@@ -4,4 +4,10 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+
+  <!-- tools/ 는 Godot 미의존 검증·테스트 전용. 게임 어셈블리 빌드에서 제외
+       (xUnit 등 외부 참조를 끌어와 Godot 빌드를 깨뜨리는 것 차단). -->
+  <ItemGroup>
+    <Compile Remove="tools/**/*.cs" />
+  </ItemGroup>
 </Project>

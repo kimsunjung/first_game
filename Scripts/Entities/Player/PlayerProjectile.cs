@@ -21,6 +21,11 @@ namespace FirstGame.Entities.Player
 		public bool SingleHit { get; set; } = true;
 		// 관통 횟수 — 0이면 첫 적중 시 소멸. N이면 최대 N+1 적 관통.
 		public int PierceCount { get; set; } = 0;
+		// 적중 시 InflictedStatusChance 확률로 InflictedStatus를 InflictedStatusDuration 동안 부여.
+		// 기본 None → 데이터 미설정 스킬/평타는 영향 없음 (EnemyProjectile 와 대칭).
+		public StatusEffect InflictedStatus { get; set; } = StatusEffect.None;
+		public float InflictedStatusDuration { get; set; } = 3.0f;
+		public float InflictedStatusChance { get; set; } = 0f;
 		// 최대 비거리(px) — 화면 밖 적까지 평타/스킬이 길게 닿지 않도록 제한.
 		// 자동 조준 사거리보다 약간 길게 두어 움직이는 적을 따라잡을 여지만 남긴다.
 		public float MaxTravel { get; set; } = 320f;
@@ -97,6 +102,10 @@ namespace FirstGame.Entities.Player
 				if (_hitIds.Contains(id)) return;
 				_hitIds.Add(id);
 				target.TakeDamage(Damage, Element);
+				if (InflictedStatus != StatusEffect.None
+				    && InflictedStatusChance > 0f
+				    && GD.Randf() <= InflictedStatusChance)
+					target.ApplyStatusEffect(InflictedStatus, InflictedStatusDuration);
 				SpawnHitEffect();
 				if (PierceCount <= 0)
 				{

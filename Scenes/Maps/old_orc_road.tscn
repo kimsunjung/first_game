@@ -15,6 +15,7 @@
 [ext_resource type="Resource" uid="uid://dda8uy5afijwd" path="res://Resources/Enemies/dungeon1_orc_shaman.tres" id="22_e3"]
 [ext_resource type="Resource" uid="uid://dda8uydgnmvwc" path="res://Resources/Enemies/dungeon1_orc_rogue.tres" id="23_e4"]
 [ext_resource type="Resource" uid="uid://cghb6tykcbvnn" path="res://Resources/Enemies/field1_orc_scout.tres" id="24_e5"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -106,3 +107,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 2
+DisplayName = "숲안개"
+VisualIntensity = 0.15
+OverlayColor = Color(0.65, 0.72, 0.68, 0.5)
+ParticleColor = Color(0.8, 0.85, 0.8, 0.25)
+ParticleCount = 26
+Wind = Vector2(0.2, 0.25)
+HazardEnabled = false
+HazardInterval = 4.0
+InflictedStatus = 0
+StatusChance = 0.0
+StatusDuration = 3.0

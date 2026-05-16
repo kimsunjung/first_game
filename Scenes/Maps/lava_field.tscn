@@ -14,6 +14,8 @@
 [ext_resource type="Resource" uid="uid://f6_sala01" path="res://Resources/Enemies/field6_salamander.tres" id="21_e2"]
 [ext_resource type="Resource" uid="uid://f6_mgolem01" path="res://Resources/Enemies/field6_magma_golem.tres" id="22_e3"]
 [ext_resource type="Resource" uid="uid://f6_earcher01" path="res://Resources/Enemies/field6_ember_archer.tres" id="23_e4"]
+[ext_resource type="Resource" path="res://Resources/Enemies/field6_cinder_salamander.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -89,7 +91,8 @@ DestinationName = "화산 (필드6)"
 position = Vector2(640, 100)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("23_e4")])
+StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("23_e4"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 1.0, 0.4)
 SpawnInterval = 2.5
 MaxEnemies = 8
 SpawnRadius = 340.0
@@ -113,3 +116,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 9
+DisplayName = "열파"
+VisualIntensity = 0.18
+OverlayColor = Color(0.8, 0.45, 0.3, 0.5)
+ParticleColor = Color(1, 0.6, 0.3, 0.35)
+ParticleCount = 30
+Wind = Vector2(0.1, 0.2)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 8
+StatusChance = 0.07
+StatusDuration = 3.0

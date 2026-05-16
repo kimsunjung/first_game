@@ -85,7 +85,9 @@ namespace FirstGame.Entities.Player
 		public void HealSelf(int amount) => Stats.CurrentHealth += amount;
 
 		/// <summary>스킬 전략용 — PlayerProjectile 생성·발사. 닿을 때 데미지 적용.</summary>
-		public void FireProjectile(int damage, FirstGame.Data.ElementType element, Color color, float speed = 460f)
+		public void FireProjectile(int damage, FirstGame.Data.ElementType element, Color color, float speed = 460f,
+			FirstGame.Data.StatusEffect inflicted = FirstGame.Data.StatusEffect.None,
+			float inflictedDuration = 0f, float inflictedChance = 0f)
 		{
 			var proj = new PlayerProjectile
 			{
@@ -94,7 +96,10 @@ namespace FirstGame.Entities.Player
 				Direction = GetAimDirection(),
 				Element = element,
 				ProjectileColor = color,
-				SingleHit = true
+				SingleHit = true,
+				InflictedStatus = inflicted,
+				InflictedStatusDuration = inflictedDuration,
+				InflictedStatusChance = inflictedChance
 			};
 			GetParent().AddChild(proj);
 			proj.GlobalPosition = GlobalPosition;
@@ -285,7 +290,9 @@ namespace FirstGame.Entities.Player
 			_dashForcedDir = direction.LengthSquared() > 0.01f ? direction.Normalized() : -_facingDirection;
 		}
 
-		public void FireProjectileEx(int damage, FirstGame.Data.ElementType element, Color color, float speed, int pierceCount)
+		public void FireProjectileEx(int damage, FirstGame.Data.ElementType element, Color color, float speed, int pierceCount,
+			FirstGame.Data.StatusEffect inflicted = FirstGame.Data.StatusEffect.None,
+			float inflictedDuration = 0f, float inflictedChance = 0f)
 		{
 			var proj = new PlayerProjectile
 			{
@@ -296,6 +303,9 @@ namespace FirstGame.Entities.Player
 				ProjectileColor = color,
 				SingleHit = pierceCount <= 0,
 				PierceCount = System.Math.Max(0, pierceCount),
+				InflictedStatus = inflicted,
+				InflictedStatusDuration = inflictedDuration,
+				InflictedStatusChance = inflictedChance
 			};
 			GetParent().AddChild(proj);
 			proj.GlobalPosition = GlobalPosition;

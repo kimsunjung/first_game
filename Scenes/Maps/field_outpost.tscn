@@ -29,6 +29,7 @@
 [ext_resource type="Resource" uid="uid://itm_skb_lstorm01" path="res://Resources/Items/skillbook_lightning_storm.tres" id="44_skb_lstorm"]
 [ext_resource type="Resource" uid="uid://itm_skb_paim01" path="res://Resources/Items/skillbook_precise_aim.tres" id="45_skb_paim"]
 [ext_resource type="Resource" uid="uid://itm_skb_lifest_001" path="res://Resources/Items/skillbook_lifesteal.tres" id="46_skb_lifest"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(640, 16)
@@ -140,3 +141,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(648, 180)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 1
+DisplayName = "들바람"
+VisualIntensity = 0.1
+OverlayColor = Color(0.7, 0.9, 0.6, 0.5)
+ParticleColor = Color(0.85, 1, 0.6, 0.35)
+ParticleCount = 18
+Wind = Vector2(0.4, 0.3)
+HazardEnabled = false
+HazardInterval = 4.0
+InflictedStatus = 0
+StatusChance = 0.0
+StatusDuration = 3.0

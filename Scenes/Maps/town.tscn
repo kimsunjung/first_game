@@ -64,6 +64,7 @@
 [ext_resource type="Resource" uid="uid://itm_skb_rainoa_001" path="res://Resources/Items/skillbook_rain_of_arrows.tres" id="73_skb_rainoa"]
 [ext_resource type="Resource" uid="uid://itm_skb_speed_001" path="res://Resources/Items/skillbook_speed_boost.tres" id="74_skb_speed"]
 [ext_resource type="Resource" uid="uid://itm_skb_whirl_001" path="res://Resources/Items/skillbook_whirlwind.tres" id="75_skb_whirl"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="deco_small"]
 size = Vector2(16, 16)
@@ -325,3 +326,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(648, 180)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 0
+DisplayName = "맑음"
+VisualIntensity = 0.0
+OverlayColor = Color(1, 1, 1, 0)
+ParticleColor = Color(1, 1, 1, 0)
+ParticleCount = 0
+Wind = Vector2(0, 1)
+HazardEnabled = false
+HazardInterval = 4.0
+InflictedStatus = 0
+StatusChance = 0.0
+StatusDuration = 3.0

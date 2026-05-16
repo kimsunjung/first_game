@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Godot 런타임 없이 실행되는 순수 로직 단위 테스트.
+    게임 어셈블리(Godot.NET.Sdk)를 참조하지 않고, Godot 미의존 소스만 링크해
+    `dotnet test` 로 헤드리스 실행/CI 가능하게 한다.
+    게임 빌드(first_game.sln)와 분리 — sln 에 추가하지 말 것.
+  -->
+  <PropertyGroup>
+    <!-- 게임(first_game.csproj)과 동일한 net8.0 으로 고정 — 프로젝트 가이드 일치.
+         RollForward=Major: net8 런타임이 없는 환경(예: net10만 설치)에서도
+         상위 메이저로 롤포워드해 `dotnet test` 가 돌도록 함. CI 는 8.0.x 설치. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <RollForward>Major</RollForward>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <!-- 테스트 대상: Godot 미의존 게임 소스만 선별 링크 -->
+  <ItemGroup>
+    <Compile Include="../../Scripts/Data/Chapter.cs" />
+    <Compile Include="../../Scripts/Data/ChapterDialogue.cs" />
+    <Compile Include="../../Scripts/Data/StatusEffect.cs" />
+    <Compile Include="../../Scripts/Data/PlayerClass.cs" />
+    <Compile Include="../../Scripts/Data/ElementType.cs" />
+    <Compile Include="**/*Tests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+</Project>

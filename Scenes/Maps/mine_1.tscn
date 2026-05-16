@@ -17,6 +17,7 @@
 [ext_resource type="Resource" uid="uid://bsv2ore7l1m04" path="res://Resources/Items/silver_ore.tres" id="15_silver"]
 [ext_resource type="Resource" uid="uid://bgo2ore7l2m05" path="res://Resources/Items/gold_ore.tres" id="16_gold"]
 [ext_resource type="Resource" uid="uid://c7xqf2lpmn503" path="res://Resources/Items/enhance_stone.tres" id="17_enhance"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -118,3 +119,18 @@ RespawnChanceOnReentry = 0.3
 [node name="EnhanceStoneNode" parent="." instance=ExtResource("13_mine_node")]
 position = Vector2(1100, 250)
 OreItem = ExtResource("17_enhance")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 10
+DisplayName = "수정 먼지"
+VisualIntensity = 0.1
+OverlayColor = Color(0.6, 0.8, 0.9, 0.5)
+ParticleColor = Color(0.7, 0.95, 1, 0.45)
+ParticleCount = 20
+Wind = Vector2(0.1, 0.3)
+HazardEnabled = false
+HazardInterval = 4.0
+InflictedStatus = 0
+StatusChance = 0.0
+StatusDuration = 3.0

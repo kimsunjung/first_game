@@ -117,6 +117,8 @@ namespace FirstGame.Entities.Player
 			float baseInterval = BalanceData.Combat.AutoAttackInterval;
 			float spd = System.Math.Max(0.1f, Stats.AttackSpeed);
 			_attackCooldown = baseInterval / spd;
+			// Shock: 공격 쿨다운 ×1.5 (적과 동일 규칙 — 플레이어 측 적용).
+			if (Stats.HasStatus(Data.StatusEffect.Shock)) _attackCooldown *= 1.5f;
 			AudioManager.Instance?.PlaySFX("player_attack.wav");
 
 			int damage = Stats.BaseDamage;

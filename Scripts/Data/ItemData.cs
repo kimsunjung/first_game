@@ -89,6 +89,8 @@ namespace FirstGame.Data
 		[Export] public float BonusAttackSpeed { get; set; } = 0f;
 		// HP 흡수 — 적중 데미지의 N% 만큼 회복. 0.01 = 1%. 장신구에 미약하게 붙음.
 		[Export] public float BonusLifesteal { get; set; } = 0f;
+		// 상태이상 저항(0~1) 장비 보너스. 장착/해제 시 PlayerStats.StatusResist 에 가감.
+		[Export] public float BonusStatusResist { get; set; } = 0f;
 		[Export] public WeaponAttackType AttackType { get; set; } = WeaponAttackType.Slice;
 
 		// 상점 차단 — true면 일반 상점에서 진열·판매 안 됨. 적 드랍/보스 전용 무기에 사용.
@@ -107,6 +109,8 @@ namespace FirstGame.Data
 		[Export] public int BuffBaseDamage { get; set; } = 0;
 		[Export] public int BuffDefense { get; set; } = 0;
 		[Export] public float BuffCritRate { get; set; } = 0f;
+		// 임시 상태이상 저항 buff(0~1). 사용 시 BuffDurationSec 동안 StatusResist 상승.
+		[Export] public float BuffStatusResist { get; set; } = 0f;
 
 		// 클래스 제한 — 무기에서 사용. AvailableToAllClasses=true(기본)면 누구나 장착.
 		// 무기 .tres에서 false + RequiredClass 지정으로 클래스 전용 무기 표현.

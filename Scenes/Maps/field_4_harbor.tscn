@@ -22,6 +22,10 @@
 [ext_resource type="Resource" uid="uid://itm_con_mhextr_001" path="res://Resources/Items/mana_herb_extract.tres" id="24_mhextr"]
 [ext_resource type="Resource" uid="uid://lq1ay338edtn" path="res://Resources/Items/hi_potion.tres" id="25_hipot"]
 [ext_resource type="Resource" uid="uid://bi02gfux88d6o" path="res://Resources/Items/return_scroll.tres" id="26_rscroll"]
+[ext_resource type="Resource" uid="uid://itm_con_stormwd_v3" path="res://Resources/Items/storm_ward.tres" id="v3_stormwd"]
+[ext_resource type="Resource" uid="uid://itm_con_grndslv_v3" path="res://Resources/Items/grounding_salve.tres" id="v3_grndslv"]
+[ext_resource type="Resource" path="res://Resources/Enemies/field4_storm_siren.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -64,7 +68,7 @@ position = Vector2(80, 360)
 [node name="HarborMerchant" parent="." instance=ExtResource("21_shopnpc")]
 position = Vector2(200, 80)
 ShopName = "항구 상인"
-ShopItems = Array[Resource]([ExtResource("23_ttonic"), ExtResource("24_mhextr"), ExtResource("25_hipot"), ExtResource("26_rscroll")])
+ShopItems = Array[Resource]([ExtResource("23_ttonic"), ExtResource("24_mhextr"), ExtResource("25_hipot"), ExtResource("26_rscroll"), ExtResource("v3_stormwd"), ExtResource("v3_grndslv")])
 
 [node name="ShopUI" parent="HarborMerchant" instance=ExtResource("22_shopUI")]
 
@@ -125,7 +129,23 @@ shape = SubResource("wall_right")
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5")])
+StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 1.0, 1.0, 0.4)
 SpawnInterval = 3.0
 MaxEnemies = 8
 SpawnRadius = 340.0
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 5
+DisplayName = "바다 폭풍"
+VisualIntensity = 0.22
+OverlayColor = Color(0.35, 0.42, 0.6, 0.5)
+ParticleColor = Color(0.7, 0.8, 1, 0.55)
+ParticleCount = 70
+Wind = Vector2(0.5, 1.0)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 16
+StatusChance = 0.06
+StatusDuration = 3.0

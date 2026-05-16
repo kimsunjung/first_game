@@ -28,6 +28,9 @@
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/water_well.png" id="40_well"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/barrel_group.png" id="41_barrel"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/street_lantern.png" id="42_lantern"]
+[ext_resource type="Resource" uid="uid://itm_con_stormwd_v3" path="res://Resources/Items/storm_ward.tres" id="v3_stormwd"]
+[ext_resource type="Resource" uid="uid://itm_con_grndslv_v3" path="res://Resources/Items/grounding_salve.tres" id="v3_grndslv"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(640, 16)
@@ -108,7 +111,7 @@ NpcId = "save_point"
 position = Vector2(320, 90)
 NpcId = "harbor_shop"
 ShopName = "항구마을 종합상점"
-ShopItems = Array[Resource]([ExtResource("20_hipot"), ExtResource("21_mpot"), ExtResource("22_megahp"), ExtResource("23_ttonic"), ExtResource("24_mhextr"), ExtResource("25_rscroll"), ExtResource("26_swift")])
+ShopItems = Array[Resource]([ExtResource("20_hipot"), ExtResource("21_mpot"), ExtResource("22_megahp"), ExtResource("23_ttonic"), ExtResource("24_mhextr"), ExtResource("25_rscroll"), ExtResource("26_swift"), ExtResource("v3_stormwd"), ExtResource("v3_grndslv")])
 
 [node name="ShopUI" parent="HarborMerchant" instance=ExtResource("11_shopUI")]
 
@@ -156,3 +159,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(648, 180)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 4
+DisplayName = "바닷비"
+VisualIntensity = 0.1
+OverlayColor = Color(0.5, 0.6, 0.75, 0.5)
+ParticleColor = Color(0.6, 0.75, 0.95, 0.45)
+ParticleCount = 30
+Wind = Vector2(0.2, 1.0)
+HazardEnabled = false
+HazardInterval = 4.0
+InflictedStatus = 0
+StatusChance = 0.0
+StatusDuration = 3.0

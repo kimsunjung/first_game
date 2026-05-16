@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://v3_grovespirit"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field1/forest_spirit.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/mana_potion.tres" id="3_d"]
+[ext_resource type="Resource" path="res://Resources/Items/material_wood.tres" id="4_d"]
+[resource]
+script = ExtResource("1")
+MoveSpeed = 55
+DetectionRange = 260
+AttackRange = 230
+BaseDamage = 5
+AttackCooldown = 2.0
+ExperienceReward = 16
+GoldReward = 9
+Behavior = 1
+EnemyTypeName = "GroveSpirit"
+PreferredRange = 160
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.22
+CollisionScale = 1.4
+ProjectileScale = 0.4
+PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d")])
+DropWeights = PackedFloat32Array(0.6, 0.4)
+DropChance = 0.25
+MaxHealth = 28
+Defense = 0
+
+InflictedStatus = 4
+InflictedStatusDuration = 3.0
+InflictedStatusChance = 0.15

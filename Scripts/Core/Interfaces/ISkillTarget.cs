@@ -20,8 +20,9 @@ namespace FirstGame.Core.Interfaces
 		void TriggerCameraShake(float intensity, float duration);
 		void HealSelf(int amount);
 		IEnumerable<(Node2D Node, IDamageable Target)> GetNearbyEnemies(float range);
-		// 원거리 스킬 — 정면 방향으로 투사체 발사. 닿을 때 데미지.
-		void FireProjectile(int damage, ElementType element, Color color, float speed = 460f);
+		// 원거리 스킬 — 정면 방향으로 투사체 발사. 닿을 때 데미지(+선택적 상태이상).
+		void FireProjectile(int damage, ElementType element, Color color, float speed = 460f,
+			StatusEffect inflicted = StatusEffect.None, float inflictedDuration = 0f, float inflictedChance = 0f);
 		// 마법사 LightningStorm — duration초 동안 interval초마다 가장 가까운 적에 번개.
 		void StartLightningStorm(float duration, float interval);
 		// 일시 buff — duration초 동안 dmg/def/crit. ApplyBuffEx 래퍼.
@@ -30,7 +31,8 @@ namespace FirstGame.Core.Interfaces
 		void ActivateManaShield(float duration);
 		// BackstepShot 전용 — 지정 방향으로 강제 대시 (facing 반대 방향 등).
 		void ActivateDashInDirection(float duration, Vector2 direction);
-		// PiercingShot 전용 — pierceCount번 관통하는 투사체 발사.
-		void FireProjectileEx(int damage, ElementType element, Color color, float speed, int pierceCount);
+		// PiercingShot 전용 — pierceCount번 관통하는 투사체 발사(+선택적 상태이상).
+		void FireProjectileEx(int damage, ElementType element, Color color, float speed, int pierceCount,
+			StatusEffect inflicted = StatusEffect.None, float inflictedDuration = 0f, float inflictedChance = 0f);
 	}
 }

@@ -63,6 +63,21 @@
 - GameManager._ExitTree에서 `Instance = null` 필수
 - tscn 직접 편집 시 UID 충돌 주의
 
+## 검증·테스트 인프라 (2026-05-16 신설 — Godot 런타임 불필요)
+큰 변경 후 아래 3개 게이트를 **모두 green** 으로 유지할 것. CI(`.github/workflows/ci.yml`)가 push/PR마다 동일하게 검증.
+- `python3 tools/validate/validate.py` — 리소스 무결성 (res:// 해결, 헤더 uid 유일성, EnemySpawner 표준 API/폐기 API, balance zones↔씬, 스킬북↔스킬, 드랍 weight 개수, teleport ScenePath)
+- `python3 tools/validate/balance.py` — 밸런스 정합성 (스폰 적 빈 드랍 금지, 난이도(hp×atk)↔expMul 강한 역전 금지, 씬 참조 보스의 BossId 누락 금지). 경고(완만한 역전·사장 보스 리소스)는 종료코드 무관.
+- `dotnet test tools/Tests/FirstGame.Tests.csproj` — Godot 미의존 순수 로직 단위 테스트(11개: ChapterDialogue 등록NPC 전챕터 완비 + 사전↔씬 NpcId 정합 + enum/세이브키 안정성). 게임과 동일 **net8.0**(RollForward=Major라 net8 런타임 없는 환경에서도 실행). `tools/Tests` 는 독립 프로젝트라 `first_game.sln`/csproj에 추가 금지(게임 빌드는 `tools/**` 제외 처리됨).
+- 새 사냥터/적/zone 추가 시 위 검사를 통과시키는 게 완료 기준. 적은 반드시 비어있지 않은 PossibleDrops + DropChance>0.
+
+## Regional Weather & Hunting v3 (2026-05-16)
+신규 맵 없이 기존 사냥터 정체성 강화. 상세 `PLAN_DOC/regional-weather-hunting-v3.md`.
+- **가중치 스폰**: `EnemySpawner.StatWeights : float[]`. null/길이불일치/합≤0이면 균등 fallback. 씬 .tscn `StatWeights = PackedFloat32Array(...)`. validate.py R3가 길이·합 검사.
+- **날씨**: `Scripts/Maps/BiomeWeatherController.cs` — 씬 루트 Node2D, 코드로 오버레이/파티클 + 저확률 hazard(`Stats.ApplyStatus`). 새 PNG·세이브 상태 없음. 허브는 hazard 없음. 28맵 배치 완료.
+- **상태저항 배선**: `CharacterStats.StatusResist`(0~0.85). `ItemData.BonusStatusResist`(장비, Inventory equip/clear/restore), `BuffStatusResist`(소모품 Buff, `ApplyBuffEx` 선택 인자+만료 차감). 저장 미수정 — 로드 후 장비 재적용으로 복구.
+- **신규**: 날씨 테마 적 12종 + 소모품 6종. **전부 기존 PNG/아이콘 임시 재사용**(v3 문서에만 기록, generated-asset-inventory 미수정). 18 사냥터에 테마 적을 희귀 가중치로 추가, field_1/보스던전 구조 유지.
+- 검증 4종(validate/balance/build/test)+ git diff --check 모두 green 유지가 완료 기준.
+
 ## 문서·메모리 동기화 정책 (필수)
 다음 변경이 발생할 때마다 **CLAUDE.md와 메모리 디렉토리(`~/.claude/projects/.../memory/`)를 함께 최신화**할 것:
 - 큰 기능 변경 (스킬/전투/세이브/상점 시스템 등)

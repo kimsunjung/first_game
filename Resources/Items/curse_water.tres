@@ -15,6 +15,6 @@ Type = 0
 IsStackable = true
 MaxStack = 10
 UseEffect = 6
-HealAmount = 7
+HealAmount = 31
 Weight = 0.1
 MinRequiredChapter = 3

@@ -90,6 +90,6 @@ dungeon_3 skel_warrior + mage + rogue (==d2)   →  abyss_wraith + shadow_assass
 - 임시 배치는 현재 5종 스켈레톤·4종 오크 리소스 내에서 가능한 최대 차별화. 진짜 정체성 회복은 신규 이미지/리소스 도착 후.
 - field_3 / dungeon_3 모두 스켈레톤 계열에 의존 — zone scaling으로 체감 난이도는 분리되지만 시각적 단조로움은 남는다.
 - mine_1 작업 PR이 mine_* 적 8종을 mine_1 EnemySpawner에 등록할 예정. 이 문서는 그 PR의 결과를 mine_1 행에 반영하지 않은 상태.
-- `EnemySpawner.StatVariants`는 **균등 랜덤** — 가중치 미지원. 같은 지역의 적 비율을 차등하려면 weighted spawn 시스템을 별도 PR로 도입해야 한다. 그 전까지는 모든 임시 배치가 균등 분포다.
+- ~~`EnemySpawner.StatVariants`는 균등 랜덤 — 가중치 미지원.~~ **(해결됨, v3 2026-05-16)** `EnemySpawner.StatWeights : float[]` 가중치 스폰 도입. `StatWeights`가 `StatVariants`와 길이가 같고 합>0이면 룰렛 선택, 아니면 균등 fallback. 18개 사냥터에 신규 테마 적이 희귀 가중치(0.25~0.4)로 배치됨. 상세 `PLAN_DOC/regional-weather-hunting-v3.md`. validate.py R3가 길이·합 검사.
 - mine_* 적 8종 중 mine_2에 실제 배치된 건 3종(skeleton_miner / cave_bat / rock_golem). 나머지 5종(zombie_basic/fast/armored/brute, mine_wraith)은 리소스 + PNG만 등록되어 있고 맵 EnemySpawner에는 미배치 상태. 광산 적 등록 PR이 mine_1 / mine_2에 가중치를 분배할 때 함께 처리한다.
 - EnemyStats에 `SpriteScale` + `CollisionScale` Export가 추가됐다. 시각은 `_animSprite.Scale`로, 충돌은 `CollisionShape2D.Scale`로 각각 적용 — 둘 다 root `CharacterBody2D.Scale` 비점유라 EnemySpawner elite scale(1.25)과 독립적으로 작동. mine_* 8종에 시각의 ~50% 비례로 CollisionScale 설정(예: rock_golem SpriteScale 0.55 / CollisionScale 2.5). 게임 디자인상 정확한 매칭 값은 플레이테스트 후 미세 조정 필요.

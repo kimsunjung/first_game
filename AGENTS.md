@@ -52,6 +52,8 @@
 - Save/load: `Scripts/Core/SaveManager.cs`, `Scripts/Data/SaveData.cs`, `Scripts/Core/GameTransaction.cs`
 - Player: `Scripts/Entities/Player/PlayerController*.cs`
 - Enemies: `Scripts/Entities/Enemies/EnemyController.cs`, `EnemySpawner.cs`, `EnemyProjectile.cs`
+- Regional weather (v3): `Scripts/Maps/BiomeWeatherController.cs` — per-scene Node2D, code overlay/particles + low-rate hazard via `Stats.ApplyStatus`. No PNG, no save state.
+- Status resist: `CharacterStats.StatusResist` (0~0.85 clamp via `PlayerStats.ModifyStatusResist`); `ItemData.BonusStatusResist` (equip) / `BuffStatusResist` (consumable Buff, `ApplyBuffEx` optional arg).
 - Inventory/equipment/affix: `Scripts/Data/Inventory.cs`, `AffixGenerator.cs`, `ItemData.cs`
 - Quests: `Scripts/Core/QuestManager.cs`, `Scripts/Data/QuestData.cs`
 - Mobile controls: `Scripts/UI/MobileControls.cs`, `VirtualJoystick.cs`, `VirtualInput.cs`
@@ -68,7 +70,8 @@
 
 ## Current Review Hotspots
 - Large Claude scene-generation batches need path/export checks: `TargetScenePath`, `StatVariants`, `MaxEnemies`, `SpawnRadius`, `BossStatVariant`, `BossId`, `ShopItems`, `SkillBooks`, save points, and spawn positions.
-- `EnemySpawner` uses `StatVariants`, `SpawnInterval`, `MaxEnemies`, `SpawnRadius`, `SpawnAroundPlayer`, `MinSpawnDistance`, `BossStatVariant`, and `BossId`. Old scene properties such as `EnemyStatsList`, `SpawnCount`, `SpawnAreaSize`, and `SpawnAreaOffset` should not be used.
+- `EnemySpawner` uses `StatVariants`, `StatWeights` (v3, optional weighted spawn), `SpawnInterval`, `MaxEnemies`, `SpawnRadius`, `SpawnAroundPlayer`, `MinSpawnDistance`, `BossStatVariant`, and `BossId`. Old scene properties such as `EnemyStatsList`, `SpawnCount`, `SpawnAreaSize`, and `SpawnAreaOffset` should not be used.
+- v3 weather/spawn: see `PLAN_DOC/regional-weather-hunting-v3.md`. New themed enemies/consumables reuse existing PNG/icons temporarily (recorded there, not in generated-asset-inventory). `StatWeights` must match `StatVariants` length with sum > 0 or it falls back to uniform. Hub scenes must not get hazard weather.
 - If status effects are touched, check both melee and ranged paths. Ranged enemies need status data passed through `EnemyProjectile`; player skills need explicit status application if the design says they inflict Freeze/Burn/Curse/etc.
 - If skill shops are redistributed, verify actual `SkillShopUI.SkillBooks` arrays in each scene, not only documentation.
 - If documentation says a feature is complete, confirm the implementation matches. Keep TODO sections current after fixes.
@@ -91,7 +94,9 @@
 
 ## Validation
 - For code changes, run:
-  - `dotnet build`
+  - `python3 tools/validate/validate.py` and `python3 tools/validate/balance.py` (CI gates; validate.py R3 checks `StatWeights` length==`StatVariants` and sum>0)
+  - `dotnet build first_game.csproj -c Debug --nologo`
+  - `dotnet test tools/Tests/FirstGame.Tests.csproj --nologo`
   - `git diff --check`
 - For scene/world changes, also verify:
   - all new `.tscn` files exist and are not empty placeholder-only scenes

@@ -15,6 +15,8 @@
 [ext_resource type="Resource" uid="uid://cghb6lvi4hjnm" path="res://Resources/Enemies/field1_goblin_scout.tres" id="22_e3"]
 [ext_resource type="Resource" uid="uid://b1fld1wolf002" path="res://Resources/Enemies/field1_wild_wolf.tres" id="23_e4"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Village/flower_planter.png" id="40_flower"]
+[ext_resource type="Resource" path="res://Resources/Enemies/field1_grove_spirit.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -96,7 +98,8 @@ DestinationName = "고블린 숲"
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("23_e4")])
+StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("23_e4"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 1.0, 0.4)
 SpawnInterval = 3.5
 MaxEnemies = 6
 SpawnRadius = 280.0
@@ -120,3 +123,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 1
+DisplayName = "들바람"
+VisualIntensity = 0.12
+OverlayColor = Color(0.7, 0.9, 0.6, 0.5)
+ParticleColor = Color(0.85, 1, 0.6, 0.35)
+ParticleCount = 24
+Wind = Vector2(0.4, 0.3)
+HazardEnabled = false
+HazardInterval = 4.0
+InflictedStatus = 0
+StatusChance = 0.0
+StatusDuration = 3.0

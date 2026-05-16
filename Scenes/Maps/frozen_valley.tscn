@@ -14,6 +14,8 @@
 [ext_resource type="Resource" uid="uid://f5_witch01" path="res://Resources/Enemies/field5_snow_witch.tres" id="21_e2"]
 [ext_resource type="Resource" uid="uid://f5_imp01" path="res://Resources/Enemies/field5_ice_imp.tres" id="22_e3"]
 [ext_resource type="Resource" uid="uid://f5_wolf01" path="res://Resources/Enemies/field5_frost_wolf.tres" id="23_e4"]
+[ext_resource type="Resource" path="res://Resources/Enemies/field5_blizzard_witch.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -81,7 +83,8 @@ DestinationName = "설원 (필드5)"
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("23_e4")])
+StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("23_e4"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 1.0, 0.4)
 SpawnInterval = 2.8
 MaxEnemies = 7
 SpawnRadius = 320.0
@@ -105,3 +108,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 7
+DisplayName = "눈보라"
+VisualIntensity = 0.2
+OverlayColor = Color(0.8, 0.88, 1, 0.5)
+ParticleColor = Color(1, 1, 1, 0.8)
+ParticleCount = 78
+Wind = Vector2(0.7, 0.8)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 2
+StatusChance = 0.07
+StatusDuration = 3.0

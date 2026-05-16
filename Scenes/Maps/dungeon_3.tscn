@@ -16,6 +16,7 @@
 [ext_resource type="Resource" uid="uid://b1d3warlock0004" path="res://Resources/Enemies/dungeon3_cursed_warlock.tres" id="15_warlock"]
 [ext_resource type="Resource" uid="uid://b1d3ahound000006" path="res://Resources/Enemies/dungeon3_abyss_hound.tres" id="16_hound"]
 [ext_resource type="Resource" uid="uid://bossd3lich00009" path="res://Resources/Enemies/boss_dungeon3_ancient_lich.tres" id="17_boss"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -93,3 +94,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 11
+DisplayName = "던전 어둠"
+VisualIntensity = 0.24
+OverlayColor = Color(0.2, 0.2, 0.28, 0.5)
+ParticleColor = Color(1, 1, 1, 0)
+ParticleCount = 0
+Wind = Vector2(0, 0)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 4
+StatusChance = 0.07
+StatusDuration = 3.0

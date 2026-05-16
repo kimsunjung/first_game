@@ -19,6 +19,8 @@
 [ext_resource type="Script" uid="uid://dmf0bg8r5ncbd" path="res://Scripts/Maps/MapGenerator.cs" id="15_5m0au"]
 [ext_resource type="TileSet" uid="uid://qg8y8romnyuy" path="res://Resources/Tilesets/field_tileset.tres" id="16_tileset"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/dungeon_entrance.png" id="17_dent"]
+[ext_resource type="Resource" path="res://Resources/Enemies/field2_fog_wraith.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -94,7 +96,8 @@ DestinationName = "전초기지"
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource("res://Resources/Enemies/field2_skeleton_wanderer.tres")]([ExtResource("20_wanderer"), ExtResource("21_archer"), ExtResource("22_zombie"), ExtResource("23_slime"), ExtResource("24_wolf")])
+StatVariants = Array[Resource("res://Resources/Enemies/field2_skeleton_wanderer.tres")]([ExtResource("20_wanderer"), ExtResource("21_archer"), ExtResource("22_zombie"), ExtResource("23_slime"), ExtResource("24_wolf"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 1.0, 1.0, 0.4)
 SpawnInterval = 3.5
 MaxEnemies = 6
 SpawnRadius = 280.0
@@ -130,3 +133,18 @@ tile_set = ExtResource("16_tileset")
 [node name="ObstacleLayer" type="TileMapLayer" parent="MapGenerator"]
 z_index = 0
 tile_set = ExtResource("16_tileset")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 3
+DisplayName = "묘지안개"
+VisualIntensity = 0.2
+OverlayColor = Color(0.45, 0.4, 0.55, 0.5)
+ParticleColor = Color(0.6, 0.55, 0.65, 0.3)
+ParticleCount = 30
+Wind = Vector2(0.15, 0.2)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 4
+StatusChance = 0.05
+StatusDuration = 3.0

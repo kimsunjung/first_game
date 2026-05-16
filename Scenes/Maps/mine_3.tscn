@@ -16,6 +16,8 @@
 [ext_resource type="Resource" uid="uid://m3_brute01" path="res://Resources/Enemies/mine_crystal_brute.tres" id="15_e4"]
 [ext_resource type="Resource" uid="uid://m3_miner01" path="res://Resources/Enemies/mine_corrupted_miner.tres" id="16_e5"]
 [ext_resource type="Resource" uid="uid://boss_crystal_lord01" path="res://Resources/Enemies/boss_mine3_crystal_lord.tres" id="17_boss"]
+[ext_resource type="Resource" path="res://Resources/Enemies/mine3_crystal_shocker.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -96,10 +98,26 @@ shape = SubResource("wall_right")
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5")])
+StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 1.0, 1.0, 0.4)
 SpawnInterval = 2.8
 MaxEnemies = 7
 SpawnRadius = 340.0
 BossStatVariant = ExtResource("17_boss")
 BossId = "crystal_lord_m3"
 RepeatableBoss = true
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 10
+DisplayName = "수정 먼지"
+VisualIntensity = 0.14
+OverlayColor = Color(0.6, 0.8, 0.9, 0.5)
+ParticleColor = Color(0.7, 0.95, 1, 0.45)
+ParticleCount = 30
+Wind = Vector2(0.1, 0.3)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 16
+StatusChance = 0.06
+StatusDuration = 3.0

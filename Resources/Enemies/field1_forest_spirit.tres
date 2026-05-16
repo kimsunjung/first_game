@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field1/forest_spirit.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="90_hp"]
+[ext_resource type="Resource" uid="uid://cg2gnu2yqhbvv" path="res://Resources/Items/material_wood.tres" id="91_wood"]
 
 [resource]
 script = ExtResource("1")
@@ -18,6 +20,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.24
 CollisionScale = 1.7
-DropChance = 0.0
+PossibleDrops = Array[Resource]([ExtResource("90_hp"), ExtResource("91_wood")])
+DropWeights = PackedFloat32Array(0.7, 0.3)
+DropChance = 0.22
 MaxHealth = 75
 Defense = 1

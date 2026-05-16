@@ -303,7 +303,8 @@ namespace FirstGame.Data
                             slot.Item.BuffBaseDamage,
                             slot.Item.BuffDefense,
                             slot.Item.BuffCritRate,
-                            slot.Item.BuffDurationSec);
+                            slot.Item.BuffDurationSec,
+                            slot.Item.BuffStatusResist);
                         GD.Print($"{slot.Item.ItemName} 사용! {slot.Item.BuffDurationSec:0}초간 효과 적용");
                         AudioManager.Instance?.PlaySFX("potion_use.wav");
                         RemoveItem(slotIndex, 1);
@@ -421,6 +422,7 @@ namespace FirstGame.Data
                 slot.IsEquipped = true;
                 target.ModifyMaxHealth(item.BonusMaxHealth);
                 target.ModifyDefense(item.BonusDefense);
+                if (item.BonusStatusResist != 0f) target.ModifyStatusResist(item.BonusStatusResist);
             }
             else if (item.Type == ItemType.Accessory)
             {
@@ -430,6 +432,7 @@ namespace FirstGame.Data
                 target.ModifyDefense(item.BonusDefense);
                 if (item.BonusDamage > 0) target.ModifyBaseDamage(item.BonusDamage);
                 if (item.BonusMaxHealth > 0) target.ModifyMaxHealth(item.BonusMaxHealth);
+                if (item.BonusStatusResist != 0f) target.ModifyStatusResist(item.BonusStatusResist);
             }
             else if (IsExtraEquipType(item.Type))
             {
@@ -464,6 +467,7 @@ namespace FirstGame.Data
             if (EquippedArmor == null) return;
             target.ModifyMaxHealth(-EquippedArmor.BonusMaxHealth);
             target.ModifyDefense(-EquippedArmor.BonusDefense);
+            if (EquippedArmor.BonusStatusResist != 0f) target.ModifyStatusResist(-EquippedArmor.BonusStatusResist);
             int idx = FindEquippedSlotIndex(EquippedArmor);
             if (idx >= 0) Slots[idx].IsEquipped = false;
             EquippedArmor = null;
@@ -475,6 +479,7 @@ namespace FirstGame.Data
             target.ModifyDefense(-EquippedAccessory.BonusDefense);
             if (EquippedAccessory.BonusDamage > 0) target.ModifyBaseDamage(-EquippedAccessory.BonusDamage);
             if (EquippedAccessory.BonusMaxHealth > 0) target.ModifyMaxHealth(-EquippedAccessory.BonusMaxHealth);
+            if (EquippedAccessory.BonusStatusResist != 0f) target.ModifyStatusResist(-EquippedAccessory.BonusStatusResist);
             int idx = FindEquippedSlotIndex(EquippedAccessory);
             if (idx >= 0) Slots[idx].IsEquipped = false;
             EquippedAccessory = null;
@@ -687,6 +692,7 @@ namespace FirstGame.Data
             if (item.BonusMoveSpeed != 0f) target.ModifyMoveSpeed(sign * item.BonusMoveSpeed);
             if (item.BonusAttackSpeed != 0f) target.ModifyAttackSpeed(sign * item.BonusAttackSpeed);
             if (item.BonusLifesteal != 0f) target.ModifyLifesteal(sign * item.BonusLifesteal);
+            if (item.BonusStatusResist != 0f) target.ModifyStatusResist(sign * item.BonusStatusResist);
         }
 
         /// <summary>affix 합산 적용 (sign=+1 장착, -1 해제). 같은 type이 여러 개면 모두 누적.</summary>
@@ -992,6 +998,7 @@ namespace FirstGame.Data
                 EquippedArmor = armor;
                 target.ModifyMaxHealth(armor.BonusMaxHealth);
                 target.ModifyDefense(armor.BonusDefense);
+                if (armor.BonusStatusResist != 0f) target.ModifyStatusResist(armor.BonusStatusResist);
             }
             if (accessory != null)
             {
@@ -999,6 +1006,7 @@ namespace FirstGame.Data
                 target.ModifyDefense(accessory.BonusDefense);
                 if (accessory.BonusDamage > 0) target.ModifyBaseDamage(accessory.BonusDamage);
                 if (accessory.BonusMaxHealth > 0) target.ModifyMaxHealth(accessory.BonusMaxHealth);
+                if (accessory.BonusStatusResist != 0f) target.ModifyStatusResist(accessory.BonusStatusResist);
             }
             OnEquipmentChanged?.Invoke();
         }

@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://v3_stormsiren"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon4/siren.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/sea_kelp.tres" id="3_d"]
+[ext_resource type="Resource" path="res://Resources/Items/storm_ward.tres" id="4_d"]
+[ext_resource type="Resource" path="res://Resources/Items/mana_herb_extract.tres" id="5_d"]
+[resource]
+script = ExtResource("1")
+MoveSpeed = 55
+DetectionRange = 280
+AttackRange = 240
+BaseDamage = 14
+AttackCooldown = 2.4
+ExperienceReward = 40
+GoldReward = 26
+Behavior = 1
+EnemyTypeName = "StormSiren"
+PreferredRange = 220
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.25
+CollisionScale = 1.9
+ProjectileScale = 0.4
+PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d"), ExtResource("5_d")])
+DropWeights = PackedFloat32Array(0.5, 0.2, 0.3)
+DropChance = 0.3
+MaxHealth = 90
+Defense = 0
+
+InflictedStatus = 16
+InflictedStatusDuration = 3.0
+InflictedStatusChance = 0.3

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://v3_cindersala"]
+[ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Field6/salamander.png" id="2_tex"]
+[ext_resource type="Resource" path="res://Resources/Items/lava_stone.tres" id="3_d"]
+[ext_resource type="Resource" path="res://Resources/Items/ash_filter.tres" id="4_d"]
+[resource]
+script = ExtResource("1")
+MoveSpeed = 100
+DetectionRange = 210
+AttackRange = 42
+BaseDamage = 14
+AttackCooldown = 1.6
+ExperienceReward = 46
+GoldReward = 28
+Behavior = 0
+EnemyTypeName = "CinderSalamander"
+SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("2_tex")
+SpriteScale = 0.25
+CollisionScale = 1.9
+PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d")])
+DropWeights = PackedFloat32Array(0.6, 0.4)
+DropChance = 0.3
+MaxHealth = 95
+Defense = 1
+
+InflictedStatus = 8
+InflictedStatusDuration = 2.5
+InflictedStatusChance = 0.2

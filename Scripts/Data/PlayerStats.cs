@@ -50,6 +50,10 @@ namespace FirstGame.Data
 		public void ModifyCritRate(float delta) => CritRate += delta;
 		public void ModifyMoveSpeed(float delta) => MoveSpeed += delta;
 		public void ModifyAttackSpeed(float delta) => AttackSpeed += delta;
+		// 상태이상 저항 가감 — raw 누적값 유지(장비+버프 합산이 0.85를 넘어도 정보 손실 없음).
+		// 실제 면역 상한 clamp(0~0.85)은 사용 시점(CharacterStats.ApplyStatus)에서만 적용해
+		// 버프 만료 시 전체 차감이 장비 저항을 깎는 비대칭 버그를 방지한다.
+		public void ModifyStatusResist(float delta) => StatusResist += delta;
 
 		// 무게 페널티: 0~80% 정상, 80~100% -10% 이속, 100%+ -30% 이속
 		public float WeightPenaltyMultiplier { get; private set; } = 1.0f;
@@ -90,11 +94,13 @@ namespace FirstGame.Data
 		private float _buffDefenseRemaining = 0f;
 		private float _buffCritAmount = 0f;
 		private float _buffCritRemaining = 0f;
+		private float _buffResistAmount = 0f;
+		private float _buffResistRemaining = 0f;
 
 		public void ApplyBuff(float moveDelta, float atkDelta, float durationSec)
 			=> ApplyBuffEx(moveDelta, atkDelta, 0, 0, 0f, durationSec);
 
-		public void ApplyBuffEx(float moveDelta, float atkDelta, int dmgDelta, int defDelta, float critDelta, float durationSec)
+		public void ApplyBuffEx(float moveDelta, float atkDelta, int dmgDelta, int defDelta, float critDelta, float durationSec, float resistDelta = 0f)
 		{
 			if (durationSec <= 0f) return;
 			// 중복 buff 적용 시 기존 효과를 먼저 제거(누적 차단) → 새 값/시간으로 갱신.
@@ -103,21 +109,25 @@ namespace FirstGame.Data
 			if (_buffDamageRemaining > 0f) BaseDamage -= _buffDamageAmount;
 			if (_buffDefenseRemaining > 0f) Defense -= _buffDefenseAmount;
 			if (_buffCritRemaining > 0f) CritRate -= _buffCritAmount;
+			if (_buffResistRemaining > 0f) ModifyStatusResist(-_buffResistAmount);
 			_buffMoveSpeedAmount = moveDelta;
 			_buffAttackSpeedAmount = atkDelta;
 			_buffDamageAmount = dmgDelta;
 			_buffDefenseAmount = defDelta;
 			_buffCritAmount = critDelta;
+			_buffResistAmount = resistDelta;
 			_buffMoveSpeedRemaining   = moveDelta != 0f ? durationSec : 0f;
 			_buffAttackSpeedRemaining = atkDelta  != 0f ? durationSec : 0f;
 			_buffDamageRemaining      = dmgDelta  != 0  ? durationSec : 0f;
 			_buffDefenseRemaining     = defDelta  != 0  ? durationSec : 0f;
 			_buffCritRemaining        = critDelta != 0f ? durationSec : 0f;
+			_buffResistRemaining      = resistDelta != 0f ? durationSec : 0f;
 			MoveSpeed   += moveDelta;
 			AttackSpeed += atkDelta;
 			BaseDamage  += dmgDelta;
 			Defense     += defDelta;
 			CritRate    += critDelta;
+			if (resistDelta != 0f) ModifyStatusResist(resistDelta);
 		}
 
 		public void TickBuffs(float delta)
@@ -159,6 +169,11 @@ namespace FirstGame.Data
 			{
 				_buffCritRemaining -= delta;
 				if (_buffCritRemaining <= 0f) { CritRate -= _buffCritAmount; _buffCritAmount = 0f; }
+			}
+			if (_buffResistRemaining > 0f)
+			{
+				_buffResistRemaining -= delta;
+				if (_buffResistRemaining <= 0f) { ModifyStatusResist(-_buffResistAmount); _buffResistAmount = 0f; }
 			}
 		}
 		public void Heal(int amount) => CurrentHealth = Math.Min(CurrentHealth + amount, MaxHealth);

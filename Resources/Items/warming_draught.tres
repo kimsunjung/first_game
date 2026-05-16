@@ -18,6 +18,7 @@ UseEffect = 4
 BuffDefense = 12
 BuffMoveSpeed = 20.0
 BuffDurationSec = 60.0
+BuffStatusResist = 0.2
 HealAmount = 0
 Weight = 0.1
 MinRequiredChapter = 4

@@ -64,7 +64,8 @@ namespace FirstGame.Data.Skills
 			if (fbCrit) rawDmg = (long)(rawDmg * target.CritMultiplier);
 			int dmg = (int)Math.Min(rawDmg, int.MaxValue);
 			ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.Fire;
-			target.FireProjectile(dmg, element, new Color(1.0f, 0.4f, 0.1f), 540f);
+			target.FireProjectile(dmg, element, new Color(1.0f, 0.4f, 0.1f), 540f,
+				skill.InflictedStatus, skill.InflictedStatusDuration, skill.InflictedStatusChance);
 			target.TriggerCameraShake(3f, 0.12f);
 		}
 	}
@@ -83,7 +84,8 @@ namespace FirstGame.Data.Skills
 			long raw = (long)target.BaseDamage * multiplier;
 			if (crit) raw = (long)(raw * target.CritMultiplier);
 			int dmg = (int)Math.Min(raw, int.MaxValue);
-			target.FireProjectile(dmg, skill.Element, new Color(0.95f, 0.9f, 0.55f), 620f);
+			target.FireProjectile(dmg, skill.Element, new Color(0.95f, 0.9f, 0.55f), 620f,
+				skill.InflictedStatus, skill.InflictedStatusDuration, skill.InflictedStatusChance);
 			target.TriggerCameraShake(2f, 0.10f);
 		}
 	}
@@ -164,7 +166,8 @@ namespace FirstGame.Data.Skills
 			if (crit) raw = (long)(raw * target.CritMultiplier);
 			int dmg = (int)Math.Min(raw, int.MaxValue);
 			ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.Ice;
-			target.FireProjectile(dmg, element, new Color(0.6f, 0.85f, 1.0f), 500f);
+			target.FireProjectile(dmg, element, new Color(0.6f, 0.85f, 1.0f), 500f,
+				skill.InflictedStatus, skill.InflictedStatusDuration, skill.InflictedStatusChance);
 			target.TriggerCameraShake(3f, 0.12f);
 		}
 	}
@@ -292,7 +295,8 @@ namespace FirstGame.Data.Skills
 			if (crit) raw = (long)(raw * target.CritMultiplier);
 			int dmg = (int)Math.Min(raw, int.MaxValue);
 			ElementType element = skill.Element != ElementType.None ? skill.Element : ElementType.None;
-			target.FireProjectile(dmg, element, new Color(0.8f, 0.1f, 0.1f), 480f);
+			target.FireProjectile(dmg, element, new Color(0.8f, 0.1f, 0.1f), 480f,
+				skill.InflictedStatus, skill.InflictedStatusDuration, skill.InflictedStatusChance);
 			target.TriggerCameraShake(8f, 0.30f);
 			FirstGame.Core.UIEffectManager.HitStop(0.15f, 0.08f);
 		}
@@ -377,7 +381,8 @@ namespace FirstGame.Data.Skills
 				long raw = (long)target.BaseDamage * multiplier;
 				if (crit) raw = (long)(raw * target.CritMultiplier);
 				int dmg = (int)Math.Min(raw, int.MaxValue);
-				target.FireProjectile(dmg, elem, color, 580f);
+				target.FireProjectile(dmg, elem, color, 580f,
+					skill.InflictedStatus, skill.InflictedStatusDuration, skill.InflictedStatusChance);
 			}
 			target.TriggerCameraShake(4f, 0.15f);
 		}
@@ -411,7 +416,8 @@ namespace FirstGame.Data.Skills
 			if (crit) raw = (long)(raw * target.CritMultiplier);
 			int dmg = (int)Math.Min(raw, int.MaxValue);
 			ElementType elem = skill.Element != ElementType.None ? skill.Element : ElementType.None;
-			target.FireProjectileEx(dmg, elem, new Color(1.0f, 0.85f, 0.3f), 700f, 2); // 최대 3적 관통
+			target.FireProjectileEx(dmg, elem, new Color(1.0f, 0.85f, 0.3f), 700f, 2,
+				skill.InflictedStatus, skill.InflictedStatusDuration, skill.InflictedStatusChance); // 최대 3적 관통
 			target.TriggerCameraShake(4f, 0.15f);
 		}
 	}
@@ -428,7 +434,8 @@ namespace FirstGame.Data.Skills
 			if (crit) raw = (long)(raw * target.CritMultiplier);
 			int dmg = (int)Math.Min(raw, int.MaxValue);
 			ElementType elem = skill.Element != ElementType.None ? skill.Element : ElementType.None;
-			target.FireProjectile(dmg, elem, new Color(0.95f, 0.9f, 0.55f), 580f);
+			target.FireProjectile(dmg, elem, new Color(0.95f, 0.9f, 0.55f), 580f,
+				skill.InflictedStatus, skill.InflictedStatusDuration, skill.InflictedStatusChance);
 			// facing 반대 방향으로 강제 대시 (적 반대 방향으로 물러남)
 			float dashDur = skill.DurationSeconds > 0f ? skill.DurationSeconds : 0.35f;
 			target.ActivateDashInDirection(dashDur, -target.FacingDirection);

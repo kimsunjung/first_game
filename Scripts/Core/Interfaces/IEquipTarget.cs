@@ -21,10 +21,13 @@ namespace FirstGame.Core.Interfaces
 		bool LearnSkill(SkillData skill);
 		// 일시 buff — duration초 동안 MoveSpeed/AttackSpeed/BaseDamage/Defense/CritRate 적용 후 자동 복귀.
 		void ApplyBuff(float moveDelta, float atkDelta, float durationSec);
-		// 확장 buff — Damage/Defense/Crit 추가. 기본 구현은 좁은 ApplyBuff로 fallback.
-		void ApplyBuffEx(float moveDelta, float atkDelta, int dmgDelta, int defDelta, float critDelta, float durationSec)
+		// 확장 buff — Damage/Defense/Crit/StatusResist 추가. 기본 구현은 좁은 ApplyBuff로 fallback.
+		// resistDelta는 선택 인자 — 기존 호출 호환 유지.
+		void ApplyBuffEx(float moveDelta, float atkDelta, int dmgDelta, int defDelta, float critDelta, float durationSec, float resistDelta = 0f)
 			=> ApplyBuff(moveDelta, atkDelta, durationSec);
 		// 상태이상 해제 — mask 비트: 1=독, 2=빙결, 4=저주. 기본 no-op.
 		void CureStatuses(int mask) { }
+		// 상태이상 저항 가감 (장비 보너스). 기본 no-op.
+		void ModifyStatusResist(float delta) { }
 	}
 }

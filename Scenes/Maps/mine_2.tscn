@@ -20,6 +20,7 @@
 [ext_resource type="Resource" uid="uid://bmt2ore7l5m08" path="res://Resources/Items/mithril_ore.tres" id="18_mithril"]
 [ext_resource type="Resource" uid="uid://brb2ore7l6m09" path="res://Resources/Items/ruby_ore.tres" id="19_ruby"]
 [ext_resource type="Resource" uid="uid://bsp2ore7l7m10" path="res://Resources/Items/sapphire_ore.tres" id="20_sapphire"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -128,3 +129,18 @@ position = Vector2(1220, 360)
 TargetScenePath = "res://Scenes/Maps/mine_3.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 RespawnChanceOnReentry = 0.3
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 10
+DisplayName = "수정 먼지"
+VisualIntensity = 0.12
+OverlayColor = Color(0.6, 0.8, 0.9, 0.5)
+ParticleColor = Color(0.7, 0.95, 1, 0.45)
+ParticleCount = 26
+Wind = Vector2(0.1, 0.3)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 16
+StatusChance = 0.03
+StatusDuration = 3.0

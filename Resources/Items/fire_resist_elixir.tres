@@ -17,6 +17,7 @@ MaxStack = 10
 UseEffect = 4
 BuffDefense = 20
 BuffDurationSec = 90.0
+BuffStatusResist = 0.25
 HealAmount = 0
 Weight = 0.1
 MinRequiredChapter = 4

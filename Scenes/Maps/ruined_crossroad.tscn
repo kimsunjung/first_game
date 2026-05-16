@@ -15,6 +15,8 @@
 [ext_resource type="Resource" uid="uid://bkh2g0kc5posl" path="res://Resources/Enemies/field3_cursed_banner_wraith.tres" id="22_e3"]
 [ext_resource type="Resource" uid="uid://b12v6oyfpuosk" path="res://Resources/Enemies/field3_ruin_golem.tres" id="23_e4"]
 [ext_resource type="Resource" uid="uid://b2onvw64l2osg" path="res://Resources/Enemies/field3_shadow_bat.tres" id="24_e5"]
+[ext_resource type="Resource" path="res://Resources/Enemies/field3_ruin_sentinel.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -82,7 +84,8 @@ DestinationName = "필드 3"
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("23_e4"), ExtResource("24_e5")])
+StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("23_e4"), ExtResource("24_e5"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 1.0, 1.0, 0.4)
 SpawnInterval = 3.0
 MaxEnemies = 6
 SpawnRadius = 300.0
@@ -106,3 +109,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 3
+DisplayName = "묘지안개"
+VisualIntensity = 0.2
+OverlayColor = Color(0.45, 0.4, 0.55, 0.5)
+ParticleColor = Color(0.6, 0.55, 0.65, 0.3)
+ParticleCount = 32
+Wind = Vector2(0.15, 0.2)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 4
+StatusChance = 0.06
+StatusDuration = 3.0

@@ -16,6 +16,8 @@
 [ext_resource type="Resource" path="res://Resources/Items/antidote.tres" id="14_anti"]
 [ext_resource type="Resource" uid="uid://bi02gfux88d6o" path="res://Resources/Items/return_scroll.tres" id="15_rscroll"]
 [ext_resource type="Resource" uid="uid://scroll_town01" path="res://Resources/Items/scroll_town.tres" id="16_stown"]
+[ext_resource type="Resource" uid="uid://itm_con_mistchm_v3" path="res://Resources/Items/mist_charm.tres" id="v3_mist"]
+[ext_resource type="Resource" uid="uid://itm_con_purinc_v3" path="res://Resources/Items/purifying_incense.tres" id="v3_purinc"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_pshop"]
 radius = 56.0
@@ -28,7 +30,7 @@ collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_shop")
 PromptIcon = ExtResource("3_prompt")
-ShopItems = Array[Resource]([ExtResource("4_hp"), ExtResource("5_hi"), ExtResource("6_mega"), ExtResource("7_mp"), ExtResource("8_mhp"), ExtResource("9_mmp"), ExtResource("10_atk"), ExtResource("11_def"), ExtResource("12_crit"), ExtResource("13_swift"), ExtResource("14_anti"), ExtResource("15_rscroll"), ExtResource("16_stown")])
+ShopItems = Array[Resource]([ExtResource("4_hp"), ExtResource("5_hi"), ExtResource("6_mega"), ExtResource("7_mp"), ExtResource("8_mhp"), ExtResource("9_mmp"), ExtResource("10_atk"), ExtResource("11_def"), ExtResource("12_crit"), ExtResource("13_swift"), ExtResource("14_anti"), ExtResource("15_rscroll"), ExtResource("16_stown"), ExtResource("v3_mist"), ExtResource("v3_purinc")])
 ShopName = "소모품 상점"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

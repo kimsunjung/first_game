@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_con_coolslv_v3"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/defrost_potion.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "냉각 연고"
+Description = "화상(Burn)을 즉시 해제한다."
+Rarity = 1
+Icon = ExtResource("2_icon")
+Price = 90
+SellPrice = 32
+Type = 0
+IsStackable = true
+MaxStack = 10
+UseEffect = 6
+HealAmount = 8
+Weight = 0.1

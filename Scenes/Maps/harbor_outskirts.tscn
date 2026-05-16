@@ -13,6 +13,8 @@
 [ext_resource type="Resource" uid="uid://f4_seagull01" path="res://Resources/Enemies/field4_seagull_swarm.tres" id="20_e1"]
 [ext_resource type="Resource" uid="uid://f4_crab01" path="res://Resources/Enemies/field4_giant_crab.tres" id="21_e2"]
 [ext_resource type="Resource" uid="uid://f4_grunt01" path="res://Resources/Enemies/field4_pirate_grunt.tres" id="22_e3"]
+[ext_resource type="Resource" path="res://Resources/Enemies/field4_reef_raider.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -80,7 +82,8 @@ DestinationName = "게 해변"
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3")])
+StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 0.4)
 SpawnInterval = 3.2
 MaxEnemies = 6
 SpawnRadius = 300.0
@@ -104,3 +107,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 4
+DisplayName = "바닷비"
+VisualIntensity = 0.16
+OverlayColor = Color(0.5, 0.6, 0.75, 0.5)
+ParticleColor = Color(0.6, 0.75, 0.95, 0.5)
+ParticleCount = 48
+Wind = Vector2(0.25, 1.0)
+HazardEnabled = false
+HazardInterval = 4.0
+InflictedStatus = 0
+StatusChance = 0.0
+StatusDuration = 3.0

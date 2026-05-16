@@ -13,6 +13,8 @@
 [ext_resource type="Resource" uid="uid://f5_imp01" path="res://Resources/Enemies/field5_ice_imp.tres" id="20_e1"]
 [ext_resource type="Resource" uid="uid://f5_wolf01" path="res://Resources/Enemies/field5_frost_wolf.tres" id="21_e2"]
 [ext_resource type="Resource" uid="uid://f5_farcher01" path="res://Resources/Enemies/field5_frost_archer.tres" id="22_e3"]
+[ext_resource type="Resource" path="res://Resources/Enemies/field5_blizzard_witch.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -80,7 +82,8 @@ DestinationName = "빙결 계곡"
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3")])
+StatVariants = Array[Resource]([ExtResource("20_e1"), ExtResource("21_e2"), ExtResource("22_e3"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 0.25)
 SpawnInterval = 3.0
 MaxEnemies = 7
 SpawnRadius = 320.0
@@ -104,3 +107,18 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(1288, 360)
 shape = SubResource("wall_right")
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 6
+DisplayName = "눈발"
+VisualIntensity = 0.16
+OverlayColor = Color(0.85, 0.9, 1, 0.5)
+ParticleColor = Color(1, 1, 1, 0.7)
+ParticleCount = 45
+Wind = Vector2(0.2, 0.6)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 2
+StatusChance = 0.04
+StatusDuration = 3.0

@@ -16,4 +16,5 @@ IsStackable = true
 MaxStack = 20
 UseEffect = 1
 HealAmount = 60
+BuffStatusResist = 0.1
 Weight = 0.1

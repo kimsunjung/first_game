@@ -10,6 +10,9 @@ namespace FirstGame.Entities.Enemies
 	{
 		[Export] public PackedScene EnemyScene { get; set; }
 		[Export] public EnemyStats[] StatVariants { get; set; } // 다양한 적 타입
+		// 지역별 일반/희귀 비율 조절용 가중치. null이거나 길이가 StatVariants와 다르거나
+		// 합계가 0 이하이면 기존 균등 랜덤으로 fallback. 설정 시 가중치 룰렛 선택.
+		[Export] public float[] StatWeights { get; set; }
 		[Export] public float SpawnInterval { get; set; } = 3.0f;
 		[Export] public int MaxEnemies { get; set; } = 5;
 		[Export] public float SpawnRadius { get; set; } = 300.0f;
@@ -170,7 +173,7 @@ namespace FirstGame.Entities.Enemies
 				EliteAffixUtil.AffixParams affixParams = default;
 				if (StatVariants != null && StatVariants.Length > 0)
 				{
-					int idx = (int)(GD.Randi() % (uint)StatVariants.Length);
+					int idx = PickVariantIndex();
 					var scaled = (EnemyStats)StatVariants[idx].Duplicate();
 					ApplyZoneScaling(scaled);
 
@@ -205,6 +208,26 @@ namespace FirstGame.Entities.Enemies
 				GD.Print($"[EnemySpawner] 스폰 실패: {maxAttempts}회 모두 차단됨. center={spawnCenter}, " +
 						 $"ground={_groundTiles.Count}, obstacle={_obstacleTiles.Count}, emptyGroundWalkable={_emptyGroundIsWalkable}");
 			}
+		}
+
+		// 가중치 룰렛으로 StatVariants 인덱스 선택. 조건 불충족 시 균등 랜덤 fallback.
+		private int PickVariantIndex()
+		{
+			int n = StatVariants.Length;
+			if (StatWeights == null || StatWeights.Length != n)
+				return (int)(GD.Randi() % (uint)n);
+			float total = 0f;
+			foreach (var w in StatWeights) total += w > 0f ? w : 0f;
+			if (total <= 0f)
+				return (int)(GD.Randi() % (uint)n);
+			float roll = (float)GD.RandRange(0.0, total);
+			float cumulative = 0f;
+			for (int i = 0; i < n; i++)
+			{
+				cumulative += StatWeights[i] > 0f ? StatWeights[i] : 0f;
+				if (roll < cumulative) return i;
+			}
+			return n - 1;
 		}
 
 		private Vector2 GetSpawnCenter()

@@ -33,6 +33,9 @@ namespace FirstGame.UI
 		private Label _levelUpLabel;
 		private Label _questLabel;
 
+		// 상태이상 칩 바 — 코드 생성(상태 아이콘 텍스처 자산 없음 → 색상 타이머 바로 표시).
+		private HBoxContainer _statusBar;
+		private readonly System.Collections.Generic.Dictionary<FirstGame.Data.StatusEffect, ProgressBar> _statusChips = new();
 
 		public override void _Ready()
 		{
@@ -91,8 +94,62 @@ namespace FirstGame.UI
 				UpdateGoldDisplay(GameManager.Instance.PlayerGold);
 			}
 
+			// 상태이상 칩 바 생성 — QuestLabel 아래(있으면) 또는 VBox 말미.
+			var vbox = GetNodeOrNull<Control>("MarginContainer/VBoxContainer");
+			if (vbox != null)
+			{
+				_statusBar = new HBoxContainer { Name = "StatusBar" };
+				_statusBar.AddThemeConstantOverride("separation", 4);
+				vbox.AddChild(_statusBar);
+			}
+
 			// 씬 트리 _Ready 순서 보장을 위해 플레이어 바인딩은 지연 실행
 			CallDeferred(nameof(BindPlayer));
+		}
+
+		public override void _Process(double delta)
+		{
+			RefreshStatusBar();
+		}
+
+		// 매 프레임 플레이어 상태이상을 칩으로 표시. 활성 상태가 없으면 칩 숨김.
+		private void RefreshStatusBar()
+		{
+			if (_statusBar == null || _player?.Stats == null) return;
+			var bars = _player.Stats.GetActiveStatusBars();
+
+			var present = new System.Collections.Generic.HashSet<FirstGame.Data.StatusEffect>();
+			foreach (var (kind, frac, remain) in bars)
+			{
+				present.Add(kind);
+				if (!_statusChips.TryGetValue(kind, out var chip) || !IsInstanceValid(chip))
+				{
+					chip = new ProgressBar
+					{
+						CustomMinimumSize = new Vector2(30, 10),
+						MinValue = 0, MaxValue = 1, ShowPercentage = false,
+					};
+					var bg = new StyleBoxFlat { BgColor = new Color(0.1f, 0.1f, 0.1f, 0.7f) };
+					var col = FirstGame.Data.CharacterStats.StatusColor(kind);
+					var fill = new StyleBoxFlat { BgColor = col };
+					chip.AddThemeStyleboxOverride("background", bg);
+					chip.AddThemeStyleboxOverride("fill", fill);
+					_statusBar.AddChild(chip);
+					_statusChips[kind] = chip;
+				}
+				chip.Value = frac;
+				chip.TooltipText = $"{kind} {remain:0.0}s";
+				chip.Visible = true;
+			}
+			// 더 이상 활성 아닌 칩 제거
+			foreach (var kv in new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<FirstGame.Data.StatusEffect, ProgressBar>>(_statusChips))
+			{
+				if (!present.Contains(kv.Key))
+				{
+					if (IsInstanceValid(kv.Value)) kv.Value.QueueFree();
+					_statusChips.Remove(kv.Key);
+				}
+			}
 		}
 
 		private void BindPlayer()

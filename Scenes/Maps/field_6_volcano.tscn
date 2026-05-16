@@ -24,6 +24,10 @@
 [ext_resource type="Resource" uid="uid://itm_con_mgbrew_001" path="res://Resources/Items/magma_brew.tres" id="23_mgbrew"]
 [ext_resource type="Resource" uid="uid://cons_mega_hp01" path="res://Resources/Items/mega_health_potion.tres" id="24_megahp"]
 [ext_resource type="Resource" uid="uid://itm_con_btlelx_001" path="res://Resources/Items/battle_elixir.tres" id="25_btlelx"]
+[ext_resource type="Resource" uid="uid://itm_con_ashflt_v3" path="res://Resources/Items/ash_filter.tres" id="v3_ashflt"]
+[ext_resource type="Resource" uid="uid://itm_con_coolslv_v3" path="res://Resources/Items/cooling_salve.tres" id="v3_coolslv"]
+[ext_resource type="Resource" path="res://Resources/Enemies/field6_cinder_salamander.tres" id="v3e_new"]
+[ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -66,7 +70,7 @@ position = Vector2(80, 360)
 [node name="VolcanoMerchant" parent="." instance=ExtResource("20_shopnpc")]
 position = Vector2(250, 80)
 ShopName = "화산 상인"
-ShopItems = Array[Resource]([ExtResource("22_firelx"), ExtResource("23_mgbrew"), ExtResource("24_megahp"), ExtResource("25_btlelx")])
+ShopItems = Array[Resource]([ExtResource("22_firelx"), ExtResource("23_mgbrew"), ExtResource("24_megahp"), ExtResource("25_btlelx"), ExtResource("v3_ashflt"), ExtResource("v3_coolslv")])
 
 [node name="ShopUI" parent="VolcanoMerchant" instance=ExtResource("21_shopUI")]
 
@@ -117,10 +121,26 @@ shape = SubResource("wall_right")
 position = Vector2(640, 360)
 script = ExtResource("11_spawner")
 EnemyScene = ExtResource("10_enemy")
-StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5"), ExtResource("17_e6"), ExtResource("18_e7")])
+StatVariants = Array[Resource]([ExtResource("12_e1"), ExtResource("13_e2"), ExtResource("14_e3"), ExtResource("15_e4"), ExtResource("16_e5"), ExtResource("17_e6"), ExtResource("18_e7"), ExtResource("v3e_new")])
+StatWeights = PackedFloat32Array(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.4)
 SpawnInterval = 2.5
 MaxEnemies = 8
 SpawnRadius = 360.0
 BossStatVariant = ExtResource("19_boss")
 BossId = "inferno_drake_f6"
 RepeatableBoss = true
+
+[node name="Weather" type="Node2D" parent="."]
+script = ExtResource("wctrl_v3")
+WeatherKind = 9
+DisplayName = "열파"
+VisualIntensity = 0.2
+OverlayColor = Color(0.8, 0.45, 0.3, 0.5)
+ParticleColor = Color(1, 0.6, 0.3, 0.35)
+ParticleCount = 32
+Wind = Vector2(0.1, 0.2)
+HazardEnabled = true
+HazardInterval = 4.0
+InflictedStatus = 8
+StatusChance = 0.08
+StatusDuration = 3.0

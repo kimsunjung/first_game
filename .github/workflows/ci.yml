@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # 1) 데이터/리소스 무결성 검사 (Godot 불필요, 가장 빠른 실패 게이트)
+      - name: Resource integrity validator
+        run: python3 tools/validate/validate.py
+
+      # 2) 밸런스 정합성 검사 (빈 드랍 / 보상 강역전 / 보스 BossId 누락)
+      - name: Balance consistency analyzer
+        run: python3 tools/validate/balance.py
+
+      # 3) 게임 어셈블리 컴파일 (Godot.NET.Sdk → GodotSharp NuGet 복원)
+      - name: Build game assembly
+        run: dotnet build first_game.csproj -c Debug --nologo
+
+      # 4) Godot 미의존 순수 로직 단위 테스트
+      - name: Unit tests
+        run: dotnet test tools/Tests/FirstGame.Tests.csproj --nologo
