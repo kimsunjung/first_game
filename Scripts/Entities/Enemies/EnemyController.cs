@@ -517,7 +517,9 @@ namespace FirstGame.Entities.Enemies
 			proj.InflictedStatus = Stats.InflictedStatus;
 			proj.InflictedStatusDuration = Stats.InflictedStatusDuration;
 			proj.InflictedStatusChance = Stats.InflictedStatusChance;
-			GetTree().CurrentScene.AddChild(proj);
+			var pscene = GetTree()?.CurrentScene;
+			if (pscene == null) { proj.QueueFree(); return; }
+			pscene.AddChild(proj);
 		}
 
 		private void SpawnAttackEffect(Vector2 direction)
@@ -627,6 +629,9 @@ namespace FirstGame.Entities.Enemies
 		private void Die()
 		{
 			_isDying = true;
+			// 사망 즉시 타깃 풀에서 제거 — 사망 애니메이션(노드는 아직 valid) 동안
+			// AoE/번개/평타/넉백이 시체를 타깃하는 문제 차단. _ExitTree 재호출은 무해(idempotent).
+			GameManager.Instance?.UnregisterEnemy(this);
 
 			// 진행 중인 공격 tween 즉시 종료 — IsValid 검사가 통과하는 동안에도
 			// 데미지/투사체 콜백이 발사되지 않도록 차단. 콜백 안 _isDying 검사가
@@ -723,9 +728,11 @@ namespace FirstGame.Entities.Enemies
 				UIEffectManager.SpawnGoldLabel(GlobalPosition, amount);
 				return;
 			}
+			var gscene = GetTree()?.CurrentScene;
+			if (gscene == null) { GameManager.Instance.PlayerGold += amount; return; }
 			var pickup = prefab.Instantiate<FirstGame.Objects.GoldPickup>();
 			pickup.Amount = amount;
-			GetTree().CurrentScene.AddChild(pickup);
+			gscene.AddChild(pickup);
 			Vector2 dropDir = new Vector2((float)GD.RandRange(-1, 1), -1).Normalized();
 			pickup.Drop(GlobalPosition, dropDir, (float)GD.RandRange(60, 130));
 		}
@@ -744,7 +751,9 @@ namespace FirstGame.Entities.Enemies
 			// 장신구 드롭이면 rarity에 따라 affix 개수·값 차등 부여 — 같은 .tres라도 개체마다 달라짐.
 			if (AffixGenerator.IsJewelry(item.Type))
 				fieldItem.Affixes = AffixGenerator.GenerateForJewelry(item.Rarity);
-			GetTree().CurrentScene.AddChild(fieldItem);
+			var fscene = GetTree()?.CurrentScene;
+			if (fscene == null) { fieldItem.QueueFree(); return; }
+			fscene.AddChild(fieldItem);
 			Vector2 dropDir = new Vector2((float)GD.RandRange(-1, 1), -1).Normalized();
 			fieldItem.Drop(GlobalPosition, dropDir, (float)GD.RandRange(minForce, maxForce));
 		}

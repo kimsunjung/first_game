@@ -332,8 +332,12 @@ namespace FirstGame.Entities.Enemies
 
 		private void OnEnemyKilledHandler()
 		{
+			// 보스 생존 중에는 카운트하지 않는다 — 보스 자신/소환수/엘리트 처치가
+			// _killCount를 부풀려 다음 보스 주기를 앞당기거나, 보스 사망 시점의
+			// TriggerEnemyKilled가 임계값에 걸려 주기가 영구히 어긋나는 것을 차단.
+			if (_bossAlive || BossStatVariant == null) return;
 			_killCount++;
-			if (!_bossAlive && BossStatVariant != null && _killCount % BalanceData.Enemy.BossKillThreshold == 0)
+			if (_killCount % BalanceData.Enemy.BossKillThreshold == 0)
 			{
 				TrySpawnBoss();
 			}

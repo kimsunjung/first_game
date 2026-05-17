@@ -242,6 +242,9 @@ namespace FirstGame.Data
 
             if (slot.Item.Type == ItemType.Consumable)
             {
+                // 소비 아이템이 IsEquipped로 표시된 비정상 상태면 RemoveItem이 제거를 거부해
+                // 효과만 적용되고 소모는 안 되는 exploit(무한 텔레포트 등)이 된다. 사전 차단.
+                if (slot.IsEquipped) return;
                 switch (slot.Item.UseEffect)
                 {
                     case ItemUseEffect.ReturnToTown:

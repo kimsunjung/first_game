@@ -94,8 +94,11 @@ namespace FirstGame.Entities.Enemies
 
 		private void SpawnHitEffect()
 		{
+			// 씬 전환 중 명중 시 GetTree()/CurrentScene이 null일 수 있음 — 가드.
+			var scene = GetTree()?.CurrentScene;
+			if (scene == null) return;
 			var flash = new HitFlash { GlobalPosition = GlobalPosition };
-			GetTree().CurrentScene.AddChild(flash);
+			scene.AddChild(flash);
 			flash.Play(ProjectileColor);
 		}
 	}

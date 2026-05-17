@@ -55,6 +55,7 @@ namespace FirstGame.Entities.Player
 				float minDist = float.MaxValue;
 				foreach (var e in enemies)
 				{
+					if (!IsInstanceValid(e)) continue;
 					float d = GlobalPosition.DistanceTo(e.GlobalPosition);
 					if (d < minDist) { minDist = d; nearest = e; }
 				}

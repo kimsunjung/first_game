@@ -9,6 +9,10 @@ namespace FirstGame.Core
 		// 포탈 이동 시 다음 씬에서 적용할 스폰 위치
 		public Vector2? NextSpawnPosition { get; set; } = null;
 
+		// 재진입 가드 — 포탈 중복 트리거(같은 프레임 두 번/겹친 포탈)로 ChangeScene이
+		// 이중 호출돼 디스크 이중 기록·잘못된 목적지가 되는 것을 차단. 큐잉 후 짧게 잠금.
+		private bool _changing = false;
+
 		public override void _Ready()
 		{
 			if (Instance == null)
@@ -37,6 +41,13 @@ namespace FirstGame.Core
         /// 실패 시 false 반환, 사이드 이펙트 전무 — 호출자는 반환값으로 골드/아이템 롤백 판단.</summary>
 		public bool ChangeScene(string scenePath, Vector2 spawnPosition)
 		{
+			// 0. 재진입 차단 — 직전 전환이 아직 처리 중이면 무시.
+			if (_changing)
+			{
+				GD.Print($"SceneManager: 전환 진행 중 — 중복 요청 무시 ({scenePath})");
+				return false;
+			}
+
 			// 1. 경로 + 로드 가능성 사전 검증.
 			if (string.IsNullOrEmpty(scenePath) || !ResourceLoader.Exists(scenePath))
 			{
@@ -69,12 +80,18 @@ namespace FirstGame.Core
 			Engine.TimeScale = 1.0;
 
 			// 4. 씬 전환 큐잉. 실패 시 mutation 없이 false 반환.
+			// 전환 전 static 이벤트 초기화 — 구 씬 노드 구독 dead 참조 백스톱
+			// (노드별 _ExitTree -= 가 1차 방어, 여기가 2차). QuestManager 구독은 자동 복원.
+			EventManager.ResetAll();
 			var err = GetTree().ChangeSceneToPacked(packed);
 			if (err != Error.Ok)
 			{
 				GD.PrintErr($"SceneManager: ChangeSceneToPacked 실패 ({scenePath}) err={err}");
 				return false;
 			}
+			// 큐잉 성공 — 재진입 잠금. 다음 씬 로드까지 약간의 시간 후 해제.
+			_changing = true;
+			GetTree().CreateTimer(0.5, processAlways: true).Timeout += () => _changing = false;
 
 			// 5. 큐잉 성공 — 메모리 visit 기록 + PendingLoadData 설정 + 디스크 영속화.
 			//    씬 전환은 이미 큐잉됐으므로 디스크 쓰기 실패해도 게임은 계속 진행. 다만 다음

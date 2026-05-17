@@ -115,7 +115,10 @@ namespace FirstGame.UI
 		// 매 프레임 플레이어 상태이상을 칩으로 표시. 활성 상태가 없으면 칩 숨김.
 		private void RefreshStatusBar()
 		{
-			if (_statusBar == null || _player?.Stats == null) return;
+			if (_statusBar == null || _player == null) return;
+			// _player가 freed PlayerController면 .Stats 접근이 ObjectDisposedException.
+			if (_player is GodotObject pgo && !IsInstanceValid(pgo)) { _player = null; return; }
+			if (_player.Stats == null) return;
 			var bars = _player.Stats.GetActiveStatusBars();
 
 			var present = new System.Collections.Generic.HashSet<FirstGame.Data.StatusEffect>();
@@ -154,6 +157,10 @@ namespace FirstGame.UI
 
 		private void BindPlayer()
 		{
+			// CallDeferred로 지연 실행 — 그 사이 빠른 씬 전환으로 이 HUD가 이미
+			// 해제됐을 수 있다. freed HUD 메서드를 살아있는 Stats에 구독하면
+			// 콜백 시 ObjectDisposedException. 유효성 먼저 확인.
+			if (!IsInstanceValid(this) || !IsInsideTree()) return;
 			var player = GameManager.Instance?.Player;
 			if (player == null) return;
 

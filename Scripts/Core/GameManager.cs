@@ -227,6 +227,7 @@ namespace FirstGame.Core
 
 			_claimingPendingRewards = true;
 			bool queueMutated = false;
+			System.Collections.Generic.List<FirstGame.Data.SavedItemSlot> reAdd = null;
 			try
 			{
 				for (int i = _pendingRewards.Count - 1; i >= 0; i--)
@@ -248,11 +249,15 @@ namespace FirstGame.Core
 					if (inv.AddItem(item, pending.Quantity, pending.EnhancementLevel, true, pending.Affixes))
 						OnPendingRewardClaimed?.Invoke(item, pending.Quantity);
 					else
-						_pendingRewards.Insert(0, pending); // 매우 드문 race — 큐 끝에 복귀
+						// 매우 드문 race(CanAddItem↔AddItem 불일치). 하향 루프 도중
+						// Insert(0)하면 인덱스가 시프트돼 다른 보상을 건너뛰거나 중복 처리한다.
+						// 루프 종료 후 일괄 재삽입으로 안전화.
+						(reAdd ??= new()).Add(pending);
 				}
 			}
 			finally
 			{
+				if (reAdd != null) _pendingRewards.AddRange(reAdd);
 				_claimingPendingRewards = false;
 			}
 

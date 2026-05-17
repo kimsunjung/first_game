@@ -83,6 +83,14 @@ namespace FirstGame.Core
 
 		public static SaveData SaveGame(string slot = AutoSaveSlot)
 		{
+			// 복원 critical section 중에는 절대 저장하지 않는다. LoadFromSaveData 도중
+			// OnEquipmentChanged→RequestAutoSave 등이 부분 복원 상태를 디스크에 박는 것을 차단.
+			// dirty만 남겨 EndRestoreState 후 TickDirty/다음 RequestAutoSave가 정상 flush.
+			if (FirstGame.Core.GameManager.Instance?.IsRestoringState == true)
+			{
+				_dirty = true;
+				return null;
+			}
 			var data = BuildSaveData();
 			if (data == null) return null;
 			WriteSaveDataToDisk(data, slot);
@@ -222,6 +230,8 @@ namespace FirstGame.Core
 			string targetScene = PendingLoadData?.CurrentScene;
 			if (string.IsNullOrEmpty(targetScene))
 				targetScene = "res://Scenes/Maps/town.tscn";
+			// 씬 전환 전 static 이벤트 초기화 — 구 씬 노드 구독 dead 참조 백스톱.
+			EventManager.ResetAll();
 			tree.ChangeSceneToFile(targetScene);
 		}
 

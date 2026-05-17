@@ -257,10 +257,11 @@ namespace FirstGame.Entities.Player
 			foreach (Node2D e in enemies)
 			{
 				if (e is not IDamageable) continue;
+				if (!IsInstanceValid(e)) continue;
 				float d = GlobalPosition.DistanceTo(e.GlobalPosition);
 				if (d < bestDist) { bestDist = d; best = e; }
 			}
-			if (best == null) return;
+			if (best == null || !IsInstanceValid(best)) return;
 			int dmg = Stats.BaseDamage * 2;
 			(best as IDamageable)?.TakeDamage(dmg, FirstGame.Data.ElementType.Lightning);
 			// 번개 시각 — 흰색 라인 flash
@@ -507,6 +508,7 @@ namespace FirstGame.Entities.Player
 			var result = new List<(Node2D, IDamageable)>();
 			foreach (Node2D e in enemies)
 			{
+				if (!IsInstanceValid(e)) continue;
 				if (e is IDamageable dam && GlobalPosition.DistanceTo(e.GlobalPosition) <= range)
 					result.Add((e, dam));
 			}
@@ -541,10 +543,14 @@ namespace FirstGame.Entities.Player
 					{
 						var item = GD.Load<ItemData>(savedSlot.ItemPath);
 						if (item == null) continue;
+						int beforeCount = Inventory.Slots.Count;
 						bool added = Inventory.AddItem(item, savedSlot.Quantity, savedSlot.EnhancementLevel,
 							fireAcquired: false, savedSlot.Affixes);
-						// AddItem 직후 마지막 슬롯에 IsEquipped 마킹 (AddItem이 stack했을 경우 마킹 안 됨)
-						if (added && savedSlot.IsEquipped && Inventory.Slots.Count > 0)
+						// IsEquipped는 "신규 슬롯이 실제로 생성된 경우"에만 그 슬롯에 마킹.
+						// AddItem이 기존 스택에 합쳐 슬롯 수가 안 늘면(장착 표시를 엉뚱한
+						// 스택에 걸어 영구 판매불가/무한 증식되던 버그) 마킹하지 않는다.
+						if (added && savedSlot.IsEquipped
+							&& Inventory.Slots.Count > beforeCount)
 						{
 							var last = Inventory.Slots[Inventory.Slots.Count - 1];
 							if (last.Item.ResourcePath == savedSlot.ItemPath)
