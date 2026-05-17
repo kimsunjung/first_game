@@ -74,7 +74,7 @@
 신규 맵 없이 기존 사냥터 정체성 강화. 상세 `PLAN_DOC/regional-weather-hunting-v3.md`.
 - **가중치 스폰**: `EnemySpawner.StatWeights : float[]`. null/길이불일치/합≤0이면 균등 fallback. 씬 .tscn `StatWeights = PackedFloat32Array(...)`. validate.py R3가 길이·합 검사.
 - **날씨**: `Scripts/Maps/BiomeWeatherController.cs` — 씬 루트 Node2D, 코드로 오버레이/파티클 + 저확률 hazard(`Stats.ApplyStatus`). 새 PNG·세이브 상태 없음. 허브는 hazard 없음. 28맵 배치 완료.
-- **상태저항 배선**: `CharacterStats.StatusResist`(0~0.85). `ItemData.BonusStatusResist`(장비, Inventory equip/clear/restore), `BuffStatusResist`(소모품 Buff, `ApplyBuffEx` 선택 인자+만료 차감). 저장 미수정 — 로드 후 장비 재적용으로 복구.
+- **상태저항 배선**: `CharacterStats.StatusResist`는 **raw 누적값**(장비+버프 합산, 저장값 자체는 clamp 안 함). `PlayerStats.ModifyStatusResist`는 `+= delta`만. 면역 상한(0~0.85)은 **사용 시점** `CharacterStats.ApplyStatus`에서만 clamp(버프 만료가 장비 저항을 깎지 않게). `ItemData.BonusStatusResist`(장비, Inventory equip/clear/restore), `BuffStatusResist`(소모품 Buff, `ApplyBuffEx` 선택 인자+만료 차감). 저장 미수정 — 로드 후 장비 재적용으로 복구.
 - **신규**: 날씨 테마 적 12종 + 소모품 6종. **전부 기존 PNG/아이콘 임시 재사용**(v3 문서에만 기록, generated-asset-inventory 미수정). 18 사냥터에 테마 적을 희귀 가중치로 추가, field_1/보스던전 구조 유지.
 - 검증 4종(validate/balance/build/test)+ git diff --check 모두 green 유지가 완료 기준.
 

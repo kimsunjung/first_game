@@ -53,7 +53,7 @@
 - Player: `Scripts/Entities/Player/PlayerController*.cs`
 - Enemies: `Scripts/Entities/Enemies/EnemyController.cs`, `EnemySpawner.cs`, `EnemyProjectile.cs`
 - Regional weather (v3): `Scripts/Maps/BiomeWeatherController.cs` — per-scene Node2D, code overlay/particles + low-rate hazard via `Stats.ApplyStatus`. No PNG, no save state.
-- Status resist: `CharacterStats.StatusResist` (0~0.85 clamp via `PlayerStats.ModifyStatusResist`); `ItemData.BonusStatusResist` (equip) / `BuffStatusResist` (consumable Buff, `ApplyBuffEx` optional arg).
+- Status resist: `CharacterStats.StatusResist` is a **raw accumulator** (equip + buff summed, no clamp on the stored value); `PlayerStats.ModifyStatusResist` just does `+= delta`. The 0~0.85 immunity cap is applied **only at use** in `CharacterStats.ApplyStatus` (so buff expiry can't erode equip resist). `ItemData.BonusStatusResist` (equip) / `BuffStatusResist` (consumable Buff, `ApplyBuffEx` optional arg).
 - Inventory/equipment/affix: `Scripts/Data/Inventory.cs`, `AffixGenerator.cs`, `ItemData.cs`
 - Quests: `Scripts/Core/QuestManager.cs`, `Scripts/Data/QuestData.cs`
 - Mobile controls: `Scripts/UI/MobileControls.cs`, `VirtualJoystick.cs`, `VirtualInput.cs`
