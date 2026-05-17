@@ -27,6 +27,9 @@ namespace FirstGame.Objects
 		private bool _isLanded = false;
 		private int _bounceCount = 0;
 		private bool _canCollect = true; // 드롭 직후 수집 방지용
+		// 가방 만석으로 튕겨낸 상태 — 이 동안은 Drop()의 0.5초 재무장 타이머가
+		// _canCollect를 켜지 못하게 막고, 2초 타이머만 해제하도록 한다.
+		private bool _bagFullBounce = false;
 
 		public override void _Ready()
 		{
@@ -65,6 +68,8 @@ namespace FirstGame.Objects
 			GetTree().CreateTimer(0.5).Timeout += () =>
 			{
 				if (!IsInstanceValid(this)) return;
+				// 만석 튕김 중이면 2초 쿨다운이 전담 — 0.5초 타이머는 관여하지 않음.
+				if (_bagFullBounce) return;
 				_canCollect = true;
 				// 0.5s 픽업 잠금 동안 플레이어가 이미 위에 서 있어 BodyEntered가 재발화하지 않는 케이스 보강.
 				foreach (var body in GetOverlappingBodies())
@@ -81,6 +86,13 @@ namespace FirstGame.Objects
 
 		public override void _Process(double delta)
 		{
+			if (_isMagnetized && !IsInstanceValid(_magnetTarget))
+			{
+				// 자석 대상(플레이어)이 씬 전환 등으로 해제됨 — 자석 상태 리셋.
+				_isMagnetized = false;
+				_magnetTarget = null;
+				_magnetSpeed = 400.0f;
+			}
 			if (_isMagnetized && _magnetTarget != null)
 			{
 				// 플레이어에게 빨려들어감
@@ -164,10 +176,13 @@ namespace FirstGame.Objects
 				_magnetTarget = null;
 				_magnetSpeed = 400.0f;
 				_canCollect = false;
+				_bagFullBounce = true; // Drop()의 0.5초 타이머가 _canCollect를 못 켜게
 				Drop(GlobalPosition, new Vector2((float)GD.RandRange(-1, 1), -1), 80f);
 				GetTree().CreateTimer(2.0).Timeout += () =>
 				{
-					if (IsInstanceValid(this)) _canCollect = true;
+					if (!IsInstanceValid(this)) return;
+					_bagFullBounce = false;
+					_canCollect = true;
 				};
 			}
 		}

@@ -109,9 +109,11 @@ namespace FirstGame.UI
 				});
 
 			// 2) 인벤토리 내 무기 — 방어구/장신구는 강화 대상이 아니므로 제외.
+			//    장착 중인 무기 슬롯(IsEquipped)은 위 EquippedWeapon 엔트리로만 취급해
+			//    중복 표시/중복 강화/유령 장비를 차단한다.
 			foreach (var slot in _inventory.Slots)
 			{
-				if (slot.Item.Type == ItemType.Weapon)
+				if (slot.Item.Type == ItemType.Weapon && !slot.IsEquipped)
 				{
 					_entries.Add(new EnhanceEntry
 					{

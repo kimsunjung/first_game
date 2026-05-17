@@ -100,9 +100,10 @@ namespace FirstGame.Maps
 			if (!HazardEnabled || InflictedStatus == StatusEffect.None) return;
 			_hazardTimer -= (float)delta;
 			if (_hazardTimer > 0f) return;
-			_hazardTimer = HazardInterval;
+			// HazardInterval이 0 이하면 매 프레임 시도 = 상태이상 스팸. 최소 간격 보장.
+			_hazardTimer = Mathf.Max(0.5f, HazardInterval);
 
-			if (GD.Randf() > StatusChance) return;
+			if (GD.Randf() > Mathf.Clamp(StatusChance, 0f, 1f)) return;
 			var stats = GameManager.Instance?.Player?.Stats;
 			stats?.ApplyStatus(InflictedStatus, StatusDuration);
 		}

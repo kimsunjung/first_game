@@ -80,16 +80,18 @@ namespace FirstGame.Core
 			Engine.TimeScale = 1.0;
 
 			// 4. 씬 전환 큐잉. 실패 시 mutation 없이 false 반환.
-			// 전환 전 static 이벤트 초기화 — 구 씬 노드 구독 dead 참조 백스톱
-			// (노드별 _ExitTree -= 가 1차 방어, 여기가 2차). QuestManager 구독은 자동 복원.
-			EventManager.ResetAll();
+			// ResetAll은 큐잉 성공 *후*에만 — 실패 시 현재 씬 HUD/Player/Spawner의
+			// static 이벤트 구독이 살아 있어야 기존 씬이 정상 동작한다.
 			var err = GetTree().ChangeSceneToPacked(packed);
 			if (err != Error.Ok)
 			{
 				GD.PrintErr($"SceneManager: ChangeSceneToPacked 실패 ({scenePath}) err={err}");
-				return false;
+				return false; // _changing 미설정, ResetAll 미호출 — 현재 씬 그대로 유지
 			}
-			// 큐잉 성공 — 재진입 잠금. 다음 씬 로드까지 약간의 시간 후 해제.
+			// 큐잉 성공 — static 이벤트 초기화(구 씬 노드 dead 참조 백스톱;
+			// 노드별 _ExitTree -= 가 1차 방어, 여기가 2차). QuestManager 구독은 자동 복원.
+			EventManager.ResetAll();
+			// 재진입 잠금. 다음 씬 로드까지 약간의 시간 후 해제.
 			_changing = true;
 			GetTree().CreateTimer(0.5, processAlways: true).Timeout += () => _changing = false;
 

@@ -217,8 +217,12 @@ namespace FirstGame.Entities.Enemies
 			if (StatWeights == null || StatWeights.Length != n)
 				return (int)(GD.Randi() % (uint)n);
 			float total = 0f;
-			foreach (var w in StatWeights) total += w > 0f ? w : 0f;
-			if (total <= 0f)
+			int lastPositive = -1;
+			for (int i = 0; i < n; i++)
+			{
+				if (StatWeights[i] > 0f) { total += StatWeights[i]; lastPositive = i; }
+			}
+			if (total <= 0f || lastPositive < 0)
 				return (int)(GD.Randi() % (uint)n);
 			float roll = (float)GD.RandRange(0.0, total);
 			float cumulative = 0f;
@@ -227,7 +231,8 @@ namespace FirstGame.Entities.Enemies
 				cumulative += StatWeights[i] > 0f ? StatWeights[i] : 0f;
 				if (roll < cumulative) return i;
 			}
-			return n - 1;
+			// roll==total 경계 — n-1이 가중치 0일 수 있으므로 양수 가중치 마지막 인덱스 반환.
+			return lastPositive;
 		}
 
 		private Vector2 GetSpawnCenter()

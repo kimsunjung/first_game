@@ -198,41 +198,79 @@ namespace FirstGame.Core
 		// 씬 전환 후 save 동기화는 SceneManager.ChangeScene이 BuildSaveData → 캡처 override →
 		// 큐잉 성공 시에만 WriteSaveDataToDisk + PendingLoadData 설정으로 일원화한다.
 
+		/// <summary>슬롯 미지정 로드용 — 선호 슬롯의 본/.bak이 모두 손상돼도 다른 슬롯을
+		/// 시도한다. 정상 세이브가 하나라도 있으면 빈 town으로 떨어지지 않게 하는 게 목적.
+		/// 명시 슬롯 로드는 이 경로를 쓰지 않고 해당 슬롯만 처리한다.</summary>
+		private static SaveData LoadAnySlotWithFallback(string preferred, out string usedSlot)
+		{
+			usedSlot = null;
+			string other = preferred == ManualSaveSlot ? AutoSaveSlot : ManualSaveSlot;
+			foreach (var s in new[] { preferred, other })
+			{
+				string p = ProjectSettings.GlobalizePath(SaveDir + s + ".json");
+				// 본/.bak 중 하나라도 존재할 때만 시도 (TryReadSaveFile이 본→.bak 순 처리).
+				if (!File.Exists(p) && !File.Exists(p + ".bak")) continue;
+				var d = TryReadSaveFile(p);
+				if (d != null)
+				{
+					usedSlot = s;
+					if (s != preferred)
+						GD.PrintErr($"SaveManager: '{preferred}' 슬롯(본/.bak) 손상 — '{s}' 슬롯으로 폴백 로드 성공");
+					return d;
+				}
+				GD.PrintErr($"SaveManager: '{s}' 슬롯 본/.bak 모두 손상");
+			}
+			return null;
+		}
+
 		public static void LoadGame(string slot = null)
 		{
-			if (slot == null)
-			{
-				slot = SelectNewerSaveSlot();
-				if (slot == null)
-				{
-					GD.Print("저장된 파일이 없습니다. 새로 시작합니다.");
-					var t = (SceneTree)Engine.GetMainLoop();
-					t.Paused = false;
-					t.ReloadCurrentScene();
-					return;
-				}
-			}
-
-			string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
-
-			if (!File.Exists(path))
-			{
-				GD.PrintErr($"SaveManager: Save file not found at {path}");
-				return;
-			}
-
-			PendingLoadData = TryReadSaveFile(path);
-
 			var tree = (SceneTree)Engine.GetMainLoop();
 			tree.Paused = false;
 
-			// 저장된 씬으로 이동 (없으면 마을로)
+			SaveData data;
+			if (slot == null)
+			{
+				string preferred = SelectNewerSaveSlot();
+				if (preferred == null)
+				{
+					GD.Print("저장된 파일이 없습니다. 새로 시작합니다.");
+					tree.ReloadCurrentScene();
+					return;
+				}
+				data = LoadAnySlotWithFallback(preferred, out _);
+				if (data == null)
+					GD.PrintErr("SaveManager: 모든 슬롯(본/.bak) 손상 — 데이터 없이 마을로 시작");
+			}
+			else
+			{
+				// 명시 슬롯은 기존 의미 유지 — 해당 슬롯 본/.bak만 시도(교차 폴백 없음).
+				string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
+				data = (File.Exists(path) || File.Exists(path + ".bak")) ? TryReadSaveFile(path) : null;
+				if (data == null)
+					GD.PrintErr($"SaveManager: 명시 슬롯 '{slot}' 본/.bak 모두 손상/없음 — 데이터 없이 마을로 시작");
+			}
+
+			PendingLoadData = data;
+
+			// 저장된 씬으로 이동 (데이터 없거나 손상/경로 무효면 마을로)
+			const string townScene = "res://Scenes/Maps/town.tscn";
 			string targetScene = PendingLoadData?.CurrentScene;
-			if (string.IsNullOrEmpty(targetScene))
-				targetScene = "res://Scenes/Maps/town.tscn";
-			// 씬 전환 전 static 이벤트 초기화 — 구 씬 노드 구독 dead 참조 백스톱.
-			EventManager.ResetAll();
-			tree.ChangeSceneToFile(targetScene);
+			if (string.IsNullOrEmpty(targetScene) || !ResourceLoader.Exists(targetScene))
+				targetScene = townScene;
+
+			// ResetAll은 씬 전환 큐잉 성공 *후*에만 — 실패 시 현재 씬 HUD/Player/Spawner
+			// static 이벤트 구독이 살아 있어야 기존 씬이 정상 동작한다. (SceneManager와 동일 정책)
+			var err = tree.ChangeSceneToFile(targetScene);
+			if (err != Error.Ok && targetScene != townScene)
+			{
+				GD.PrintErr($"SaveManager: '{targetScene}' 전환 실패(err={err}) — 마을로 재시도");
+				err = tree.ChangeSceneToFile(townScene);
+			}
+			if (err == Error.Ok)
+				EventManager.ResetAll();
+			else
+				GD.PrintErr($"SaveManager: 씬 전환 실패(err={err}) — 현재 씬/구독 유지");
 		}
 
 		/// <summary>씬 전환 시 사용. 파일에서 읽어 PendingLoadData에 넣되, 씬 리로드는 하지 않음.</summary>
@@ -240,11 +278,13 @@ namespace FirstGame.Core
 		{
 			if (slot == null)
 			{
-				slot = SelectNewerSaveSlot();
-				if (slot == null) return;
+				string preferred = SelectNewerSaveSlot();
+				if (preferred == null) return;
+				PendingLoadData = LoadAnySlotWithFallback(preferred, out _);
+				return;
 			}
 			string path = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
-			if (!File.Exists(path)) return;
+			if (!File.Exists(path) && !File.Exists(path + ".bak")) return;
 			PendingLoadData = TryReadSaveFile(path);
 		}
 
@@ -475,18 +515,35 @@ namespace FirstGame.Core
 		/// 그 슬롯, 둘 다 없으면 null. "이어하기"가 항상 가장 최근 진행을 로드하도록.
 		/// FlushBeforeExit가 autosave에만 저장한 후 stale manual save가 우선 로드되는 결함 방지.
 		/// </summary>
+		// 본 파일이 삭제되고 .bak만 생존한 슬롯도 후보로 인정 (LoadAnySlotWithFallback이
+		// 실제 .bak 복구를 처리하므로 선택 단계에서 누락하면 안 됨).
+		private static bool SlotExists(string slot)
+		{
+			string p = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
+			return File.Exists(p) || File.Exists(p + ".bak");
+		}
+
+		// 본/.bak 중 더 최근 mtime — 최신 슬롯 판정용.
+		private static DateTime SlotWriteTime(string slot)
+		{
+			string p = ProjectSettings.GlobalizePath(SaveDir + slot + ".json");
+			DateTime t = DateTime.MinValue;
+			if (File.Exists(p)) t = File.GetLastWriteTime(p);
+			if (File.Exists(p + ".bak"))
+			{
+				DateTime tb = File.GetLastWriteTime(p + ".bak");
+				if (tb > t) t = tb;
+			}
+			return t;
+		}
+
 		private static string SelectNewerSaveSlot()
 		{
-			bool hasManual = HasSave(ManualSaveSlot);
-			bool hasAuto = HasSave(AutoSaveSlot);
+			bool hasManual = SlotExists(ManualSaveSlot);
+			bool hasAuto = SlotExists(AutoSaveSlot);
 			if (hasManual && hasAuto)
-			{
-				string pathManual = ProjectSettings.GlobalizePath(SaveDir + ManualSaveSlot + ".json");
-				string pathAuto = ProjectSettings.GlobalizePath(SaveDir + AutoSaveSlot + ".json");
-				DateTime tManual = File.GetLastWriteTime(pathManual);
-				DateTime tAuto = File.GetLastWriteTime(pathAuto);
-				return tManual >= tAuto ? ManualSaveSlot : AutoSaveSlot;
-			}
+				return SlotWriteTime(ManualSaveSlot) >= SlotWriteTime(AutoSaveSlot)
+					? ManualSaveSlot : AutoSaveSlot;
 			if (hasManual) return ManualSaveSlot;
 			if (hasAuto) return AutoSaveSlot;
 			return null;

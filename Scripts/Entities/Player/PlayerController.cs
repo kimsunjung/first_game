@@ -607,9 +607,7 @@ namespace FirstGame.Entities.Player
 					Stats.ApplyPassiveBonuses();
 				}
 
-				// 처치한 보스 목록 복원
-				if (data.DefeatedBosses != null && data.DefeatedBosses.Count > 0)
-					GameManager.Instance?.RestoreDefeatedBosses(data.DefeatedBosses);
+				// 보스 목록은 위(536)에서 이미 RestoreDefeatedBosses로 복원됨 — 중복 호출 제거.
 
 				// 보류 보상은 복원만 하고 TryClaim은 EndRestoreState 후로 미룬다.
 				GameManager.Instance?.RestorePendingRewards(data.PendingRewardItems);

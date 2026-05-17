@@ -31,6 +31,8 @@ namespace FirstGame.Entities.Player
 				finalDamage -= mpAbsorb;
 				if (finalDamage <= 0)
 				{
+					// 완전 흡수라도 "피격" — 비전투 HP재생 등이 즉시 도는 것 방지.
+					_lastDamageTime = Time.GetTicksMsec() / 1000.0;
 					SpawnFloatingLabel(GlobalPosition, mpAbsorb, false, true);
 					AudioManager.Instance?.PlaySFX("player_hit.wav");
 					return; // 완전 흡수

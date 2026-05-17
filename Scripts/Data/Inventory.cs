@@ -193,6 +193,10 @@ namespace FirstGame.Data
             foreach (var slot in Slots)
             {
                 if (!IsSameItem(slot.Item, item)) continue;
+                // AddItem과 동일 판정 — 장착/affix 슬롯은 stack 대상에서 제외해야
+                // CanAddItem이 과대 계산해 신규 슬롯 부족을 못 잡는 불일치를 막는다.
+                if (slot.IsEquipped) continue;
+                if (slot.Affixes != null && slot.Affixes.Count > 0) continue;
 
                 int space = maxStack - slot.Quantity;
                 if (space <= 0) continue;
@@ -498,6 +502,31 @@ namespace FirstGame.Data
             return -1;
         }
 
+        /// <summary>같은 ResourcePath(예: emerald_ring)를 Ring1/Ring2에 서로 다른 affix로
+        /// 장착했을 때 인스턴스를 구분하기 위해 affix까지 비교. affix 일치 슬롯 우선,
+        /// 없으면 path만 일치하는 IsEquipped 슬롯으로 폴백(구 세이브/affix 없는 장비 호환).</summary>
+        private int FindEquippedSlotIndex(ItemData item, List<ItemAffix> affixes)
+        {
+            if (item == null) return -1;
+            int pathOnly = -1;
+            for (int i = 0; i < Slots.Count; i++)
+            {
+                if (!Slots[i].IsEquipped || !IsSameItem(Slots[i].Item, item)) continue;
+                if (AffixesEqual(Slots[i].Affixes, affixes)) return i;
+                if (pathOnly < 0) pathOnly = i;
+            }
+            return pathOnly;
+        }
+
+        private static bool AffixesEqual(List<ItemAffix> a, List<ItemAffix> b)
+        {
+            int ca = a?.Count ?? 0, cb = b?.Count ?? 0;
+            if (ca != cb) return false;
+            for (int i = 0; i < ca; i++)
+                if (a[i].Type != b[i].Type || a[i].Value != b[i].Value) return false;
+            return true;
+        }
+
         /// <summary>반지처럼 같은 ItemType이 두 슬롯(Ring1/Ring2)을 가질 때 사용자가
         /// 어느 슬롯에 장착/교체할지 직접 지정. ResolveExtraSlot이 자동으로 빈 칸을 고르는
         /// 기본 EquipItem과 달리, 둘 다 차 있어도 지정한 슬롯으로 교체 가능.</summary>
@@ -548,7 +577,7 @@ namespace FirstGame.Data
             {
                 ApplyItemBonuses(prev, target, -1);
                 ApplyAffixBonuses(prevAffixes, target, -1);
-                int prevIdx = FindEquippedSlotIndex(prev);
+                int prevIdx = FindEquippedSlotIndex(prev, prevAffixes);
                 if (prevIdx >= 0) Slots[prevIdx].IsEquipped = false;
             }
 
@@ -740,20 +769,31 @@ namespace FirstGame.Data
         private void EnsureEquippedSlotPresent(ItemData item, int enhancementLevel, List<ItemAffix> affixes = null)
         {
             if (item == null) return;
-            // 이미 IsEquipped 슬롯이 있으면 끝
-            int existing = FindEquippedSlotIndex(item);
+            // 이미 (affix까지 일치하는) IsEquipped 슬롯이 있으면 끝.
+            // 같은 path 다른 affix 반지(Ring1/Ring2)를 별개 인스턴스로 구분.
+            int existing = FindEquippedSlotIndex(item, affixes);
             if (existing >= 0) return;
-            // 없으면 일치하는 미장착 슬롯 찾아 IsEquipped 마킹 (없으면 신규 추가)
+            // 없으면 일치(path+affix)하는 미장착 슬롯 찾아 마킹. affix까지 같은 슬롯 우선.
+            int pathOnlyIdx = -1;
             for (int i = 0; i < Slots.Count; i++)
             {
-                if (!Slots[i].IsEquipped && IsSameItem(Slots[i].Item, item))
-                {
-                    Slots[i].IsEquipped = true;
-                    Slots[i].EnhancementLevel = enhancementLevel;
-                    if (affixes != null && affixes.Count > 0)
-                        Slots[i].Affixes = new List<ItemAffix>(affixes);
-                    return;
-                }
+                if (Slots[i].IsEquipped || !IsSameItem(Slots[i].Item, item)) continue;
+                if (affixes != null && affixes.Count > 0 && !AffixesEqual(Slots[i].Affixes, affixes))
+                { if (pathOnlyIdx < 0) pathOnlyIdx = i; continue; }
+                Slots[i].IsEquipped = true;
+                Slots[i].EnhancementLevel = enhancementLevel;
+                if (affixes != null && affixes.Count > 0)
+                    Slots[i].Affixes = new List<ItemAffix>(affixes);
+                return;
+            }
+            // affix까지 같은 슬롯이 없으면 path만 같은 미장착 슬롯에 폴백 마킹.
+            if (pathOnlyIdx >= 0)
+            {
+                Slots[pathOnlyIdx].IsEquipped = true;
+                Slots[pathOnlyIdx].EnhancementLevel = enhancementLevel;
+                if (affixes != null && affixes.Count > 0)
+                    Slots[pathOnlyIdx].Affixes = new List<ItemAffix>(affixes);
+                return;
             }
             // 신규 슬롯 추가 (MaxSlots 초과해도 강제 — 세이브 복원은 안전 최우선)
             Slots.Add(new InventorySlot
@@ -777,7 +817,7 @@ namespace FirstGame.Data
                 ApplyItemBonuses(item, target, -1);
                 ApplyAffixBonuses(affixes, target, -1);
 
-                int idx = FindEquippedSlotIndex(item);
+                int idx = FindEquippedSlotIndex(item, affixes);
                 if (idx >= 0) Slots[idx].IsEquipped = false;
 
                 SetExtraSlot(slot, null);
@@ -881,7 +921,12 @@ namespace FirstGame.Data
             EquippedWeaponEnhancement = newLevel;
             var (newWDmg, _, _) = GetEnhancementBonuses(EquippedWeapon, newLevel);
             target.ModifyBaseDamage(newWDmg);
+            // 장착 무기의 인벤 슬롯 EnhancementLevel도 동기화 — 안 하면 슬롯 값이 stale로
+            // 남아 저장/재로드 시 EquippedWeaponEnhancement와 불일치.
+            int wIdx = FindEquippedSlotIndex(EquippedWeapon);
+            if (wIdx >= 0) Slots[wIdx].EnhancementLevel = newLevel;
             OnEquipmentChanged?.Invoke();
+            OnInventoryChanged?.Invoke();
         }
 
         /// <summary>장착 중인 무기 파괴 (강화 실패 시). 보너스 제거 후 null로. 무기 외 ItemType은 무시.</summary>
@@ -890,9 +935,14 @@ namespace FirstGame.Data
             if (type != ItemType.Weapon || EquippedWeapon == null) return;
             var (wDmg, _, _) = GetEnhancementBonuses(EquippedWeapon, EquippedWeaponEnhancement);
             target.ModifyBaseDamage(-(EquippedWeapon.BonusDamage + wDmg));
+            // 파괴 의미에 맞게 대응 인벤 슬롯도 제거 — 안 하면 IsEquipped 슬롯이
+            // 인벤에 살아남아 "파괴됐는데 그대로 있는" 유령 무기가 된다.
+            int dIdx = FindEquippedSlotIndex(EquippedWeapon);
+            if (dIdx >= 0) Slots.RemoveAt(dIdx);
             EquippedWeapon = null;
             EquippedWeaponEnhancement = 0;
             OnEquipmentChanged?.Invoke();
+            OnInventoryChanged?.Invoke();
         }
 
         /// <summary>
