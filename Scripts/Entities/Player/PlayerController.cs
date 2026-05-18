@@ -132,7 +132,12 @@ namespace FirstGame.Entities.Player
 			CollisionMask |= 4;
 			Inventory = new Inventory();
 			Inventory.OnItemPickedUp += item =>
+			{
 				GameManager.Instance?.QuestManager.NotifyItemAcquired(item, this);
+				// 사냥 계약 Gather — 획득 누적형. fireAcquired=true(필드 픽업/보상/구매/채광)
+				// 에서만 발신되므로 세이브 복원 중에는 진행하지 않는다.
+				GameManager.Instance?.ContractManager.NotifyItemAcquired(item);
+			};
 			// OnInventoryChanged → TryClaimPendingRewards 구독은 복원 완료 후에 추가한다.
 			// 복원 중 AddItem이 발생시키는 OnInventoryChanged가 pending claim을 트리거하면
 			// 부분 복원 상태에서 SaveGame이 호출돼 저장 파일이 망가질 수 있다.
@@ -611,6 +616,9 @@ namespace FirstGame.Entities.Player
 
 				// 공유 창고 복원 (v12). 누락 시 빈 리스트.
 				GameManager.Instance?.RestoreStorage(data.StorageItems);
+
+				// 사냥 계약 복원 (v13). 누락 시 빈 목록. 메인 퀘스트와 독립.
+				GameManager.Instance?.ContractManager.RestoreFromSave(data.ActiveContracts);
 
 				// 보류 보상은 복원만 하고 TryClaim은 EndRestoreState 후로 미룬다.
 				GameManager.Instance?.RestorePendingRewards(data.PendingRewardItems);

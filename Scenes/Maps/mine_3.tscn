@@ -18,6 +18,11 @@
 [ext_resource type="Resource" uid="uid://boss_crystal_lord01" path="res://Resources/Enemies/boss_mine3_crystal_lord.tres" id="17_boss"]
 [ext_resource type="Resource" path="res://Resources/Enemies/mine3_crystal_shocker.tres" id="v3e_new"]
 [ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/mining_node.tscn" id="mnode_v1"]
+[ext_resource type="Resource" uid="uid://mat_crystal01" path="res://Resources/Items/crystal_ore.tres" id="ore_cry"]
+[ext_resource type="Resource" uid="uid://mat_deepore01" path="res://Resources/Items/deep_ore.tres" id="ore_deep"]
+[ext_resource type="Resource" uid="uid://mat_prism01" path="res://Resources/Items/prismatic_crystal.tres" id="ore_prism"]
+[ext_resource type="Resource" uid="uid://c7xqf2lpmn503" path="res://Resources/Items/enhance_stone.tres" id="ore_enh"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -106,6 +111,30 @@ SpawnRadius = 340.0
 BossStatVariant = ExtResource("17_boss")
 BossId = "crystal_lord_m3"
 RepeatableBoss = true
+
+[node name="CrystalOreNode1" parent="." instance=ExtResource("mnode_v1")]
+position = Vector2(260, 180)
+OreItem = ExtResource("ore_cry")
+RespawnChanceOnReentry = 0.6
+
+[node name="CrystalOreNode2" parent="." instance=ExtResource("mnode_v1")]
+position = Vector2(1050, 200)
+OreItem = ExtResource("ore_cry")
+RespawnChanceOnReentry = 0.6
+
+[node name="DeepOreNode1" parent="." instance=ExtResource("mnode_v1")]
+position = Vector2(1050, 560)
+OreItem = ExtResource("ore_deep")
+RespawnChanceOnReentry = 0.4
+
+[node name="PrismaticCrystalNode1" parent="." instance=ExtResource("mnode_v1")]
+position = Vector2(260, 560)
+OreItem = ExtResource("ore_prism")
+RespawnChanceOnReentry = 0.15
+
+[node name="EnhanceStoneNodeM3" parent="." instance=ExtResource("mnode_v1")]
+position = Vector2(350, 640)
+OreItem = ExtResource("ore_enh")
 
 [node name="Weather" type="Node2D" parent="."]
 script = ExtResource("wctrl_v3")

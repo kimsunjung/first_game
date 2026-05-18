@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/ancient_hide.tres" id="4_ah"]
 [ext_resource type="Resource" uid="uid://itm_robe_app_001" path="res://Resources/Items/apprentice_robe.tres" id="5_apprr"]
 
+[ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
 MoveSpeed = 28.9
@@ -21,8 +22,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.27
 CollisionScale = 1.9
-PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_ah"), ExtResource("5_apprr")])
-DropWeights = PackedFloat32Array(0.55, 0.40, 0.05)
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_ah"), ExtResource("5_apprr"), ExtResource("rgd1")])
+DropWeights = PackedFloat32Array(0.55, 0.40, 0.05, 0.12)
 DropChance = 0.4
 MaxHealth = 130
 Defense = 1

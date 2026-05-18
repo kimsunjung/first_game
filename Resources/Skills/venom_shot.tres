@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://nsk_venom_shot_v1"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/arrow_shot.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "독사격"
+Description = "독을 묻힌 화살로 원거리 적을 맞혀 중독시킨다"
+Icon = ExtResource("2_icon")
+Type = 27
+MpCost = 14
+Cooldown = 4.0
+RequiredLevel = 6
+RequiredClass = 2
+AvailableToAllClasses = false
+HealAmount = 0
+DurationSeconds = 0
+BonusDamageMultiplier = 1
+Element = 6
+InflictedStatus = 1
+InflictedStatusDuration = 4.0
+InflictedStatusChance = 0.6
+IsPassive = false

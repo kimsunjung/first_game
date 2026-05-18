@@ -10,7 +10,14 @@
 - 월드: Scenes/Maps 29개 / 4권역(town·outpost·coast·mountain). 적 ~120, 아이템 ~244, 스킬 27, 퀘스트 41(side 30), 보스패턴 10.
 - 구현 완료 시스템: QuestBoardUI·반복 사이드퀘스트, BiomeWeatherController(v3)·StatWeights·StatusResist, EliteAffix, BossController/BossPattern, 무게 시스템, MiningNode, 검증망(validate/balance/xUnit/CI).
 - **허브 루프 v1(2026-05-18)**: 공유 창고(SaveData v12) / 확정 제작(recipes.json) / 미장착 장신구 affix 재련 — town 배치 완료. 상세 `hub-preparation-loop-v1.md`.
-- 다음 우선순위: (1) 사냥 계약 시스템 D(별도 HuntingContractManager, SaveData v13) (2) 사냥터 환경 오브젝트/광맥/Loot glow E (3) 창고/제작/재련 허브 확장(harbor/mountain) + 모바일 UI 실측.
+- **사냥 계약 v1(2026-05-18)**: 별도 `HuntingContractManager`(메인 QuestManager 미확장) + `contracts.json` 16개(권역별 4, Kill8/Gather4/Mining2/BossKill2). SaveData **v13** `ActiveContracts` 추가(backfill). 동시 3개, 완료 후 재수락, 일일/시간제한 없음. 보드 NPC를 허브 4곳 배치. 보상은 골드/EXP 항상+아이템은 PendingReward 폴백(손실 없음).
+- **사냥터 보강 v1(2026-05-18)**: mine_3 광맥 5개(crystal/deep/prismatic/enhance_stone) 추가. FieldItem 희귀도 Loot glow(코드 Sprite2D, 새 PNG 없음). 18개 사냥터에 환경 장식 Sprite2D(Collision 없음, z=-2) 2~3개씩 배치 완료.
+- **허브 확장(2026-05-18)**: 창고/제작/재련 NPC를 field_outpost·harbor_village·mountain_refuge에도 배치 — 4개 거점 전부에서 허브 준비 루프 완결.
+- **UX/스케일(2026-05-18)**: HUD 상태이상 칩에 전용 아이콘(poison/freeze/burn/shock; Curse는 색상 폴백) 적용. HUD 좌측하단 현재 맵 이름 표시(`MapNames` 테이블, 29맵 한글). 플레이어/적/NPC **시각 크기 일괄 −20%**(`GameScale.CharacterVisual=0.8`; 콜리전/상호작용 반경/사거리 불변 → 밸런스·상호작용 무영향).
+- **HUD/진행 후속2(2026-05-18)**: 상단 중앙 이펙트 바(상태이상+버프 아이콘) — 클릭 시 활성 효과 목록+남은시간 팝업, 잔여 <3s면 아이콘/행 깜빡임. 우측상단 미니맵(`MinimapView`, 맵 경계 안에 플레이어/적/포탈 점). coast/mountain 보스(kraken/glacier_titan/inferno_drake/crystal_lord) 처치 시 ChapterFlags 누적 마커 기록(Chapter enum/엔딩 불변 — 엔딩형 아님, 대사/계약/통계용).
+- **권역 특화 드랍 v1(2026-05-18)**: 60개 적 `.tres`에 권역 테마 재료를 **append-only**(기존 드랍 제거 0)로 추가 — town=orc_leather, mine_1=iron_ore, outpost=bone_dust, mine_2=silver_ore, coast=sapphire_ore, snow=glacier_shard, volcano=drake_scale, mine_3=crystal_ore. 보스(BossStatVariant) 제외. 가중치 0.12, R6 카운트 동기. 씬 StatVariants 역추적으로 매핑.
+- **스킬 확장 v2(2026-05-18)**: 신규 능동 스킬 8종(독사격·독성마탄·재생의가호·분쇄강타·서리화살비·대지균열·신성작렬·연쇄뇌격) — 기존 검증된 SkillType 전략 재사용 + Element/Status/파라미터로 차별화(코드 무변경, 회귀 0). 스킬북 8 + 4개 거점 스킬상점에 레벨대별 분산 배치.
+- 다음 우선순위: (1) Godot 실측: 이펙트 바/미니맵/축소/장식/신규 스킬 시연 (2) 계약 v2(권역별 다양화·티어) (3) 신규 SkillType 전략(코드) 추가 — 진짜 새 메커닉.
 
 ---
 

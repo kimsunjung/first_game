@@ -78,6 +78,16 @@
 - **신규**: 날씨 테마 적 12종 + 소모품 6종. **전부 기존 PNG/아이콘 임시 재사용**(v3 문서에만 기록, generated-asset-inventory 미수정). 18 사냥터에 테마 적을 희귀 가중치로 추가, field_1/보스던전 구조 유지.
 - 검증 4종(validate/balance/build/test)+ git diff --check 모두 green 유지가 완료 기준.
 
+## 허브 루프 + 사냥 계약 v1 (2026-05-18)
+- 허브 준비 루프: 공유 창고(SaveData v12) / 확정 제작(recipes.json) / 미장착 장신구 affix 재련. **4개 거점(town·field_outpost·harbor_village·mountain_refuge) 전부**에 창고/제작/재련 NPC 배치 완료.
+- **사냥 계약**: 메인 `QuestManager`와 독립된 별도 `Scripts/Core/HuntingContractManager.cs`(GameManager.ContractManager). **메인 QuestManager를 계약용으로 확장 금지.** `Resources/Contracts/contracts.json` 16개(권역별 4 / Kill·Gather·Mining·BossKill). SaveData **v13** `ActiveContracts`(backfill). 동시 3개·완료 후 재수락·일일/시간제한 없음(반복 파밍 보조). 보상은 골드/EXP 항상 + 아이템 PendingReward 폴백(손실 금지). 완료/포기는 GameTransaction + 명시 SaveGame. 보드 NPC 4거점 배치(Region Export).
+- 진행 이벤트: Kill=`OnEnemyKilledTyped`, BossKill=신설 `EventManager.OnBossKilled`, Mining=신설 `OnOreMined`, Gather=`Inventory.OnItemPickedUp` 누적형(완료 시 차감 없음). `EventManager.ResetAll`이 `ContractManager.Resubscribe` 자동 호출.
+- 사냥터 보강: mine_3 광맥 5개 추가, FieldItem 희귀도 Loot glow(코드 Sprite2D), 18개 사냥터 환경 장식 Sprite2D(Collision 없음·z=-2 → 동선 차단 불가). 상세 `PLAN_DOC/hub-preparation-loop-v1.md`.
+- 검증: validate.py R10(contracts)/R11(보드)/R12(MiningNode), xUnit `ContractTests`. 4종+diff green 유지.
+- **UX/스케일 후속**: HUD 상태이상 칩 전용 아이콘(`Icons/Status/*`, Curse 색상 폴백) / HUD 좌측하단 맵 이름(`Scripts/Data/MapNames.cs`) / 캐릭터 시각 크기 −20%(`Scripts/Core/GameScale.cs` `CharacterVisual=0.8`, 적·플레이어·NPC 스프라이트만 — 콜리전/상호작용/사거리 불변이라 밸런스 무영향).
+- **HUD/진행 후속2**: 상단 이펙트 바(상태+버프 아이콘·클릭 시 목록+남은시간 팝업·잔여<3s 깜빡임, `PlayerStats.GetActiveBuffs()`) / 미니맵 `Scripts/UI/MinimapView.cs`(플레이어·적·포탈) / coast·mountain 보스 ChapterFlags 누적 마커(**Chapter enum·CurrentChapter 불변, 세이브 버전 미bump — 엔딩형 아님**). 권역 특화 드랍 테이블은 회귀 위험으로 **단독 검증 패스로 분리**(미진행, 문서화됨).
+- **권역 드랍 v1 / 스킬 확장 v2**: 60개 비보스 적에 권역 테마 재료 append-only(기존 드랍 미제거, weight 0.12, R6 동기, 보스 제외). 신규 능동 스킬 8종 — 기존 SkillType 전략 재사용 + Element/Status/파라미터 차별(SkillStrategies 코드 무변경) + 스킬북 8 + 4거점 스킬상점 분산. 검증 4종 green.
+
 ## 문서·메모리 동기화 정책 (필수)
 다음 변경이 발생할 때마다 **CLAUDE.md와 메모리 디렉토리(`~/.claude/projects/.../memory/`)를 함께 최신화**할 것:
 - 큰 기능 변경 (스킬/전투/세이브/상점 시스템 등)

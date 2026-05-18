@@ -21,6 +21,7 @@
 [ext_resource type="Resource" uid="uid://brb2ore7l6m09" path="res://Resources/Items/ruby_ore.tres" id="19_ruby"]
 [ext_resource type="Resource" uid="uid://bsp2ore7l7m10" path="res://Resources/Items/sapphire_ore.tres" id="20_sapphire"]
 [ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Objects/Mine/mine_cart.png" id="deco_0"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(1280, 16)
@@ -144,3 +145,13 @@ HazardInterval = 4.0
 InflictedStatus = 16
 StatusChance = 0.03
 StatusDuration = 3.0
+
+[node name="Decorations" type="Node2D" parent="."]
+z_index = -2
+
+[node name="Deco0" type="Sprite2D" parent="Decorations"]
+position = Vector2(1120, 160)
+texture_filter = 1
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("deco_0")
+modulate = Color(1, 1, 1, 0.92)

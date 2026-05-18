@@ -12,7 +12,8 @@
 - 재련: `Scripts/UI/ReforgeUI.cs`, `Scenes/UI/reforge_ui.tscn`, `Scripts/Entities/ReforgeNPC.cs`, `Scenes/Objects/reforge_npc.tscn`; affix 생성 `Scripts/Data/AffixGenerator.cs`.
 - 날씨/스폰: `Scripts/Maps/BiomeWeatherController.cs`, `EnemySpawner.StatWeights`. 보스: `Scripts/Entities/Enemies/BossController.cs` + `Resources/BossPatterns`. 채광: `MiningNode`. 무게: `PlayerStats` 무게 페널티.
 - 검증: `tools/validate/validate.py`, `tools/validate/balance.py`, `tools/Tests/FirstGame.Tests.csproj`, `.github/workflows/ci.yml`.
-- 계약(D) 보류 — 구현 시 `HuntingContractManager` 신설(메인 `Scripts/Core/QuestManager.cs` 확장 금지).
+- 사냥 계약(v1): `Scripts/Core/HuntingContractManager.cs`(GameManager.ContractManager 영구 인스턴스, 메인 QuestManager 미확장), `Scripts/Core/ContractsData.cs`(로더), `Resources/Contracts/contracts.json`(16), `Scripts/Data/ContractData.cs`(ContractType enum + ContractData + ContractProgress), UI `Scripts/UI/ContractBoardUI.cs`/`Scenes/UI/contract_board_ui.tscn`, NPC `Scripts/Entities/ContractBoardNPC.cs`/`Scenes/Objects/contract_board_npc.tscn`(허브 4곳, Region Export 오버라이드). 진행 이벤트: `EventManager.OnBossKilled`/`OnOreMined`(신설) + `OnEnemyKilledTyped` + `Inventory.OnItemPickedUp`(Gather). 세이브 `SaveData.ActiveContracts`(v13).
+- Loot glow: `Scripts/Objects/FieldItem.cs` 희귀도별 코드 Sprite2D 글로우(새 PNG 없음). 광맥: `Scenes/Maps/mine_3.tscn`에 MiningNode 5개 추가.
 
 ---
 

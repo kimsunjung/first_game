@@ -4,6 +4,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/cutlass.tres" id="3_d"]
 [ext_resource type="Resource" path="res://Resources/Items/sea_kelp.tres" id="4_d"]
 [ext_resource type="Resource" path="res://Resources/Items/health_potion.tres" id="5_d"]
+[ext_resource type="Resource" path="res://Resources/Items/sapphire_ore.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
 MoveSpeed = 95
@@ -19,8 +20,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.25
 CollisionScale = 1.9
-PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d"), ExtResource("5_d")])
-DropWeights = PackedFloat32Array(0.2, 0.4, 0.4)
+PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d"), ExtResource("5_d"), ExtResource("rgd1")])
+DropWeights = PackedFloat32Array(0.2, 0.4, 0.4, 0.12)
 DropChance = 0.28
 MaxHealth = 70
 Defense = 1

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://nsk_sundering_blow_v1"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/execute.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "분쇄 강타"
+Description = "단일 대상에게 어둠 속성 3배 데미지를 가한다"
+Icon = ExtResource("2_icon")
+Type = 30
+MpCost = 25
+Cooldown = 9.0
+RequiredLevel = 14
+RequiredClass = 0
+AvailableToAllClasses = false
+HealAmount = 0
+DurationSeconds = 0
+BonusDamageMultiplier = 3
+Element = 5
+InflictedStatus = 0
+InflictedStatusDuration = 0.0
+InflictedStatusChance = 0.0
+IsPassive = false

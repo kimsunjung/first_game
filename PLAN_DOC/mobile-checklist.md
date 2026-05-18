@@ -66,6 +66,18 @@
 - [ ] 모바일 스피커 기준 사운드가 너무 크거나 작지 않다.
 - [ ] 진동 또는 추가 피드백이 필요한 지점이 보인다.
 
+## 사냥 계약 v1 (2026-05-18)
+- [ ] town/field_outpost/harbor_village/mountain_refuge 계약 보드가 열리고 권역별 계약이 보인다.
+- [ ] 계약 3개 동시 수락 / 4번째 차단(가득참 표시) / 같은 계약 중복 수락 차단.
+- [ ] Kill/Gather/Mining/BossKill 진행도가 각각 증가한다.
+- [ ] 완료 보상 수령(골드/EXP/아이템), 인벤 가득일 때 아이템이 PendingReward로 보존(손실 없음).
+- [ ] 계약 포기 후 저장/로드 시 상태 일치.
+- [ ] 저장 후 재시작 시 active contract 진행도/완료대기 상태 복원.
+- [ ] mine_3 광맥 채광 후 씬 재진입/로드 시 mined 유지 또는 respawn 확률 적용.
+- [ ] Rare/Epic/Legendary 드랍 글로우가 희귀도별로 구분되고 펄스가 과하지 않다.
+- [ ] 계약 보드가 기존 NPC/포탈 상호작용과 겹치지 않고 동선을 막지 않는다.
+- [ ] 보드 UI 텍스트가 행/버튼 밖으로 삐져나가지 않는다(모바일 해상도).
+
 ## Issue Log
 | Priority | Area | Issue | Repro Steps | Next Action |
 | --- | --- | --- | --- | --- |

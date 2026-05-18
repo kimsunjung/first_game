@@ -25,7 +25,7 @@ script = ExtResource("1_0pdwm")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-scale = Vector2(1, 1)
+scale = Vector2(0.8, 0.8)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=647577739]
 shape = SubResource("RectangleShape2D_j4k56")

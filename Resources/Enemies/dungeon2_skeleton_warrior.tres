@@ -7,6 +7,7 @@
 [ext_resource type="Resource" uid="uid://itm_bow_hunt_001" path="res://Resources/Items/hunter_bow.tres" id="5_hbow"]
 [ext_resource type="Resource" uid="uid://itm_bow_comp_001" path="res://Resources/Items/composite_bow.tres" id="6_cbow"]
 
+[ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
 MoveSpeed = 39.4
@@ -22,8 +23,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.27
 CollisionScale = 1.9
-PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab"), ExtResource("5_hbow"), ExtResource("6_cbow")])
-DropWeights = PackedFloat32Array(0.50, 0.42, 0.04, 0.04)
+PossibleDrops = Array[Resource]([ExtResource("3_hi"), ExtResource("4_ab"), ExtResource("5_hbow"), ExtResource("6_cbow"), ExtResource("rgd1")])
+DropWeights = PackedFloat32Array(0.50, 0.42, 0.04, 0.04, 0.12)
 DropChance = 0.4
 MaxHealth = 180
 Defense = 3

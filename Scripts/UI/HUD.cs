@@ -33,9 +33,12 @@ namespace FirstGame.UI
 		private Label _levelUpLabel;
 		private Label _questLabel;
 
-		// 상태이상 칩 바 — 코드 생성(상태 아이콘 텍스처 자산 없음 → 색상 타이머 바로 표시).
-		private HBoxContainer _statusBar;
-		private readonly System.Collections.Generic.Dictionary<FirstGame.Data.StatusEffect, ProgressBar> _statusChips = new();
+		// 상단 이펙트 바(상태이상+버프 아이콘) + 상세 팝업 + 미니맵 — 모두 코드 생성.
+		private HBoxContainer _effectsBar;
+		private PanelContainer _effectsPopup;
+		private VBoxContainer _effectsPopupList;
+		private readonly System.Collections.Generic.Dictionary<string, Button> _effectIcons = new();
+		private MinimapView _minimap;
 
 		public override void _Ready()
 		{
@@ -94,65 +97,200 @@ namespace FirstGame.UI
 				UpdateGoldDisplay(GameManager.Instance.PlayerGold);
 			}
 
-			// 상태이상 칩 바 생성 — QuestLabel 아래(있으면) 또는 VBox 말미.
-			var vbox = GetNodeOrNull<Control>("MarginContainer/VBoxContainer");
-			if (vbox != null)
+			// 상단 중앙 이펙트 바(상태이상+버프 아이콘). 클릭 시 상세 팝업 토글.
+			_effectsBar = new HBoxContainer { Name = "EffectsBar" };
+			_effectsBar.AddThemeConstantOverride("separation", 4);
+			_effectsBar.SetAnchorsPreset(Control.LayoutPreset.CenterTop);
+			_effectsBar.AnchorLeft = 0.5f; _effectsBar.AnchorRight = 0.5f;
+			_effectsBar.GrowHorizontal = Control.GrowDirection.Both;
+			_effectsBar.OffsetTop = 4;
+			AddChild(_effectsBar);
+
+			// 상세 팝업 — 활성 효과 목록 + 남은시간. 기본 숨김.
+			_effectsPopup = new PanelContainer { Name = "EffectsPopup", Visible = false };
+			_effectsPopup.SetAnchorsPreset(Control.LayoutPreset.CenterTop);
+			_effectsPopup.AnchorLeft = 0.5f; _effectsPopup.AnchorRight = 0.5f;
+			_effectsPopup.GrowHorizontal = Control.GrowDirection.Both;
+			_effectsPopup.OffsetTop = 30; _effectsPopup.CustomMinimumSize = new Vector2(190, 0);
+			var pst = new StyleBoxFlat { BgColor = new Color(0.08f, 0.08f, 0.10f, 0.94f) };
+			pst.SetBorderWidthAll(1); pst.SetCornerRadiusAll(4); pst.SetContentMarginAll(6);
+			pst.BorderColor = new Color(0.5f, 0.5f, 0.6f, 0.9f);
+			_effectsPopup.AddThemeStyleboxOverride("panel", pst);
+			var pv = new VBoxContainer();
+			pv.AddThemeConstantOverride("separation", 3);
+			_effectsPopup.AddChild(pv);
+			var ph = new Label { Text = "활성 효과" };
+			ph.AddThemeFontSizeOverride("font_size", 11);
+			ph.AddThemeColorOverride("font_color", new Color(0.8f, 0.9f, 1f));
+			pv.AddChild(ph);
+			_effectsPopupList = new VBoxContainer();
+			_effectsPopupList.AddThemeConstantOverride("separation", 2);
+			pv.AddChild(_effectsPopupList);
+			AddChild(_effectsPopup);
+
+			// 좌측하단 현재 맵 이름 — 코드 생성(씬마다 hud.tscn 인스턴스라 1곳만 수정).
+			var mapName = new Label
 			{
-				_statusBar = new HBoxContainer { Name = "StatusBar" };
-				_statusBar.AddThemeConstantOverride("separation", 4);
-				vbox.AddChild(_statusBar);
-			}
+				Name = "MapNameLabel",
+				Text = FirstGame.Data.MapNames.Get(GetTree().CurrentScene?.SceneFilePath),
+				MouseFilter = Control.MouseFilterEnum.Ignore,
+			};
+			mapName.SetAnchorsPreset(Control.LayoutPreset.BottomLeft);
+			mapName.AnchorTop = 1; mapName.AnchorBottom = 1;
+			mapName.OffsetLeft = 12; mapName.OffsetBottom = -8; mapName.OffsetTop = -30;
+			mapName.AddThemeFontSizeOverride("font_size", 13);
+			mapName.AddThemeColorOverride("font_color", new Color(0.95f, 0.92f, 0.7f));
+			mapName.AddThemeColorOverride("font_outline_color", new Color(0, 0, 0, 1));
+			mapName.AddThemeConstantOverride("outline_size", 4);
+			AddChild(mapName);
+
+			// 우측상단 미니맵 — 코드 생성. 맵 경계 안에 플레이어/적/포탈 점 표시.
+			_minimap = new MinimapView { Name = "Minimap" };
+			_minimap.SetAnchorsPreset(Control.LayoutPreset.TopRight);
+			_minimap.AnchorLeft = 1; _minimap.AnchorRight = 1;
+			_minimap.GrowHorizontal = Control.GrowDirection.Begin;
+			_minimap.CustomMinimumSize = new Vector2(150, 90);
+			_minimap.Size = new Vector2(150, 90);
+			_minimap.OffsetLeft = -158; _minimap.OffsetTop = 8;
+			_minimap.OffsetRight = -8; _minimap.OffsetBottom = 98;
+			AddChild(_minimap);
 
 			// 씬 트리 _Ready 순서 보장을 위해 플레이어 바인딩은 지연 실행
 			CallDeferred(nameof(BindPlayer));
 		}
 
+		// 이펙트 바/미니맵은 매 프레임 갱신할 필요가 없다 — 약 0.15s 간격으로 throttle해
+		// 전투 중 리스트/노드 재생성 GC hitch를 줄인다(깜빡임은 0.15s 스텝으로도 충분).
+		private double _hudRefreshAccum;
+		private const double HudRefreshInterval = 0.15;
+
 		public override void _Process(double delta)
 		{
-			RefreshStatusBar();
+			_hudRefreshAccum += delta;
+			if (_hudRefreshAccum < HudRefreshInterval) return;
+			_hudRefreshAccum = 0;
+			RefreshEffects();
+			_minimap?.Refresh();
 		}
 
-		// 매 프레임 플레이어 상태이상을 칩으로 표시. 활성 상태가 없으면 칩 숨김.
-		private void RefreshStatusBar()
+		// 매 프레임 상태이상+버프를 상단 아이콘으로 표시. 클릭 시 팝업. 남은시간 짧으면 깜빡임.
+		private const float BlinkThreshold = 3.0f;
+		private void RefreshEffects()
 		{
-			if (_statusBar == null || _player == null) return;
-			// _player가 freed PlayerController면 .Stats 접근이 ObjectDisposedException.
+			if (_effectsBar == null || _player == null) return;
 			if (_player is GodotObject pgo && !IsInstanceValid(pgo)) { _player = null; return; }
 			if (_player.Stats == null) return;
-			var bars = _player.Stats.GetActiveStatusBars();
 
-			var present = new System.Collections.Generic.HashSet<FirstGame.Data.StatusEffect>();
-			foreach (var (kind, frac, remain) in bars)
+			var active = new System.Collections.Generic.List<(string id, string name, float remain, Color col, Texture2D tex)>();
+			foreach (var (kind, _, remain) in _player.Stats.GetActiveStatusBars())
 			{
-				present.Add(kind);
-				if (!_statusChips.TryGetValue(kind, out var chip) || !IsInstanceValid(chip))
-				{
-					chip = new ProgressBar
-					{
-						CustomMinimumSize = new Vector2(30, 10),
-						MinValue = 0, MaxValue = 1, ShowPercentage = false,
-					};
-					var bg = new StyleBoxFlat { BgColor = new Color(0.1f, 0.1f, 0.1f, 0.7f) };
-					var col = FirstGame.Data.CharacterStats.StatusColor(kind);
-					var fill = new StyleBoxFlat { BgColor = col };
-					chip.AddThemeStyleboxOverride("background", bg);
-					chip.AddThemeStyleboxOverride("fill", fill);
-					_statusBar.AddChild(chip);
-					_statusChips[kind] = chip;
-				}
-				chip.Value = frac;
-				chip.TooltipText = $"{kind} {remain:0.0}s";
-				chip.Visible = true;
+				var c = FirstGame.Data.CharacterStats.StatusColor(kind);
+				active.Add(("st_" + kind, StatusName(kind), remain, c, LoadStatusIcon(kind)));
 			}
-			// 더 이상 활성 아닌 칩 제거
-			foreach (var kv in new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<FirstGame.Data.StatusEffect, ProgressBar>>(_statusChips))
+			foreach (var (id, name, remain) in _player.Stats.GetActiveBuffs())
+			{
+				active.Add(("bf_" + id, name, remain, new Color(0.4f, 0.85f, 1f), LoadBuffIcon(id)));
+			}
+
+			float blink = 0.45f + 0.55f * Mathf.Abs(Mathf.Sin((float)Time.GetTicksMsec() / 140f));
+			var present = new System.Collections.Generic.HashSet<string>();
+			foreach (var e in active)
+			{
+				present.Add(e.id);
+				if (!_effectIcons.TryGetValue(e.id, out var btn) || !IsInstanceValid(btn))
+				{
+					btn = new Button { Flat = true, FocusMode = Control.FocusModeEnum.None };
+					btn.CustomMinimumSize = new Vector2(22, 22);
+					btn.Pressed += ToggleEffectsPopup;
+					if (e.tex != null)
+					{
+						btn.Icon = e.tex;
+						btn.ExpandIcon = true;
+					}
+					else
+					{
+						var sb = new StyleBoxFlat { BgColor = e.col };
+						sb.SetCornerRadiusAll(3);
+						btn.AddThemeStyleboxOverride("normal", sb);
+						btn.AddThemeStyleboxOverride("hover", sb);
+						btn.AddThemeStyleboxOverride("pressed", sb);
+					}
+					_effectsBar.AddChild(btn);
+					_effectIcons[e.id] = btn;
+				}
+				btn.TooltipText = $"{e.name}  {e.remain:0.0}s";
+				btn.Modulate = e.remain < BlinkThreshold ? new Color(1, 1, 1, blink) : Colors.White;
+				btn.Visible = true;
+			}
+			foreach (var kv in new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<string, Button>>(_effectIcons))
 			{
 				if (!present.Contains(kv.Key))
 				{
 					if (IsInstanceValid(kv.Value)) kv.Value.QueueFree();
-					_statusChips.Remove(kv.Key);
+					_effectIcons.Remove(kv.Key);
 				}
 			}
+
+			if (_effectsPopup != null && _effectsPopup.Visible)
+			{
+				if (active.Count == 0) { _effectsPopup.Visible = false; }
+				else
+				{
+					foreach (Node c in _effectsPopupList.GetChildren()) c.QueueFree();
+					foreach (var e in active)
+					{
+						var row = new Label
+						{
+							Text = $"{e.name}  —  {e.remain:0.0}s",
+							Modulate = e.remain < BlinkThreshold ? new Color(1f, 0.5f, 0.4f, blink) : Colors.White,
+						};
+						row.AddThemeFontSizeOverride("font_size", 10);
+						_effectsPopupList.AddChild(row);
+					}
+				}
+			}
+		}
+
+		private void ToggleEffectsPopup()
+		{
+			if (_effectsPopup != null) _effectsPopup.Visible = !_effectsPopup.Visible;
+		}
+
+		private static string StatusName(FirstGame.Data.StatusEffect k) => k switch
+		{
+			FirstGame.Data.StatusEffect.Poison => "중독",
+			FirstGame.Data.StatusEffect.Freeze => "빙결",
+			FirstGame.Data.StatusEffect.Burn => "화상",
+			FirstGame.Data.StatusEffect.Shock => "감전",
+			FirstGame.Data.StatusEffect.Curse => "저주",
+			_ => k.ToString(),
+		};
+
+		private static readonly System.Collections.Generic.Dictionary<string, string> _buffIconPaths = new()
+		{
+			{ "dmg", "res://Resources/Generated/GPT/Icons/Status/attack_up.png" },
+			{ "def", "res://Resources/Generated/GPT/Icons/Status/defense_up.png" },
+		};
+
+		private static Texture2D LoadBuffIcon(string id)
+		{
+			if (!_buffIconPaths.TryGetValue(id, out var path)) return null;
+			return ResourceLoader.Exists(path) ? GD.Load<Texture2D>(path) : null;
+		}
+
+		private static readonly System.Collections.Generic.Dictionary<FirstGame.Data.StatusEffect, string> _statusIconPaths = new()
+		{
+			{ FirstGame.Data.StatusEffect.Poison, "res://Resources/Generated/GPT/Icons/Status/poison.png" },
+			{ FirstGame.Data.StatusEffect.Freeze, "res://Resources/Generated/GPT/Icons/Status/freeze.png" },
+			{ FirstGame.Data.StatusEffect.Burn,   "res://Resources/Generated/GPT/Icons/Status/burn.png" },
+			{ FirstGame.Data.StatusEffect.Shock,  "res://Resources/Generated/GPT/Icons/Status/shock.png" },
+		};
+
+		// 상태 전용 아이콘 텍스처. 매핑/리소스 없으면 null → 호출부가 색상 바로 폴백.
+		private static Texture2D LoadStatusIcon(FirstGame.Data.StatusEffect kind)
+		{
+			if (!_statusIconPaths.TryGetValue(kind, out var path)) return null;
+			return ResourceLoader.Exists(path) ? GD.Load<Texture2D>(path) : null;
 		}
 
 		private void BindPlayer()

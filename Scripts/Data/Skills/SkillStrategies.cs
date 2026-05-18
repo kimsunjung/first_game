@@ -485,6 +485,34 @@ namespace FirstGame.Data.Skills
 		}
 	}
 
+	// ─── 스킬 확장 v2 — 동작은 기존 전략 위임 상속, SkillType만 고유 ──────────────
+	// SkillStrategyAttribute(Inherited=false)라 서브클래스는 base 어트리뷰트를 상속하지
+	// 않으므로 각자 고유 [SkillStrategy]를 달아 팩토리에 별도 등록된다. Execute는 base
+	// 구현 그대로 재사용(검증된 동작, 회귀 0). 차별화는 .tres Element/Status/파라미터로.
+	[SkillStrategy(SkillType.VenomShot)]
+	public class VenomShotStrategy : ArrowShotStrategy { }
+
+	[SkillStrategy(SkillType.VenomBolt)]
+	public class VenomBoltStrategy : FireBoltStrategy { }
+
+	[SkillStrategy(SkillType.Renewal)]
+	public class RenewalStrategy : HealSelfStrategy { }
+
+	[SkillStrategy(SkillType.SunderingBlow)]
+	public class SunderingBlowStrategy : ExecuteStrategy { }
+
+	[SkillStrategy(SkillType.FrostVolley)]
+	public class FrostVolleyStrategy : RainOfArrowsStrategy { }
+
+	[SkillStrategy(SkillType.Earthquake)]
+	public class EarthquakeStrategy : GroundSlamStrategy { }
+
+	[SkillStrategy(SkillType.HolyBurst)]
+	public class HolyBurstStrategy : FrostNovaStrategy { }
+
+	[SkillStrategy(SkillType.ChainBolt)]
+	public class ChainBoltStrategy : LightningStormStrategy { }
+
 	/// <summary>
 	/// Reflection 기반 스킬 전략 팩토리.
 	/// [SkillStrategy(SkillType.X)] 어트리뷰트가 붙은 클래스를 자동 등록.

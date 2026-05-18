@@ -52,7 +52,8 @@ namespace FirstGame.Core
 				PlayerGold = GameManager.Instance.PlayerGold,
 				Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
 				PendingRewardItems = new System.Collections.Generic.List<SavedItemSlot>(GameManager.Instance.PendingRewards),
-				StorageItems = new System.Collections.Generic.List<SavedItemSlot>(GameManager.Instance.Storage)
+				StorageItems = new System.Collections.Generic.List<SavedItemSlot>(GameManager.Instance.Storage),
+				ActiveContracts = GameManager.Instance.ContractManager.ToSaveList()
 			};
 			saveable.WriteSaveData(data);
 			return data;
@@ -410,6 +411,16 @@ namespace FirstGame.Core
 				data.StorageItems ??= new();
 			}
 
+			if (data.Version < 13)
+			{
+				// v12→v13: 사냥 계약 도입. 기존 세이브는 빈 계약 목록으로 안전 로드.
+				data.ActiveContracts ??= new();
+				// coast/mountain 권역 졸업 마커 backfill — 이미 보스를 잡았던 v10~v12
+				// 세이브도 v13 로드 시 새 플래그를 채운다(BackfillChapterFlagsV10는
+				// v<10에서만 돌아 구멍이 있었음). CurrentChapter엔 영향 없음(누적 마커).
+				BackfillRegionFlagsV13(data);
+			}
+
 			data.Version = SaveData.LatestVersion;
 			GD.Print($"SaveManager: 세이브 데이터 v{data.Version}으로 마이그레이션 완료");
 		}
@@ -502,6 +513,10 @@ namespace FirstGame.Core
 						case "orc_warlord_d1":   Add(FirstGame.Data.ChapterFlags.OrcWarlordKilled); break;
 						case "skeleton_king_d2": Add(FirstGame.Data.ChapterFlags.SkeletonKingKilled); break;
 						case "ancient_lich_d3":  Add(FirstGame.Data.ChapterFlags.LichKilled); break;
+						case "kraken_d4":         Add(FirstGame.Data.ChapterFlags.KrakenKilled); break;
+						case "glacier_titan_f5":  Add(FirstGame.Data.ChapterFlags.GlacierTitanKilled); break;
+						case "inferno_drake_f6":  Add(FirstGame.Data.ChapterFlags.InfernoDrakeKilled); break;
+						case "crystal_lord_m3":   Add(FirstGame.Data.ChapterFlags.CrystalLordKilled); break;
 					}
 				}
 			}
@@ -509,6 +524,25 @@ namespace FirstGame.Core
 			// 당연히 Prologue를 지났음을 보장.
 			if (data.ChapterFlags.Count > 0 && !data.ChapterFlags.Contains(FirstGame.Data.ChapterFlags.OutpostEntered))
 				Add(FirstGame.Data.ChapterFlags.OutpostEntered);
+		}
+
+		/// <summary>v12→v13: coast/mountain 반복 보스 마커 backfill. DefeatedBosses에 이미
+		/// 있던 플레이어도 새 플래그를 받게 한다. 누적 마커 — CurrentChapter 불변.</summary>
+		private static void BackfillRegionFlagsV13(SaveData data)
+		{
+			if (data.DefeatedBosses == null) return;
+			data.ChapterFlags ??= new System.Collections.Generic.List<string>();
+			void Add(string f) { if (!data.ChapterFlags.Contains(f)) data.ChapterFlags.Add(f); }
+			foreach (var b in data.DefeatedBosses)
+			{
+				switch (b)
+				{
+					case "kraken_d4":        Add(FirstGame.Data.ChapterFlags.KrakenKilled); break;
+					case "glacier_titan_f5": Add(FirstGame.Data.ChapterFlags.GlacierTitanKilled); break;
+					case "inferno_drake_f6": Add(FirstGame.Data.ChapterFlags.InfernoDrakeKilled); break;
+					case "crystal_lord_m3":  Add(FirstGame.Data.ChapterFlags.CrystalLordKilled); break;
+				}
+			}
 		}
 
 		public static bool HasSave(string slot = AutoSaveSlot)

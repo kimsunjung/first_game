@@ -176,6 +176,21 @@ namespace FirstGame.Data
 				if (_buffResistRemaining <= 0f) { ModifyStatusResist(-_buffResistAmount); _buffResistAmount = 0f; }
 			}
 		}
+		/// <summary>활성 임시 buff 목록 (HUD 이펙트 바/팝업용). (id, 표시명, 남은초).
+		/// id 는 아이콘/딕셔너리 키 안정용 영문 식별자.</summary>
+		public System.Collections.Generic.List<(string id, string name, float remain)> GetActiveBuffs()
+		{
+			var list = new System.Collections.Generic.List<(string, string, float)>(6);
+			if (_buffMoveSpeedRemaining > 0f)   list.Add(("move",   "이동속도",   _buffMoveSpeedRemaining));
+			if (_buffAttackSpeedRemaining > 0f) list.Add(("aspd",   "공격속도",   _buffAttackSpeedRemaining));
+			if (_buffDamageRemaining > 0f)      list.Add(("dmg",    "공격력",     _buffDamageRemaining));
+			if (_buffDefenseRemaining > 0f)     list.Add(("def",    "방어력",     _buffDefenseRemaining));
+			if (_buffCritRemaining > 0f)        list.Add(("crit",   "치명타",     _buffCritRemaining));
+			if (_buffResistRemaining > 0f)      list.Add(("resist", "상태저항",   _buffResistRemaining));
+			if (_manaShieldRemaining > 0f)      list.Add(("mshield","마나 보호막", _manaShieldRemaining));
+			return list;
+		}
+
 		public void Heal(int amount) => CurrentHealth = Math.Min(CurrentHealth + amount, MaxHealth);
 		public void RestoreMp(int amount) => CurrentMp = Math.Min(CurrentMp + amount, MaxMp);
 

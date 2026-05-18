@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://nsb_renewal_v1"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://nsk_renewal_v1" path="res://Resources/Skills/renewal.tres" id="2"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/skillbook_heal_v2.png" id="3_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "스킬북: 재생의 가호"
+Description = "재생의 가호 스킬을 배웁니다 (공통, Lv.10 이상)"
+Icon = ExtResource("3_icon")
+Price = 600
+SellPrice = 300
+Type = 3
+IsStackable = false
+MaxStack = 1
+RequiredClass = 0
+AvailableToAllClasses = true
+LearnedSkill = ExtResource("2")
+Weight = 0.5

@@ -80,6 +80,8 @@ namespace FirstGame.Objects
 				inv.AddItem(OreItem, Quantity);
 				GameManager.Instance.RecordNodeMined(GetNodeId());
 			}
+			// 사냥 계약 Mining 진행 — SaveGame 전에 발신해 계약 진행도가 같은 저장에 포함.
+			EventManager.TriggerOreMined(OreItem.ResourcePath);
 			SaveManager.SaveGame();
 
 			AudioManager.Instance?.PlaySFX("pickup.wav");

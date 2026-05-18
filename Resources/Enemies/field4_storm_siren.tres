@@ -4,6 +4,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/sea_kelp.tres" id="3_d"]
 [ext_resource type="Resource" path="res://Resources/Items/storm_ward.tres" id="4_d"]
 [ext_resource type="Resource" path="res://Resources/Items/mana_herb_extract.tres" id="5_d"]
+[ext_resource type="Resource" path="res://Resources/Items/sapphire_ore.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
 MoveSpeed = 55
@@ -21,8 +22,8 @@ Sprite = ExtResource("2_tex")
 SpriteScale = 0.25
 CollisionScale = 1.9
 ProjectileScale = 0.4
-PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d"), ExtResource("5_d")])
-DropWeights = PackedFloat32Array(0.5, 0.2, 0.3)
+PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d"), ExtResource("5_d"), ExtResource("rgd1")])
+DropWeights = PackedFloat32Array(0.5, 0.2, 0.3, 0.12)
 DropChance = 0.3
 MaxHealth = 90
 Defense = 0

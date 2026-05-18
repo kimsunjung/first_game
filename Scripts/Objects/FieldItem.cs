@@ -14,6 +14,11 @@ namespace FirstGame.Objects
 		public List<ItemAffix> Affixes { get; set; } = new();
 
 		private Sprite2D _sprite;
+		// 희귀도 글로우 — 새 PNG 없이 코드로 생성한 가벼운 Sprite2D 1개(파티클/Light2D 미사용,
+		// 모바일 성능 고려). Common은 글로우 없음. 알파만 사인 펄스.
+		private Sprite2D _glow;
+		private float _glowTime;
+		private float _glowBaseScale = 1f;
 		private float _startY;
 		private float _timePassed;
 		private bool _isMagnetized = false;
@@ -47,11 +52,47 @@ namespace FirstGame.Objects
 				}
 			}
 
+			SetupGlow();
+
 			BodyEntered += OnBodyEntered;
 
 			// 착지 목표 Y값 설정 (현재 위치 언저리)
 			_groundY = GlobalPosition.Y + (float)GD.RandRange(-10, 10);
 			_startY = GlobalPosition.Y;
+		}
+
+		private static Color RarityGlowColor(ItemRarity r) => r switch
+		{
+			ItemRarity.Uncommon => new Color(0.40f, 1.00f, 0.45f),
+			ItemRarity.Rare => new Color(0.35f, 0.65f, 1.00f),
+			ItemRarity.Epic => new Color(0.75f, 0.40f, 1.00f),
+			ItemRarity.Legendary => new Color(1.00f, 0.82f, 0.20f),
+			_ => Colors.White,
+		};
+
+		// Common 초과 희귀도에서만 아이콘을 확대·틴트한 글로우 Sprite2D 1개 생성.
+		private void SetupGlow()
+		{
+			if (Item == null || Item.Icon == null) return;
+			if (Item.Rarity == ItemRarity.Common) return;
+
+			float maxDim = Mathf.Max(Item.Icon.GetWidth(), Item.Icon.GetHeight());
+			if (maxDim <= 0) return;
+			float spriteScale = 16.0f / maxDim; // _sprite와 동일 표시 크기 기준
+			// 희귀도 높을수록 글로우 약간 더 큼.
+			float mult = Item.Rarity >= ItemRarity.Epic ? 2.0f : 1.7f;
+			_glowBaseScale = spriteScale * mult;
+
+			_glow = new Sprite2D
+			{
+				Name = "RarityGlow",
+				Texture = Item.Icon,
+				TextureFilter = CanvasItem.TextureFilterEnum.Linear,
+				ZIndex = -1, // 아이콘 뒤
+				Scale = new Vector2(_glowBaseScale, _glowBaseScale),
+				Modulate = RarityGlowColor(Item.Rarity) with { A = 0.35f },
+			};
+			AddChild(_glow);
 		}
 
 		public void Drop(Vector2 startPos, Vector2 direction, float force)
@@ -86,6 +127,15 @@ namespace FirstGame.Objects
 
 		public override void _Process(double delta)
 		{
+			if (_glow != null)
+			{
+				_glowTime += (float)delta * 3.0f;
+				float a = 0.30f + 0.18f * Mathf.Sin(_glowTime);
+				_glow.Modulate = _glow.Modulate with { A = a };
+				float s = _glowBaseScale * (1.0f + 0.06f * Mathf.Sin(_glowTime));
+				_glow.Scale = new Vector2(s, s);
+			}
+
 			if (_isMagnetized && !IsInstanceValid(_magnetTarget))
 			{
 				// 자석 대상(플레이어)이 씬 전환 등으로 해제됨 — 자석 상태 리셋.

@@ -34,6 +34,9 @@ namespace FirstGame.Core
 		// 메인 퀘스트 매니저 (1개씩만 진행)
 		public QuestManager QuestManager { get; } = new();
 
+		// 사냥 계약 매니저 — 메인 퀘스트와 독립, 동시 3개까지 반복 파밍 보조.
+		public HuntingContractManager ContractManager { get; } = new();
+
 		// 처치한 보스 목록
 		private readonly HashSet<string> _defeatedBosses = new();
 		public IReadOnlyCollection<string> DefeatedBosses => _defeatedBosses;
@@ -46,6 +49,11 @@ namespace FirstGame.Core
 				case "orc_warlord_d1":  RecordChapterFlag(FirstGame.Data.ChapterFlags.OrcWarlordKilled); break;
 				case "skeleton_king_d2": RecordChapterFlag(FirstGame.Data.ChapterFlags.SkeletonKingKilled); break;
 				case "ancient_lich_d3":  RecordChapterFlag(FirstGame.Data.ChapterFlags.LichKilled); break;
+				// coast/mountain 권역 졸업 표지자(반복 보스) — 누적 마커만, CurrentChapter 불변.
+				case "kraken_d4":         RecordChapterFlag(FirstGame.Data.ChapterFlags.KrakenKilled); break;
+				case "glacier_titan_f5":  RecordChapterFlag(FirstGame.Data.ChapterFlags.GlacierTitanKilled); break;
+				case "inferno_drake_f6":  RecordChapterFlag(FirstGame.Data.ChapterFlags.InfernoDrakeKilled); break;
+				case "crystal_lord_m3":   RecordChapterFlag(FirstGame.Data.ChapterFlags.CrystalLordKilled); break;
 			}
 		}
 		public bool IsBossDefeated(string bossId) => _defeatedBosses.Contains(bossId);
@@ -300,7 +308,8 @@ namespace FirstGame.Core
 			_claimingPendingRewards = false;
 			_isRestoringState = false;
 			QuestManager.RestoreFromSave("", 0, null);
-			EventManager.ResetAll(); // 내부에서 QuestManager.Resubscribe 자동 호출
+			ContractManager.RestoreFromSave(null); // 이전 세션 계약이 새 게임으로 이월되지 않도록
+			EventManager.ResetAll(); // 내부에서 QuestManager/ContractManager.Resubscribe 자동 호출
 		}
 
 		// UI 업데이트용 이벤트 (Event for UI updates)

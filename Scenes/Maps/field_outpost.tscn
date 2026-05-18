@@ -30,6 +30,15 @@
 [ext_resource type="Resource" uid="uid://itm_skb_paim01" path="res://Resources/Items/skillbook_precise_aim.tres" id="45_skb_paim"]
 [ext_resource type="Resource" uid="uid://itm_skb_lifest_001" path="res://Resources/Items/skillbook_lifesteal.tres" id="46_skb_lifest"]
 [ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/contract_board_npc.tscn" id="cboard_v1"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_sundering_blow.tres" id="nsb_sund"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_frost_volley.tres" id="nsb_fvol"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/storage_npc.tscn" id="hb_storenpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/storage_ui.tscn" id="hb_storeui"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/crafting_npc.tscn" id="hb_craftnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/crafting_ui.tscn" id="hb_craftui"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/reforge_npc.tscn" id="hb_rfnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/reforge_ui.tscn" id="hb_rfui"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(640, 16)
@@ -73,12 +82,34 @@ ShopItems = Array[Resource]([ExtResource("16_hipot"), ExtResource("17_swift"), E
 
 [node name="ShopUI" parent="TravelMerchant" instance=ExtResource("15_shopUI")]
 
+[node name="ContractBoardNPC" parent="." instance=ExtResource("cboard_v1")]
+position = Vector2(320, 180)
+Region = "outpost_region"
+
+[node name="StorageNPC" parent="." instance=ExtResource("hb_storenpc")]
+position = Vector2(140, 280)
+NpcId = "storage_keeper"
+
+[node name="StorageUI" parent="StorageNPC" instance=ExtResource("hb_storeui")]
+
+[node name="CraftingNPC" parent="." instance=ExtResource("hb_craftnpc")]
+position = Vector2(250, 250)
+NpcId = "crafting_station"
+
+[node name="CraftingUI" parent="CraftingNPC" instance=ExtResource("hb_craftui")]
+
+[node name="ReforgeNPC" parent="." instance=ExtResource("hb_rfnpc")]
+position = Vector2(470, 270)
+NpcId = "reforge_station"
+
+[node name="ReforgeUI" parent="ReforgeNPC" instance=ExtResource("hb_rfui")]
+
 [node name="OutpostSkillNPC" parent="." instance=ExtResource("30_skillnpc")]
 position = Vector2(420, 100)
 NpcId = "outpost_skill_shop"
 
 [node name="SkillShopUI" parent="OutpostSkillNPC" instance=ExtResource("31_skillshopUI")]
-SkillBooks = Array[Resource]([ExtResource("40_skb_cleave"), ExtResource("41_skb_whirl"), ExtResource("42_skb_gslam"), ExtResource("43_skb_btlcry"), ExtResource("44_skb_lstorm"), ExtResource("45_skb_paim"), ExtResource("46_skb_lifest")])
+SkillBooks = Array[Resource]([ExtResource("40_skb_cleave"), ExtResource("41_skb_whirl"), ExtResource("42_skb_gslam"), ExtResource("43_skb_btlcry"), ExtResource("44_skb_lstorm"), ExtResource("45_skb_paim"), ExtResource("46_skb_lifest"), ExtResource("nsb_sund"), ExtResource("nsb_fvol")])
 
 [node name="SavePoint" parent="." instance=ExtResource("8_save")]
 position = Vector2(100, 100)

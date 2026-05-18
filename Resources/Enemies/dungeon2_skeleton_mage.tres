@@ -7,6 +7,7 @@
 [ext_resource type="Resource" uid="uid://itm_robe_arch_001" path="res://Resources/Items/archmage_robe.tres" id="5_arch"]
 
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Projectiles/arcane_bolt_projectile.png" id="99_proj"]
+[ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
 ProjectileTexture = ExtResource("99_proj")
@@ -25,8 +26,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.27
 CollisionScale = 1.9
-PossibleDrops = Array[Resource]([ExtResource("3_mp"), ExtResource("4_ab"), ExtResource("5_arch")])
-DropWeights = PackedFloat32Array(0.52, 0.43, 0.05)
+PossibleDrops = Array[Resource]([ExtResource("3_mp"), ExtResource("4_ab"), ExtResource("5_arch"), ExtResource("rgd1")])
+DropWeights = PackedFloat32Array(0.52, 0.43, 0.05, 0.12)
 DropChance = 0.4
 MaxHealth = 140
 Defense = 1

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://nsk_holy_burst_v1"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/frost_nova.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "신성 작렬"
+Description = "주변에 신성 폭발을 일으켜 광역 피해를 준다"
+Icon = ExtResource("2_icon")
+Type = 33
+MpCost = 34
+Cooldown = 10.0
+RequiredLevel = 18
+RequiredClass = 1
+AvailableToAllClasses = false
+HealAmount = 0
+DurationSeconds = 0
+BonusDamageMultiplier = 1
+Element = 4
+InflictedStatus = 0
+InflictedStatusDuration = 0.0
+InflictedStatusChance = 0.0
+IsPassive = false

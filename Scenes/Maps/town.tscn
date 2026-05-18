@@ -71,6 +71,10 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/crafting_ui.tscn" id="v3_craftui"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/reforge_npc.tscn" id="v3_rfnpc"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/reforge_ui.tscn" id="v3_rfui"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/contract_board_npc.tscn" id="cboard_v1"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_venom_shot.tres" id="nsb_vshot"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_venom_bolt.tres" id="nsb_vbolt"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_renewal.tres" id="nsb_renew"]
 
 [sub_resource type="RectangleShape2D" id="deco_small"]
 size = Vector2(16, 16)
@@ -238,12 +242,16 @@ NpcId = "shop"
 
 [node name="ShopUI" parent="ShopNPC" instance=ExtResource("9_shopUI")]
 
+[node name="ContractBoardNPC" parent="." instance=ExtResource("cboard_v1")]
+position = Vector2(440, 160)
+Region = "town_region"
+
 [node name="SkillShopNPC" parent="." instance=ExtResource("10_skillnpc")]
 position = Vector2(520, 80)
 NpcId = "skill_shop"
 
 [node name="SkillShopUI" parent="SkillShopNPC" instance=ExtResource("11_skillshopUI")]
-SkillBooks = Array[Resource]([ExtResource("61_skb_heal"), ExtResource("55_skb_dash"), ExtResource("71_skb_pstr"), ExtResource("57_skb_fbolt"), ExtResource("64_skb_ice"), ExtResource("62_skb_hpreg"), ExtResource("74_skb_speed"), ExtResource("65_skb_istan"), ExtResource("69_skb_multi"), ExtResource("54_skb_crit")])
+SkillBooks = Array[Resource]([ExtResource("61_skb_heal"), ExtResource("55_skb_dash"), ExtResource("71_skb_pstr"), ExtResource("57_skb_fbolt"), ExtResource("64_skb_ice"), ExtResource("62_skb_hpreg"), ExtResource("74_skb_speed"), ExtResource("65_skb_istan"), ExtResource("69_skb_multi"), ExtResource("54_skb_crit"), ExtResource("nsb_vshot"), ExtResource("nsb_vbolt"), ExtResource("nsb_renew")])
 
 [node name="BlacksmithNPC" parent="." instance=ExtResource("12_smith")]
 position = Vector2(120, 240)

@@ -31,6 +31,15 @@
 [ext_resource type="Resource" uid="uid://itm_con_stormwd_v3" path="res://Resources/Items/storm_ward.tres" id="v3_stormwd"]
 [ext_resource type="Resource" uid="uid://itm_con_grndslv_v3" path="res://Resources/Items/grounding_salve.tres" id="v3_grndslv"]
 [ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/contract_board_npc.tscn" id="cboard_v1"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_earthquake.tres" id="nsb_quake"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_holy_burst.tres" id="nsb_holy"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/storage_npc.tscn" id="hb_storenpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/storage_ui.tscn" id="hb_storeui"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/crafting_npc.tscn" id="hb_craftnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/crafting_ui.tscn" id="hb_craftui"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/reforge_npc.tscn" id="hb_rfnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/reforge_ui.tscn" id="hb_rfui"]
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
 size = Vector2(640, 16)
@@ -115,12 +124,34 @@ ShopItems = Array[Resource]([ExtResource("20_hipot"), ExtResource("21_mpot"), Ex
 
 [node name="ShopUI" parent="HarborMerchant" instance=ExtResource("11_shopUI")]
 
+[node name="ContractBoardNPC" parent="." instance=ExtResource("cboard_v1")]
+position = Vector2(320, 180)
+Region = "coast_region"
+
+[node name="StorageNPC" parent="." instance=ExtResource("hb_storenpc")]
+position = Vector2(160, 270)
+NpcId = "storage_keeper"
+
+[node name="StorageUI" parent="StorageNPC" instance=ExtResource("hb_storeui")]
+
+[node name="CraftingNPC" parent="." instance=ExtResource("hb_craftnpc")]
+position = Vector2(240, 300)
+NpcId = "crafting_station"
+
+[node name="CraftingUI" parent="CraftingNPC" instance=ExtResource("hb_craftui")]
+
+[node name="ReforgeNPC" parent="." instance=ExtResource("hb_rfnpc")]
+position = Vector2(480, 290)
+NpcId = "reforge_station"
+
+[node name="ReforgeUI" parent="ReforgeNPC" instance=ExtResource("hb_rfui")]
+
 [node name="HarborSkillNPC" parent="." instance=ExtResource("12_skillnpc")]
 position = Vector2(500, 90)
 NpcId = "harbor_skill_shop"
 
 [node name="SkillShopUI" parent="HarborSkillNPC" instance=ExtResource("13_skillshopUI")]
-SkillBooks = Array[Resource]([ExtResource("30_skb_prc"), ExtResource("31_skb_bk"), ExtResource("32_skb_rain"), ExtResource("33_skb_hnt"), ExtResource("34_skb_fnova")])
+SkillBooks = Array[Resource]([ExtResource("30_skb_prc"), ExtResource("31_skb_bk"), ExtResource("32_skb_rain"), ExtResource("33_skb_hnt"), ExtResource("34_skb_fnova"), ExtResource("nsb_quake"), ExtResource("nsb_holy")])
 
 [node name="PortalToOutpost" parent="." instance=ExtResource("9_portal")]
 position = Vector2(40, 180)

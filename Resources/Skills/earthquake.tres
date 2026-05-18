@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://nsk_earthquake_v1"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/ground_slam.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "대지 균열"
+Description = "주변을 강타해 번개 충격으로 적을 감전시킨다"
+Icon = ExtResource("2_icon")
+Type = 32
+MpCost = 30
+Cooldown = 10.0
+RequiredLevel = 16
+RequiredClass = 0
+AvailableToAllClasses = false
+HealAmount = 0
+DurationSeconds = 0
+BonusDamageMultiplier = 1
+Element = 3
+InflictedStatus = 16
+InflictedStatusDuration = 3.0
+InflictedStatusChance = 0.4
+IsPassive = false

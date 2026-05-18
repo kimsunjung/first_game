@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://bc173doicpk3i" path="res://Resources/Items/tooth_necklace.tres" id="3_tooth"]
 [ext_resource type="Resource" uid="uid://cr5usrj6wuwg3" path="res://Resources/Items/wolf_necklace.tres" id="4_wolfneck"]
 
+[ext_resource type="Resource" path="res://Resources/Items/orc_leather.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
 MoveSpeed = 68.2
@@ -20,8 +21,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.27
 CollisionScale = 2.0
-PossibleDrops = Array[Resource]([ExtResource("3_tooth"), ExtResource("4_wolfneck")])
-DropWeights = PackedFloat32Array(0.85, 0.15)
+PossibleDrops = Array[Resource]([ExtResource("3_tooth"), ExtResource("4_wolfneck"), ExtResource("rgd1")])
+DropWeights = PackedFloat32Array(0.85, 0.15, 0.12)
 DropChance = 0.2
 MaxHealth = 50
 Defense = 0

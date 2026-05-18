@@ -25,6 +25,8 @@
     <Compile Include="../../Scripts/Data/StatusEffect.cs" />
     <Compile Include="../../Scripts/Data/PlayerClass.cs" />
     <Compile Include="../../Scripts/Data/ElementType.cs" />
+    <Compile Include="../../Scripts/Data/ContractData.cs" />
+    <Compile Include="../../Scripts/Data/MapNames.cs" />
     <Compile Include="**/*Tests.cs" />
   </ItemGroup>
 

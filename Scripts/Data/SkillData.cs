@@ -37,6 +37,17 @@ namespace FirstGame.Data
 		BackstepShot  = 24, // 궁수 — 원거리 사격 + 뒤로 대시
 		RainOfArrows  = 25, // 궁수 — 자신 주변 넓은 광역 화살 비
 		HunterFocus   = 26, // 궁수 — 15초간 공격력+치명타 버프
+		// ─── 스킬 확장 v2 (27+) ─────────────────────────────────────
+		// 기존 전략 동작을 위임 상속하되 *고유 SkillType* 을 부여 — 학습 중복/쿨다운/
+		// 상점 게이팅이 모두 Type 기준이라, 같은 동작이라도 별개 스킬로 병존 가능.
+		VenomShot     = 27, // 궁수 — 독 화살(ArrowShot 위임)
+		VenomBolt     = 28, // 마법사 — 독성 마탄(FireBolt 위임)
+		Renewal       = 29, // 공통 — 대량 회복(HealSelf 위임)
+		SunderingBlow = 30, // 전사 — 어둠 처형(Execute 위임)
+		FrostVolley   = 31, // 궁수 — 서리 화살비(RainOfArrows 위임)
+		Earthquake    = 32, // 전사 — 대지 균열(GroundSlam 위임)
+		HolyBurst     = 33, // 마법사 — 신성 작렬(FrostNova 위임)
+		ChainBolt     = 34, // 마법사 — 연쇄 뇌격(LightningStorm 위임)
 	}
 
 	public enum PassiveType

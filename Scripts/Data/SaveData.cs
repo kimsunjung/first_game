@@ -15,7 +15,7 @@ namespace FirstGame.Data
 
 	public class SaveData
 	{
-		public const int LatestVersion = 12;
+		public const int LatestVersion = 13;
 		public int Version { get; set; } = LatestVersion;
 
 		public float PlayerPosX { get; set; }
@@ -114,5 +114,9 @@ namespace FirstGame.Data
 		// ─── v12: 공유 창고/보관함. 허브 창고 NPC로 입출고. 인벤과 동일하게
 		// 강화 수치/affix/수량 보존. 누락 시 빈 창고로 안전 로드(초기화자 new()).
 		public List<SavedItemSlot> StorageItems { get; set; } = new();
+
+		// ─── v13: 사냥 계약 진행 상태. 메인 퀘스트와 독립(별도 HuntingContractManager).
+		// 누락 시 빈 목록으로 안전 로드(초기화자 new()).
+		public List<ContractProgress> ActiveContracts { get; set; } = new();
 	}
 }

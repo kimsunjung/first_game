@@ -13,6 +13,11 @@
   R8  사냥터 씬은 EnemySpawner 를 포함 (허브 3곳 제외)
   R9  recipes.json: id 유일 / material·result 경로 실존 / qty>0·gold>=0 /
       레시피 내 material path 중복 금지 / 재료는 Consumable·Material 타입만
+  R10 contracts.json: id 유일 / type 유효 / goal>0 / reward gold·exp>=0 /
+      rewardItem 경로 실존 / 타입별 타깃 필수 + enemy/boss 타깃 실존
+  R11 사냥 계약 보드: 허브 4곳(town/field_outpost/harbor_village/mountain_refuge)에
+      ContractBoardNPC 배치
+  R12 MiningNode: 씬 내 노드명 유일 / OreItem 지정 / RespawnChanceOnReentry 0~1
 
 종료 코드: 결함 0건이면 0, 아니면 1.
 """
@@ -321,6 +326,152 @@ def check_recipes():
                           "— Consumable/Material 만 허용")
 
 
+CONTRACT_TYPES = {"Kill", "Gather", "BossKill", "Mining"}
+HUB_BOARD_SCENES = ("town", "field_outpost", "harbor_village", "mountain_refuge")
+
+
+def _collect_enemy_type_names():
+    names = set()
+    enemies = os.path.join(ROOT, "Resources", "Enemies")
+    if not os.path.isdir(enemies):
+        return names
+    for fn in os.listdir(enemies):
+        if not fn.endswith(".tres"):
+            continue
+        with open(os.path.join(enemies, fn), encoding="utf-8") as f:
+            for m in re.finditer(r'EnemyTypeName\s*=\s*"([^"]+)"', f.read()):
+                names.add(m.group(1))
+    return names
+
+
+def _collect_boss_ids():
+    ids = set()
+    maps_dir = os.path.join(ROOT, "Scenes", "Maps")
+    for fn in os.listdir(maps_dir):
+        if not fn.endswith(".tscn"):
+            continue
+        with open(os.path.join(maps_dir, fn), encoding="utf-8") as f:
+            for m in re.finditer(r'\bBossId\s*=\s*"([^"]+)"', f.read()):
+                ids.add(m.group(1))
+    return ids
+
+
+def check_contracts():
+    cp = os.path.join(ROOT, "Resources", "Contracts", "contracts.json")
+    if not os.path.isfile(cp):
+        return
+    try:
+        with open(cp, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        err("R10", f"contracts.json 파싱 실패: {e}")
+        return
+
+    enemy_names = _collect_enemy_type_names()
+    boss_ids = _collect_boss_ids()
+    seen = set()
+    for c in data.get("contracts", []):
+        cid = c.get("id", "<무-id>")
+        if cid in seen:
+            err("R10", f"중복 contract id: {cid}")
+        seen.add(cid)
+
+        ctype = c.get("type", "")
+        if ctype not in CONTRACT_TYPES:
+            err("R10", f"{cid}: 잘못된 type '{ctype}'")
+
+        goal = c.get("goal", 0)
+        if not isinstance(goal, int) or goal <= 0:
+            err("R10", f"{cid}: goal 은 1 이상이어야 함 ({goal})")
+        for k in ("goldReward", "expReward"):
+            v = c.get(k, 0)
+            if not isinstance(v, int) or v < 0:
+                err("R10", f"{cid}: {k} 는 0 이상 정수여야 함 ({v})")
+
+        rip = c.get("rewardItemPath", "")
+        if rip:
+            if not os.path.exists(res_to_path(rip)):
+                err("R10", f"{cid}: rewardItemPath 미해결 {rip}")
+            rq = c.get("rewardItemQuantity", 1)
+            if not isinstance(rq, int) or rq <= 0:
+                err("R10", f"{cid}: rewardItemQuantity 는 1 이상이어야 함 ({rq})")
+
+        if ctype == "Kill":
+            t = c.get("targetEnemyType", "")
+            if not t:
+                err("R10", f"{cid}: Kill 계약에 targetEnemyType 누락")
+            elif enemy_names and t not in enemy_names:
+                err("R10", f"{cid}: targetEnemyType '{t}' 가 어떤 적 EnemyTypeName 과도 불일치")
+        elif ctype == "BossKill":
+            t = c.get("targetBossId", "")
+            if not t:
+                err("R10", f"{cid}: BossKill 계약에 targetBossId 누락")
+            elif boss_ids and t not in boss_ids:
+                err("R10", f"{cid}: targetBossId '{t}' 가 어떤 씬 BossId 와도 불일치")
+        elif ctype == "Gather":
+            t = c.get("targetItemPath", "")
+            if not t or not os.path.exists(res_to_path(t)):
+                err("R10", f"{cid}: Gather targetItemPath 미해결 {t}")
+        elif ctype == "Mining":
+            t = c.get("targetOreItemPath", "")
+            if not t or not os.path.exists(res_to_path(t)):
+                err("R10", f"{cid}: Mining targetOreItemPath 미해결 {t}")
+
+
+def check_contract_boards():
+    maps_dir = os.path.join(ROOT, "Scenes", "Maps")
+    for hub in HUB_BOARD_SCENES:
+        path = os.path.join(maps_dir, hub + ".tscn")
+        if not os.path.isfile(path):
+            err("R11", f"허브 씬 없음: {hub}.tscn")
+            continue
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+        if "Scenes/Objects/contract_board_npc.tscn" not in text:
+            err("R11", f"{hub}.tscn 에 ContractBoardNPC(사냥 계약 보드) 미배치")
+
+
+# MiningNode 인스턴스 블록: [node name=".." parent=".." instance=ExtResource("..")]
+# 다음 노드 헤더 전까지를 본문으로 본다.
+def check_mining_nodes():
+    maps_dir = os.path.join(ROOT, "Scenes", "Maps")
+    for fn in sorted(os.listdir(maps_dir)):
+        if not fn.endswith(".tscn"):
+            continue
+        path = os.path.join(maps_dir, fn)
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+        if "Scenes/Objects/mining_node.tscn" not in text:
+            continue
+        # mining_node.tscn 의 ext_resource id 수집
+        mnode_ids = set()
+        for typ, uid, p, rid in parse_ext_resources(text):
+            if p == "res://Scenes/Objects/mining_node.tscn" and rid:
+                mnode_ids.add(rid)
+        if not mnode_ids:
+            continue
+        blocks = re.split(r'^\[node ', text, flags=re.M)
+        seen_names = {}
+        for blk in blocks:
+            mh = re.match(r'name="([^"]+)"[^\]]*instance=ExtResource\("([^"]+)"\)', blk)
+            if not mh or mh.group(2) not in mnode_ids:
+                continue
+            nm = mh.group(1)
+            if nm in seen_names:
+                err("R12", f"{fn}: MiningNode 노드명 중복 '{nm}' (저장 키 충돌)")
+            seen_names[nm] = True
+            if not re.search(r'\bOreItem\s*=\s*ExtResource\(', blk):
+                err("R12", f"{fn}: MiningNode '{nm}' OreItem 미지정")
+            rc = re.search(r'\bRespawnChanceOnReentry\s*=\s*([-\d.]+)', blk)
+            if rc is not None:
+                v = float(rc.group(1))
+                if v < 0 or v > 1:
+                    err("R12", f"{fn}: MiningNode '{nm}' RespawnChanceOnReentry 범위 밖 ({v})")
+            q = re.search(r'\bQuantity\s*=\s*(-?\d+)', blk)
+            if q is not None and int(q.group(1)) <= 0:
+                err("R12", f"{fn}: MiningNode '{nm}' Quantity 는 1 이상이어야 함 ({q.group(1)})")
+
+
 def main():
     scan_uids()
     check_res_refs()
@@ -330,6 +481,9 @@ def main():
     check_drop_tables()
     check_teleport_dests()
     check_recipes()
+    check_contracts()
+    check_contract_boards()
+    check_mining_nodes()
 
     by_cat = {}
     for cat, msg in errors:

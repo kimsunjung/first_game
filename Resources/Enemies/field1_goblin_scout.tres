@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="3_hp"]
 [ext_resource type="Resource" uid="uid://djkwf7m5ay001" path="res://Resources/Items/iron_ore.tres" id="4_iron"]
 
+[ext_resource type="Resource" path="res://Resources/Items/orc_leather.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
 MoveSpeed = 47.2
@@ -20,8 +21,8 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.24
 CollisionScale = 1.7
-PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_iron")])
-DropWeights = PackedFloat32Array(0.7, 0.3)
+PossibleDrops = Array[Resource]([ExtResource("3_hp"), ExtResource("4_iron"), ExtResource("rgd1")])
+DropWeights = PackedFloat32Array(0.7, 0.3, 0.12)
 DropChance = 0.3
 MaxHealth = 55
 Defense = 0

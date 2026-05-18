@@ -155,8 +155,10 @@ namespace FirstGame.Entities.Enemies
 
 			_animSprite.SpriteFrames = frames;
 			// SpriteScale은 시각만 — root CharacterBody2D.Scale에 손대지 않아 콜리전/체력바/elite scale 보호.
-			if (Stats.SpriteScale > 0f && !Mathf.IsEqualApprox(Stats.SpriteScale, 1.0f))
-				_animSprite.Scale = new Vector2(Stats.SpriteScale, Stats.SpriteScale);
+			// 전역 GameScale.CharacterVisual(0.8)을 항상 곱해 모든 적 시각 크기 20% 축소.
+			// 콜리전(CollisionScale)은 미적용 → 전투 밸런스 불변.
+			float spriteScale = (Stats.SpriteScale > 0f ? Stats.SpriteScale : 1f) * FirstGame.Core.GameScale.CharacterVisual;
+			_animSprite.Scale = new Vector2(spriteScale, spriteScale);
 			_animSprite.Play("idle");
 			_animSprite.AnimationFinished += OnAnimationFinished;
 		}
@@ -692,6 +694,9 @@ namespace FirstGame.Entities.Enemies
 					EventManager.TriggerBossDied();
 					string bossKey = !string.IsNullOrEmpty(BossId) ? BossId : Stats.EnemyTypeName;
 					GameManager.Instance?.RecordBossDefeat(bossKey);
+					// 사냥 계약 BossKill 진행 — bossId 식별. 이 트랜잭션 종료 후
+					// SaveManager.SaveGame()이 계약 진행도까지 한 시점에 영속화.
+					EventManager.TriggerBossKilled(bossKey);
 				}
 				SaveManager.SaveGame();
 			}

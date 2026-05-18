@@ -21,5 +21,12 @@ namespace FirstGame.Data
 		public const string SkeletonKingKilled = "flag_skeleton_king_killed";
 		public const string AbyssUnsealed = "flag_abyss_unsealed";
 		public const string LichKilled = "flag_lich_killed";
+
+		// 권역 졸업 표지자 v2 — coast/mountain 보스(반복). Chapter enum/엔딩과 무관한
+		// 누적 마커(대사/계약/통계용). CurrentChapter 계산에는 미반영(엔딩형 아님).
+		public const string KrakenKilled = "flag_kraken_killed";
+		public const string GlacierTitanKilled = "flag_glacier_titan_killed";
+		public const string InfernoDrakeKilled = "flag_inferno_drake_killed";
+		public const string CrystalLordKilled = "flag_crystal_lord_killed";
 	}
 }

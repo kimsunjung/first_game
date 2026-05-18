@@ -54,6 +54,20 @@ namespace FirstGame.Core
 			OnEnemyKilledTyped?.Invoke(enemyTypeName);
 		}
 
+		// 사냥 계약 BossKill 진행용 — bossId 식별 가능. (OnBossDied는 bossId가 없음)
+		public static event Action<string> OnBossKilled;
+		public static void TriggerBossKilled(string bossId)
+		{
+			OnBossKilled?.Invoke(bossId);
+		}
+
+		// 사냥 계약 Mining 진행용 — 채광 성공한 광석 res:// 경로.
+		public static event Action<string> OnOreMined;
+		public static void TriggerOreMined(string oreItemPath)
+		{
+			OnOreMined?.Invoke(oreItemPath);
+		}
+
 		// 경험치 지급 이벤트
 		public static event Action<int> OnExpGained;
 		public static void TriggerExpGained(int amount)
@@ -75,11 +89,15 @@ namespace FirstGame.Core
 			OnBossDied = null;
 			OnEnemyKilled = null;
 			OnEnemyKilledTyped = null;
+			OnBossKilled = null;
+			OnOreMined = null;
 			OnExpGained = null;
 			OnBossPhaseChanged = null;
 
-			// QuestManager는 GameManager 영구 인스턴스 — 적 처치 이벤트 구독을 잃지 않도록 복원.
+			// QuestManager / HuntingContractManager는 GameManager 영구 인스턴스 —
+			// 적 처치/보스/채광 이벤트 구독을 잃지 않도록 복원.
 			GameManager.Instance?.QuestManager?.Resubscribe();
+			GameManager.Instance?.ContractManager?.Resubscribe();
 		}
 	}
 }

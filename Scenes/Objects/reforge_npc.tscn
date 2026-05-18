@@ -29,7 +29,7 @@ shape = SubResource("body_shape")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
-scale = Vector2(0.3, 0.3)
+scale = Vector2(0.24, 0.24)
 modulate = Color(1, 1, 1, 1)
 texture = ExtResource("2_tex")
 
