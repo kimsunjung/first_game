@@ -792,18 +792,18 @@ Price/드랍 등 다른 필드는 무수정.** 무기(활) 4종은 `Icons/Items/
 | `amethyst_ring` | 반지 | S4 | `Icons/Equipment/amethyst_ring.png` | `Resources/Items/amethyst_ring.tres` Icon | 사용 중 | `Items/magic_ring.png` 돌려쓰기 → 전용 교체 |
 | `storm_ring` | 반지 | S4 | `Icons/Equipment/storm_ring.png` | `Resources/Items/storm_ring.tres` Icon | 사용 중 | `Equipment/emerald_ring.png` 돌려쓰기 → 전용 교체 |
 
-**`.import` 미동반**: 신규 32 PNG는 `.png.import` 사이드카를 만들지 않았다 — Godot
-`.ctex` 해시/`uid`는 에디터 import 없이 정확 생성 불가. `.tres`는 `path=`(uid
-없음)로 참조하므로 validate/build/test는 영향 없음. **Godot 에디터 최초 실행
-시 자동 import 필요**. 원본 생성 이미지/기존 PNG/`.tres`/씬 미삭제, 루트
-`ChatGPT Image*.png` 미추적. 위 32개 inline 레거시 표 행(돌려쓰기 경로 표기)은
-이 절이 최신 권위 — 개별 행은 점진적으로 갱신.
+**`.import` 생성 완료**: Godot 4.6.2 mono headless import로 신규 32 PNG와 원본
+시트 4장의 `.png.import`를 생성했다. `.tres`는 `path=`로 참조하며, 원본 생성
+이미지/기존 PNG/`.tres`/씬 미삭제, 루트 `ChatGPT Image*.png` 미추적. 위 32개
+inline 레거시 표 행(돌려쓰기 경로 표기)은 이 절이 최신 권위 — 개별 행은 점진적으로
+갱신.
 
 ### 이미지 매칭 감사 보정 (2026-05-18)
 
 전체 `Resources/Items/*.tres`와 `Resources/Enemies/*.tres`의 이미지 연결을 전수 점검해
 누락/의미 불일치/변형 재사용을 보정했다. 신규 AI 시트 생성 없이 기존 시트/아이콘/스프라이트를
-슬라이스하거나 색상 변형해 연결했다. `.import`는 Godot 에디터 import 필요.
+슬라이스하거나 색상 변형해 연결했다. Godot 4.6.2 mono headless import로 이 절의
+신규 PNG 16개도 `.png.import` 생성 완료.
 
 #### 아이템 아이콘 보정
 
