@@ -609,6 +609,9 @@ namespace FirstGame.Entities.Player
 
 				// 보스 목록은 위(536)에서 이미 RestoreDefeatedBosses로 복원됨 — 중복 호출 제거.
 
+				// 공유 창고 복원 (v12). 누락 시 빈 리스트.
+				GameManager.Instance?.RestoreStorage(data.StorageItems);
+
 				// 보류 보상은 복원만 하고 TryClaim은 EndRestoreState 후로 미룬다.
 				GameManager.Instance?.RestorePendingRewards(data.PendingRewardItems);
 

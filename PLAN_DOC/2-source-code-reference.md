@@ -4,7 +4,15 @@
 - 현재 `first_game` 리포의 실제 구조를 빠르게 찾기 위한 참조 문서다.
 - 예전 문서에 남아 있는 `main.tscn` 중심 설명 대신, 현재 맵 분리 구조를 기준으로 정리한다.
 
-작성일: 2026-04-21
+작성일: 2026-04-21 (갱신: 2026-05-18)
+
+## 2026-05-18 신규/주요 시스템 위치
+- 창고: `Scripts/UI/StorageUI.cs`, `Scenes/UI/storage_ui.tscn`, `Scripts/Entities/StorageNPC.cs`, `Scenes/Objects/storage_npc.tscn`; 데이터 `SaveData.StorageItems`(v12), `GameManager._storage`/`RestoreStorage`.
+- 제작: `Resources/Recipes/recipes.json`, `Scripts/Core/CraftingData.cs`, `Scripts/UI/CraftingUI.cs`, `Scenes/UI/crafting_ui.tscn`, `Scripts/Entities/CraftingNPC.cs`, `Scenes/Objects/crafting_npc.tscn`.
+- 재련: `Scripts/UI/ReforgeUI.cs`, `Scenes/UI/reforge_ui.tscn`, `Scripts/Entities/ReforgeNPC.cs`, `Scenes/Objects/reforge_npc.tscn`; affix 생성 `Scripts/Data/AffixGenerator.cs`.
+- 날씨/스폰: `Scripts/Maps/BiomeWeatherController.cs`, `EnemySpawner.StatWeights`. 보스: `Scripts/Entities/Enemies/BossController.cs` + `Resources/BossPatterns`. 채광: `MiningNode`. 무게: `PlayerStats` 무게 페널티.
+- 검증: `tools/validate/validate.py`, `tools/validate/balance.py`, `tools/Tests/FirstGame.Tests.csproj`, `.github/workflows/ci.yml`.
+- 계약(D) 보류 — 구현 시 `HuntingContractManager` 신설(메인 `Scripts/Core/QuestManager.cs` 확장 금지).
 
 ---
 

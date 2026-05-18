@@ -60,6 +60,24 @@ namespace FirstGame.Core
 		private readonly List<FirstGame.Data.SavedItemSlot> _pendingRewards = new();
 		public IReadOnlyList<FirstGame.Data.SavedItemSlot> PendingRewards => _pendingRewards;
 
+		// 공유 창고(v12) — 영구 보관함. SaveData.StorageItems로 직렬화.
+		// 입출고 트랜잭션은 StorageUI가 GameTransaction으로 원자 처리, 여기는 보관소.
+		private readonly List<FirstGame.Data.SavedItemSlot> _storage = new();
+		public IReadOnlyList<FirstGame.Data.SavedItemSlot> Storage => _storage;
+		public void RestoreStorage(List<FirstGame.Data.SavedItemSlot> list)
+		{
+			_storage.Clear();
+			if (list != null) _storage.AddRange(list);
+		}
+		public void AddStorageSlot(FirstGame.Data.SavedItemSlot slot)
+		{
+			if (slot != null) _storage.Add(slot);
+		}
+		public void RemoveStorageAt(int index)
+		{
+			if (index >= 0 && index < _storage.Count) _storage.RemoveAt(index);
+		}
+
 		// AddItem이 동기적으로 OnInventoryChanged를 발생시켜 TryClaimPendingRewards가 자기
 		// 자신을 재진입할 때 같은 보상이 중복 지급되거나 RemoveAt이 throw하는 결함 차단.
 		private bool _claimingPendingRewards = false;
@@ -273,6 +291,7 @@ namespace FirstGame.Core
 			_defeatedBosses.Clear();
 			_activeEnemies.Clear();
 			_pendingRewards.Clear(); // 이전 세션 보류 보상이 새 게임으로 이월되지 않도록
+			_storage.Clear(); // 이전 세션 공유 창고 아이템이 새 게임으로 이월되지 않도록
 			_fieldSeeds.Clear();
 			_visitedScenes.Clear();
 			_minedNodes.Clear();

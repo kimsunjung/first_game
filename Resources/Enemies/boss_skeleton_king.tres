@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://dp4rst6uvw7xy"]
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1_es"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/skeleton_king.png" id="99_sprite"]
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="2_hip"]
 [ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="3_mp"]
 [ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="4_core"]
@@ -24,6 +25,8 @@ GoldReward = 300
 EnemyTypeName = "SkeletonKing"
 IsBoss = true
 SpriteAtlasCoords = Vector2i(8, 8)
+Sprite = ExtResource("99_sprite")
+SpriteScale = 0.39
 Patterns = Array[Resource]([ExtResource("9_p1"), ExtResource("10_p2"), ExtResource("11_p3")])
 PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core"), ExtResource("5_ib"), ExtResource("6_sb"), ExtResource("7_tb"), ExtResource("8_elven")])
 DropWeights = PackedFloat32Array(0.18, 0.13, 0.22, 0.13, 0.13, 0.08, 0.13)

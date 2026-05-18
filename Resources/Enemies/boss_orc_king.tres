@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://cljvyxtj68uii"]
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1_es"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/NamedBosses/orc_warlord.png" id="99_sprite"]
 [ext_resource type="Resource" path="res://Resources/Items/hi_potion.tres" id="2_hip"]
 [ext_resource type="Resource" path="res://Resources/Items/mega_potion.tres" id="3_mp"]
 [ext_resource type="Resource" path="res://Resources/Items/boss_core.tres" id="4_core"]
@@ -18,6 +19,8 @@ ExperienceReward = 200
 EnemyTypeName = "Boss"
 IsBoss = true
 SpriteAtlasCoords = Vector2i(9, 7)
+Sprite = ExtResource("99_sprite")
+SpriteScale = 0.39
 PossibleDrops = Array[Resource]([ExtResource("2_hip"), ExtResource("3_mp"), ExtResource("4_core"), ExtResource("5_lb"), ExtResource("6_bb")])
 DropWeights = PackedFloat32Array(0.25, 0.15, 0.30, 0.15, 0.15)
 DropChance = 1.0

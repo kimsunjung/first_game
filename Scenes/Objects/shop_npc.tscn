@@ -30,7 +30,7 @@
 [ext_resource type="Resource" uid="uid://wpn_tidestaff01" path="res://Resources/Items/tide_staff.tres" id="27_tide"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_shop"]
-radius = 56.0
+radius = 40.0
 
 [sub_resource type="CircleShape2D" id="body_shape"]
 radius = 10.0

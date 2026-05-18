@@ -1,0 +1,97 @@
+{
+  "_comment": "제작 레시피 v1 — 확정 제작(확률/뽑기 없음). 결과/재료는 기존 Resources/Items 만 사용. 새 PNG 없음.",
+  "recipes": [
+    {
+      "id": "potion_bundle",
+      "name": "회복약 묶음 제작",
+      "desc": "약초 추출물로 회복약 3개를 확정 제작.",
+      "gold": 20,
+      "materials": [ { "path": "res://Resources/Items/mana_herb_extract.tres", "qty": 2 } ],
+      "result": { "path": "res://Resources/Items/health_potion.tres", "qty": 3 }
+    },
+    {
+      "id": "mana_brew",
+      "name": "마나 물약 제작",
+      "desc": "해초를 정제해 마나 물약 2개 제작.",
+      "gold": 25,
+      "materials": [ { "path": "res://Resources/Items/sea_kelp.tres", "qty": 2 } ],
+      "result": { "path": "res://Resources/Items/mana_potion.tres", "qty": 2 }
+    },
+    {
+      "id": "enhance_stone_craft",
+      "name": "강화석 가공",
+      "desc": "수정 원석을 가공해 강화석 2개 제작.",
+      "gold": 60,
+      "materials": [ { "path": "res://Resources/Items/crystal_ore.tres", "qty": 3 } ],
+      "result": { "path": "res://Resources/Items/enhance_stone.tres", "qty": 2 }
+    },
+    {
+      "id": "antidote_craft",
+      "name": "해독제 제작",
+      "desc": "뼛가루로 해독제 2개 제작.",
+      "gold": 15,
+      "materials": [ { "path": "res://Resources/Items/bone_dust.tres", "qty": 2 } ],
+      "result": { "path": "res://Resources/Items/antidote.tres", "qty": 2 }
+    },
+    {
+      "id": "tidal_tonic_craft",
+      "name": "조류 강장제 제작",
+      "desc": "해초를 끓여 조류 강장제 제작.",
+      "gold": 50,
+      "materials": [ { "path": "res://Resources/Items/sea_kelp.tres", "qty": 3 } ],
+      "result": { "path": "res://Resources/Items/tidal_tonic.tres", "qty": 1 }
+    },
+    {
+      "id": "storm_ward_craft",
+      "name": "폭풍 부적 제작",
+      "desc": "해초와 크라켄 먹물로 폭풍 부적 제작.",
+      "gold": 70,
+      "materials": [
+        { "path": "res://Resources/Items/sea_kelp.tres", "qty": 2 },
+        { "path": "res://Resources/Items/kraken_ink.tres", "qty": 1 }
+      ],
+      "result": { "path": "res://Resources/Items/storm_ward.tres", "qty": 1 }
+    },
+    {
+      "id": "warming_draught_craft",
+      "name": "온기 묘약 제작",
+      "desc": "빙하 조각을 정제해 온기 묘약 제작.",
+      "gold": 60,
+      "materials": [ { "path": "res://Resources/Items/glacier_shard.tres", "qty": 2 } ],
+      "result": { "path": "res://Resources/Items/warming_draught.tres", "qty": 1 }
+    },
+    {
+      "id": "ash_filter_craft",
+      "name": "재 여과기 제작",
+      "desc": "용암석과 빙하 조각으로 재 여과기 제작.",
+      "gold": 80,
+      "materials": [
+        { "path": "res://Resources/Items/lava_stone.tres", "qty": 3 },
+        { "path": "res://Resources/Items/glacier_shard.tres", "qty": 1 }
+      ],
+      "result": { "path": "res://Resources/Items/ash_filter.tres", "qty": 1 }
+    },
+    {
+      "id": "fire_resist_craft",
+      "name": "화염 저항 엘릭서 제작",
+      "desc": "용암석과 드레이크 비늘로 화염 저항 엘릭서 제작.",
+      "gold": 120,
+      "materials": [
+        { "path": "res://Resources/Items/lava_stone.tres", "qty": 2 },
+        { "path": "res://Resources/Items/drake_scale.tres", "qty": 1 }
+      ],
+      "result": { "path": "res://Resources/Items/fire_resist_elixir.tres", "qty": 1 }
+    },
+    {
+      "id": "prismatic_craft",
+      "name": "프리즘 수정 가공",
+      "desc": "수정 원석과 미스릴 원석으로 프리즘 수정 제작.",
+      "gold": 150,
+      "materials": [
+        { "path": "res://Resources/Items/crystal_ore.tres", "qty": 5 },
+        { "path": "res://Resources/Items/mithril_ore.tres", "qty": 1 }
+      ],
+      "result": { "path": "res://Resources/Items/prismatic_crystal.tres", "qty": 1 }
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://cr0uxb4estgbh"]
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon1/orc_club.png" id="99_sprite"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
 [ext_resource type="Resource" path="res://Resources/Items/material_wood.tres" id="3_wood"]
 [ext_resource type="Resource" uid="uid://djkwf7m5ay001" path="res://Resources/Items/iron_ore.tres" id="4_iron"]
@@ -13,6 +14,8 @@ BaseDamage = 3
 ExperienceReward = 20
 Behavior = 2
 SpriteAtlasCoords = Vector2i(10, 8)
+Sprite = ExtResource("99_sprite")
+SpriteScale = 0.24
 PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_wood"), ExtResource("4_iron")])
 DropWeights = PackedFloat32Array(0.5, 0.4, 0.1)
 DropChance = 0.3

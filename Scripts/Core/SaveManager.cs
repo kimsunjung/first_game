@@ -51,7 +51,8 @@ namespace FirstGame.Core
 			{
 				PlayerGold = GameManager.Instance.PlayerGold,
 				Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-				PendingRewardItems = new System.Collections.Generic.List<SavedItemSlot>(GameManager.Instance.PendingRewards)
+				PendingRewardItems = new System.Collections.Generic.List<SavedItemSlot>(GameManager.Instance.PendingRewards),
+				StorageItems = new System.Collections.Generic.List<SavedItemSlot>(GameManager.Instance.Storage)
 			};
 			saveable.WriteSaveData(data);
 			return data;
@@ -401,6 +402,12 @@ namespace FirstGame.Core
 				// 회귀 차단. (PlayerClassId=0=Warrior, DexPoints=0은 JSON 누락 시 자동 0 폴백이라
 				// 별도 처리 불필요.)
 				BackfillChapterFlagsV10(data);
+			}
+
+			if (data.Version < 12)
+			{
+				// v11→v12: 공유 창고 도입. 기존 세이브는 빈 창고로 안전 로드.
+				data.StorageItems ??= new();
 			}
 
 			data.Version = SaveData.LatestVersion;

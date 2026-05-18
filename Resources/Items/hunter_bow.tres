@@ -1,12 +1,14 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_bow_hunt_001"]
 
 [ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/hunter_bow.png" id="2_icon"]
 
 
 [resource]
 script = ExtResource("1")
 ItemName = "사냥꾼의 정예궁"
 Description = "베테랑 사냥꾼이 손에 길들인 활. 공격 +12, 크리 +6%, 공속 +10%."
+Icon = ExtResource("2_icon")
 Rarity = 2
 Price = 750
 SellPrice = 375

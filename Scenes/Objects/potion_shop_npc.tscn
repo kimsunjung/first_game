@@ -20,7 +20,7 @@
 [ext_resource type="Resource" uid="uid://itm_con_purinc_v3" path="res://Resources/Items/purifying_incense.tres" id="v3_purinc"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_pshop"]
-radius = 56.0
+radius = 40.0
 
 [sub_resource type="CircleShape2D" id="body_shape"]
 radius = 10.0

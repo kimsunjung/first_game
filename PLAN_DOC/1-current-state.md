@@ -4,7 +4,13 @@
 - 다른 PC 또는 새 세션에서 작업을 이어갈 때, 현재 프로젝트 상태와 결정된 방향을 한 장으로 파악하게 한다.
 - 아트/에셋 의사결정 맥락, 작업 우선순위, 다음 실행 포인트를 요약한다.
 
-작성일: 2026-05-03
+작성일: 2026-05-03 (갱신: 2026-05-18)
+
+## 2026-05-18 현행 요약
+- 월드: Scenes/Maps 29개 / 4권역(town·outpost·coast·mountain). 적 ~120, 아이템 ~244, 스킬 27, 퀘스트 41(side 30), 보스패턴 10.
+- 구현 완료 시스템: QuestBoardUI·반복 사이드퀘스트, BiomeWeatherController(v3)·StatWeights·StatusResist, EliteAffix, BossController/BossPattern, 무게 시스템, MiningNode, 검증망(validate/balance/xUnit/CI).
+- **허브 루프 v1(2026-05-18)**: 공유 창고(SaveData v12) / 확정 제작(recipes.json) / 미장착 장신구 affix 재련 — town 배치 완료. 상세 `hub-preparation-loop-v1.md`.
+- 다음 우선순위: (1) 사냥 계약 시스템 D(별도 HuntingContractManager, SaveData v13) (2) 사냥터 환경 오브젝트/광맥/Loot glow E (3) 창고/제작/재련 허브 확장(harbor/mountain) + 모바일 UI 실측.
 
 ---
 

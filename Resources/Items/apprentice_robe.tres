@@ -1,12 +1,14 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://itm_robe_app_001"]
 
 [ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/apprentice_robe.png" id="2_icon"]
 
 
 [resource]
 script = ExtResource("1")
 ItemName = "견습 마법사의 로브"
 Description = "초보 마법사가 입는 단정한 로브. 최대MP +20, 방어 +3."
+Icon = ExtResource("2_icon")
 Rarity = 1
 Price = 280
 SellPrice = 140

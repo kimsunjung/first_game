@@ -11,6 +11,8 @@
   R6  적 .tres 의 PossibleDrops 개수 == DropWeights 개수
   R7  Resources/Teleport/dest_*.tres 의 ScenePath 가 실존 씬
   R8  사냥터 씬은 EnemySpawner 를 포함 (허브 3곳 제외)
+  R9  recipes.json: id 유일 / material·result 경로 실존 / qty>0·gold>=0 /
+      레시피 내 material path 중복 금지 / 재료는 Consumable·Material 타입만
 
 종료 코드: 결함 0건이면 0, 아니면 1.
 """
@@ -253,6 +255,72 @@ def check_teleport_dests():
             err("R7", f"{fn}: ScenePath 미해결 {m.group(1)}")
 
 
+ITEM_TYPE_RE = re.compile(r'^Type\s*=\s*(\d+)', re.M)
+# 제작 재료 허용 ItemType: 0=Consumable, 4=Material.
+# 장비/스킬북 금지 — Inventory.ConsumeItems 가 IsEquipped/affix 무시하고 path 만으로
+# 세므로, 장비를 재료로 허용하면 장착 중인 장비가 제작에 소모될 수 있다.
+SAFE_MATERIAL_TYPES = {0, 4}
+
+
+def _item_type(res_path):
+    p = res_to_path(res_path)
+    if not os.path.exists(p):
+        return None
+    with open(p, encoding="utf-8") as f:
+        m = ITEM_TYPE_RE.search(f.read())
+    return int(m.group(1)) if m else 0  # Type 미기재 = enum 기본값 0(Consumable)
+
+
+def check_recipes():
+    rp = os.path.join(ROOT, "Resources", "Recipes", "recipes.json")
+    if not os.path.isfile(rp):
+        return
+    try:
+        with open(rp, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        err("R9", f"recipes.json 파싱 실패: {e}")
+        return
+    seen_ids = set()
+    for r in data.get("recipes", []):
+        rid = r.get("id", "<무-id>")
+        if rid in seen_ids:
+            err("R9", f"중복 recipe id: {rid}")
+        seen_ids.add(rid)
+
+        gold = r.get("gold", 0)
+        if not isinstance(gold, int) or gold < 0:
+            err("R9", f"{rid}: gold 는 0 이상 정수여야 함 ({gold})")
+
+        result = r.get("result", {})
+        rpath = result.get("path", "")
+        rqty = result.get("qty", 0)
+        if not rpath or not os.path.exists(res_to_path(rpath)):
+            err("R9", f"{rid}: result.path 미해결 {rpath}")
+        if not isinstance(rqty, int) or rqty <= 0:
+            err("R9", f"{rid}: result.qty 는 1 이상이어야 함 ({rqty})")
+
+        mats = r.get("materials", [])
+        if not mats:
+            err("R9", f"{rid}: materials 비어있음")
+        seen_paths = set()
+        for m in mats:
+            mpath = m.get("path", "")
+            mqty = m.get("qty", 0)
+            if not mpath or not os.path.exists(res_to_path(mpath)):
+                err("R9", f"{rid}: material.path 미해결 {mpath}")
+                continue
+            if not isinstance(mqty, int) or mqty <= 0:
+                err("R9", f"{rid}: material.qty 는 1 이상이어야 함 ({mpath} {mqty})")
+            if mpath in seen_paths:
+                err("R9", f"{rid}: 같은 material path 중복 기재 {mpath}")
+            seen_paths.add(mpath)
+            t = _item_type(mpath)
+            if t is not None and t not in SAFE_MATERIAL_TYPES:
+                err("R9", f"{rid}: 재료에 비안전 타입(Type={t}) {mpath} "
+                          "— Consumable/Material 만 허용")
+
+
 def main():
     scan_uids()
     check_res_refs()
@@ -261,6 +329,7 @@ def main():
     check_skillbooks()
     check_drop_tables()
     check_teleport_dests()
+    check_recipes()
 
     by_cat = {}
     for cat, msg in errors:

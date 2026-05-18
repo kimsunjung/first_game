@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Interaction/quest.png" id="prompt_icon"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_skillshop"]
-radius = 56.0
+radius = 40.0
 
 [sub_resource type="CircleShape2D" id="body_shape"]
 radius = 10.0

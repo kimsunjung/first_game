@@ -9,7 +9,7 @@
 [ext_resource type="Resource" uid="uid://bcp2ore7l4m07" path="res://Resources/Items/copper_ore.tres" id="5_copper"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_matshop"]
-radius = 56.0
+radius = 40.0
 
 [sub_resource type="CircleShape2D" id="body_shape"]
 radius = 10.0

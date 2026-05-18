@@ -4,6 +4,14 @@
 - 프로젝트 방향, 작업 우선순위, 실행 플랜을 한 곳에 정리한다.
 - 다른 PC 또는 새 세션에서 맥락을 빠르게 복원한다.
 
+## 현행 우선 참고 문서 (2026-05-18 기준)
+1. `world-flow-plan.md` / `regional-world-map-plan.md` — 29맵·4권역 구조
+2. `regional-weather-hunting-v3.md` — 날씨/StatWeights/StatusResist
+3. `hub-preparation-loop-v1.md` — 신규: 창고/제작/재련(구현 완료) + 계약/오브젝트(보류 설계)
+4. `generated-asset-inventory.md` — GPT 자산 연결 상태(허브 루프 v1 반영)
+5. `mobile-checklist.md` · `1-current-state.md` · `2-source-code-reference.md`
+- 이전 "활성 문서 7개" 설명은 위 목록 기준으로 읽는다.
+
 작성일: 2026-04-21
 
 ---

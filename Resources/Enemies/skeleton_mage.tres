@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://e360qqlbtjgf"]
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon2/skeleton_mage.png" id="99_sprite"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
 [ext_resource type="Resource" uid="uid://lq1ay338edtn" path="res://Resources/Items/hi_potion.tres" id="3_hip"]
 [ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="4_bone"]
@@ -19,6 +20,8 @@ Behavior = 1
 PreferredRange = 180.0
 EnemyTypeName = "Skeleton"
 SpriteAtlasCoords = Vector2i(6, 8)
+Sprite = ExtResource("99_sprite")
+SpriteScale = 0.27
 PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_hip"), ExtResource("4_bone")])
 DropWeights = PackedFloat32Array(0.3, 0.15, 0.55)
 DropChance = 0.55

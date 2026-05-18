@@ -15,7 +15,7 @@ namespace FirstGame.Data
 
 	public class SaveData
 	{
-		public const int LatestVersion = 11;
+		public const int LatestVersion = 12;
 		public int Version { get; set; } = LatestVersion;
 
 		public float PlayerPosX { get; set; }
@@ -110,5 +110,9 @@ namespace FirstGame.Data
 		// 게임 시작 시 자동 재시도 + 사용자 알림. 필드 드랍과 달리 세이브에 영속화되어
 		// 앱 종료/OS kill에도 손실되지 않는다.
 		public List<SavedItemSlot> PendingRewardItems { get; set; } = new();
+
+		// ─── v12: 공유 창고/보관함. 허브 창고 NPC로 입출고. 인벤과 동일하게
+		// 강화 수치/affix/수량 보존. 누락 시 빈 창고로 안전 로드(초기화자 new()).
+		public List<SavedItemSlot> StorageItems { get; set; } = new();
 	}
 }

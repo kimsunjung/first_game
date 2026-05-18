@@ -25,7 +25,7 @@
 [ext_resource type="Resource" uid="uid://tpdest020" path="res://Resources/Teleport/dest_lava_field.tres" id="23_lf"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tp"]
-radius = 56.0
+radius = 40.0
 
 [sub_resource type="CircleShape2D" id="body_shape"]
 radius = 10.0

@@ -1,0 +1,94 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/StorageUI.cs" id="1_storage"]
+
+[node name="StorageUI" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_storage")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+texture_filter = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -180.0
+offset_right = 210.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+custom_minimum_size = Vector2(420, 360)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="StorageTitleLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "창고"
+horizontal_alignment = 1
+
+[node name="Cols" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="InvCol" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Cols"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="InvHeader" type="Label" parent="PanelContainer/VBoxContainer/Cols/InvCol"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "가방"
+horizontal_alignment = 1
+
+[node name="InvScroll" type="ScrollContainer" parent="PanelContainer/VBoxContainer/Cols/InvCol"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 250)
+
+[node name="StorageInvList" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Cols/InvCol/InvScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="StoreCol" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Cols"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StoreHeader" type="Label" parent="PanelContainer/VBoxContainer/Cols/StoreCol"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "창고"
+horizontal_alignment = 1
+
+[node name="StoreScroll" type="ScrollContainer" parent="PanelContainer/VBoxContainer/Cols/StoreCol"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 250)
+
+[node name="StorageStoreList" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Cols/StoreCol/StoreScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="StorageMessageLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+visible = false
+horizontal_alignment = 1
+modulate = Color(1, 0.8, 0.2, 1)
+
+[node name="StorageCloseButton" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 24)
+theme_override_font_sizes/font_size = 10
+text = "닫기"

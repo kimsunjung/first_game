@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://v3_crystshock"]
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
-[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Mine/crystal_warlock.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Mine/crystal_shocker.png" id="2_tex"]
 [ext_resource type="Resource" path="res://Resources/Items/crystal_ore.tres" id="3_d"]
 [ext_resource type="Resource" path="res://Resources/Items/prismatic_crystal.tres" id="4_d"]
 [resource]

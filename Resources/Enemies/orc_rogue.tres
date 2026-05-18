@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://dg1yife2gyn0o"]
 
 [ext_resource type="Script" uid="uid://bu76ivc353qms" path="res://Scripts/Data/EnemyStats.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Enemies/Dungeon1/orc_rogue.png" id="99_sprite"]
 [ext_resource type="Resource" uid="uid://da8ktdgend72m" path="res://Resources/Items/health_potion.tres" id="2_hp"]
 [ext_resource type="Resource" path="res://Resources/Items/orc_leather.tres" id="3_leather"]
 
@@ -13,6 +14,8 @@ BaseDamage = 5
 AttackCooldown = 1.5
 ExperienceReward = 30
 SpriteAtlasCoords = Vector2i(10, 7)
+Sprite = ExtResource("99_sprite")
+SpriteScale = 0.24
 PossibleDrops = Array[Resource]([ExtResource("2_hp"), ExtResource("3_leather")])
 DropChance = 0.4
 MaxHealth = 85

@@ -1,11 +1,13 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://3kvbaq4agaij"]
 
 [ext_resource type="Script" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Equipment/iron_helm.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1")
 ItemName = "강철 투구"
 Description = "단단한 강철 투구. HP +12, 방어력 +3"
+Icon = ExtResource("2_icon")
 Rarity = 1
 Price = 220
 SellPrice = 110

@@ -65,6 +65,12 @@
 [ext_resource type="Resource" uid="uid://itm_skb_speed_001" path="res://Resources/Items/skillbook_speed_boost.tres" id="74_skb_speed"]
 [ext_resource type="Resource" uid="uid://itm_skb_whirl_001" path="res://Resources/Items/skillbook_whirlwind.tres" id="75_skb_whirl"]
 [ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/storage_npc.tscn" id="v3_storenpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/storage_ui.tscn" id="v3_storeui"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/crafting_npc.tscn" id="v3_craftnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/crafting_ui.tscn" id="v3_craftui"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/reforge_npc.tscn" id="v3_rfnpc"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/reforge_ui.tscn" id="v3_rfui"]
 
 [sub_resource type="RectangleShape2D" id="deco_small"]
 size = Vector2(16, 16)
@@ -326,6 +332,24 @@ shape = SubResource("wall_left")
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
 position = Vector2(648, 180)
 shape = SubResource("wall_right")
+
+[node name="StorageNPC" parent="." instance=ExtResource("v3_storenpc")]
+position = Vector2(470, 320)
+NpcId = "storage_keeper"
+
+[node name="StorageUI" parent="StorageNPC" instance=ExtResource("v3_storeui")]
+
+[node name="CraftingNPC" parent="." instance=ExtResource("v3_craftnpc")]
+position = Vector2(300, 340)
+NpcId = "crafting_station"
+
+[node name="CraftingUI" parent="CraftingNPC" instance=ExtResource("v3_craftui")]
+
+[node name="ReforgeNPC" parent="." instance=ExtResource("v3_rfnpc")]
+position = Vector2(70, 310)
+NpcId = "reforge_station"
+
+[node name="ReforgeUI" parent="ReforgeNPC" instance=ExtResource("v3_rfui")]
 
 [node name="Weather" type="Node2D" parent="."]
 script = ExtResource("wctrl_v3")
