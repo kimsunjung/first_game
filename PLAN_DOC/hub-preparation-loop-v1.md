@@ -85,6 +85,14 @@
 - **[P3] stale 계약 id 폐기**: `RestoreFromSave`가 `ContractsData.EnsureLoaded` 후 `Find()==null` id 폐기 — contracts.json id 변경/삭제 시 보이지 않는 계약이 3칸 한도 점유하던 결함 차단(목록 비었으면 방어적으로 미필터).
 - **[수동지적] 계약 보드 UI**: 420×370 → **420×330**(offset ±165, Scroll min 280→240)로 640×360 모바일 세로 넘침 해소.
 
+## Claude 적대적 리뷰 후속 hardening v2 (2026-05-18, 드랍·스킬·계약·세이브)
+- **[F1] 사냥 불가 계약 차단**: `outpost_kill_skeleton` 타깃 `Skeleton`(미참조 레거시 리소스만 보유)→`SkeletonWanderer`(field_2 실제 스폰). `validate.py` R10의 Kill 타깃 검증을 **씬에서 실제 참조되는 적 리소스의 EnemyTypeName**만 유효로 강화(`_collect_enemy_type_names`가 Scenes/Maps 참조분으로 한정) — 동류 결함 재발 시 검사 실패.
+- **[F2] 영구 진행 불가 보스 계약 차단**: 비반복 스토리 보스(orc_warlord_d1/skeleton_king_d2/ancient_lich_d3)는 1회 처치 후 재스폰 안 됨(`EnemySpawner.TrySpawnBoss` 억제). `HuntingContractManager`에 `RepeatableBossIds`(kraken/glacier_titan/inferno_drake/crystal_lord) 도입, `IsBossContractUnobtainable` = BossKill·비반복·이미 처치. `CanAccept`/`AvailableForRegion` 제외, `RestoreFromSave`는 **미완료**일 때만 폐기(TurnInReady면 보스 재스폰 불필요라 수령 가능 유지). → skeleton_king 계약은 "1회성 현상금" 의미.
+- **[F3] 진행도 저장 누락창 차단**: `Inventory.AddItem`이 `OnItemPickedUp`보다 먼저 `OnInventoryChanged`→autosave를 발생시켜 Gather 진행이 다음 저장에서 누락될 수 있던 문제. `Advance()`가 변경 시 `SaveManager.RequestAutoSave()` 호출(GameTransaction 중엔 dirty만→종료 시 flush). Kill/Mining/Boss 진행에도 동일 적용.
+- **[F4] Chain Bolt 감전 실제 동작**: `LightningStorm`이 SkillData를 보존하지 않아 `chain_bolt`의 Shock가 무시되던 문제. `ISkillTarget.StartLightningStorm` 시그니처에 element/status/dur/chance 추가, `PlayerController`가 storm 상태로 보존하고 매 틱 `_stormElement`로 데미지 + 확률 `ApplyStatusEffect`. `LightningStormStrategy`가 skill 값 전달, `ChainBoltStrategy`는 위임 상속으로 자동 적용. `lightning_storm`(Status=None)은 불변.
+- **[F5] 드랍 희석 → 독립 가산형**: in-table append(weight 0.12)는 `PickDropIndex` 정규화로 기존 드랍 확률을 희석(0.7→0.7/1.12)했음. 60개 .tres의 PossibleDrops/DropWeights를 base(025f313)로 **원복**, `EnemyStats.RegionDrop`/`RegionDropChance`(0.1) 신설 + `EnemyController` 비보스 분기에서 **독립 굴림**(정규화 무관 → 기존 확률 불변, 진짜 가산형). `validate.py` R6에 RegionDropChance 0~1·정합 검사 추가.
+- 검증 4종(validate/balance/build/test 20)+git diff --check green.
+
 ## 사용 흐름
 - 창고: town 우하단 [창고] NPC → 가방/창고 목록 → 보관/꺼내기.
 - 제작: town 대장간 인근 [제작] → 레시피 선택 → 제작.

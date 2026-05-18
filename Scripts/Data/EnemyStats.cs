@@ -71,6 +71,11 @@ namespace FirstGame.Data
 		[Export] public float[] DropWeights { get; set; }  // PossibleDrops와 같은 길이. 미설정 시 균등 확률
 		[Export] public float DropChance { get; set; } = 0.5f;
 
+		// 권역 테마 재료 — 위 PossibleDrops 테이블과 *독립적으로* 굴린다(가중치 정규화에
+		// 끼지 않으므로 기존 드랍 확률을 희석하지 않는 진짜 가산형). 0이면 비활성.
+		[Export] public ItemData RegionDrop { get; set; }
+		[Export] public float RegionDropChance { get; set; } = 0f;
+
 		/// <summary>가중치 기반 랜덤 드랍 인덱스 반환. DropWeights 미설정 시 균등 선택.</summary>
 		public int PickDropIndex()
 		{

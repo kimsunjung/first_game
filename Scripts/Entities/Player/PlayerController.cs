@@ -30,6 +30,11 @@ namespace FirstGame.Entities.Player
 		private float _stormDuration = 0f;
 		private float _stormInterval = 2f;
 		private float _stormTickTimer = 0f;
+		// 스킬별 차별화(ChainBolt=Lightning+Shock 등). status=None이면 상태이상 미적용.
+		private FirstGame.Data.ElementType _stormElement = FirstGame.Data.ElementType.Lightning;
+		private FirstGame.Data.StatusEffect _stormStatus = FirstGame.Data.StatusEffect.None;
+		private float _stormStatusDuration = 0f;
+		private float _stormStatusChance = 0f;
 
 		// 애니메이션
 		private AnimatedSprite2D _animSprite;
@@ -268,18 +273,30 @@ namespace FirstGame.Entities.Player
 			}
 			if (best == null || !IsInstanceValid(best)) return;
 			int dmg = Stats.BaseDamage * 2;
-			(best as IDamageable)?.TakeDamage(dmg, FirstGame.Data.ElementType.Lightning);
+			var dmgTarget = best as IDamageable;
+			dmgTarget?.TakeDamage(dmg, _stormElement);
+			// 스킬 지정 상태이상(예: ChainBolt Shock) — None/0%면 no-op(기존 storm 불변).
+			if (dmgTarget != null && _stormStatus != FirstGame.Data.StatusEffect.None
+				&& _stormStatusChance > 0f && GD.Randf() <= _stormStatusChance)
+				dmgTarget.ApplyStatusEffect(_stormStatus, _stormStatusDuration);
 			// 번개 시각 — 흰색 라인 flash
 			var bolt = new LightningBolt(GlobalPosition, best.GlobalPosition);
 			GetParent().AddChild(bolt);
 			TriggerCameraShake(2.5f, 0.12f);
 		}
 
-		public void StartLightningStorm(float duration, float interval)
+		public void StartLightningStorm(float duration, float interval,
+			FirstGame.Data.ElementType element, FirstGame.Data.StatusEffect status,
+			float statusDuration, float statusChance)
 		{
 			_stormDuration = duration;
 			_stormInterval = interval;
 			_stormTickTimer = 0f; // 즉시 첫 타격
+			_stormElement = element == FirstGame.Data.ElementType.None
+				? FirstGame.Data.ElementType.Lightning : element;
+			_stormStatus = status;
+			_stormStatusDuration = statusDuration;
+			_stormStatusChance = statusChance;
 		}
 
 		public void ApplyTempBuff(int dmgDelta, int defDelta, float critDelta, float duration)

@@ -22,9 +22,11 @@ Sprite = ExtResource("2_tex")
 SpriteScale = 0.25
 CollisionScale = 1.9
 ProjectileScale = 0.4
-PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d"), ExtResource("5_d"), ExtResource("rgd1")])
-DropWeights = PackedFloat32Array(0.5, 0.2, 0.3, 0.12)
+PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d"), ExtResource("5_d")])
+DropWeights = PackedFloat32Array(0.5, 0.2, 0.3)
 DropChance = 0.3
+RegionDrop = ExtResource("rgd1")
+RegionDropChance = 0.1
 MaxHealth = 90
 Defense = 0
 

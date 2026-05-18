@@ -21,9 +21,11 @@ SpriteAtlasCoords = Vector2i(10, 8)
 Sprite = ExtResource("2_tex")
 SpriteScale = 0.216
 CollisionScale = 1.5
-PossibleDrops = Array[Resource]([ExtResource("90_hp"), ExtResource("91_wood"), ExtResource("rgd1")])
-DropWeights = PackedFloat32Array(0.7, 0.3, 0.12)
+PossibleDrops = Array[Resource]([ExtResource("90_hp"), ExtResource("91_wood")])
+DropWeights = PackedFloat32Array(0.7, 0.3)
 DropChance = 0.22
+RegionDrop = ExtResource("rgd1")
+RegionDropChance = 0.1
 MaxHealth = 35
 Defense = 0
 

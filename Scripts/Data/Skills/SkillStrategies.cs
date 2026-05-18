@@ -127,7 +127,9 @@ namespace FirstGame.Data.Skills
 		public void Execute(ISkillTarget target, SkillData skill)
 		{
 			float duration = skill.DurationSeconds > 0f ? skill.DurationSeconds : 10f;
-			target.StartLightningStorm(duration, 2f);
+			var elem = skill.Element != ElementType.None ? skill.Element : ElementType.Lightning;
+			target.StartLightningStorm(duration, 2f, elem,
+				skill.InflictedStatus, skill.InflictedStatusDuration, skill.InflictedStatusChance);
 			target.TriggerCameraShake(4f, 0.2f);
 		}
 	}

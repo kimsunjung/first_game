@@ -24,7 +24,10 @@ namespace FirstGame.Core.Interfaces
 		void FireProjectile(int damage, ElementType element, Color color, float speed = 460f,
 			StatusEffect inflicted = StatusEffect.None, float inflictedDuration = 0f, float inflictedChance = 0f);
 		// 마법사 LightningStorm — duration초 동안 interval초마다 가장 가까운 적에 번개.
-		void StartLightningStorm(float duration, float interval);
+		// element/status는 스킬별 차별화(예: ChainBolt=Lightning+Shock). status=None이면
+		// 상태이상 미적용(기존 lightning_storm 동작 불변).
+		void StartLightningStorm(float duration, float interval, ElementType element,
+			StatusEffect status, float statusDuration, float statusChance);
 		// 일시 buff — duration초 동안 dmg/def/crit. ApplyBuffEx 래퍼.
 		void ApplyTempBuff(int dmgDelta, int defDelta, float critDelta, float duration);
 		// ManaShield — duration초 동안 받는 데미지를 HP 대신 MP로 흡수.

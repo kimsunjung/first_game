@@ -61,7 +61,7 @@
       "desc": "전초기지 인근 묘지의 스켈레톤을 처치한다.",
       "region": "outpost_region",
       "type": "Kill",
-      "targetEnemyType": "Skeleton",
+      "targetEnemyType": "SkeletonWanderer",
       "goal": 12,
       "recommendedLevel": 6,
       "goldReward": 160,

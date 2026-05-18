@@ -239,6 +239,17 @@ def check_drop_tables():
         n_weights = len([x for x in wm.group(1).split(",") if x.strip()]) if wm else 0
         if n_weights and n_drops != n_weights:
             err("R6", f"{fn}: PossibleDrops {n_drops}개 ≠ DropWeights {n_weights}개")
+        # 권역 독립 드랍 — RegionDrop 지정 시 RegionDropChance 는 (0,1] 범위.
+        rc = re.search(r'RegionDropChance\s*=\s*([-\d.]+)', text)
+        has_region = "RegionDrop = ExtResource(" in text
+        if has_region and rc is None:
+            err("R6", f"{fn}: RegionDrop 지정됐으나 RegionDropChance 누락")
+        elif rc is not None:
+            v = float(rc.group(1))
+            if v < 0 or v > 1:
+                err("R6", f"{fn}: RegionDropChance 범위 밖 ({v})")
+            elif v > 0 and not has_region:
+                err("R6", f"{fn}: RegionDropChance>0 인데 RegionDrop 미지정")
 
 
 # ── R7: teleport dest ScenePath ──────────────────────────────────────
@@ -331,13 +342,27 @@ HUB_BOARD_SCENES = ("town", "field_outpost", "harbor_village", "mountain_refuge"
 
 
 def _collect_enemy_type_names():
+    """씬 StatVariants/ext_resource로 *실제 스폰되는* 적 리소스의 EnemyTypeName만 모은다.
+    레거시·미참조 리소스는 제외 — 계약 타깃이 실제 사냥터에서 사냥 가능한지 검증하기 위함
+    (예: skeleton_base.tres('Skeleton')는 어떤 씬도 안 쓰므로 계약 타깃으로 무효)."""
     names = set()
+    maps_dir = os.path.join(ROOT, "Scenes", "Maps")
+    referenced = set()
+    if os.path.isdir(maps_dir):
+        for fn in os.listdir(maps_dir):
+            if not fn.endswith(".tscn"):
+                continue
+            with open(os.path.join(maps_dir, fn), encoding="utf-8") as f:
+                for m in re.finditer(r'res://Resources/Enemies/([a-zA-Z0-9_]+)\.tres', f.read()):
+                    referenced.add(m.group(1))
     enemies = os.path.join(ROOT, "Resources", "Enemies")
     if not os.path.isdir(enemies):
         return names
     for fn in os.listdir(enemies):
         if not fn.endswith(".tres"):
             continue
+        if fn[:-5] not in referenced:
+            continue  # 어떤 씬에서도 스폰되지 않는 리소스는 제외
         with open(os.path.join(enemies, fn), encoding="utf-8") as f:
             for m in re.finditer(r'EnemyTypeName\s*=\s*"([^"]+)"', f.read()):
                 names.add(m.group(1))
@@ -401,7 +426,8 @@ def check_contracts():
             if not t:
                 err("R10", f"{cid}: Kill 계약에 targetEnemyType 누락")
             elif enemy_names and t not in enemy_names:
-                err("R10", f"{cid}: targetEnemyType '{t}' 가 어떤 적 EnemyTypeName 과도 불일치")
+                err("R10", f"{cid}: targetEnemyType '{t}' 가 씬에서 스폰되는 적 "
+                          "EnemyTypeName 과 불일치 (사냥 불가 계약)")
         elif ctype == "BossKill":
             t = c.get("targetBossId", "")
             if not t:

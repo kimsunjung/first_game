@@ -707,6 +707,10 @@ namespace FirstGame.Entities.Enemies
 					int index = Stats.PickDropIndex();
 					SpawnFieldDrop(Stats.PossibleDrops[index], 50, 120);
 				}
+				// 권역 테마 재료 — 독립 굴림. 위 드랍 테이블 확률과 무관(희석 없음).
+				if (Stats.RegionDrop != null && Stats.RegionDropChance > 0f
+					&& GD.Randf() <= Stats.RegionDropChance)
+					SpawnFieldDrop(Stats.RegionDrop, 50, 120);
 				SaveManager.RequestAutoSave();
 			}
 

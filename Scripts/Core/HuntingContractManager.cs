@@ -17,9 +17,28 @@ namespace FirstGame.Core
 	{
 		public const int MaxActive = 3;
 
+		// EnemySpawner.RepeatableBoss=true 인 보스만 반복 파밍 가능. 그 외 스토리 보스
+		// (orc_warlord_d1/skeleton_king_d2/ancient_lich_d3)는 1회 처치 후 재스폰되지
+		// 않으므로(EnemySpawner.TrySpawnBoss 억제), 그 보스를 노린 BossKill 계약은
+		// "1회성 현상금"으로 다룬다 — 이미 처치했으면 수락/복원 불가(영구 불가 계약 차단).
+		private static readonly System.Collections.Generic.HashSet<string> RepeatableBossIds = new()
+		{
+			"kraken_d4", "glacier_titan_f5", "inferno_drake_f6", "crystal_lord_m3",
+		};
+
 		// 진행 상태 — 세이브 직렬화 대상. 순서 보존(UI 안정).
 		private readonly List<ContractProgress> _active = new();
 		public IReadOnlyList<ContractProgress> Active => _active;
+
+		/// <summary>BossKill 계약인데 비반복 보스를 이미 처치해 다시는 스폰되지 않는 상태
+		/// (영구 진행 불가)면 true. 데이터/보스 미해결이면 false(보수적으로 허용).</summary>
+		private static bool IsBossContractUnobtainable(ContractData c)
+		{
+			if (c == null || c.Type != ContractType.BossKill) return false;
+			if (string.IsNullOrEmpty(c.TargetBossId)) return false;
+			if (RepeatableBossIds.Contains(c.TargetBossId)) return false;
+			return GameManager.Instance?.IsBossDefeated(c.TargetBossId) == true;
+		}
 
 		public event Action OnContractStateChanged;
 
@@ -67,7 +86,11 @@ namespace FirstGame.Core
 			if (string.IsNullOrEmpty(contractId)) return false;
 			if (_active.Count >= MaxActive) return false;
 			if (IsActive(contractId)) return false;
-			return ContractsData.Find(contractId) != null;
+			var def = ContractsData.Find(contractId);
+			if (def == null) return false;
+			// 이미 처치된 비반복 스토리 보스 계약은 재수락 불가(1회성 현상금).
+			if (IsBossContractUnobtainable(def)) return false;
+			return true;
 		}
 
 		/// <summary>지정 권역에서 지금 수락 가능한 계약 목록.</summary>
@@ -79,6 +102,8 @@ namespace FirstGame.Core
 			{
 				if (c.Region != region) continue;
 				if (IsActive(c.Id)) continue;
+				// 영구 진행 불가(처치된 비반복 보스) 계약은 보드에 노출하지 않음.
+				if (IsBossContractUnobtainable(c)) continue;
 				list.Add(c);
 			}
 			return list;
@@ -199,7 +224,14 @@ namespace FirstGame.Core
 				if (prog.Progress >= def.Goal) prog.TurnInReady = true;
 				changed = true;
 			}
-			if (changed) OnContractStateChanged?.Invoke();
+			if (changed)
+			{
+				OnContractStateChanged?.Invoke();
+				// 진행도 영속화 — Inventory.AddItem이 OnItemPickedUp 보다 *먼저*
+				// OnInventoryChanged→autosave를 발생시켜, 이 진행 증가가 다음 저장에서
+				// 누락되는 창을 막는다(GameTransaction 중에는 dirty만 표시 후 종료 시 flush).
+				SaveManager.RequestAutoSave();
+			}
 		}
 
 		// ─── 세이브 ────────────────────────────────────────────
@@ -215,9 +247,17 @@ namespace FirstGame.Core
 				foreach (var p in saved)
 				{
 					if (p == null || string.IsNullOrEmpty(p.ContractId)) continue;
-					if (canFilter && ContractsData.Find(p.ContractId) == null)
+					var def = canFilter ? ContractsData.Find(p.ContractId) : null;
+					if (canFilter && def == null)
 					{
 						GD.Print($"[Contract] 알 수 없는 계약 id 폐기: {p.ContractId}");
+						continue;
+					}
+					// 완료대기(TurnInReady)면 보스 재스폰 불필요 — 그대로 수령 가능하므로 유지.
+					// 미완료 + 처치된 비반복 보스면 영구 진행 불가라 폐기(죽은 슬롯 차단).
+					if (def != null && !p.TurnInReady && IsBossContractUnobtainable(def))
+					{
+						GD.Print($"[Contract] 진행 불가 보스 계약 폐기: {p.ContractId}");
 						continue;
 					}
 					_active.Add(new ContractProgress
