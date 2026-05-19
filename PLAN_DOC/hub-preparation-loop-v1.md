@@ -93,6 +93,38 @@
 - **[F5] 드랍 희석 → 독립 가산형**: in-table append(weight 0.12)는 `PickDropIndex` 정규화로 기존 드랍 확률을 희석(0.7→0.7/1.12)했음. 60개 .tres의 PossibleDrops/DropWeights를 base(025f313)로 **원복**, `EnemyStats.RegionDrop`/`RegionDropChance`(0.1) 신설 + `EnemyController` 비보스 분기에서 **독립 굴림**(정규화 무관 → 기존 확률 불변, 진짜 가산형). `validate.py` R6에 RegionDropChance 0~1·정합 검사 추가.
 - 검증 4종(validate/balance/build/test 20)+git diff --check green.
 
+## Claude 적대적 리뷰 후속 hardening v3 (2026-05-18, 내구성·결합·경제·검증·신규메커닉)
+- **F3 격상**: Gather 진행은 throttle된 RequestAutoSave가 아니라 **즉시 `SaveManager.SaveGame()`**(완료/포기와 동일). `AddItem`의 OnInventoryChanged→autosave가 OnItemPickedUp보다 앞서 진행이 유실되던 창을 실제로 닫음. Kill/Mining/Boss는 빈번하거나 직후 SaveGame 경로가 따로 있어 RequestAutoSave 유지(=일반 autosave 수준 내구성, 의도적·문서화).
+- **F2 결합 제거**: "처치된 비반복 보스 계약 폐기"를 `RestoreFromSave`에서 분리 → 신규 `PruneUnobtainable()`를 **전체 복원 완료 후**(DefeatedBosses 확정) `PlayerController.LoadFromSaveData` 말미에서 1회 호출. 복원 호출 순서에 비의존(향후 reorder 시 조용히 무력화되던 잠재 결함 제거). TurnInReady면 보스 재스폰 불필요라 유지.
+- **F5 경제 정합**: RegionDropChance 0.1→**0.05**(60 .tres). 구 in-table 실효율(DropChance 0.3~0.5 × 0.12/1.12 ≈ 3~5%/킬) 대역으로 맞춤 — 독립 굴림이지만 경제 영향이 구 의도와 정합. EnemyStats에 산출 근거 주석.
+- **검증공백 해소**: validate.py R10에 `_collect_mining_ore_paths()` 추가 — Mining 계약 `targetOreItemPath`가 **실제 어떤 씬 MiningNode가 캐는 광석**인지 교차검증(Kill 강화와 대칭). 채광 불가 계약 재발 차단.
+- **HUD**: throttle 0.15→**0.08s**(~12.5Hz) — 깜빡임 자연스럽고 0.08s↑ 지속 상태이상 칩 최소 1회 가시 보장.
+- **LightningStorm 제약 명시**: 스톰 상태는 인스턴스 싱글턴 — lightning_storm↔chain_bolt 교차 시전 시 element/status/지속 덮어쓰기 + 타이머 리셋(동시 2스톰 불가, 의도된 단순화). 코드 주석화.
+- **신규 메커닉 스킬 2종(v3, 위임 아님·전용 전략)**: `ChainLightning`(SkillType 35, 마법사 Lv22, mountain) = 적→인접 적 최대 5회 즉발 연쇄·점프마다 20% 감쇠; `LifeDrain`(36, 마법사 Lv19, harbor) = 단일 강타 + 피해 1/3 즉시 흡혈. ISkillTarget 기존 표면(GetNearbyEnemies/HealSelf/TriggerCameraShake)만 사용해 신규 API/회귀 0. 스킬·스킬북 .tres + 거점 스킬상점 배치.
+- 잔여 한계(정직): Gather 외 진행도는 여전히 일반 autosave 내구성(하드 크래시 시 throttle 창 존재 — 설계상 게임 전체와 동일). 신규 v3 2종 외 v2 8종은 여전히 "기존 동작 리스킨"(메커닉 다양성 아님). 검증 4종+diff green.
+
+## 7-에이전트 적대적 리뷰 후속 hardening v4 (2026-05-19, 경제 익스플로잇 봉쇄)
+Opus 적대적 리뷰어 7명 병렬 + Codex 리뷰 종합 반영. **ship-blocker 2건(무한 골드/재료) 봉쇄.**
+- **[치명·A안] Gather = 무한 골드/EXP 분수 봉쇄**: 비소모+무한재수락+구매도 픽업카운트+채광 이중카운트 → 무한 머니. **A안 채택** — `NotifyItemAcquired`가 *현재 인벤 보유 수량* 기반으로 진행/TurnInReady 산정(누적 폐기), `Complete()`가 Gather일 때 `HasItems` 재검증 후 트랜잭션 내 `ConsumeItems(Goal)` 소모(보유 부족이면 완료 실패+진행 재계산). 구매/판매/채광 이중카운트·수량 미반영 익스플로잇 원천 차단. desc도 "납품(소모)"으로 정정.
+- **[치명·경제] enhance_stone faucet 차단**: 게이트 통화(Price=0)가 반복 계약으로 무한 누수. 반복 계약(town_mine_iron/coast_boss_kraken[반복보스]/mountain_mine_crystal)에서 enhance_stone 제거(골드 보전), 1회성 보스(outpost_boss_skeletonking)만 qty 1 유지. `balance.py` B5 신설 — 반복 계약 enhance_stone 지급 시 **에러**(영구 재발 차단).
+- **[높음·세이브] SaveGame 트랜잭션 안전**: `SaveManager.SaveGame()`이 `_autoSaveSuspendCount>0`이면 dirty만(RequestAutoSave와 동일). 보스 트랜잭션 내 Gather 픽업→즉시 SaveGame이 RecordBossDefeat 전에 디스크 박는 부분상태 차단(직후 명시 SaveGame은 Dispose 이후라 정상 기록).
+- **[P3·Codex] 권역 플래그 멱등화**: `BackfillRegionFlagsV13`를 버전 게이트 밖에서 무조건 호출 — 수정 전 만든 v13 로컬 세이브도 DefeatedBosses에서 누락 마커 보정(중복 추가 없음).
+- **[P3·Codex] Accept 즉시 SaveGame**: Abandon/Complete와 일관, 수락 직후 하드크래시 보존.
+- **[P1·Codex] 신규 스킬 4파일 스테이징**: chain_lightning/life_drain + 스킬북 2 git add(클린 체크아웃에서 스킬상점 깨짐 방지).
+- **[중간·밸런스] RegionDropChance 티어링**: 일률 0.05 → 일반재 0.05 / sapphire 0.03 / 상위 강화·재련재(drake_scale·glacier_shard·crystal_ore) **0.02**. EnemyStats 주석을 "DropChance 게이트 없는 faucet이라 등급별 차등" 으로 정정(이전 "구 실효율 정합" 표현 수정).
+- **[중간·스킬] ChainLightning 풀 확대**: 플레이어중심 `GetNearbyEnemies(300)` → `range+maxJumps*jumpRange(1150)` 수집(먼 연쇄 끊김 해소).
+- **[중간·UX] 계약 보드 3허브 중앙축 이격**: field_outpost(520,150)/harbor_village·mountain_refuge(420,140) — player→portal y=180 통로·중앙 x 회피.
+- **[중간·UX] HUD**: 팝업 외부탭 dismiss(전체화면 캡처 ColorRect) + 활성 시그니처 변경 시에만 행 재생성(80ms마다 QueueFree 폐기), PendingReward 보류 시 정직한 토스트. 미니맵은 단일화면 허브(≤760×440)에서 자동 숨김.
+- **[검증] validate.py**: R13(스킬 .tres Type 전역 유일 + chain_lightning=35/life_drain=36 — Type충돌 재발 차단), R14(RepeatableBossIds ↔ 씬 RepeatableBoss=true 정확일치 — 하드코딩 드리프트 차단), R6+/R10+(RegionDrop·계약 보상/타깃이 ItemData인지 script_class 검사).
+- **v4 재리뷰 후속(2026-05-19, Codex 적대 2건)**:
+  - [높음] `SaveManager.SaveGame()` suspend 가드가 `TryClaimPendingRewards`의 "큐 제거 직후 즉시 저장"을 dirty로 격하 → 크래시 시 펜딩 보상 중복 위험. `GameTransaction.Dispose` 순서를 **ResumeAutoSave → ResumePendingRewardClaims**로 교체(autosave 먼저 풀어 claim의 SaveGame이 실제 기록). 본문은 이미 종료라 중간상태 위험 없음.
+  - [중간] Gather 진행도가 "현재 보유" 모델인데 재계산 경로가 `NotifyItemAcquired` 뿐 → 수락 전부터 재료를 보유했거나 로드 후엔 영영 완료 불가. 단일 재계산 `RecomputeGatherProgress()` 신설, **Accept 직후 / 복원 완료 후(PlayerController) / 획득 시** 모두 호출. `Complete()`의 인벤 재검증을 `TurnInReady` 게이트 *앞*으로 이동(현재 보유로 완료 가능 판정).
+- **v4 재재리뷰 후속(2026-05-19, Codex P2×2/P3×1)**:
+  - [P2] 납품형 Gather UI stale — 재료를 창고/상점으로 뺀 뒤에도 보드에 "완료" 잔존(데이터는 안전, UX만 혼란). `ContractBoardUI.Rebuild()` 진입 시 `RecomputeGatherProgress()` 호출 추가 → 보드 표시와 완료 가능 여부 항상 일치.
+  - [P2] LifeDrain이 방어·저항·오버킬 적용 *전* 피해 기준으로 흡혈 → 과다 회복. `IDamageable.TakeDamageReporting(dmg, elem)` 신설(기본 구현=입력값 반환), `EnemyController`가 속성보정·Defense·잔여HP 클램프 후 **실제 적용 피해** 반환. `TakeDamage(int,Element)`는 이 메서드에 위임(동작 불변). LifeDrain이 반환값/3로 회복.
+  - [P3] 계약 보드 Gather 라벨 "수집(획득 누적)" → "납품(완료 시 소모)"로 교체(실제 A안 설계와 일치).
+- 잔여 한계(정직): Gather 외(Kill/Boss/Mining) 진행도는 여전히 게임 전체와 동일한 throttled autosave 내구성. v2 8종은 리스킨. 헤드리스 검증만 — Godot 런타임 시연 미수행(보드 stale/LifeDrain 체감/미니맵 터치는 에디터 실밟기 권장). 검증 4종+diff green, 신규 스킬 4파일 staged.
+
 ## 사용 흐름
 - 창고: town 우하단 [창고] NPC → 가방/창고 목록 → 보관/꺼내기.
 - 제작: town 대장간 인근 [제작] → 레시피 선택 → 제작.

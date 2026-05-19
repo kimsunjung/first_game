@@ -576,8 +576,13 @@ namespace FirstGame.Entities.Enemies
 
 		// 속성 인식 오버로드 — 공격자 속성이 적 Weakness면 1.5x, Element와 같으면 0.75x.
 		public void TakeDamage(int damage, FirstGame.Data.ElementType attackerElement)
+			=> TakeDamageReporting(damage, attackerElement);
+
+		// 실제 적용된(속성 보정·방어·잔여 HP 클램프 후) 피해를 반환. LifeDrain 등
+		// 흡혈 스킬이 과다 회복하지 않도록 사용. 표시/사망 처리는 기존과 동일.
+		public int TakeDamageReporting(int damage, FirstGame.Data.ElementType attackerElement)
 		{
-			if (_isDying) return;
+			if (_isDying) return 0;
 
 			// Passive 적: 피격 시 도발됨
 			if (!_isProvoked && Stats.Behavior == EnemyBehavior.Passive)
@@ -596,6 +601,11 @@ namespace FirstGame.Entities.Enemies
 			// Defense 적용 — Tough 엘리트 affix가 DefenseBonus를 +5 부여하므로 실제 피해 감소로 반영.
 			// 일반 적은 .tres Defense 기본 0이라 영향 없음. PlayerController.TakeDamage와 동일 패턴.
 			damage = Math.Max(1, damage - Stats.Defense);
+
+			// 흡혈 산정용 실제 적용 피해 — 잔여 HP를 넘는 오버킬분은 제외(체력 1
+			// 남은 적을 100으로 쳐도 흡혈은 1 기준). CurrentHealth는 사망 판정을
+			// 위해 기존대로 전체 피해만큼 차감(음수 허용).
+			int applied = Math.Max(0, Math.Min(damage, Stats.CurrentHealth));
 
 			Stats.CurrentHealth -= damage;
 			AudioManager.Instance?.PlaySFX("enemy_hit.wav");
@@ -626,6 +636,7 @@ namespace FirstGame.Entities.Enemies
 			{
 				Die();
 			}
+			return applied;
 		}
 
 		private void Die()

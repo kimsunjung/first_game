@@ -23,6 +23,6 @@ PossibleDrops = Array[Resource]([ExtResource("3_d"), ExtResource("4_d")])
 DropWeights = PackedFloat32Array(0.15, 0.85)
 DropChance = 0.3
 RegionDrop = ExtResource("rgd1")
-RegionDropChance = 0.1
+RegionDropChance = 0.02
 MaxHealth = 180
 Defense = 4

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://nsk_life_drain_v1"]
+
+[ext_resource type="Script" uid="uid://ddvltopao0tvx" path="res://Scripts/Data/SkillData.cs" id="1"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Skills/lifesteal_passive.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1")
+SkillName = "생명 흡수"
+Description = "가장 가까운 적을 강타하고 가한 피해의 1/3을 즉시 흡혈해 회복한다"
+Icon = ExtResource("2_icon")
+Type = 36
+MpCost = 28
+Cooldown = 8.0
+RequiredLevel = 19
+RequiredClass = 1
+AvailableToAllClasses = false
+BonusDamageMultiplier = 3
+Element = 5
+InflictedStatus = 0
+InflictedStatusDuration = 0.0
+InflictedStatusChance = 0.0
+IsPassive = false

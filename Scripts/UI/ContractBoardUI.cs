@@ -54,7 +54,7 @@ namespace FirstGame.UI
 		private static string TypeLabel(ContractData c) => c.Type switch
 		{
 			ContractType.Kill => $"처치: {c.TargetEnemyType}",
-			ContractType.Gather => "수집(획득 누적)",
+			ContractType.Gather => "납품(완료 시 소모)",
 			ContractType.BossKill => $"보스: {c.TargetBossId}",
 			ContractType.Mining => "채광",
 			_ => ""
@@ -77,6 +77,11 @@ namespace FirstGame.UI
 			foreach (Node ch in _list.GetChildren()) ch.QueueFree();
 			var mgr = Mgr;
 			if (mgr == null) return;
+
+			// 보드를 열 때마다 현재 인벤 기준으로 납품형 Gather 진행을 재계산.
+			// 재료를 창고/제작/상점으로 빼면 TurnInReady가 내려가 stale "완료" 버튼이
+			// 남지 않는다(완료 가능 여부와 화면 표시가 항상 일치).
+			mgr.RecomputeGatherProgress();
 
 			// ── 진행 중 ──
 			AddHeader($"진행 중 ({mgr.Active.Count}/{HuntingContractManager.MaxActive})");
@@ -201,13 +206,18 @@ namespace FirstGame.UI
 
 		private void OnComplete(ContractData c)
 		{
-			if (Mgr?.Complete(c.Id, _player) == true)
+			var mgr = Mgr;
+			if (mgr != null && mgr.Complete(c.Id, _player, out bool rewardDeferred))
 			{
 				AudioManager.Instance?.PlaySFX("craft_success.wav");
-				ShowMessage($"계약 완료! 보상을 지급했습니다: {c.Title}");
+				ShowMessage(rewardDeferred
+					? $"계약 완료! 가방이 가득 차 보상 아이템은 보관함에 보류됨: {c.Title}"
+					: $"계약 완료! 보상을 지급했습니다: {c.Title}");
 				Rebuild();
 			}
-			else ShowMessage("완료할 수 없습니다.");
+			else ShowMessage(c.Type == ContractType.Gather
+				? "완료할 수 없습니다 (납품 재료가 부족합니다)."
+				: "완료할 수 없습니다.");
 		}
 
 		private async void ShowMessage(string text)

@@ -83,7 +83,7 @@ ShopItems = Array[Resource]([ExtResource("16_hipot"), ExtResource("17_swift"), E
 [node name="ShopUI" parent="TravelMerchant" instance=ExtResource("15_shopUI")]
 
 [node name="ContractBoardNPC" parent="." instance=ExtResource("cboard_v1")]
-position = Vector2(320, 180)
+position = Vector2(520, 150)
 Region = "outpost_region"
 
 [node name="StorageNPC" parent="." instance=ExtResource("hb_storenpc")]

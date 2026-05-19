@@ -60,12 +60,16 @@ namespace FirstGame.Core
 			{
 				if (_disposed) return;
 				_disposed = true;
-				// 순서: pending claim 먼저 풀고 autosave 풀기. claim의 SaveGame 우회가
-				// 직접 호출이라 autosave suspend와 무관하지만, 순서를 통일해 향후 회귀를 막는다.
-				if (_suspendPendingClaims)
-					GameManager.Instance?.ResumePendingRewardClaims(claimNow: _claimAfter);
+				// 순서: autosave 먼저 풀고 → pending claim. SaveManager.SaveGame()이
+				// 이제 _autoSaveSuspendCount>0이면 dirty로 격하되므로, autosave를 *먼저*
+				// resume해야 TryClaimPendingRewards 가 큐에서 보상 제거 직후 호출하는
+				// 즉시 SaveGame이 실제 디스크에 기록된다(미루면 throttle 30s 창 동안
+				// 크래시 시 옛 pending 큐가 남아 중복 지급). 트랜잭션 본문은 이미
+				// 종료된 시점이라 autosave를 먼저 풀어도 중간상태 박힘 위험 없음.
 				if (_suspendAutoSave)
 					SaveManager.ResumeAutoSave();
+				if (_suspendPendingClaims)
+					GameManager.Instance?.ResumePendingRewardClaims(claimNow: _claimAfter);
 			}
 		}
 	}

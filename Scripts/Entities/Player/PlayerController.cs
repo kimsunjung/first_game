@@ -27,6 +27,10 @@ namespace FirstGame.Entities.Player
 		public Node2D TargetEnemy => _targetEnemy;
 
 		// LightningStorm 상태 — duration > 0이면 active. tickInterval마다 가까운 적에 번개.
+		// 제약: 스톰 상태는 인스턴스 1세트 싱글턴. lightning_storm 시전 중 chain_bolt(또는
+		// 반대)를 시전하면 element/status/지속이 *덮어써지고* 타이머가 리셋된다 — 동시에
+		// 두 개의 스톰 정체성이 공존하지 않는다(의도된 단순화). 다중 스톰이 필요해지면
+		// 스톰을 리스트로 일반화해야 함.
 		private float _stormDuration = 0f;
 		private float _stormInterval = 2f;
 		private float _stormTickTimer = 0f;
@@ -659,6 +663,14 @@ namespace FirstGame.Entities.Player
 			// 모든 복원이 끝난 뒤 단 한 번 claim 시도. 인벤에 자리 있으면 즉시 지급되고
 			// queueMutated 경로에서 SaveGame이 호출돼 stale pending 재지급을 차단한다.
 			GameManager.Instance?.TryClaimPendingRewards();
+
+			// 전체 복원 완료(DefeatedBosses 확정) 후 진행 불가 보스 계약 정리 —
+			// 복원 호출 순서에 의존하지 않도록 RestoreFromSave 와 분리해 여기서 1회.
+			GameManager.Instance?.ContractManager.PruneUnobtainable();
+			// 복원된 active Gather 계약 진행도를 현재 인벤 보유로 재계산 —
+			// 세이브엔 옛 누적값이 박혀 있을 수 있고, 로드 후 NotifyItemAcquired 가
+			// 안 불릴 수 있어 stale-progress 가 남던 결함 차단(Codex 적대 리뷰).
+			GameManager.Instance?.ContractManager.RecomputeGatherProgress();
 		}
 	}
 }

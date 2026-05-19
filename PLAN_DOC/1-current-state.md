@@ -17,7 +17,9 @@
 - **HUD/진행 후속2(2026-05-18)**: 상단 중앙 이펙트 바(상태이상+버프 아이콘) — 클릭 시 활성 효과 목록+남은시간 팝업, 잔여 <3s면 아이콘/행 깜빡임. 우측상단 미니맵(`MinimapView`, 맵 경계 안에 플레이어/적/포탈 점). coast/mountain 보스(kraken/glacier_titan/inferno_drake/crystal_lord) 처치 시 ChapterFlags 누적 마커 기록(Chapter enum/엔딩 불변 — 엔딩형 아님, 대사/계약/통계용).
 - **권역 특화 드랍 v1(2026-05-18, 리뷰 후 독립 굴림으로 정정)**: 60개 비보스 적 `.tres`에 권역 테마 재료를 `EnemyStats.RegionDrop`/`RegionDropChance`(0.1)로 부여 — town=orc_leather, mine_1=iron_ore, outpost=bone_dust, mine_2=silver_ore, coast=sapphire_ore, snow=glacier_shard, volcano=drake_scale, mine_3=crystal_ore. `EnemyController`가 PossibleDrops 테이블과 **독립 굴림**(가중치 정규화 무관 → 기존 드랍 확률 불변). 씬 StatVariants 역추적 매핑, 보스 제외.
 - **스킬 확장 v2(2026-05-18)**: 신규 능동 스킬 8종(독사격·독성마탄·재생의가호·분쇄강타·서리화살비·대지균열·신성작렬·연쇄뇌격) — 기존 검증된 SkillType 전략 재사용 + Element/Status/파라미터로 차별화(코드 무변경, 회귀 0). 스킬북 8 + 4개 거점 스킬상점에 레벨대별 분산 배치.
-- 다음 우선순위: (1) Godot 실측: 이펙트 바/미니맵/축소/장식/신규 스킬 시연 (2) 계약 v2(권역별 다양화·티어) (3) 신규 SkillType 전략(코드) 추가 — 진짜 새 메커닉.
+- **스킬 확장 v3 + 적대적 리뷰 hardening v3(2026-05-18)**: 진짜 신규 메커닉 스킬 2종 — `ChainLightning`(연쇄 점프 감쇠, 마법사 Lv22 mountain) / `LifeDrain`(흡혈 폭딜, 마법사 Lv19 harbor), 전용 전략 코드. + F3 Gather 즉시 SaveGame, F2 PruneUnobtainable 복원 순서 비의존화, F5 RegionDropChance 0.05(구 실효율 정합), R10 Mining↔MiningNode 교차검증, HUD throttle 0.08, 스톰 싱글턴 주석.
+- **7-에이전트 적대적 리뷰 hardening v4(2026-05-19)**: Gather 계약 **A안**(turn-in 시 재료 소모+보유기반) — 무한 골드/재료 익스플로잇 봉쇄. enhance_stone 반복계약 금지(balance B5 에러). SaveGame 트랜잭션 deferred, 권역 플래그 멱등, RegionDropChance 등급 티어링, validate R13/R14, HUD 팝업 dismiss/미니맵 허브 숨김, 계약 보드 중앙축 이격. 신규 스킬 4파일 staged. 상세 `hub-preparation-loop-v1.md` v4.
+- 다음 우선순위: (1) **Godot 런타임 실측**(헤드리스로 검증 불가분): 계약 수락→납품 소모 흐름, 이펙트 바/팝업/미니맵, 신규 스킬 시연, 보드 신위치 동선 (2) 계약 v2(권역별 다양화·티어) (3) 비Gather 진행도 내구성 강화 여부 검토.
 
 ---
 

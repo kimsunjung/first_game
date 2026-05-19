@@ -6,6 +6,8 @@
   B2  zone 난이도(hpMul*atkMul) 대비 보상(expMul) 강한 역전 금지
         — A 가 B 보다 1.5배 이상 어려운데 expMul(A) < expMul(B) 면 결함
   B3  zone 의 hpMul/atkMul/expMul 은 모두 양수 (validate.py R4 와 중복 방어)
+  B5  반복 가능한 계약(비반복 스토리보스 BossKill 제외 전부)은 enhance_stone 을
+        보상으로 줄 수 없다 — 게이트 통화 무한 faucet 차단. 골드/레벨 비 과대는 경고.
 
 종료 코드: 결함 0건이면 0, 아니면 1. (경고는 종료코드에 영향 없음)
 """
@@ -105,10 +107,43 @@ def check_bosses():
                         f"BossStatVariant 로 연결되지 않음 (레거시 추정)")
 
 
+# RepeatableBoss=true 인 보스만 반복 BossKill 계약 — 그 외 스토리보스 BossKill 은 1회성.
+_REPEATABLE_BOSSES = {"kraken_d4", "glacier_titan_f5", "inferno_drake_f6", "crystal_lord_m3"}
+_GATED_CURRENCY = "enhance_stone.tres"
+
+
+def check_contract_economy():
+    cp = os.path.join(ROOT, "Resources", "Contracts", "contracts.json")
+    if not os.path.isfile(cp):
+        return
+    try:
+        data = json.load(open(cp, encoding="utf-8"))
+    except Exception as e:
+        errors.append(("B5", f"contracts.json 파싱 실패: {e}"))
+        return
+    for c in data.get("contracts", []):
+        cid = c.get("id", "?")
+        ctype = c.get("type", "")
+        boss = c.get("targetBossId", "")
+        # 1회성 = 비반복 보스를 노린 BossKill. 그 외(Kill/Gather/Mining/반복보스)는 반복 가능.
+        one_time = ctype == "BossKill" and boss not in _REPEATABLE_BOSSES
+        repeatable = not one_time
+        rip = c.get("rewardItemPath", "")
+        if repeatable and rip.endswith(_GATED_CURRENCY):
+            errors.append(("B5", f"{cid}: 반복 계약이 게이트 통화(enhance_stone) 지급 "
+                                 "— 무한 강화/재련 faucet (1회성 보스 현상금만 허용)"))
+        gold = c.get("goldReward", 0)
+        lvl = max(1, c.get("recommendedLevel", 1))
+        if repeatable and gold / lvl > 60:
+            warnings.append(f"[계약 보상 과대] {cid}: {gold}G / Lv{lvl} "
+                            f"= {gold/lvl:.0f}G/레벨 (반복 계약 권장 ≤60)")
+
+
 def main():
     check_drops()
     check_curve()
     check_bosses()
+    check_contract_economy()
 
     if warnings:
         print(f"⚠️  경고 {len(warnings)}건 (종료코드 무관, 검토 권장)")

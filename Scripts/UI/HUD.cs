@@ -37,6 +37,8 @@ namespace FirstGame.UI
 		private HBoxContainer _effectsBar;
 		private PanelContainer _effectsPopup;
 		private VBoxContainer _effectsPopupList;
+		private ColorRect _effectsDismiss;
+		private string _effectsPopupSig = "";
 		private readonly System.Collections.Generic.Dictionary<string, Button> _effectIcons = new();
 		private MinimapView _minimap;
 
@@ -106,6 +108,23 @@ namespace FirstGame.UI
 			_effectsBar.OffsetTop = 4;
 			AddChild(_effectsBar);
 
+			// 팝업 바깥 탭 시 닫기용 전체화면 투명 캡처(팝업보다 먼저 추가 → 팝업이 위에 그려짐).
+			_effectsDismiss = new ColorRect
+			{
+				Name = "EffectsDismiss",
+				Color = new Color(0, 0, 0, 0),
+				Visible = false,
+				MouseFilter = Control.MouseFilterEnum.Stop,
+			};
+			_effectsDismiss.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+			_effectsDismiss.GuiInput += ev =>
+			{
+				bool tap = (ev is InputEventMouseButton mb && mb.Pressed)
+					|| (ev is InputEventScreenTouch st && st.Pressed);
+				if (tap) { SetEffectsPopupVisible(false); _effectsDismiss.AcceptEvent(); }
+			};
+			AddChild(_effectsDismiss);
+
 			// 상세 팝업 — 활성 효과 목록 + 남은시간. 기본 숨김.
 			_effectsPopup = new PanelContainer { Name = "EffectsPopup", Visible = false };
 			_effectsPopup.SetAnchorsPreset(Control.LayoutPreset.CenterTop);
@@ -159,10 +178,11 @@ namespace FirstGame.UI
 			CallDeferred(nameof(BindPlayer));
 		}
 
-		// 이펙트 바/미니맵은 매 프레임 갱신할 필요가 없다 — 약 0.15s 간격으로 throttle해
-		// 전투 중 리스트/노드 재생성 GC hitch를 줄인다(깜빡임은 0.15s 스텝으로도 충분).
+		// 이펙트 바/미니맵은 매 프레임 갱신할 필요가 없다 — throttle해 전투 중 리스트/노드
+		// 재생성 GC hitch를 줄인다. 0.08s(~12.5Hz): 깜빡임이 거칠지 않고, 0.08s 미만으로만
+		// 지속되는 극단적 단발 상태가 아니면 칩이 최소 1회는 그려진다(가시성 보장).
 		private double _hudRefreshAccum;
-		private const double HudRefreshInterval = 0.15;
+		private const double HudRefreshInterval = 0.08;
 
 		public override void _Process(double delta)
 		{
@@ -233,27 +253,44 @@ namespace FirstGame.UI
 
 			if (_effectsPopup != null && _effectsPopup.Visible)
 			{
-				if (active.Count == 0) { _effectsPopup.Visible = false; }
+				if (active.Count == 0) { SetEffectsPopupVisible(false); }
 				else
 				{
-					foreach (Node c in _effectsPopupList.GetChildren()) c.QueueFree();
-					foreach (var e in active)
+					// 활성 집합(이름·개수)이 바뀔 때만 행 재생성. 그 외에는 기존
+					// Label 의 텍스트/모듈레이트만 갱신(80ms마다 QueueFree+재생성 회피).
+					string sig = string.Join("|", active.ConvertAll(e => e.name));
+					if (sig != _effectsPopupSig)
 					{
-						var row = new Label
+						_effectsPopupSig = sig;
+						foreach (Node c in _effectsPopupList.GetChildren()) c.QueueFree();
+						foreach (var e in active)
 						{
-							Text = $"{e.name}  —  {e.remain:0.0}s",
-							Modulate = e.remain < BlinkThreshold ? new Color(1f, 0.5f, 0.4f, blink) : Colors.White,
-						};
-						row.AddThemeFontSizeOverride("font_size", 10);
-						_effectsPopupList.AddChild(row);
+							var row = new Label();
+							row.AddThemeFontSizeOverride("font_size", 10);
+							_effectsPopupList.AddChild(row);
+						}
+					}
+					var rows = _effectsPopupList.GetChildren();
+					for (int i = 0; i < active.Count && i < rows.Count; i++)
+					{
+						if (rows[i] is not Label row) continue;
+						var e = active[i];
+						row.Text = $"{e.name}  —  {e.remain:0.0}s";
+						row.Modulate = e.remain < BlinkThreshold
+							? new Color(1f, 0.5f, 0.4f, blink) : Colors.White;
 					}
 				}
 			}
 		}
 
 		private void ToggleEffectsPopup()
+			=> SetEffectsPopupVisible(_effectsPopup != null && !_effectsPopup.Visible);
+
+		private void SetEffectsPopupVisible(bool visible)
 		{
-			if (_effectsPopup != null) _effectsPopup.Visible = !_effectsPopup.Visible;
+			if (_effectsPopup != null) _effectsPopup.Visible = visible;
+			if (_effectsDismiss != null) _effectsDismiss.Visible = visible;
+			if (!visible) _effectsPopupSig = ""; // 다음 오픈 시 강제 재구성
 		}
 
 		private static string StatusName(FirstGame.Data.StatusEffect k) => k switch

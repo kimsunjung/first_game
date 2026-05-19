@@ -21,7 +21,10 @@ namespace FirstGame.UI
 		public void Refresh()
 		{
 			if (!IsInsideTree()) return;
-			QueueRedraw();
+			// 숨김 상태에서는 _Draw 가 안 불리므로 경계/가시성 판정을 여기서 한다
+			// (허브→필드 전환 시 다시 보이게). 보일 때만 redraw 큐잉.
+			ResolveBounds();
+			if (Visible) QueueRedraw();
 		}
 
 		private void ResolveBounds()
@@ -37,6 +40,9 @@ namespace FirstGame.UI
 				_mapW = bg.Size.X;
 				_mapH = bg.Size.Y;
 			}
+			// 단일 화면(허브 ~640×360)은 맵 전체가 이미 보이므로 미니맵 무가치 +
+			// 매 틱 redraw 비용만 발생 → 숨김. 멀티스크린 필드/던전에서만 표시.
+			Visible = _mapW > 760f || _mapH > 440f;
 		}
 
 		public override void _Draw()

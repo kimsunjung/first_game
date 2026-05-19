@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://nsb_life_drain_v1"]
+
+[ext_resource type="Script" uid="uid://ct0iyxsd1s7up" path="res://Scripts/Data/ItemData.cs" id="1"]
+[ext_resource type="Resource" uid="uid://nsk_life_drain_v1" path="res://Resources/Skills/life_drain.tres" id="2"]
+[ext_resource type="Texture2D" path="res://Resources/Generated/GPT/Icons/Items/skillbook_lifesteal.png" id="3_icon"]
+
+[resource]
+script = ExtResource("1")
+ItemName = "스킬북: 생명 흡수"
+Description = "생명 흡수 스킬을 배웁니다 (마법사, Lv.19 이상)"
+Icon = ExtResource("3_icon")
+Price = 1300
+SellPrice = 650
+Type = 3
+IsStackable = false
+MaxStack = 1
+RequiredClass = 1
+AvailableToAllClasses = false
+LearnedSkill = ExtResource("2")
+Weight = 0.5

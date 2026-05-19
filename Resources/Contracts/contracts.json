@@ -32,7 +32,7 @@
     {
       "id": "town_gather_iron",
       "title": "철광석 납품",
-      "desc": "대장간에 쓸 철광석을 모아 온다. (획득 누적)",
+      "desc": "대장간에 쓸 철광석을 모아 온다. 완료 시 목표 수량을 납품(소모)한다.",
       "region": "town_region",
       "type": "Gather",
       "targetItemPath": "res://Resources/Items/iron_ore.tres",
@@ -50,10 +50,8 @@
       "targetOreItemPath": "res://Resources/Items/iron_ore.tres",
       "goal": 2,
       "recommendedLevel": 4,
-      "goldReward": 120,
-      "expReward": 35,
-      "rewardItemPath": "res://Resources/Items/enhance_stone.tres",
-      "rewardItemQuantity": 1
+      "goldReward": 160,
+      "expReward": 35
     },
     {
       "id": "outpost_kill_skeleton",
@@ -84,7 +82,7 @@
     {
       "id": "outpost_gather_silver",
       "title": "은광석 수집",
-      "desc": "전초기지 보급용 은광석을 모은다. (획득 누적)",
+      "desc": "전초기지 보급용 은광석을 모은다. 완료 시 목표 수량을 납품(소모)한다.",
       "region": "outpost_region",
       "type": "Gather",
       "targetItemPath": "res://Resources/Items/silver_ore.tres",
@@ -105,7 +103,7 @@
       "goldReward": 400,
       "expReward": 250,
       "rewardItemPath": "res://Resources/Items/enhance_stone.tres",
-      "rewardItemQuantity": 2
+      "rewardItemQuantity": 1
     },
     {
       "id": "coast_kill_pirate",
@@ -136,7 +134,7 @@
     {
       "id": "coast_gather_gold",
       "title": "금광석 회수",
-      "desc": "항구 보급에 쓸 금광석을 모아 온다. (획득 누적)",
+      "desc": "항구 보급에 쓸 금광석을 모아 온다. 완료 시 목표 수량을 납품(소모)한다.",
       "region": "coast_region",
       "type": "Gather",
       "targetItemPath": "res://Resources/Items/gold_ore.tres",
@@ -154,10 +152,8 @@
       "targetBossId": "kraken_d4",
       "goal": 1,
       "recommendedLevel": 14,
-      "goldReward": 500,
-      "expReward": 320,
-      "rewardItemPath": "res://Resources/Items/enhance_stone.tres",
-      "rewardItemQuantity": 2
+      "goldReward": 650,
+      "expReward": 320
     },
     {
       "id": "mountain_kill_frostwolf",
@@ -188,7 +184,7 @@
     {
       "id": "mountain_gather_crystal",
       "title": "수정 결정 수집",
-      "desc": "수정 광산의 수정 결정을 모아 온다. (획득 누적)",
+      "desc": "수정 광산의 수정 결정을 모아 온다. 완료 시 목표 수량을 납품(소모)한다.",
       "region": "mountain_region",
       "type": "Gather",
       "targetItemPath": "res://Resources/Items/crystal_ore.tres",
@@ -206,10 +202,8 @@
       "targetOreItemPath": "res://Resources/Items/crystal_ore.tres",
       "goal": 2,
       "recommendedLevel": 18,
-      "goldReward": 360,
-      "expReward": 150,
-      "rewardItemPath": "res://Resources/Items/enhance_stone.tres",
-      "rewardItemQuantity": 2
+      "goldReward": 460,
+      "expReward": 150
     }
   ]
 }

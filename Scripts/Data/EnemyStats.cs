@@ -73,6 +73,11 @@ namespace FirstGame.Data
 
 		// 권역 테마 재료 — 위 PossibleDrops 테이블과 *독립적으로* 굴린다(가중치 정규화에
 		// 끼지 않으므로 기존 드랍 확률을 희석하지 않는 진짜 가산형). 0이면 비활성.
+		// 주의: 구 in-table 방식은 DropChance 게이트 *후* 굴림이라 실효율이 더 낮았다.
+		// 이건 DropChance 와 무관하게 매 킬 굴리므로(=상한 없는 faucet) 재료 등급별로
+		// 티어링한다 — 권역 .tres 값: 일반재(orc_leather/iron_ore/bone_dust/silver_ore)
+		// 0.05, 중간(sapphire_ore) 0.03, 상위 강화/재련재(drake_scale/glacier_shard/
+		// crystal_ore) 0.02. 희소성 보호를 위해 상위재는 의도적으로 낮게 유지.
 		[Export] public ItemData RegionDrop { get; set; }
 		[Export] public float RegionDropChance { get; set; } = 0f;
 

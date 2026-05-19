@@ -93,6 +93,16 @@ namespace FirstGame.Core
 				_dirty = true;
 				return null;
 			}
+			// GameTransaction 진행 중에는 명시 SaveGame 도 중간 상태를 디스크에 박을 수
+			// 있다(예: 보스 처치 트랜잭션 안에서 Gather 픽업 → NotifyItemAcquired →
+			// SaveGame 이 RecordBossDefeat 전에 실행). RequestAutoSave 와 동일하게
+			// dirty 만 표시하고 트랜잭션 종료 후 flush(직후 명시 SaveGame은 Dispose
+			// 이후라 suspend=0 → 정상 기록).
+			if (_autoSaveSuspendCount > 0)
+			{
+				_dirty = true;
+				return null;
+			}
 			var data = BuildSaveData();
 			if (data == null) return null;
 			WriteSaveDataToDisk(data, slot);
@@ -330,6 +340,11 @@ namespace FirstGame.Core
 
 		private static void MigrateSaveData(SaveData data)
 		{
+			// 권역(coast/mountain) 졸업 마커는 DefeatedBosses 에서 파생되는 *멱등* 보정이라
+			// 버전 게이트 밖에서 무조건 실행 — "첫 v13 구현 후 이번 수정 전"에 만든 로컬 v13
+			// 세이브처럼 이미 LatestVersion 인 세이브도 누락 플래그를 채운다(중복 추가 없음).
+			BackfillRegionFlagsV13(data);
+
 			if (data.Version >= SaveData.LatestVersion) return;
 
 			if (data.Version < 2)
@@ -415,10 +430,7 @@ namespace FirstGame.Core
 			{
 				// v12→v13: 사냥 계약 도입. 기존 세이브는 빈 계약 목록으로 안전 로드.
 				data.ActiveContracts ??= new();
-				// coast/mountain 권역 졸업 마커 backfill — 이미 보스를 잡았던 v10~v12
-				// 세이브도 v13 로드 시 새 플래그를 채운다(BackfillChapterFlagsV10는
-				// v<10에서만 돌아 구멍이 있었음). CurrentChapter엔 영향 없음(누적 마커).
-				BackfillRegionFlagsV13(data);
+				// 권역 마커 backfill 은 위에서 버전 무관 멱등 호출됨(중복 호출 제거).
 			}
 
 			data.Version = SaveData.LatestVersion;

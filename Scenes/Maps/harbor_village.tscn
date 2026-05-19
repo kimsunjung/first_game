@@ -34,6 +34,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/contract_board_npc.tscn" id="cboard_v1"]
 [ext_resource type="Resource" path="res://Resources/Items/skillbook_earthquake.tres" id="nsb_quake"]
 [ext_resource type="Resource" path="res://Resources/Items/skillbook_holy_burst.tres" id="nsb_holy"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_life_drain.tres" id="nsb_ldrain"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/storage_npc.tscn" id="hb_storenpc"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/storage_ui.tscn" id="hb_storeui"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/crafting_npc.tscn" id="hb_craftnpc"]
@@ -125,7 +126,7 @@ ShopItems = Array[Resource]([ExtResource("20_hipot"), ExtResource("21_mpot"), Ex
 [node name="ShopUI" parent="HarborMerchant" instance=ExtResource("11_shopUI")]
 
 [node name="ContractBoardNPC" parent="." instance=ExtResource("cboard_v1")]
-position = Vector2(320, 180)
+position = Vector2(420, 140)
 Region = "coast_region"
 
 [node name="StorageNPC" parent="." instance=ExtResource("hb_storenpc")]
@@ -151,7 +152,7 @@ position = Vector2(500, 90)
 NpcId = "harbor_skill_shop"
 
 [node name="SkillShopUI" parent="HarborSkillNPC" instance=ExtResource("13_skillshopUI")]
-SkillBooks = Array[Resource]([ExtResource("30_skb_prc"), ExtResource("31_skb_bk"), ExtResource("32_skb_rain"), ExtResource("33_skb_hnt"), ExtResource("34_skb_fnova"), ExtResource("nsb_quake"), ExtResource("nsb_holy")])
+SkillBooks = Array[Resource]([ExtResource("30_skb_prc"), ExtResource("31_skb_bk"), ExtResource("32_skb_rain"), ExtResource("33_skb_hnt"), ExtResource("34_skb_fnova"), ExtResource("nsb_quake"), ExtResource("nsb_holy"), ExtResource("nsb_ldrain")])
 
 [node name="PortalToOutpost" parent="." instance=ExtResource("9_portal")]
 position = Vector2(40, 180)

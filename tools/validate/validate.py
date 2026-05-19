@@ -18,6 +18,9 @@
   R11 사냥 계약 보드: 허브 4곳(town/field_outpost/harbor_village/mountain_refuge)에
       ContractBoardNPC 배치
   R12 MiningNode: 씬 내 노드명 유일 / OreItem 지정 / RespawnChanceOnReentry 0~1
+  R13 스킬 .tres Type 전역 유일 / chain_lightning=35·life_drain=36 (Type 충돌·드리프트)
+  R14 HuntingContractManager.RepeatableBossIds ↔ 씬 RepeatableBoss=true BossId 정확 일치
+  (R6+) RegionDrop / (R10+) 계약 보상·타깃 아이템 경로는 ItemData 리소스여야 함
 
 종료 코드: 결함 0건이면 0, 아니면 1.
 """
@@ -250,6 +253,16 @@ def check_drop_tables():
                 err("R6", f"{fn}: RegionDropChance 범위 밖 ({v})")
             elif v > 0 and not has_region:
                 err("R6", f"{fn}: RegionDropChance>0 인데 RegionDrop 미지정")
+        if has_region:
+            rid = re.search(r'RegionDrop\s*=\s*ExtResource\("([^"]+)"\)', text)
+            rp = None
+            if rid:
+                for typ, uid, p, eid in parse_ext_resources(text):
+                    if eid == rid.group(1):
+                        rp = p
+                        break
+            if rp and _script_class(rp) not in (None, "ItemData"):
+                err("R6", f"{fn}: RegionDrop 가 ItemData 가 아님 ({rp})")
 
 
 # ── R7: teleport dest ScenePath ──────────────────────────────────────
@@ -285,6 +298,24 @@ def _item_type(res_path):
     with open(p, encoding="utf-8") as f:
         m = ITEM_TYPE_RE.search(f.read())
     return int(m.group(1)) if m else 0  # Type 미기재 = enum 기본값 0(Consumable)
+
+
+SCRIPT_CLASS_RE = re.compile(r'script_class="([^"]+)"')
+
+
+def _script_class(res_path):
+    """gd_resource 헤더의 script_class 반환(없으면 None). 보상/드랍이 ItemData
+    가 아닌 SkillData/EnemyStats 등을 가리키는 오결선을 잡기 위함."""
+    p = res_to_path(res_path)
+    if not os.path.exists(p):
+        return None
+    try:
+        with open(p, encoding="utf-8") as f:
+            first = f.readline()
+    except OSError:
+        return None
+    m = SCRIPT_CLASS_RE.search(first)
+    return m.group(1) if m else None
 
 
 def check_recipes():
@@ -381,6 +412,29 @@ def _collect_boss_ids():
     return ids
 
 
+def _collect_mining_ore_paths():
+    """씬 MiningNode 인스턴스가 캐는 OreItem 의 res:// 경로 집합.
+    Mining 계약 타깃이 *실제 채광 가능한* 광석인지 교차검증용(Kill 검증과 대칭)."""
+    paths = set()
+    maps_dir = os.path.join(ROOT, "Scenes", "Maps")
+    for fn in os.listdir(maps_dir):
+        if not fn.endswith(".tscn"):
+            continue
+        with open(os.path.join(maps_dir, fn), encoding="utf-8") as f:
+            text = f.read()
+        if "Scenes/Objects/mining_node.tscn" not in text:
+            continue
+        idmap = {}
+        for typ, uid, p, rid in parse_ext_resources(text):
+            if rid and p:
+                idmap[rid] = p
+        for m in re.finditer(r'\bOreItem\s*=\s*ExtResource\("([^"]+)"\)', text):
+            p = idmap.get(m.group(1))
+            if p:
+                paths.add(p)
+    return paths
+
+
 def check_contracts():
     cp = os.path.join(ROOT, "Resources", "Contracts", "contracts.json")
     if not os.path.isfile(cp):
@@ -394,6 +448,7 @@ def check_contracts():
 
     enemy_names = _collect_enemy_type_names()
     boss_ids = _collect_boss_ids()
+    mining_ores = _collect_mining_ore_paths()
     seen = set()
     for c in data.get("contracts", []):
         cid = c.get("id", "<무-id>")
@@ -417,6 +472,8 @@ def check_contracts():
         if rip:
             if not os.path.exists(res_to_path(rip)):
                 err("R10", f"{cid}: rewardItemPath 미해결 {rip}")
+            elif _script_class(rip) not in (None, "ItemData"):
+                err("R10", f"{cid}: rewardItemPath 가 ItemData 가 아님 {rip}")
             rq = c.get("rewardItemQuantity", 1)
             if not isinstance(rq, int) or rq <= 0:
                 err("R10", f"{cid}: rewardItemQuantity 는 1 이상이어야 함 ({rq})")
@@ -438,10 +495,17 @@ def check_contracts():
             t = c.get("targetItemPath", "")
             if not t or not os.path.exists(res_to_path(t)):
                 err("R10", f"{cid}: Gather targetItemPath 미해결 {t}")
+            elif _script_class(t) not in (None, "ItemData"):
+                err("R10", f"{cid}: Gather targetItemPath 가 ItemData 가 아님 {t}")
         elif ctype == "Mining":
             t = c.get("targetOreItemPath", "")
             if not t or not os.path.exists(res_to_path(t)):
                 err("R10", f"{cid}: Mining targetOreItemPath 미해결 {t}")
+            elif _script_class(t) not in (None, "ItemData"):
+                err("R10", f"{cid}: Mining targetOreItemPath 가 ItemData 가 아님 {t}")
+            elif mining_ores and t not in mining_ores:
+                err("R10", f"{cid}: targetOreItemPath '{t}' 를 캐는 MiningNode가 "
+                          "어떤 씬에도 없음 (채광 불가 계약)")
 
 
 def check_contract_boards():
@@ -498,6 +562,64 @@ def check_mining_nodes():
                 err("R12", f"{fn}: MiningNode '{nm}' Quantity 는 1 이상이어야 함 ({q.group(1)})")
 
 
+SKILL_TYPE_RE = re.compile(r'^Type\s*=\s*(\d+)', re.M)
+
+
+def check_skill_types():
+    """Resources/Skills/*.tres 의 Type 전역 유일성 + 신규 메커닉 고정값.
+    원래 결함(신규 스킬이 기존 SkillType 재사용 → 학습/쿨다운/상점 중복)이
+    .tres 단계에서 재발하면 잡는다. Godot 비의존 텍스트 검사."""
+    sk = os.path.join(ROOT, "Resources", "Skills")
+    if not os.path.isdir(sk):
+        return
+    by_type = {}
+    for fn in sorted(os.listdir(sk)):
+        if not fn.endswith(".tres"):
+            continue
+        with open(os.path.join(sk, fn), encoding="utf-8") as f:
+            m = SKILL_TYPE_RE.search(f.read())
+        if not m:
+            err("R13", f"{fn}: Type 미기재")
+            continue
+        t = int(m.group(1))
+        by_type.setdefault(t, []).append(fn)
+        if fn == "chain_lightning.tres" and t != 35:
+            err("R13", f"chain_lightning.tres Type={t} (35 이어야 함)")
+        if fn == "life_drain.tres" and t != 36:
+            err("R13", f"life_drain.tres Type={t} (36 이어야 함)")
+    for t, files in sorted(by_type.items()):
+        if len(files) > 1:
+            err("R13", f"SkillType {t} 중복 — {', '.join(files)} "
+                       "(학습중복/쿨다운/상점 게이팅 충돌)")
+
+
+def check_repeatable_boss_drift():
+    """HuntingContractManager.RepeatableBossIds 가 씬의 RepeatableBoss=true
+    BossId 집합과 정확히 일치해야 한다. 하드코딩 셋이 씬과 어긋나면 반복 보스
+    계약이 영구히 사라지거나(드리프트) 1회성으로 오판된다."""
+    mgr = os.path.join(ROOT, "Scripts", "Core", "HuntingContractManager.cs")
+    if not os.path.isfile(mgr):
+        return
+    txt = open(mgr, encoding="utf-8").read()
+    block = re.search(r'RepeatableBossIds\s*=\s*new\(\)\s*\{(.*?)\}', txt, re.DOTALL)
+    if not block:
+        err("R14", "HuntingContractManager.RepeatableBossIds 리터럴을 찾을 수 없음")
+        return
+    code_set = set(re.findall(r'"([^"]+)"', block.group(1)))
+    scene_set = set()
+    maps_dir = os.path.join(ROOT, "Scenes", "Maps")
+    for fn in os.listdir(maps_dir):
+        if not fn.endswith(".tscn"):
+            continue
+        s = open(os.path.join(maps_dir, fn), encoding="utf-8").read()
+        if re.search(r'\bRepeatableBoss\s*=\s*true\b', s):
+            for m in re.finditer(r'\bBossId\s*=\s*"([^"]+)"', s):
+                scene_set.add(m.group(1))
+    if code_set != scene_set:
+        err("R14", f"RepeatableBossIds 불일치 — 코드 {sorted(code_set)} ≠ "
+                   f"씬(RepeatableBoss=true) {sorted(scene_set)}")
+
+
 def main():
     scan_uids()
     check_res_refs()
@@ -510,6 +632,8 @@ def main():
     check_contracts()
     check_contract_boards()
     check_mining_nodes()
+    check_skill_types()
+    check_repeatable_boss_drift()
 
     by_cat = {}
     for cat, msg in errors:

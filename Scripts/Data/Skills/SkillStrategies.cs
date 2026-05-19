@@ -487,6 +487,92 @@ namespace FirstGame.Data.Skills
 		}
 	}
 
+	// ═══════════════════════════════════════════════════════════════
+	// 스킬 확장 v3 — *진짜 신규 메커닉*(전용 전략 코드, 위임 아님)
+	// ═══════════════════════════════════════════════════════════════
+
+	/// <summary>ChainLightning (마법사) — 즉발 연쇄. 가장 가까운 적에서 시작해 인접 적으로
+	/// 최대 5회 튕기며(점프 사거리 170f) 점프마다 20% 감쇠. LightningStorm(주기적 단일)과
+	/// 달리 1회 시전에 다수를 순차 타격하는 별개 메커닉.</summary>
+	[SkillStrategy(SkillType.ChainLightning)]
+	public class ChainLightningStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float range = 300f, jumpRange = 170f;
+			const int maxJumps = 5;
+			// GetNearbyEnemies 는 *플레이어 중심* 질의다. 첫 타깃은 range 내, 이후
+			// 점프는 직전 적 기준 jumpRange 내에서 고른다. 점프가 플레이어에게서
+			// 멀어질 수 있으므로 풀은 range+maxJumps*jumpRange 까지 넓게 수집해야
+			// 먼 연쇄가 끊기지 않는다(좁게 잡으면 위치에 따라 들쭉날쭉했음).
+			float poolRange = range + maxJumps * jumpRange;
+			var pool = new List<(Node2D node, IDamageable dmg)>();
+			foreach (var (n, d) in target.GetNearbyEnemies(poolRange))
+				if (n != null && d != null && GodotObject.IsInstanceValid(n)) pool.Add((n, d));
+			if (pool.Count == 0) return;
+
+			var elem = skill.Element != ElementType.None ? skill.Element : ElementType.Lightning;
+			int baseMul = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 2;
+			Vector2 from = target.GlobalPosition;
+			var hit = new HashSet<Node2D>();
+			float falloff = 1f;
+			for (int j = 0; j < maxJumps; j++)
+			{
+				Node2D best = null; IDamageable bestD = null; float bestDist = float.MaxValue;
+				float reach = j == 0 ? range : jumpRange;
+				foreach (var (n, d) in pool)
+				{
+					if (n == null || hit.Contains(n) || !GodotObject.IsInstanceValid(n)) continue;
+					float dist = from.DistanceTo(n.GlobalPosition);
+					if (dist <= reach && dist < bestDist) { bestDist = dist; best = n; bestD = d; }
+				}
+				if (best == null) break;
+				bool crit = GD.Randf() < target.CritRate;
+				long raw = (long)(target.BaseDamage * baseMul * falloff);
+				if (crit) raw = (long)(raw * target.CritMultiplier);
+				int dmg = (int)Math.Max(1, Math.Min(raw, int.MaxValue));
+				bestD.TakeDamage(dmg, elem);
+				SkillStatusHelpers.TryInflictStatus(bestD, skill);
+				hit.Add(best);
+				from = best.GlobalPosition;
+				falloff *= 0.8f;
+			}
+			if (hit.Count > 0) target.TriggerCameraShake(4f, 0.18f);
+		}
+	}
+
+	/// <summary>LifeDrain (마법사) — 가장 가까운 단일 대상 강타 + 가한 피해의 1/3 즉시
+	/// 흡혈 회복. LifestealPassive(상시 %)·HealSelf(피해 무관 고정 회복)와 구분되는
+	/// 능동 흡혈 폭딜 메커닉.</summary>
+	[SkillStrategy(SkillType.LifeDrain)]
+	public class LifeDrainStrategy : ISkillStrategy
+	{
+		public void Execute(ISkillTarget target, SkillData skill)
+		{
+			const float range = 240f;
+			Node2D best = null; IDamageable bestD = null; float bestDist = float.MaxValue;
+			foreach (var (n, d) in target.GetNearbyEnemies(range))
+			{
+				if (n == null || d == null || !GodotObject.IsInstanceValid(n)) continue;
+				float dist = target.GlobalPosition.DistanceTo(n.GlobalPosition);
+				if (dist < bestDist) { bestDist = dist; best = n; bestD = d; }
+			}
+			if (best == null) return;
+			int mul = skill.BonusDamageMultiplier > 0 ? skill.BonusDamageMultiplier : 3;
+			bool crit = GD.Randf() < target.CritRate;
+			long raw = (long)target.BaseDamage * mul;
+			if (crit) raw = (long)(raw * target.CritMultiplier);
+			int dmg = (int)Math.Max(1, Math.Min(raw, int.MaxValue));
+			var elem = skill.Element != ElementType.None ? skill.Element : ElementType.Dark;
+			// 흡혈은 *실제 적용된* 피해(속성 저항·방어·오버킬 클램프 후) 기준 —
+			// 방어/저항 높은 적·체력 1 적에게 과다 회복하지 않게.
+			int dealt = bestD.TakeDamageReporting(dmg, elem);
+			SkillStatusHelpers.TryInflictStatus(bestD, skill);
+			target.HealSelf(Math.Max(1, dealt / 3));
+			target.TriggerCameraShake(5f, 0.18f);
+		}
+	}
+
 	// ─── 스킬 확장 v2 — 동작은 기존 전략 위임 상속, SkillType만 고유 ──────────────
 	// SkillStrategyAttribute(Inherited=false)라 서브클래스는 base 어트리뷰트를 상속하지
 	// 않으므로 각자 고유 [SkillStrategy]를 달아 팩토리에 별도 등록된다. Execute는 base

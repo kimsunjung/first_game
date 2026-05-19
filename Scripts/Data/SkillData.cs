@@ -48,6 +48,9 @@ namespace FirstGame.Data
 		Earthquake    = 32, // 전사 — 대지 균열(GroundSlam 위임)
 		HolyBurst     = 33, // 마법사 — 신성 작렬(FrostNova 위임)
 		ChainBolt     = 34, // 마법사 — 연쇄 뇌격(LightningStorm 위임)
+		// ─── 스킬 확장 v3 (35+) — *진짜 신규 메커닉*(전용 전략 코드) ──────────────
+		ChainLightning = 35, // 마법사 — 즉발 연쇄: 적→인접 적으로 튕기며 점프(감쇠)
+		LifeDrain      = 36, // 마법사 — 단일 강타 + 피해의 일부를 즉시 흡혈 회복
 	}
 
 	public enum PassiveType

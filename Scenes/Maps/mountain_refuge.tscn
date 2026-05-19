@@ -33,6 +33,7 @@
 [ext_resource type="Script" path="res://Scripts/Maps/BiomeWeatherController.cs" id="wctrl_v3"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/contract_board_npc.tscn" id="cboard_v1"]
 [ext_resource type="Resource" path="res://Resources/Items/skillbook_chain_bolt.tres" id="nsb_chain"]
+[ext_resource type="Resource" path="res://Resources/Items/skillbook_chain_lightning.tres" id="nsb_clight"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/storage_npc.tscn" id="hb_storenpc"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/storage_ui.tscn" id="hb_storeui"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/crafting_npc.tscn" id="hb_craftnpc"]
@@ -119,7 +120,7 @@ ShopItems = Array[Resource]([ExtResource("20_megahp"), ExtResource("21_megamp"),
 [node name="ShopUI" parent="MountainMerchant" instance=ExtResource("11_shopUI")]
 
 [node name="ContractBoardNPC" parent="." instance=ExtResource("cboard_v1")]
-position = Vector2(330, 180)
+position = Vector2(420, 140)
 Region = "mountain_region"
 
 [node name="StorageNPC" parent="." instance=ExtResource("hb_storenpc")]
@@ -145,7 +146,7 @@ position = Vector2(500, 90)
 NpcId = "mountain_skill_shop"
 
 [node name="SkillShopUI" parent="MountainSkillNPC" instance=ExtResource("13_skillshopUI")]
-SkillBooks = Array[Resource]([ExtResource("30_skb_fwave"), ExtResource("31_skb_mshld"), ExtResource("32_skb_arc"), ExtResource("33_skb_exec"), ExtResource("nsb_chain")])
+SkillBooks = Array[Resource]([ExtResource("30_skb_fwave"), ExtResource("31_skb_mshld"), ExtResource("32_skb_arc"), ExtResource("33_skb_exec"), ExtResource("nsb_chain"), ExtResource("nsb_clight")])
 
 [node name="PortalToHarborVillage" parent="." instance=ExtResource("9_portal")]
 position = Vector2(40, 180)
