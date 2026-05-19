@@ -13,13 +13,15 @@
   R8  사냥터 씬은 EnemySpawner 를 포함 (허브 3곳 제외)
   R9  recipes.json: id 유일 / material·result 경로 실존 / qty>0·gold>=0 /
       레시피 내 material path 중복 금지 / 재료는 Consumable·Material 타입만
-  R10 contracts.json: id 유일 / type 유효 / goal>0 / reward gold·exp>=0 /
-      rewardItem 경로 실존 / 타입별 타깃 필수 + enemy/boss 타깃 실존
+  R10 contracts.json: id 유일 / region 유효 / type 유효 / goal>0 / reward gold·exp>=0 /
+      rewardItem 경로 실존 / 타입별 타깃 필수 + enemy/boss 타깃 실존 /
+      Gather 설명 소모·납품 고지(A안 정합)
   R11 사냥 계약 보드: 허브 4곳(town/field_outpost/harbor_village/mountain_refuge)에
       ContractBoardNPC 배치
   R12 MiningNode: 씬 내 노드명 유일 / OreItem 지정 / RespawnChanceOnReentry 0~1
   R13 스킬 .tres Type 전역 유일 / chain_lightning=35·life_drain=36 (Type 충돌·드리프트)
   R14 HuntingContractManager.RepeatableBossIds ↔ 씬 RepeatableBoss=true BossId 정확 일치
+  R15 스킬북 .tres RequiredClass/AvailableToAllClasses ↔ LearnedSkill 정합 (탭 필터 오노출)
   (R6+) RegionDrop / (R10+) 계약 보상·타깃 아이템 경로는 ItemData 리소스여야 함
 
 종료 코드: 결함 0건이면 0, 아니면 1.
@@ -31,8 +33,12 @@ import sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-# 검사 대상에서 제외할 디렉터리 (엔진 캐시 / 빌드 산출물 / 서드파티)
-EXCLUDE_DIRS = {".godot", ".git", "android", "addons", "bin", "obj", "tools"}
+# 검사 대상에서 제외할 디렉터리 (엔진 캐시 / 빌드 산출물 / 서드파티 /
+# gitignore 대상). .claude 는 Claude 작업용 워크트리(.claude/worktrees)에
+# 본 프로젝트의 .tscn/.tres 사본이 들어가 헤더 uid 중복으로 잡히므로 필수
+# 제외 — gitignore 대상이라 게임 빌드와 무관.
+EXCLUDE_DIRS = {".godot", ".git", ".claude", ".vscode", ".idea",
+                "android", "addons", "bin", "obj", "tools"}
 
 # 엔진/내장 경로는 res:// 로 와도 파일이 없으므로 무결성 검사에서 제외
 RES_IGNORE_PREFIXES = ("res://addons/",)
@@ -219,6 +225,27 @@ def check_skillbooks():
             err("R5", f"{fn}: LearnedSkill 가 실존 스킬 리소스로 해결되지 않음 (id={rid})")
         elif os.path.sep + "Skills" + os.path.sep not in found:
             err("R5", f"{fn}: LearnedSkill 이 Resources/Skills 가 아닌 곳을 가리킴: {rel(found)}")
+        else:
+            # R15: 스킬북 메타(RequiredClass/AvailableToAllClasses) ↔ 실제 스킬
+            # 정합. 어긋나면 SkillShopUI 클래스 탭 필터가 스킬북을 엉뚱한 직업
+            # 탭에 노출하거나(또는 숨겨) 구매 불가/오노출이 된다.
+            with open(found, encoding="utf-8") as sf:
+                stext = sf.read()
+
+            def _rc(t):
+                mm = re.search(r'\bRequiredClass\s*=\s*(\d+)', t)
+                return int(mm.group(1)) if mm else 0  # export 미직렬화 = 기본 0
+
+            def _all(t):
+                mm = re.search(r'\bAvailableToAllClasses\s*=\s*(true|false)', t)
+                return (mm.group(1) == "true") if mm else False
+
+            if _rc(text) != _rc(stext):
+                err("R15", f"{fn}: RequiredClass({_rc(text)}) ≠ 스킬"
+                          f"({_rc(stext)}) {rel(found)}")
+            if _all(text) != _all(stext):
+                err("R15", f"{fn}: AvailableToAllClasses({_all(text)}) ≠ 스킬"
+                          f"({_all(stext)}) {rel(found)}")
 
 
 # ── R6: PossibleDrops / DropWeights 개수 일치 ────────────────────────
@@ -369,6 +396,9 @@ def check_recipes():
 
 
 CONTRACT_TYPES = {"Kill", "Gather", "BossKill", "Mining"}
+# 계약 권역 — HuntingContractManager.AvailableForRegion 이 이 문자열로 매칭하므로
+# 오타가 있으면 그 계약은 어느 보드에도 안 떠 영영 수락 불가(조용한 사장).
+CONTRACT_REGIONS = {"town_region", "outpost_region", "coast_region", "mountain_region"}
 HUB_BOARD_SCENES = ("town", "field_outpost", "harbor_village", "mountain_refuge")
 
 
@@ -456,6 +486,11 @@ def check_contracts():
             err("R10", f"중복 contract id: {cid}")
         seen.add(cid)
 
+        region = c.get("region", "")
+        if region not in CONTRACT_REGIONS:
+            err("R10", f"{cid}: 알 수 없는 region '{region}' "
+                      "(오타 시 보드에 안 떠 수락 불가)")
+
         ctype = c.get("type", "")
         if ctype not in CONTRACT_TYPES:
             err("R10", f"{cid}: 잘못된 type '{ctype}'")
@@ -497,6 +532,12 @@ def check_contracts():
                 err("R10", f"{cid}: Gather targetItemPath 미해결 {t}")
             elif _script_class(t) not in (None, "ItemData"):
                 err("R10", f"{cid}: Gather targetItemPath 가 ItemData 가 아님 {t}")
+            # A안: Gather 는 완료 시 ConsumeItems 로 소모형. 설명이 소모/납품을
+            # 안 알리면 "다 모았는데 왜 사라져?" UX 사고 → desc 정합 강제.
+            desc = c.get("desc", "")
+            if "소모" not in desc and "납품" not in desc:
+                err("R10", f"{cid}: Gather 설명에 소모/납품 고지 없음 (A안 정합) "
+                          f"→ '{desc}'")
         elif ctype == "Mining":
             t = c.get("targetOreItemPath", "")
             if not t or not os.path.exists(res_to_path(t)):

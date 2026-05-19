@@ -80,7 +80,8 @@ namespace FirstGame.UI
 			foreach (var e in gm.ActiveEnemies)
 			{
 				if (e != null && IsInstanceValid(e) && e.IsInsideTree())
-					DrawCircle(ToMap(e.GlobalPosition), 1.6f, new Color(0.95f, 0.3f, 0.3f));
+					// 모바일 가시성 — 1.6px는 폰 화면에서 거의 안 보여 2.2px로.
+					DrawCircle(ToMap(e.GlobalPosition), 2.2f, new Color(0.95f, 0.3f, 0.3f));
 			}
 
 			// 플레이어(연두, 약간 크게)

@@ -499,7 +499,10 @@ namespace FirstGame.Data.Skills
 	{
 		public void Execute(ISkillTarget target, SkillData skill)
 		{
-			const float range = 300f, jumpRange = 170f;
+			// 첫 타깃 auto-acquire는 형제 자동타깃 스킬(LifeDrain 240)과 맞춰 240으로
+			// 보수화 — 모바일 화면 밖 적을 의도치 않게 시작점으로 잡는 일 방지.
+			// 연쇄 정체성(jumpRange 170·maxJumps 5·0.8 감쇠)은 그대로 유지.
+			const float range = 240f, jumpRange = 170f;
 			const int maxJumps = 5;
 			// GetNearbyEnemies 는 *플레이어 중심* 질의다. 첫 타깃은 range 내, 이후
 			// 점프는 직전 적 기준 jumpRange 내에서 고른다. 점프가 플레이어에게서

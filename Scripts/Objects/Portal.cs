@@ -26,7 +26,12 @@ namespace FirstGame.Objects
 				: DeriveNameFromPath(TargetScenePath);
 
 			if (!string.IsNullOrEmpty(name))
-				label.Text = $"[F] {name} 이동";
+			{
+				int lv = FirstGame.Data.MapLevels.Get(TargetScenePath);
+				label.Text = lv > 0
+					? $"[F] {name} 이동 (권장 Lv.{lv}+)"
+					: $"[F] {name} 이동";
+			}
 		}
 
 		protected override void OnInteract()

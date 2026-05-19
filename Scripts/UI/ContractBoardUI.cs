@@ -71,6 +71,22 @@ namespace FirstGame.UI
 			return s;
 		}
 
+		// 진행 중 계약 한 줄 상태. Gather는 "현재 보유 / 필요 + 완료 시 소모"를
+		// 명시(모바일에서 한눈에 — 재료를 빼면 stale 표시 없이 즉시 반영됨).
+		private static string ProgressText(ContractData def, ContractProgress prog)
+		{
+			if (def.Type == ContractType.Gather)
+				return prog.TurnInReady
+					? $"보유 {prog.Progress}/{def.Goal} · 완료 시 {def.Goal}개 소모"
+					: $"보유 {prog.Progress}/{def.Goal} · 재료 더 필요 (완료 시 소모)";
+			return $"진행 {prog.Progress}/{def.Goal}";
+		}
+
+		// 수락 가능 계약 목표 한 줄. Gather는 소모형임을 사전 고지.
+		private static string GoalText(ContractData c) => c.Type == ContractType.Gather
+			? $"납품 {c.Goal}개 · 완료 시 인벤에서 소모"
+			: $"목표 {c.Goal}";
+
 		private void Rebuild()
 		{
 			if (_list == null) return;
@@ -94,7 +110,7 @@ namespace FirstGame.UI
 				bool ready = prog.TurnInReady;
 				AddRow(
 					$"{def.Title}  [{prog.Progress}/{def.Goal}]",
-					$"{TypeLabel(def)}\n보상: {RewardLabel(def)}",
+					$"{TypeLabel(def)}\n{ProgressText(def, prog)}\n보상: {RewardLabel(def)}",
 					ready ? "완료" : "포기",
 					ready ? new Color(0.4f, 1f, 0.5f) : new Color(0.9f, 0.6f, 0.5f),
 					() => { if (ready) OnComplete(def); else OnAbandon(def); });
@@ -110,7 +126,7 @@ namespace FirstGame.UI
 			{
 				AddRow(
 					$"{c.Title}  (Lv.{c.RecommendedLevel}~)",
-					$"{c.Description}\n{TypeLabel(c)}  목표 {c.Goal}\n보상: {RewardLabel(c)}",
+					$"{c.Description}\n{TypeLabel(c)} · {GoalText(c)}\n보상: {RewardLabel(c)}",
 					full ? "가득참" : "수락",
 					new Color(1f, 0.85f, 0.4f),
 					full ? (System.Action)null : () => OnAccept(c));
@@ -210,9 +226,15 @@ namespace FirstGame.UI
 			if (mgr != null && mgr.Complete(c.Id, _player, out bool rewardDeferred))
 			{
 				AudioManager.Instance?.PlaySFX("craft_success.wav");
+				string itemName = "보상 아이템";
+				if (!string.IsNullOrEmpty(c.RewardItemPath) && c.RewardItemQuantity > 0)
+				{
+					var it = GD.Load<ItemData>(c.RewardItemPath);
+					if (it != null) itemName = $"{it.ItemName} x{c.RewardItemQuantity}";
+				}
 				ShowMessage(rewardDeferred
-					? $"계약 완료! 가방이 가득 차 보상 아이템은 보관함에 보류됨: {c.Title}"
-					: $"계약 완료! 보상을 지급했습니다: {c.Title}");
+					? $"계약 완료! 가방이 가득 차 [{itemName}]은(는) 보류됨 — 가방을 비우면 자동 회수됩니다. ({c.Title})"
+					: $"계약 완료! 보상 지급: {c.Title} — {RewardLabel(c)}");
 				Rebuild();
 			}
 			else ShowMessage(c.Type == ContractType.Gather

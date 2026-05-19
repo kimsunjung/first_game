@@ -86,29 +86,29 @@ size = Vector2(24, 14)
 size = Vector2(10, 22)
 
 [sub_resource type="RectangleShape2D" id="wall_top"]
-size = Vector2(640, 16)
+size = Vector2(896, 16)
 
 [sub_resource type="RectangleShape2D" id="wall_bottom"]
-size = Vector2(640, 16)
+size = Vector2(896, 16)
 
 [sub_resource type="RectangleShape2D" id="wall_left"]
-size = Vector2(16, 360)
+size = Vector2(16, 504)
 
 [sub_resource type="RectangleShape2D" id="wall_right"]
-size = Vector2(16, 360)
+size = Vector2(16, 504)
 
 [node name="Town" type="Node2D"]
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -11
-offset_right = 640.0
-offset_bottom = 360.0
+offset_right = 896.0
+offset_bottom = 504.0
 color = Color(0.35, 0.3, 0.25, 1)
 
 [node name="Floor" type="TextureRect" parent="."]
 z_index = -10
-offset_right = 640.0
-offset_bottom = 360.0
+offset_right = 896.0
+offset_bottom = 504.0
 texture = ExtResource("16_stone")
 stretch_mode = 1
 
@@ -116,61 +116,61 @@ stretch_mode = 1
 z_index = -1
 
 [node name="ShopSign" type="Sprite2D" parent="Decorations"]
-position = Vector2(320, 35)
+position = Vector2(448, 49)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("21_shopsign")
 texture_filter = 1
 
 [node name="PotionShelf" type="Sprite2D" parent="Decorations"]
-position = Vector2(370, 78)
+position = Vector2(518, 109)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("22_potionshelf")
 texture_filter = 1
 
 [node name="MagicBookStand" type="Sprite2D" parent="Decorations"]
-position = Vector2(475, 78)
+position = Vector2(665, 109)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("26_bookstand")
 texture_filter = 1
 
 [node name="WeaponRack" type="Sprite2D" parent="Decorations"]
-position = Vector2(60, 215)
+position = Vector2(84, 301)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("25_wrack")
 texture_filter = 1
 
 [node name="BlacksmithForge" type="Sprite2D" parent="Decorations"]
-position = Vector2(180, 215)
+position = Vector2(252, 301)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("23_forge")
 texture_filter = 1
 
 [node name="AnvilWorkstation" type="Sprite2D" parent="Decorations"]
-position = Vector2(120, 295)
+position = Vector2(168, 413)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("24_anvil")
 texture_filter = 1
 
 [node name="WaterWell" type="Sprite2D" parent="Decorations"]
-position = Vector2(240, 175)
+position = Vector2(336, 245)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("27_vwell")
 texture_filter = 1
 
 [node name="StreetLantern" type="Sprite2D" parent="Decorations"]
-position = Vector2(570, 130)
+position = Vector2(798, 182)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("28_vlantern")
 texture_filter = 1
 
 [node name="FlowerPlanter" type="Sprite2D" parent="Decorations"]
-position = Vector2(75, 135)
+position = Vector2(105, 189)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("29_vflower")
 texture_filter = 1
 
 [node name="BarrelGroup" type="Sprite2D" parent="Decorations"]
-position = Vector2(470, 250)
+position = Vector2(658, 350)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("30_vbarrel")
 texture_filter = 1
@@ -180,47 +180,47 @@ collision_layer = 4
 collision_mask = 0
 
 [node name="ShopSign" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(320, 35)
+position = Vector2(448, 49)
 shape = SubResource("deco_tall")
 
 [node name="PotionShelf" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(370, 78)
+position = Vector2(518, 109)
 shape = SubResource("deco_wide")
 
 [node name="MagicBookStand" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(475, 78)
+position = Vector2(665, 109)
 shape = SubResource("deco_tall")
 
 [node name="WeaponRack" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(60, 215)
+position = Vector2(84, 301)
 shape = SubResource("deco_wide")
 
 [node name="BlacksmithForge" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(180, 215)
+position = Vector2(252, 301)
 shape = SubResource("deco_small")
 
 [node name="AnvilWorkstation" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(120, 295)
+position = Vector2(168, 413)
 shape = SubResource("deco_small")
 
 [node name="WaterWell" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(240, 175)
+position = Vector2(336, 245)
 shape = SubResource("deco_small")
 
 [node name="StreetLantern" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(570, 130)
+position = Vector2(798, 182)
 shape = SubResource("deco_tall")
 
 [node name="FlowerPlanter" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(75, 135)
+position = Vector2(105, 189)
 shape = SubResource("deco_wide")
 
 [node name="BarrelGroup" type="CollisionShape2D" parent="DecorationColliders"]
-position = Vector2(470, 250)
+position = Vector2(658, 350)
 shape = SubResource("deco_small")
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
-position = Vector2(80, 180)
+position = Vector2(112, 252)
 
 [node name="HUD" parent="." instance=ExtResource("2_hud")]
 
@@ -237,124 +237,124 @@ position = Vector2(80, 180)
 [node name="QuestDialog" parent="." instance=ExtResource("17_qdlg")]
 
 [node name="ShopNPC" parent="." instance=ExtResource("8_shop")]
-position = Vector2(320, 80)
+position = Vector2(448, 112)
 NpcId = "shop"
 
 [node name="ShopUI" parent="ShopNPC" instance=ExtResource("9_shopUI")]
 
 [node name="ContractBoardNPC" parent="." instance=ExtResource("cboard_v1")]
-position = Vector2(440, 160)
+position = Vector2(616, 224)
 Region = "town_region"
 
 [node name="SkillShopNPC" parent="." instance=ExtResource("10_skillnpc")]
-position = Vector2(520, 80)
+position = Vector2(728, 112)
 NpcId = "skill_shop"
 
 [node name="SkillShopUI" parent="SkillShopNPC" instance=ExtResource("11_skillshopUI")]
 SkillBooks = Array[Resource]([ExtResource("61_skb_heal"), ExtResource("55_skb_dash"), ExtResource("71_skb_pstr"), ExtResource("57_skb_fbolt"), ExtResource("64_skb_ice"), ExtResource("62_skb_hpreg"), ExtResource("74_skb_speed"), ExtResource("65_skb_istan"), ExtResource("69_skb_multi"), ExtResource("54_skb_crit"), ExtResource("nsb_vshot"), ExtResource("nsb_vbolt"), ExtResource("nsb_renew")])
 
 [node name="BlacksmithNPC" parent="." instance=ExtResource("12_smith")]
-position = Vector2(120, 240)
+position = Vector2(168, 336)
 NpcId = "blacksmith"
 
 [node name="EnhanceUI" parent="BlacksmithNPC" instance=ExtResource("13_enhanceUI")]
 
 [node name="TeleportNPC" parent="." instance=ExtResource("18_tpNpc")]
-position = Vector2(320, 240)
+position = Vector2(448, 336)
 NpcId = "teleport"
 
 [node name="TeleportUI" parent="TeleportNPC" instance=ExtResource("19_tpUI")]
 
 [node name="MaterialShopNPC" parent="." instance=ExtResource("20_matshop")]
-position = Vector2(520, 240)
+position = Vector2(728, 336)
 NpcId = "material_shop"
 
 [node name="ShopUI" parent="MaterialShopNPC" instance=ExtResource("9_shopUI")]
 
 [node name="SavePoint" parent="." instance=ExtResource("14_save")]
-position = Vector2(120, 80)
+position = Vector2(168, 112)
 NpcId = "save_point"
 
 [node name="PortalToField1" parent="." instance=ExtResource("15_portal")]
-position = Vector2(600, 180)
+position = Vector2(840, 252)
 TargetScenePath = "res://Scenes/Maps/field_1.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 
 [node name="PortalToOutpost" parent="." instance=ExtResource("15_portal")]
-position = Vector2(40, 180)
+position = Vector2(56, 252)
 TargetScenePath = "res://Scenes/Maps/field_outpost.tscn"
-TargetSpawnPosition = Vector2(560, 180)
+TargetSpawnPosition = Vector2(100, 180)
 
 [node name="PortalToField4Harbor" parent="." instance=ExtResource("15_portal")]
-position = Vector2(600, 300)
+position = Vector2(840, 420)
 TargetScenePath = "res://Scenes/Maps/field_4_harbor.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 
 [node name="PortalToTownOutskirts" parent="." instance=ExtResource("15_portal")]
-position = Vector2(600, 60)
+position = Vector2(840, 84)
 TargetScenePath = "res://Scenes/Maps/town_outskirts.tscn"
 TargetSpawnPosition = Vector2(80, 360)
 DestinationName = "마을 외곽"
 
 [node name="PotionShopNPC" parent="." instance=ExtResource("40_potionshop")]
-position = Vector2(410, 80)
+position = Vector2(574, 112)
 
 [node name="ShopUI" parent="PotionShopNPC" instance=ExtResource("9_shopUI")]
 
 [node name="QuestBoardUI" parent="." instance=ExtResource("36_qbui")]
 
 [node name="QuestBoardNpc" parent="." instance=ExtResource("35_qboard")]
-position = Vector2(260, 140)
+position = Vector2(364, 196)
 
 [node name="MartaInnkeeperNpc" parent="." instance=ExtResource("30_marta")]
-position = Vector2(420, 140)
+position = Vector2(588, 196)
 
 [node name="HansenMinerNpc" parent="." instance=ExtResource("31_hansen")]
-position = Vector2(170, 135)
+position = Vector2(238, 189)
 
 [node name="LilyFloristNpc" parent="." instance=ExtResource("32_lily")]
-position = Vector2(395, 290)
+position = Vector2(553, 406)
 
 [node name="GarretGuardNpc" parent="." instance=ExtResource("33_garret")]
-position = Vector2(550, 180)
+position = Vector2(770, 252)
 
 [node name="IvanBardNpc" parent="." instance=ExtResource("34_ivan")]
-position = Vector2(200, 280)
+position = Vector2(280, 392)
 
 [node name="Walls" type="StaticBody2D" parent="."]
 collision_layer = 4
 collision_mask = 0
 
 [node name="TopWall" type="CollisionShape2D" parent="Walls"]
-position = Vector2(320, -8)
+position = Vector2(448, -8)
 shape = SubResource("wall_top")
 
 [node name="BottomWall" type="CollisionShape2D" parent="Walls"]
-position = Vector2(320, 368)
+position = Vector2(448, 512)
 shape = SubResource("wall_bottom")
 
 [node name="LeftWall" type="CollisionShape2D" parent="Walls"]
-position = Vector2(-8, 180)
+position = Vector2(-8, 252)
 shape = SubResource("wall_left")
 
 [node name="RightWall" type="CollisionShape2D" parent="Walls"]
-position = Vector2(648, 180)
+position = Vector2(904, 252)
 shape = SubResource("wall_right")
 
 [node name="StorageNPC" parent="." instance=ExtResource("v3_storenpc")]
-position = Vector2(470, 320)
+position = Vector2(658, 448)
 NpcId = "storage_keeper"
 
 [node name="StorageUI" parent="StorageNPC" instance=ExtResource("v3_storeui")]
 
 [node name="CraftingNPC" parent="." instance=ExtResource("v3_craftnpc")]
-position = Vector2(300, 340)
+position = Vector2(420, 476)
 NpcId = "crafting_station"
 
 [node name="CraftingUI" parent="CraftingNPC" instance=ExtResource("v3_craftui")]
 
 [node name="ReforgeNPC" parent="." instance=ExtResource("v3_rfnpc")]
-position = Vector2(70, 310)
+position = Vector2(98, 434)
 NpcId = "reforge_station"
 
 [node name="ReforgeUI" parent="ReforgeNPC" instance=ExtResource("v3_rfui")]

@@ -850,3 +850,24 @@ inline 레거시 표 행(돌려쓰기 경로 표기)은 이 절이 최신 권위
 | `field5_frostbound_bear.tres` | `Enemies/Field5/frostbound_bear.png` | `polar_bear.png` | 사용 중 |
 | `field6_ash_imp.tres` | `Enemies/Field6/ash_imp.png` | `fire_imp.png` | 사용 중 |
 | `mine3_crystal_shocker.tres` | `Enemies/Mine/crystal_shocker.png` | `crystal_warlock.png` | 사용 중 |
+
+## 지면 식생 장식 — 필요 에셋 TODO (2026-05-19, 미생성)
+
+작업 12(바이옴 지면 장식)용. **지면 식생 전용 PNG가 현재 0개** — prop
+스케일 오브젝트만 존재해 "풀/이끼/해초" 용도로 부적합. 생성 금지 규칙에
+따라 **미생성**, 아래 15종을 추후 생성 대상으로 등록(상세 프롬프트는
+`PLAN_DOC/biome-ground-decoration-plan-v1.md`).
+
+| 키 | 제안 경로 | 바이옴 | 상태 |
+|---|---|---|---|
+| grass_tuft / meadow_flowers / weed_clump | `Objects/Ground/` | 초원 | **미생성(TODO)** |
+| dry_grass / broken_roadweed | `Objects/Ground/` | 길 | **미생성(TODO)** |
+| coastal_reed / beach_kelp | `Objects/Ground/` | 해안 | **미생성(TODO)** |
+| snow_grass / frozen_bush | `Objects/Ground/` | 설원 | **미생성(TODO)** |
+| burnt_grass / black_shrub | `Objects/Ground/` | 화산 | **미생성(TODO)** |
+| cave_moss / small_mushrooms | `Objects/Ground/` | 광산 | **미생성(TODO)** |
+| dungeon_lichen / broken_vines | `Objects/Ground/` | 던전 | **미생성(TODO)** |
+
+에셋 도착 시: PNG + Godot 4.6.2 mono headless `.import` 사이드카 생성 →
+`biome-ground-decoration-plan-v1.md`의 결정적 배치 알고리즘으로 단일
+패스 주입(Collision 없음·z=-2·금지반경·밀도캡). 기존 prop 데코는 유지.

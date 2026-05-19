@@ -61,7 +61,7 @@ position = Vector2(200, 200)
 [node name="PortalToTown" parent="." unique_id=428317051 instance=ExtResource("9_portal")]
 position = Vector2(50, 360)
 TargetScenePath = "res://Scenes/Maps/town.tscn"
-TargetSpawnPosition = Vector2(550, 180)
+TargetSpawnPosition = Vector2(770, 252)
 
 [node name="DungeonEntranceMarker1" type="Sprite2D" parent="."]
 position = Vector2(640, 360)

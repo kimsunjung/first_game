@@ -6,7 +6,7 @@ namespace FirstGame.Data
 	public enum ContractType
 	{
 		Kill = 0,     // 특정 적 N마리 처치
-		Gather = 1,   // 특정 아이템 N개 획득(누적형 — 완료 시 차감 없음)
+		Gather = 1,   // 특정 아이템 N개 납품(A안 — 완료 시 ConsumeItems로 소모, 보유기반 진행)
 		BossKill = 2, // 특정 보스 N회 처치
 		Mining = 3    // 특정 광석 N회 채광
 	}
@@ -22,7 +22,7 @@ namespace FirstGame.Data
 
 		// 타입별 타깃 (해당 타입에서만 사용)
 		public string TargetEnemyType = "";   // Kill — EnemyTypeName(엘리트 prefix 제거 후 매칭)
-		public string TargetItemPath = "";    // Gather — 획득 아이템 res:// 경로
+		public string TargetItemPath = "";    // Gather — 납품 아이템 res:// 경로(완료 시 Goal 개 소모)
 		public string TargetBossId = "";      // BossKill — EnemySpawner.BossId
 		public string TargetOreItemPath = ""; // Mining — MiningNode.OreItem res:// 경로
 

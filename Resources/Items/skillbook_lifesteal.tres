@@ -16,3 +16,4 @@ Type = 3
 IsStackable = false
 MaxStack = 1
 LearnedSkill = ExtResource("2")
+AvailableToAllClasses = true

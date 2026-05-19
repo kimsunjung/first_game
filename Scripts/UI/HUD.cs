@@ -309,10 +309,25 @@ namespace FirstGame.UI
 			{ "def", "res://Resources/Generated/GPT/Icons/Status/defense_up.png" },
 		};
 
+		// 경로→텍스처 정적 캐시. 이펙트 바는 0.08s마다 활성 효과마다 아이콘을
+		// 조회하므로 매번 ResourceLoader.Exists(파일시스템 syscall)를 타지 않게
+		// 한 번 해석한 결과를 보관(없는 경로는 null로 캐시해 재조회 방지). 아이콘
+		// 경로 집합은 고정이라 캐시 무효화 불필요.
+		private static readonly System.Collections.Generic.Dictionary<string, Texture2D> _iconCache = new();
+
+		private static Texture2D ResolveIcon(string path)
+		{
+			if (string.IsNullOrEmpty(path)) return null;
+			if (_iconCache.TryGetValue(path, out var tex)) return tex;
+			tex = ResourceLoader.Exists(path) ? GD.Load<Texture2D>(path) : null;
+			_iconCache[path] = tex;
+			return tex;
+		}
+
 		private static Texture2D LoadBuffIcon(string id)
 		{
 			if (!_buffIconPaths.TryGetValue(id, out var path)) return null;
-			return ResourceLoader.Exists(path) ? GD.Load<Texture2D>(path) : null;
+			return ResolveIcon(path);
 		}
 
 		private static readonly System.Collections.Generic.Dictionary<FirstGame.Data.StatusEffect, string> _statusIconPaths = new()
@@ -327,7 +342,7 @@ namespace FirstGame.UI
 		private static Texture2D LoadStatusIcon(FirstGame.Data.StatusEffect kind)
 		{
 			if (!_statusIconPaths.TryGetValue(kind, out var path)) return null;
-			return ResourceLoader.Exists(path) ? GD.Load<Texture2D>(path) : null;
+			return ResolveIcon(path);
 		}
 
 		private void BindPlayer()

@@ -44,18 +44,31 @@ namespace FirstGame.Data
 			{ "mine_3", "수정 광산 · 크리스탈 로드" },
 		};
 
-		// scenePathOrName: "res://Scenes/Maps/mine_3.tscn" 또는 "mine_3" 모두 허용.
-		public static string Get(string scenePathOrName)
+		private static string ToKey(string scenePathOrName)
 		{
-			if (string.IsNullOrEmpty(scenePathOrName)) return "";
 			string key = scenePathOrName;
 			int slash = key.LastIndexOf('/');
 			if (slash >= 0) key = key.Substring(slash + 1);
 			if (key.EndsWith(".tscn")) key = key.Substring(0, key.Length - 5);
+			return key;
+		}
 
+		// scenePathOrName: "res://Scenes/Maps/mine_3.tscn" 또는 "mine_3" 모두 허용.
+		public static string Get(string scenePathOrName)
+		{
+			if (string.IsNullOrEmpty(scenePathOrName)) return "";
+			string key = ToKey(scenePathOrName);
 			if (_names.TryGetValue(key, out var n)) return n;
 			// 폴백: snake_case → "Snake Case"
 			return key.Replace('_', ' ').Trim();
+		}
+
+		// 명시 한글 이름이 등록돼 있는지(폴백이 아닌지). 신규 맵 추가 시
+		// 누락을 단위테스트로 잡기 위한 조회 경로.
+		public static bool IsRegistered(string scenePathOrName)
+		{
+			if (string.IsNullOrEmpty(scenePathOrName)) return false;
+			return _names.ContainsKey(ToKey(scenePathOrName));
 		}
 	}
 }

@@ -93,3 +93,33 @@ dungeon_3 skel_warrior + mage + rogue (==d2)   →  abyss_wraith + shadow_assass
 - ~~`EnemySpawner.StatVariants`는 균등 랜덤 — 가중치 미지원.~~ **(해결됨, v3 2026-05-16)** `EnemySpawner.StatWeights : float[]` 가중치 스폰 도입. `StatWeights`가 `StatVariants`와 길이가 같고 합>0이면 룰렛 선택, 아니면 균등 fallback. 18개 사냥터에 신규 테마 적이 희귀 가중치(0.25~0.4)로 배치됨. 상세 `PLAN_DOC/regional-weather-hunting-v3.md`. validate.py R3가 길이·합 검사.
 - mine_* 적 8종 중 mine_2에 실제 배치된 건 3종(skeleton_miner / cave_bat / rock_golem). 나머지 5종(zombie_basic/fast/armored/brute, mine_wraith)은 리소스 + PNG만 등록되어 있고 맵 EnemySpawner에는 미배치 상태. 광산 적 등록 PR이 mine_1 / mine_2에 가중치를 분배할 때 함께 처리한다.
 - EnemyStats에 `SpriteScale` + `CollisionScale` Export가 추가됐다. 시각은 `_animSprite.Scale`로, 충돌은 `CollisionShape2D.Scale`로 각각 적용 — 둘 다 root `CharacterBody2D.Scale` 비점유라 EnemySpawner elite scale(1.25)과 독립적으로 작동. mine_* 8종에 시각의 ~50% 비례로 CollisionScale 설정(예: rock_golem SpriteScale 0.55 / CollisionScale 2.5). 게임 디자인상 정확한 매칭 값은 플레이테스트 후 미세 조정 필요.
+
+## 권역별 파밍 목적 (실제 데이터 기준, 2026-05-19)
+
+각 권역 사냥터의 **파밍 동기**. 수치는 실제 `Resources/Enemies/*.tres`의
+`RegionDrop` ExtResource + `RegionDropChance`를 직접 파싱해 확정(문서-데이터
+정합 통과). RegionDrop은 PossibleDrops와 **독립 굴림**이라 핵심 드랍 확률을
+희석하지 않는다(가산형) — EnemyController 비보스 분기에서 별도 `GD.Randf()`.
+
+| 권역 | 사냥터 | 테마 재료(RegionDrop) | 확률 | 부가 목적 |
+|---|---|---|---|---|
+| town_region | field_1, dungeon_1 | **orc_leather** | 0.06 | 초반 골드/EXP, iron_ore 채광(town_mine 계약) |
+| outpost_region | field_2/3, dungeon_2/3 | **bone_dust** | 0.04 | 중반 성장, silver_ore 채광(outpost 계약), 스토리 보스 1회 현상금 |
+| coast_region | field_4_harbor, dungeon_4 | **sapphire_ore** | 0.03 | 해안 장신구 재료, 크라켄 반복 보스 파밍 |
+| mountain_region | field_5_snowfield | **glacier_shard** | 0.02 | 빙결 장비 재료, 글래시어 타이탄 반복 |
+| mountain_region | field_6_volcano | **drake_scale** | 0.02 | 화염 장비 재료, 인페르노 드레이크 반복 |
+| (광산) | mine_1/2 | iron_ore·silver_ore | 0.05 | 저층 채광·금속 |
+| (광산) | mine_3 | **crystal_ore** | 0.02 | 최상위 강화/재련 재료, 크리스탈 로드 반복 |
+
+- **확률 차등화 근거**: 4개 권역이 단조 그라데이션(0.06 > 0.04 > 0.03 >
+  0.02) — 이른 권역일수록 테마 재료가 흔하고 후반 권역일수록 희소.
+  이전엔 town/outpost가 둘 다 0.05라 "권역이 같은 느낌"이었던 것을
+  교정(작업 7). coast/mountain/mine은 기존 티어 유지.
+- **문서↔데이터 정합 메모**: 기존 기획 위시리스트의 "해안 kelp" 표현과
+  달리 **coast RegionDrop은 sapphire_ore**가 실제 데이터다. `sea_kelp.tres`는
+  존재하지만 일부 해안 적의 일반 드랍 테이블 재료이지 RegionDrop이 아니다
+  (field4_reef_raider / field4_storm_siren의 RegionDrop id=rgd1 →
+  sapphire_ore로 확인). 문서를 실제 데이터에 맞춰 기술함.
+- **named/boss 예외**: field5 글래시어 타이탄 → titan_core, field6
+  인페르노 드레이크 → drake_eye 등 네임드는 전용 재료(RegionDropChance
+  미설정 — 보스 드랍 테이블로 별도 지급).
