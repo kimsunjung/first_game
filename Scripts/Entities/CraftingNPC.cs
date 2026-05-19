@@ -13,6 +13,7 @@ namespace FirstGame.Entities
 		{
 			if (UIPauseManager.IsPaused) return;
 			if (TryOpenQuestDialog()) return;
+			if (!CheckLevelGate(FirstGame.Data.FeatureGates.Crafting, CraftTitle)) return;
 			var ui = GetNodeOrNull<CraftingUI>("CraftingUI");
 			if (ui != null) ui.OpenCrafting(CraftTitle);
 			else GD.PrintErr("CraftingNPC: CraftingUI 노드를 찾을 수 없습니다.");

@@ -158,7 +158,8 @@ namespace FirstGame.Core
 			AtkMultiplier = GetFloat(el, "atkMul", 1.5f),
 			ExpMultiplier = GetFloat(el, "expMul", 2.5f),
 			DropMultiplier = GetFloat(el, "dropMul", 1.5f),
-			ScaleMultiplier = GetFloat(el, "scaleMul", 1.25f)
+			ScaleMultiplier = GetFloat(el, "scaleMul", 1.25f),
+			MinPlayerLevel = GetInt(el, "minPlayerLevel", 5)
 		};
 
 		private static ProgressionBalance ParseProgression(JsonElement el) => new()
@@ -247,6 +248,9 @@ namespace FirstGame.Core
 		public float ExpMultiplier { get; set; } = 2.5f;
 		public float DropMultiplier { get; set; } = 1.5f;
 		public float ScaleMultiplier { get; set; } = 1.25f;
+		// 엘리트/희귀 변종 등장 글로벌 최소 플레이어 레벨. 실제 게이트는
+		// max(MinPlayerLevel, 해당 zone 권장레벨)로 EnemySpawner가 계산.
+		public int MinPlayerLevel { get; set; } = 5;
 	}
 
 	public class ProgressionBalance

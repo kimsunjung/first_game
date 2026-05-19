@@ -123,3 +123,44 @@ dungeon_3 skel_warrior + mage + rogue (==d2)   →  abyss_wraith + shadow_assass
 - **named/boss 예외**: field5 글래시어 타이탄 → titan_core, field6
   인페르노 드레이크 → drake_eye 등 네임드는 전용 재료(RegionDropChance
   미설정 — 보스 드랍 테이블로 별도 지급).
+
+---
+
+## v3 진행 게이트 (2026-05-19, Regional Hunting Identity v3 작업)
+
+초반 정보량·난이도 폭주 완화. 모두 `PlayerStats.Level` 기준 — **SaveData 변경 없음**.
+
+### 기능 해금 게이트 (`Scripts/Data/FeatureGates.cs`, NPC 진입 단계 차단 + HUD 토스트)
+| 기능 | 게이트 | 근거 |
+|---|---|---|
+| 공유 창고 | Lv.1 (실질 무게이트) | 파밍 게임 기본 편의 |
+| 사냥 계약 보드 | Lv.3 | 사냥 동선 핵심이라 낮게 |
+| 제작대 | Lv.5 | 재료 개념 첫 복잡 기능 |
+| 장신구 재련 | Lv.10 | affix 등 정보량 최대 후반 준비 |
+| 재료 상점(town) | Lv.5 | `ShopNPC.MinPlayerLevel`(material_shop_npc.tscn). 광물=제작과 동일 티어 |
+| 스킬 상점 town | Lv.0 | 기본기/초급 |
+| 스킬 상점 field_outpost | Lv.8 | `.tscn` SkillShopNPC.MinPlayerLevel |
+| 스킬 상점 harbor_village | Lv.8 | 〃 |
+| 스킬 상점 mountain_refuge | Lv.12 | 고급/후반 스킬 |
+
+차단 메시지: `"{기능}은(는) Lv.{N}부터 이용할 수 있습니다. (현재 Lv.{cur})"`.
+구현: `BaseInteractable.CheckLevelGate()` 공용 헬퍼 — 각 NPC `OnInteract()`가
+`TryOpenQuestDialog()` 뒤·UI open 앞에서 호출(퀘스트 turn-in과 비충돌).
+
+### 엘리트/희귀 변종 등장 게이트 (`EnemySpawner.CanSpawnElite()`)
+- 게이트 = `max(elite.minPlayerLevel, MapLevels.Get(zone))`.
+- `game_balance.json elite.minPlayerLevel = 5` (글로벌 플로어, 중앙화).
+- **희귀 변종(v3 테마 적)도 동일 게이트로 차단**: `EnemyStats.IsRareVariant`
+  표식(테마 .tres 12종 = field1_mist_spider/grove_spirit, field2_fog_wraith,
+  field3_ruin_sentinel, field4_reef_raider/storm_siren, field5_blizzard_witch/
+  frostbound_bear, field6_ash_imp/cinder_salamander, mine3_crystal_shocker,
+  dungeon4_tide_lurker). 게이트 미통과 시 `PickVariantIndex(allowRare=false)`가
+  해당 슬롯을 룰렛에서 제외(가중치 0 취급), 후보가 전부 희귀면 소프트락 방지
+  폴백으로 전체 선택. 이전엔 엘리트 affix만 막혀 town_outskirts(StatWeights
+  0.4 mist_spider)가 Lv.1부터 등장하던 갭 교정(Codex P1).
+- 효과: town_outskirts/field_1/green_meadow 등 초반(zone 1~2)은 **플레이어
+  Lv.5 전 엘리트 0%**. outpost↑는 zone 권장레벨이 플로어를 넘어 자연 상승
+  (field_2=6, field_3=10, coast=11~14, mountain=15~18).
+- **보스 무관**: `BossStatVariant`/`BossId`/`RepeatableBoss` 흐름은 불변.
+  네임드 보스는 던전/보스 씬 도달 자체가 포탈 권장레벨 게이트 역할.
+- xUnit `FeatureGateTests` 13종이 게이트 단조성·zone별 계산을 회귀 검증.

@@ -13,6 +13,7 @@ namespace FirstGame.Entities
 		{
 			if (UIPauseManager.IsPaused) return;
 			if (TryOpenQuestDialog()) return;
+			if (!CheckLevelGate(FirstGame.Data.FeatureGates.Reforge, ReforgeTitle)) return;
 			var ui = GetNodeOrNull<ReforgeUI>("ReforgeUI");
 			if (ui != null) ui.OpenReforge(ReforgeTitle);
 			else GD.PrintErr("ReforgeNPC: ReforgeUI 노드를 찾을 수 없습니다.");

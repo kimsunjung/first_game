@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/orc_leather.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
+IsRareVariant = true
 MoveSpeed = 55
 DetectionRange = 260
 AttackRange = 230

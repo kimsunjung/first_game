@@ -159,6 +159,24 @@ namespace FirstGame.Entities
 		protected virtual void OnPlayerExited(Node2D player) { }
 
 		/// <summary>
+		/// 기능 해금 레벨 게이트. 플레이어 레벨이 requiredLevel 미만이면
+		/// HUD 안내 토스트를 띄우고 false를 반환(호출부에서 UI 진입 차단).
+		/// requiredLevel <= 1 이면 항상 통과(게이트 없음).
+		/// </summary>
+		protected bool CheckLevelGate(int requiredLevel, string featureName)
+		{
+			if (requiredLevel <= 1) return true;
+			int level = FirstGame.Core.GameManager.Instance?.Player?.Stats?.Level ?? 1;
+			if (level >= requiredLevel) return true;
+
+			string msg = FirstGame.Data.FeatureGates.LockMessage(featureName, requiredLevel, level);
+			var hud = GetTree()?.CurrentScene?.GetNodeOrNull<FirstGame.UI.HUD>("HUD");
+			if (hud != null) hud.ShowNpcDialogue(string.IsNullOrEmpty(NpcId) ? "gate" : NpcId, msg);
+			else GD.Print($"[FeatureGate] {msg}");
+			return false;
+		}
+
+		/// <summary>
 		/// NPC가 지금 처리할 퀘스트 액션이 있으면 QuestDialog를 열고 true 반환.
 		/// 단순 진행 중 안내나 Deliver 대상 방문은 NPC 본 UI(상점/스킬샵/대장간)를 막지 않는다.
 		/// </summary>

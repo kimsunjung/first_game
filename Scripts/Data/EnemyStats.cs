@@ -28,6 +28,10 @@ namespace FirstGame.Data
 		// ─── 식별 및 보스 설정 ──────────────────────────────────────
 		[Export] public string EnemyTypeName { get; set; } = "Orc";
 		[Export] public bool IsBoss { get; set; } = false;
+		// 희귀/테마(v3) 변종 표식. true면 EnemySpawner가 진행 게이트
+		// (max(elite.minPlayerLevel, zone 권장레벨)) 미만에서 스폰 후보에서 제외.
+		// 초반 시작 직후 희귀/신규 변종 조우 방지. 기본 false라 기존 적 영향 없음.
+		[Export] public bool IsRareVariant { get; set; } = false;
 
 		// ─── 스프라이트 설정 (Kenney 타일맵 좌표) ────────────────────
 		[ExportGroup("Sprite")]

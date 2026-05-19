@@ -5,6 +5,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/prismatic_crystal.tres" id="4_d"]
 [resource]
 script = ExtResource("1")
+IsRareVariant = true
 MoveSpeed = 50
 DetectionRange = 260
 AttackRange = 230

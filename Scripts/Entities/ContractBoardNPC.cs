@@ -14,6 +14,7 @@ namespace FirstGame.Entities
 		protected override void OnInteract()
 		{
 			if (UIPauseManager.IsPaused) return;
+			if (!CheckLevelGate(FirstGame.Data.FeatureGates.Contract, BoardTitle)) return;
 			var ui = GetNodeOrNull<ContractBoardUI>("ContractBoardUI");
 			if (ui != null) ui.OpenBoard(Region, BoardTitle);
 			else GD.PrintErr("ContractBoardNPC: ContractBoardUI 노드를 찾을 수 없습니다.");

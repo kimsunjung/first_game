@@ -5,6 +5,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/defrost_potion.tres" id="4_d"]
 [resource]
 script = ExtResource("1")
+IsRareVariant = true
 MoveSpeed = 52
 DetectionRange = 280
 AttackRange = 240

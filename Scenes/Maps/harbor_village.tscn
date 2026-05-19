@@ -150,6 +150,7 @@ NpcId = "reforge_station"
 [node name="HarborSkillNPC" parent="." instance=ExtResource("12_skillnpc")]
 position = Vector2(500, 90)
 NpcId = "harbor_skill_shop"
+MinPlayerLevel = 8
 
 [node name="SkillShopUI" parent="HarborSkillNPC" instance=ExtResource("13_skillshopUI")]
 SkillBooks = Array[Resource]([ExtResource("30_skb_prc"), ExtResource("31_skb_bk"), ExtResource("32_skb_rain"), ExtResource("33_skb_hnt"), ExtResource("34_skb_fnova"), ExtResource("nsb_quake"), ExtResource("nsb_holy"), ExtResource("nsb_ldrain")])

@@ -9,6 +9,9 @@ namespace FirstGame.Entities.Shop
     {
         [Export] public ItemData[] ShopItems { get; set; }
         [Export] public string ShopName { get; set; } = "상점";
+        // 0 = 게이트 없음(여행상인 등 기본 상점). 재료/광산 상점은 .tscn에서
+        // Lv.5 지정(초반 정보량 완화 — material_shop_npc.tscn).
+        [Export] public int MinPlayerLevel { get; set; } = 0;
 
         protected override void OnInteract()
         {
@@ -17,6 +20,7 @@ namespace FirstGame.Entities.Shop
 
             // 퀘스트 부여/진행/완료가 가능하면 다이얼로그 우선
             if (TryOpenQuestDialog()) return;
+            if (!CheckLevelGate(MinPlayerLevel, ShopName)) return;
 
             var shopUI = GetNodeOrNull<ShopUI>("ShopUI");
             if (shopUI != null)

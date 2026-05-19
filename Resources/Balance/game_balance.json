@@ -88,7 +88,8 @@
     "atkMul": 1.5,
     "expMul": 2.5,
     "dropMul": 1.5,
-    "scaleMul": 1.25
+    "scaleMul": 1.25,
+    "minPlayerLevel": 5
   },
   "progression": {
     "maxLevel": 50,

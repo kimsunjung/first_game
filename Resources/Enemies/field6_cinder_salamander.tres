@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/drake_scale.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
+IsRareVariant = true
 MoveSpeed = 100
 DetectionRange = 210
 AttackRange = 42

@@ -144,6 +144,7 @@ NpcId = "reforge_station"
 [node name="MountainSkillNPC" parent="." instance=ExtResource("12_skillnpc")]
 position = Vector2(500, 90)
 NpcId = "mountain_skill_shop"
+MinPlayerLevel = 12
 
 [node name="SkillShopUI" parent="MountainSkillNPC" instance=ExtResource("13_skillshopUI")]
 SkillBooks = Array[Resource]([ExtResource("30_skb_fwave"), ExtResource("31_skb_mshld"), ExtResource("32_skb_arc"), ExtResource("33_skb_exec"), ExtResource("nsb_chain"), ExtResource("nsb_clight")])

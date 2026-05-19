@@ -21,6 +21,7 @@ script = ExtResource("1_shop")
 PromptIcon = ExtResource("prompt_icon")
 ShopItems = Array[Resource]([ExtResource("5_copper"), ExtResource("2_iron"), ExtResource("3_silver"), ExtResource("4_gold")])
 ShopName = "재료 상점"
+MinPlayerLevel = 5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_matshop")

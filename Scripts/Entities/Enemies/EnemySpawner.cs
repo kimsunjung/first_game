@@ -173,11 +173,14 @@ namespace FirstGame.Entities.Enemies
 				EliteAffixUtil.AffixParams affixParams = default;
 				if (StatVariants != null && StatVariants.Length > 0)
 				{
-					int idx = PickVariantIndex();
+					// 진행 게이트: 미통과면 희귀(IsRareVariant) 변종 + 엘리트 affix
+					// 모두 차단(초반 시작 직후 희귀/네임드 조우 방지).
+					bool rareOrEliteAllowed = CanSpawnElite();
+					int idx = PickVariantIndex(rareOrEliteAllowed);
 					var scaled = (EnemyStats)StatVariants[idx].Duplicate();
 					ApplyZoneScaling(scaled);
 
-					isElite = GD.Randf() < BalanceData.Elite.SpawnChance;
+					isElite = rareOrEliteAllowed && GD.Randf() < BalanceData.Elite.SpawnChance;
 					if (isElite)
 					{
 						affix = EliteAffixUtil.RollRandom();
@@ -211,27 +214,63 @@ namespace FirstGame.Entities.Enemies
 		}
 
 		// 가중치 룰렛으로 StatVariants 인덱스 선택. 조건 불충족 시 균등 랜덤 fallback.
-		private int PickVariantIndex()
+		// allowRare=false면 IsRareVariant 슬롯을 후보에서 제외(진행 게이트 미통과).
+		// 단, 후보가 전부 희귀면 소프트락 방지를 위해 게이트를 무시하고 전체에서 선택.
+		private int PickVariantIndex(bool allowRare)
 		{
 			int n = StatVariants.Length;
+			bool Excluded(int i) => !allowRare
+				&& StatVariants[i] != null && StatVariants[i].IsRareVariant;
+
+			// 게이트 적용 시 비희귀 후보가 하나라도 있는지 확인.
+			bool anyNonRare = false;
+			if (!allowRare)
+			{
+				for (int i = 0; i < n; i++)
+					if (!Excluded(i)) { anyNonRare = true; break; }
+			}
+			bool gate = !allowRare && anyNonRare; // 실제로 제외를 적용할지
+
+			// 가중치 미설정/불일치 → 균등 선택(허용 후보 한정).
 			if (StatWeights == null || StatWeights.Length != n)
-				return (int)(GD.Randi() % (uint)n);
+			{
+				if (!gate) return (int)(GD.Randi() % (uint)n);
+				int count = 0;
+				for (int i = 0; i < n; i++) if (!Excluded(i)) count++;
+				int pick = (int)(GD.Randi() % (uint)count);
+				for (int i = 0; i < n; i++)
+					if (!Excluded(i) && pick-- == 0) return i;
+				return 0;
+			}
+
 			float total = 0f;
 			int lastPositive = -1;
 			for (int i = 0; i < n; i++)
 			{
+				if (gate && Excluded(i)) continue;
 				if (StatWeights[i] > 0f) { total += StatWeights[i]; lastPositive = i; }
 			}
 			if (total <= 0f || lastPositive < 0)
-				return (int)(GD.Randi() % (uint)n);
+			{
+				// 허용 후보 가중치가 전부 0 → 허용 후보 중 균등(없으면 전체 균등).
+				if (!gate) return (int)(GD.Randi() % (uint)n);
+				int count = 0;
+				for (int i = 0; i < n; i++) if (!Excluded(i)) count++;
+				if (count == 0) return (int)(GD.Randi() % (uint)n);
+				int pick = (int)(GD.Randi() % (uint)count);
+				for (int i = 0; i < n; i++)
+					if (!Excluded(i) && pick-- == 0) return i;
+				return 0;
+			}
 			float roll = (float)GD.RandRange(0.0, total);
 			float cumulative = 0f;
 			for (int i = 0; i < n; i++)
 			{
+				if (gate && Excluded(i)) continue;
 				cumulative += StatWeights[i] > 0f ? StatWeights[i] : 0f;
 				if (roll < cumulative) return i;
 			}
-			// roll==total 경계 — n-1이 가중치 0일 수 있으므로 양수 가중치 마지막 인덱스 반환.
+			// roll==total 경계 — 양수 가중치 마지막(허용) 인덱스 반환.
 			return lastPositive;
 		}
 
@@ -309,6 +348,18 @@ namespace FirstGame.Entities.Enemies
 			stats.CurrentHealth = stats.MaxHealth;
 			stats.BaseDamage = Mathf.Max(1, Mathf.RoundToInt(stats.BaseDamage * zone.AtkMultiplier));
 			stats.ExperienceReward = Mathf.RoundToInt(stats.ExperienceReward * zone.ExpMultiplier);
+		}
+
+		// 엘리트/희귀 변종 등장 게이트: 플레이어 레벨이
+		// max(elite.minPlayerLevel, 해당 zone 권장레벨) 이상이어야 등장.
+		// 초반 필드(town_outskirts/field_1 등)에서 시작 직후 엘리트가 튀어나오는
+		// 난이도 폭주를 차단. 보스(BossStatVariant) 흐름과는 무관.
+		private bool CanSpawnElite()
+		{
+			int gate = Mathf.Max(BalanceData.Elite.MinPlayerLevel,
+				FirstGame.Data.MapLevels.Get(GetCurrentZoneName()));
+			int level = GameManager.Instance?.Player?.Stats?.Level ?? 1;
+			return level >= gate;
 		}
 
 		private string GetCurrentZoneName()

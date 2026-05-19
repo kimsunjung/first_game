@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://Resources/Items/bone_dust.tres" id="rgd1"]
 [resource]
 script = ExtResource("1")
+IsRareVariant = true
 MoveSpeed = 32
 DetectionRange = 200
 AttackRange = 44

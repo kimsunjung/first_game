@@ -13,6 +13,7 @@ namespace FirstGame.Entities
 		{
 			if (UIPauseManager.IsPaused) return;
 			if (TryOpenQuestDialog()) return;
+			if (!CheckLevelGate(FirstGame.Data.FeatureGates.Storage, StorageTitle)) return;
 			var ui = GetNodeOrNull<StorageUI>("StorageUI");
 			if (ui != null) ui.OpenStorage(StorageTitle);
 			else GD.PrintErr("StorageNPC: StorageUI 노드를 찾을 수 없습니다.");

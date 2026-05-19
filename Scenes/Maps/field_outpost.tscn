@@ -107,6 +107,7 @@ NpcId = "reforge_station"
 [node name="OutpostSkillNPC" parent="." instance=ExtResource("30_skillnpc")]
 position = Vector2(420, 100)
 NpcId = "outpost_skill_shop"
+MinPlayerLevel = 8
 
 [node name="SkillShopUI" parent="OutpostSkillNPC" instance=ExtResource("31_skillshopUI")]
 SkillBooks = Array[Resource]([ExtResource("40_skb_cleave"), ExtResource("41_skb_whirl"), ExtResource("42_skb_gslam"), ExtResource("43_skb_btlcry"), ExtResource("44_skb_lstorm"), ExtResource("45_skb_paim"), ExtResource("46_skb_lifest"), ExtResource("nsb_sund"), ExtResource("nsb_fvol")])

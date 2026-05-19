@@ -27,6 +27,8 @@
     <Compile Include="../../Scripts/Data/ElementType.cs" />
     <Compile Include="../../Scripts/Data/ContractData.cs" />
     <Compile Include="../../Scripts/Data/MapNames.cs" />
+    <Compile Include="../../Scripts/Data/MapLevels.cs" />
+    <Compile Include="../../Scripts/Data/FeatureGates.cs" />
     <Compile Include="**/*Tests.cs" />
   </ItemGroup>
 
