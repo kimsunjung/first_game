@@ -54,6 +54,9 @@
 - Enemies: `Scripts/Entities/Enemies/EnemyController.cs`, `EnemySpawner.cs`, `EnemyProjectile.cs`
 - Regional weather (v3): `Scripts/Maps/BiomeWeatherController.cs` — per-scene Node2D, code overlay/particles + low-rate hazard via `Stats.ApplyStatus`. No PNG, no save state.
 - Status resist: `CharacterStats.StatusResist` is a **raw accumulator** (equip + buff summed, no clamp on the stored value); `PlayerStats.ModifyStatusResist` just does `+= delta`. The 0~0.85 immunity cap is applied **only at use** in `CharacterStats.ApplyStatus` (so buff expiry can't erode equip resist). `ItemData.BonusStatusResist` (equip) / `BuffStatusResist` (consumable Buff, `ApplyBuffEx` optional arg).
+- Regional shop v2: all 4 hubs have distinct `ShopItems`. `town` carries 14 basic items; `field_outpost`, `harbor_village`, and `mountain_refuge` carry region-specific stock. `IsShopBlocked=true` and `Price<=0` items must not appear in regional shops; `winter_bow`/`phoenix_bow` are mountain stock. `ShopUI.cs` class filtering applies to Weapon, Armor, and Accessory.
+- Portal/world integration v2: 75 portals audited. The outpost-west-of-town cosmology mirror is fixed; use `PLAN_DOC/world-map-layout-v2.md` for current portal topology. `Portal.OnInteract()` is interact-action driven (`[F]`/mobile interact through `BaseInteractable._UnhandledInput`), not proximity auto-triggered.
+- Economy crafting rules: `recipes.json` includes town early recipes such as `town_leather_armor` and `town_field_remedy`. Recipe outputs must not create sell-price arbitrage: `result.SellPrice * qty <= gold + sum(material.SellPrice * qty)`; missing SellPrice is treated as 0 by validation.
 - Hub loop v1 (2026-05-18, see `PLAN_DOC/hub-preparation-loop-v1.md`):
   - **Storage**: `SaveData.StorageItems` (v12, backfill in `MigrateSaveData` v11→12), `GameManager._storage`/`RestoreStorage`/`AddStorageSlot`/`RemoveStorageAt`, `StorageUI.cs`/`storage_ui.tscn`, `StorageNPC.cs`/`storage_npc.tscn` (town). Deposit/Withdraw via `GameTransaction` + explicit SaveGame; equipped slots never storable (3-guarded).
   - **Crafting**: `Resources/Recipes/recipes.json` + `CraftingData.cs` loader, `CraftingUI.cs`/`crafting_ui.tscn`, `CraftingNPC.cs`/`crafting_npc.tscn`. Deterministic (no RNG/destroy); transactional consume+gold+result.
@@ -75,6 +78,7 @@
   - **Claude review hardening v2 (2026-05-18, DONE — see hub-preparation-loop-v1.md)**: [F1] `outpost_kill_skeleton` target `Skeleton`→`SkeletonWanderer` (only scene-spawned EnemyTypeName); validate R10 now derives valid Kill targets from scene-referenced enemy resources only. [F2] BossKill on non-repeatable already-defeated boss = unobtainable → `CanAccept`/`AvailableForRegion` reject + `RestoreFromSave` drops it (TurnInReady kept). [F3] `Advance()` calls `RequestAutoSave()` so gather/kill/mine progress isn't lost to inventory-autosave ordering. [F4] `StartLightningStorm` now carries element+status; storm tick applies `ApplyStatusEffect` (Chain Bolt Shock works; `lightning_storm` None = unchanged). [F5] reverted in-table weight appends → independent RegionDrop roll above.
   - **Claude adversarial hardening v3 (2026-05-18, DONE)**: F3 escalated — Gather progress now does immediate `SaveGame()` (others stay `RequestAutoSave`, intentionally autosave-grade). F2 decoupled — boss-contract pruning moved out of `RestoreFromSave` into `HuntingContractManager.PruneUnobtainable()`, called once at end of `PlayerController.LoadFromSaveData` (no restore-order dependency). F5 economy — `RegionDropChance` 0.1→0.05 across 60 .tres to match old in-table effective rate (~3–5%/kill); rationale in `EnemyStats`. validate R10 adds `_collect_mining_ore_paths()` so Mining `targetOreItemPath` must be an ore some scene `MiningNode` actually mines (symmetry with strengthened Kill check). HUD throttle 0.15→0.08. LightningStorm single-instance constraint documented in code. **2 genuinely-new mechanic skills (dedicated strategies, not delegation)**: `ChainLightning` (SkillType 35, enemy→adjacent bounce ×5, 20% falloff/jump) and `LifeDrain` (36, single hit + heal 1/3 of damage) using only existing ISkillTarget surface; `.tres`+skillbooks in mountain/harbor shops. Residual (honest): non-Gather progress keeps game-wide autosave durability; v2 8 skills remain reskins (only v3's 2 are new mechanics).
   - **7-agent adversarial hardening v4 (2026-05-19, DONE)**: Closed two economy ship-blockers. **Gather = Option A**: `NotifyItemAcquired` now sets progress from *current inventory count* (not accumulate); `Complete()` for Gather re-validates `HasItems` and `ConsumeItems(Goal)` inside the transaction (insufficient → fail + recompute). Kills the buy/rebuy + mining-double-feed + amount-undercount infinite-money exploit. **enhance_stone** (Price=0 gated currency) removed from all repeatable contracts (gold compensated), kept only on one-time non-repeatable boss bounty qty1; `balance.py` **B5** makes any repeatable contract granting enhance_stone a hard error. `SaveManager.SaveGame()` now also defers when `_autoSaveSuspendCount>0` (no mid-transaction disk write). `BackfillRegionFlagsV13` runs unconditionally (idempotent; fixes pre-fix v13 local saves — Codex P3). `Accept` → immediate `SaveGame()` (Codex P3, consistency). New skill resources git-added (Codex P1). `RegionDropChance` tiered: common 0.05 / sapphire 0.03 / upgrade-tier drake_scale·glacier_shard·crystal_ore 0.02 (EnemyStats comment corrected — it is NOT old-rate-neutral, it's a DropChance-independent faucet). `ChainLightning` pool widened to `range+maxJumps*jumpRange`. Contract boards moved off hub center axis (field_outpost 520,150 / harbor·mountain 420,140). HUD: popup outside-tap dismiss + rebuild only on active-set signature change; minimap auto-hidden on single-screen hubs (≤760×440). validate **R13** (skill .tres Type global-unique + chain_lightning=35/life_drain=36) and **R14** (RepeatableBossIds set must equal scene RepeatableBoss=true BossIds) + R6/R10 ItemData script_class checks for RegionDrop/contract reward·target.
+  - **Boss farming v2**: repeatable boss contract coverage is required for `kraken_d4`, `glacier_titan_f5`, `inferno_drake_f6`, and `crystal_lord_m3`. Mountain BossKill contracts are repeatable, gold/EXP only, and B5-safe.
 - Inventory/equipment/affix: `Scripts/Data/Inventory.cs`, `AffixGenerator.cs`, `ItemData.cs`
 - Quests: `Scripts/Core/QuestManager.cs`, `Scripts/Data/QuestData.cs`
 - Mobile controls: `Scripts/UI/MobileControls.cs`, `VirtualJoystick.cs`, `VirtualInput.cs`
@@ -91,6 +95,7 @@
 
 ## Current Review Hotspots
 - Large Claude scene-generation batches need path/export checks: `TargetScenePath`, `StatVariants`, `MaxEnemies`, `SpawnRadius`, `BossStatVariant`, `BossId`, `ShopItems`, `SkillBooks`, save points, and spawn positions.
+- Portal checks: portal proximity warnings do **not** imply automatic ping-pong because portals require interact input. R17 currently has 0 errors / 9 warnings; warnings are acceptable but should be reviewed when touching portal spawn positions.
 - `EnemySpawner` uses `StatVariants`, `StatWeights` (v3, optional weighted spawn), `SpawnInterval`, `MaxEnemies`, `SpawnRadius`, `SpawnAroundPlayer`, `MinSpawnDistance`, `BossStatVariant`, and `BossId`. Old scene properties such as `EnemyStatsList`, `SpawnCount`, `SpawnAreaSize`, and `SpawnAreaOffset` should not be used.
 - v3 weather/spawn: see `PLAN_DOC/regional-weather-hunting-v3.md`. New themed enemies/consumables reuse existing PNG/icons temporarily (recorded there, not in generated-asset-inventory). `StatWeights` must match `StatVariants` length with sum > 0 or it falls back to uniform. Hub scenes must not get hazard weather.
 - If status effects are touched, check both melee and ranged paths. Ranged enemies need status data passed through `EnemyProjectile`; player skills need explicit status application if the design says they inflict Freeze/Burn/Curse/etc.
@@ -115,10 +120,23 @@
 
 ## Validation
 - For code changes, run:
-  - `python3 tools/validate/validate.py` and `python3 tools/validate/balance.py` (CI gates; validate.py R3 checks `StatWeights` length==`StatVariants` and sum>0)
+  - `python3 tools/validate/validate.py` and `python3 tools/validate/balance.py` (CI gates; validate.py R17 warnings and balance warnings are acceptable when exit code is 0)
   - `dotnet build first_game.csproj -c Debug --nologo`
   - `dotnet test tools/Tests/FirstGame.Tests.csproj --nologo`
   - `git diff --check`
+- Key validation coverage:
+  - `validate.py` R3: `StatWeights` length matches `StatVariants` and sum > 0.
+  - `validate.py` R9: `recipes.json` ids/paths/qty/gold/material type integrity.
+  - `validate.py` R10: contract targets resolve to scene-spawned enemies or mined ore paths.
+  - `validate.py` R13: skill `.tres` Type values are globally unique, including ChainLightning=35 and LifeDrain=36.
+  - `validate.py` R14: repeatable boss ids match scene `RepeatableBoss=true` BossIds.
+  - `validate.py` R16: `ShopItems` listing integrity; `IsShopBlocked=true`, `Price<=0`, or missing Price items are banned.
+  - `validate.py` R17: portal `TargetSpawnPosition` near non-reciprocal target portals is error under 50px, warning at 50-150px.
+  - `validate.py` R18: recipe sell-price arbitrage prevention.
+  - `validate.py` R19: every repeatable boss has at least one BossKill contract.
+  - `balance.py` B5: repeatable contracts cannot reward `enhance_stone`.
+  - `balance.py` B6: repeatable-contract total reward value per level is capped/warned.
+  - xUnit currently has 44 tests, including regional contract coverage, repeatable boss contract coverage, and repeatable reward cap checks.
 - For scene/world changes, also verify:
   - all new `.tscn` files exist and are not empty placeholder-only scenes
   - all `TargetScenePath` values point to existing scenes
@@ -141,3 +159,8 @@
   - `PLAN_DOC/generated-asset-inventory.md`
   - `PLAN_DOC/enemy-zone-plan.md`
   - `PLAN_DOC/mobile-checklist.md`
+  - `PLAN_DOC/world-map-layout-v2.md`
+  - `PLAN_DOC/boss-farming-v2.md`
+  - `PLAN_DOC/mining-loop-v2.md`
+  - `PLAN_DOC/hunting-journal-v1.md` (design-only; Phase 1-3 deferred, not a compendium)
+  - `PLAN_DOC/economy-balance-rules-v1.md`
