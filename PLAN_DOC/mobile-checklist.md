@@ -158,6 +158,15 @@ Godot 에디터에서 **순서대로** 한 번 밟아야 하는 항목. 한 줄 
 - [ ] 마운틴 권역 보스 계약 3종(glacier_titan_f5/inferno_drake_f6/crystal_lord_m3) 보드에 표시, 처치 후 turn-in 가능, 반복 수락 가능.
 - [ ] town LEFT 포탈→outpost RIGHT-안쪽(520,120) 도착, outpost RIGHT-TOP 포탈→town LEFT(140,252) 도착. 도착 직후 인접 포탈에 빨려들지 않음(outpost RIGHT-TOP(600,80) ↔ PortalToOldOrcRoad(600,180) 100px 간격 확인).
 
+## 월드 v2 + 검증기 R17/R18/B6 (2026-05-20)
+- [ ] 포탈 75개 전수 감사 R17 통과 — validate.py 결함 0건.
+- [ ] 4 허브(town/field_outpost/harbor_village/mountain_refuge) 진입 후 NPC/상점/포탈/세이브포인트가 서로 겹치지 않음(50px 이상 이격).
+- [ ] field_3 4 corner 포탈(snow/volcano/harbor_village/ruined_crossroad) 명확히 분리, 잘못 진입 없음.
+- [ ] mine_3 진입 → 5광맥(crystal×2/deep/prism/enhance_stone) 채광 가능, crystal_lord_m3 보스 반복 처치.
+- [ ] 반복 보스 4종(kraken_d4/glacier_titan_f5/inferno_drake_f6/crystal_lord_m3) 모두 계약 노출, 처치 후 재수락 가능.
+- [ ] 제작 결과물 즉시판매로 골드 차익 없음(mana_brew/enhance_stone_craft/antidote_craft 차익 0 또는 음수).
+- [ ] 반복 계약 보상이 enhance_stone 미포함(B5), 총 보상가치/Lv ≤ 100(B6).
+
 ## Issue Log
 | Priority | Area | Issue | Repro Steps | Next Action |
 | --- | --- | --- | --- | --- |

@@ -24,6 +24,15 @@
   R15 스킬북 .tres RequiredClass/AvailableToAllClasses ↔ LearnedSkill 정합 (탭 필터 오노출)
   R16 상점 ShopItems 진열 정합: IsShopBlocked=true 또는 Price<=0 품목 금지
       (ShopUI.RefreshBuyTab가 IsShopBlocked는 사일런트 제외 — 데이터 단계에서 차단)
+  R17 포탈 TargetSpawnPosition 근접 검사: target 씬의 *비-왕복* 포탈 중심 50px 이내면
+      오류. 왕복 짝(A→B, B→A) 의 도착 좌표는 의도된 패턴이라 제외.
+      "field_3 중앙에 떨어지면서 던전 포탈을 누르는" v1 회귀 안전망.
+  R18 제작 레시피 차익(arbitrage) 금지: result.SellPrice × qty
+      > gold + Σ(material.SellPrice × qty) 이면 즉시 되팔아 골드 faucet.
+      "_rule" 키 명문화. ItemData.SellPrice 누락 시 기본값 0 으로 간주.
+  R19 씬 RepeatableBoss=true BossId 가 contracts.json BossKill targetBossId 에
+      최소 1번 노출되어야 한다(반복 보스 ↔ 계약 직접 교차검증).
+      ContractsJsonTests 의 하드코딩 RepeatableBossIds 누락 안전망.
   (R6+) RegionDrop / (R10+) 계약 보상·타깃 아이템 경로는 ItemData 리소스여야 함
 
 종료 코드: 결함 0건이면 0, 아니면 1.
@@ -57,6 +66,10 @@ warnings = []
 
 def err(category, msg):
     errors.append((category, msg))
+
+
+def warn(category, msg):
+    warnings.append((category, msg))
 
 
 def walk_files(exts):
@@ -680,6 +693,166 @@ def check_shop_items_sanity():
                         err("R16", f"{rel} ShopItems에 Price<=0 품목 포함 — 상점에 부적합(드랍/퀘스트 전용){suffix}: {p}")
 
 
+def check_portal_spawn_proximity():
+    """R17 포탈 도착 좌표가 *비-왕복* 포탈 중심 50px 이내인지 검사.
+
+    왕복 짝(A→B 의 spawn ↔ B→A 의 portal position) 은 player가 돌아갈 수
+    있도록 가깝게 두는 게 정상 패턴이라 제외한다. 그 외 다른 목적지를
+    가진 포탈에 50px 이내로 떨어지면 v1 회귀(snowfield→field_3 spawn이
+    dungeon_3 포탈 위에 떨어지던 버그) 가능성.
+
+    포탈은 [F] 키 입력으로만 발동하지만, 모바일 인터랙트 버튼 + 시각적
+    프롬프트 겹침 + 인접 오인 진입을 방지하기 위해 50px 컷오프.
+    """
+    maps_dir = os.path.join(ROOT, "Scenes", "Maps")
+    if not os.path.isdir(maps_dir):
+        return
+    import math
+    portals = []  # [{'map', 'node', 'pos', 'target', 'spawn'}]
+    for fn in sorted(os.listdir(maps_dir)):
+        if not fn.endswith(".tscn"):
+            continue
+        path = os.path.join(maps_dir, fn)
+        with open(path, encoding="utf-8") as f:
+            txt = f.read()
+        # 노드 블록 분리(다음 [node|sub_resource|ext_resource|connection] 전까지)
+        blocks = re.split(
+            r'\n(?=\[(?:node|sub_resource|ext_resource|connection)\b)', txt)
+        for blk in blocks:
+            m = re.match(r'^\[node name="([^"]+)"', blk)
+            if not m or not m.group(1).startswith("Portal"):
+                continue
+            pos = re.search(
+                r'^position\s*=\s*Vector2\(([\-\d\.]+),\s*([\-\d\.]+)\)',
+                blk, re.MULTILINE)
+            tsp = re.search(
+                r'^TargetScenePath\s*=\s*"([^"]+)"', blk, re.MULTILINE)
+            tsx = re.search(
+                r'^TargetSpawnPosition\s*=\s*Vector2\(([\-\d\.]+),\s*([\-\d\.]+)\)',
+                blk, re.MULTILINE)
+            if not pos:
+                continue
+            portals.append({
+                "map": fn[:-5],
+                "node": m.group(1),
+                "pos": (float(pos.group(1)), float(pos.group(2))),
+                "target": (tsp.group(1).split("/")[-1].replace(".tscn", "")
+                           if tsp else None),
+                "spawn": ((float(tsx.group(1)), float(tsx.group(2)))
+                          if tsx else None),
+            })
+    by_map = {}
+    for p in portals:
+        by_map.setdefault(p["map"], []).append(p)
+    for p in portals:
+        if not p["target"] or not p["spawn"]:
+            continue
+        sx, sy = p["spawn"]
+        for tp in by_map.get(p["target"], []):
+            # 왕복 짝(target 씬에서 source 씬으로 돌아가는 포탈) 은 제외
+            if tp["target"] == p["map"]:
+                continue
+            tx, ty = tp["pos"]
+            d = math.hypot(tx - sx, ty - sy)
+            if d < 50:
+                err("R17",
+                    f"{p['map']}/{p['node']} spawn=({int(sx)},{int(sy)}) → "
+                    f"{p['target']}: 비-왕복 포탈 {tp['node']}"
+                    f"(→{tp['target']}, pos=({int(tx)},{int(ty)})) {d:.0f}px — "
+                    "포탈 겹침 위험(v1 회귀)")
+            elif d < 150:
+                # warning: 종료코드 무관, 튜닝 신호
+                warn("R17",
+                     f"{p['map']}/{p['node']} spawn=({int(sx)},{int(sy)}) → "
+                     f"{p['target']}: 비-왕복 포탈 {tp['node']}"
+                     f"(→{tp['target']}, pos=({int(tx)},{int(ty)})) {d:.0f}px — "
+                     "근접(50~150px) 시각적 분간 튜닝 권장")
+
+
+def check_recipe_arbitrage():
+    """R18 제작 레시피 즉시 되팔기(차익) 금지.
+
+    result.SellPrice × qty > gold_cost + Σ(material.SellPrice × qty) 이면
+    플레이어가 재료를 모아 제작 → 판매로 골드를 무한 증식 가능(faucet).
+    SellPrice 라인이 누락된 .tres 는 ItemData.cs 기본값 0 으로 간주
+    (R16 의 Price 누락 처리와 같은 패턴).
+    """
+    rp = os.path.join(ROOT, "Resources", "Recipes", "recipes.json")
+    if not os.path.isfile(rp):
+        return
+    try:
+        with open(rp, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return  # check_recipes 에서 이미 잡힘
+    sellprice_re = re.compile(r'^SellPrice\s*=\s*(\-?\d+)', re.MULTILINE)
+
+    def _sell(rpath):
+        p = res_to_path(rpath)
+        if not os.path.isfile(p):
+            return 0
+        with open(p, encoding="utf-8") as f:
+            m = sellprice_re.search(f.read())
+        return int(m.group(1)) if m else 0
+
+    for r in data.get("recipes", []):
+        rid = r.get("id", "<무-id>")
+        result = r.get("result", {})
+        rqty = result.get("qty", 1)
+        rsell = _sell(result.get("path", "")) * rqty
+        msell = 0
+        for m in r.get("materials", []):
+            msell += _sell(m.get("path", "")) * m.get("qty", 1)
+        gold = r.get("gold", 0)
+        cost = gold + msell
+        if rsell > cost:
+            err("R18", f"{rid}: 결과물 즉시판매 차익 가능 "
+                       f"(result_sell={rsell}, gold={gold}, mat_sell={msell}, "
+                       f"cost={cost}, profit=+{rsell - cost}G/제작) — "
+                       "gold 또는 재료 SellPrice 조정 필요")
+
+
+def check_repeatable_boss_contract_coverage():
+    """R19 씬의 RepeatableBoss=true BossId 가 contracts.json BossKill 계약 중
+    적어도 하나의 targetBossId 로 등장해야 한다.
+
+    ContractsJsonTests 의 `EveryRepeatableBoss_HasContract` 는 RepeatableBossIds
+    상수가 하드코딩이라 새 보스가 추가되고 코드/씬은 갱신됐는데 테스트 상수만
+    누락되면 검출 못 함. validate 쪽에서 *씬 → 계약* 직접 교차검증으로
+    하드코딩 누락 차단."""
+    cp = os.path.join(ROOT, "Resources", "Contracts", "contracts.json")
+    if not os.path.isfile(cp):
+        return
+    try:
+        with open(cp, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return  # check_contracts 가 잡음
+    contract_bosses = set()
+    for c in data.get("contracts", []):
+        if c.get("type") == "BossKill":
+            tb = c.get("targetBossId", "")
+            if tb:
+                contract_bosses.add(tb)
+    scene_repeat = set()
+    maps_dir = os.path.join(ROOT, "Scenes", "Maps")
+    if not os.path.isdir(maps_dir):
+        return
+    for fn in os.listdir(maps_dir):
+        if not fn.endswith(".tscn"):
+            continue
+        with open(os.path.join(maps_dir, fn), encoding="utf-8") as f:
+            s = f.read()
+        if re.search(r'\bRepeatableBoss\s*=\s*true\b', s):
+            for m in re.finditer(r'\bBossId\s*=\s*"([^"]+)"', s):
+                scene_repeat.add(m.group(1))
+    missing = scene_repeat - contract_bosses
+    for boss in sorted(missing):
+        err("R19",
+            f"RepeatableBoss '{boss}' — 씬에는 있는데 contracts.json BossKill "
+            "계약에 한 번도 등장하지 않음(반복 파밍 동기 없음)")
+
+
 def check_repeatable_boss_drift():
     """HuntingContractManager.RepeatableBossIds 가 씬의 RepeatableBoss=true
     BossId 집합과 정확히 일치해야 한다. 하드코딩 셋이 씬과 어긋나면 반복 보스
@@ -721,11 +894,25 @@ def main():
     check_mining_nodes()
     check_skill_types()
     check_shop_items_sanity()
+    check_portal_spawn_proximity()
+    check_recipe_arbitrage()
+    check_repeatable_boss_contract_coverage()
     check_repeatable_boss_drift()
 
     by_cat = {}
     for cat, msg in errors:
         by_cat.setdefault(cat, []).append(msg)
+
+    # 경고 출력(종료코드 무관) — R17 50~150px 근접 등 튜닝 신호용
+    if warnings:
+        warn_by_cat = {}
+        for cat, msg in warnings:
+            warn_by_cat.setdefault(cat, []).append(msg)
+        print(f"⚠️  경고 {len(warnings)}건 (종료코드 무관, 튜닝 신호)")
+        for cat in sorted(warn_by_cat):
+            for m in warn_by_cat[cat]:
+                print(f"  - [{cat}] {m}")
+        print()
 
     if not errors:
         print("✅ 검사기 통과 — 결함 0건")

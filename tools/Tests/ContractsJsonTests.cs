@@ -170,5 +170,56 @@ namespace FirstGame.Tests
 				Assert.False(grantsStone, $"{c.id}: 반복 계약이 enhance_stone 지급(무한 faucet 금지)");
 			}
 		}
+
+		// 4개 권역 모두 Kill 계약을 최소 1개 가져야 한다(가장 단순한 사냥 동기).
+		// 권역에 사냥터가 있어도 Kill 계약이 비면 "이 권역에서 무엇을 잡을지" 안내가
+		// 약해진다. 권역별 진입점 보장.
+		[Fact]
+		public void EveryRegion_HasAtLeastOneKillContract()
+		{
+			var byRegion = Load()
+				.Where(c => TryType(c.type, out var t) && t == ContractType.Kill)
+				.GroupBy(c => c.region)
+				.ToDictionary(g => g.Key, g => g.Count());
+			foreach (var region in new[] { "town_region", "outpost_region", "coast_region", "mountain_region" })
+			{
+				Assert.True(byRegion.TryGetValue(region, out var n) && n >= 1,
+					$"{region}: Kill 계약이 최소 1개 필요 (현재 {byRegion.GetValueOrDefault(region, 0)}개)");
+			}
+		}
+
+		// 모든 RepeatableBoss 는 최소 1개의 BossKill 계약으로 노출되어야 한다.
+		// 보스가 있는데 계약이 없으면 플레이어가 반복 처치할 동기가 약해진다.
+		[Fact]
+		public void EveryRepeatableBoss_HasContract()
+		{
+			var contractBosses = Load()
+				.Where(c => TryType(c.type, out var t) && t == ContractType.BossKill)
+				.Select(c => c.targetBossId)
+				.ToHashSet();
+			foreach (var boss in RepeatableBossIds)
+			{
+				Assert.Contains(boss, contractBosses);
+			}
+		}
+
+		// 반복 계약 총 보상가치(gold + rewardItem SellPrice × qty) 캡 — balance.py B6 미러.
+		// 여기서는 item SellPrice 를 파일에서 직접 못 읽으므로 골드+레벨 비만 검사하고
+		// 본격적인 SellPrice 합산은 balance.py 가 담당한다. xUnit 측은 골드/Lv 캡만.
+		[Fact]
+		public void RepeatableContracts_GoldPerLevel_WithinCap()
+		{
+			foreach (var c in Load())
+			{
+				TryType(c.type, out var t);
+				bool oneShot = t == ContractType.BossKill && OneShotStoryBossIds.Contains(c.targetBossId);
+				if (oneShot) continue;
+				int lvl = Math.Max(1, c.recommendedLevel);
+				double perLv = (double)c.goldReward / lvl;
+				// balance.py 가 60G/Lv 초과부터 경고하므로 xUnit 은 120G/Lv 를 에러로 잡는다
+				// (경고 영역은 의도된 튜닝 가능 — 명백한 폭주만 차단).
+				Assert.True(perLv <= 120.0, $"{c.id}: 반복 계약 보상 {c.goldReward}G/Lv{lvl} = {perLv:F0}/Lv 초과(상한 120)");
+			}
+		}
 	}
 }

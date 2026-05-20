@@ -1,5 +1,6 @@
 {
   "_comment": "제작 레시피 v1 — 확정 제작(확률/뽑기 없음). 결과/재료는 기존 Resources/Items 만 사용. 새 PNG 없음.",
+  "_rule": "제작 비용 규칙(R18 자동검증): result.SellPrice × qty ≤ gold + Σ(material.SellPrice × qty). 즉시 되팔아 차익이 나면 골드 faucet — gold 비용 또는 재료 SellPrice 로 조정.",
   "recipes": [
     {
       "id": "potion_bundle",
@@ -13,7 +14,7 @@
       "id": "mana_brew",
       "name": "마나 물약 제작",
       "desc": "해초를 정제해 마나 물약 2개 제작.",
-      "gold": 25,
+      "gold": 45,
       "materials": [ { "path": "res://Resources/Items/sea_kelp.tres", "qty": 2 } ],
       "result": { "path": "res://Resources/Items/mana_potion.tres", "qty": 2 }
     },
@@ -21,7 +22,7 @@
       "id": "enhance_stone_craft",
       "name": "강화석 가공",
       "desc": "수정 원석을 가공해 강화석 2개 제작.",
-      "gold": 60,
+      "gold": 200,
       "materials": [ { "path": "res://Resources/Items/crystal_ore.tres", "qty": 3 } ],
       "result": { "path": "res://Resources/Items/enhance_stone.tres", "qty": 2 }
     },
@@ -29,7 +30,7 @@
       "id": "antidote_craft",
       "name": "해독제 제작",
       "desc": "뼛가루로 해독제 2개 제작.",
-      "gold": 15,
+      "gold": 65,
       "materials": [ { "path": "res://Resources/Items/bone_dust.tres", "qty": 2 } ],
       "result": { "path": "res://Resources/Items/antidote.tres", "qty": 2 }
     },

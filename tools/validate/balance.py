@@ -8,6 +8,9 @@
   B3  zone 의 hpMul/atkMul/expMul 은 모두 양수 (validate.py R4 와 중복 방어)
   B5  반복 가능한 계약(비반복 스토리보스 BossKill 제외 전부)은 enhance_stone 을
         보상으로 줄 수 없다 — 게이트 통화 무한 faucet 차단. 골드/레벨 비 과대는 경고.
+  B6  반복 가능한 계약의 총 보상가치(gold + rewardItem SellPrice × qty) / 레벨이
+        과도하면 faucet — 100/Lv 초과 에러, 70/Lv 초과 경고. rewardItemPath
+        없는 골드 단독 계약도 검사(total = gold). 키는 `rewardItemQuantity`.
 
 종료 코드: 결함 0건이면 0, 아니면 1. (경고는 종료코드에 영향 없음)
 """
@@ -112,6 +115,19 @@ _REPEATABLE_BOSSES = {"kraken_d4", "glacier_titan_f5", "inferno_drake_f6", "crys
 _GATED_CURRENCY = "enhance_stone.tres"
 
 
+def _item_sellprice(res_path):
+    """rewardItem .tres 의 SellPrice (ItemData 기본값 0) 를 반환."""
+    if not res_path or not res_path.startswith("res://"):
+        return 0
+    p = os.path.join(ROOT, res_path[len("res://"):])
+    if not os.path.isfile(p):
+        return 0
+    with open(p, encoding="utf-8") as f:
+        text = f.read()
+    m = re.search(r'^SellPrice\s*=\s*(\-?\d+)', text, re.MULTILINE)
+    return int(m.group(1)) if m else 0
+
+
 def check_contract_economy():
     cp = os.path.join(ROOT, "Resources", "Contracts", "contracts.json")
     if not os.path.isfile(cp):
@@ -137,6 +153,23 @@ def check_contract_economy():
         if repeatable and gold / lvl > 60:
             warnings.append(f"[계약 보상 과대] {cid}: {gold}G / Lv{lvl} "
                             f"= {gold/lvl:.0f}G/레벨 (반복 계약 권장 ≤60)")
+        # B6 — 반복 계약의 *총 보상가치* (gold + rewardItem SellPrice × qty)
+        # 가 레벨당 너무 크면 faucet. enhance_stone 자체는 B5 가 별도로 막지만,
+        # 다른 고판매가 아이템(장신구/희귀 재료 등) 경유 우회 + 골드 단독 폭주
+        # 까지 한꺼번에 차단. JSON 키는 런타임 로더(`HuntingContractManager`)와
+        # 일치하는 `rewardItemQuantity` 사용(이전 `rewardItemQty` 오타 fix).
+        if repeatable:
+            sp = _item_sellprice(rip) if rip else 0
+            rqty = c.get("rewardItemQuantity", 1) if rip else 0
+            total = gold + sp * rqty
+            per_lv = total / lvl
+            if per_lv > 100:
+                errors.append(("B6", f"{cid}: 반복 보상 총가치 {total} "
+                                     f"({gold}G + {sp}×{rqty}=item) / Lv{lvl} = "
+                                     f"{per_lv:.0f}/Lv (>100 = faucet 위험)"))
+            elif per_lv > 70:
+                warnings.append(f"[반복 보상 가치 과대] {cid}: {total}/Lv{lvl} "
+                                f"= {per_lv:.0f}/Lv (반복 계약 권장 ≤70)")
 
 
 def main():
