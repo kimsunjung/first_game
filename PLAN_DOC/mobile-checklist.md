@@ -145,6 +145,19 @@ Godot 에디터에서 **순서대로** 한 번 밟아야 하는 항목. 한 줄 
 - [ ] Lv.1~4 town 재료 상점 → "Lv.5부터" 토스트, 상점 안 열림.
 - [ ] 게이트 토스트가 본 UI/상점 위에 가려지지 않고 보임.
 
+## 월드 포탈 방향 v1 (2026-05-20)
+- [ ] field_5_snowfield/PortalToField3 → field_3 (1150,200) 도착, 던전3 진입 안 됨.
+- [ ] field_6_volcano/PortalToField3 → field_3 (1150,520) 도착, 던전3 진입 안 됨.
+- [ ] old_orc_road→field_outpost 도착 후 즉시 town 포탈에 빨려들지 않음.
+- [ ] field_3→harbor_village 도착 후 즉시 outpost 포탈에 빨려들지 않음.
+- [ ] field_outpost→mountain_refuge 도착 후 즉시 harbor 포탈에 빨려들지 않음.
+- [ ] field_5→mountain_refuge 도착 후 즉시 snowfield_edge로 되돌아가지 않음.
+- [ ] lava→field_6 / frozen→field_5 / field_6→mine_3 / pirate→field_4: 도착 직후 인접 포탈 미발동.
+- [ ] 모든 양방향 포탈 왕복 시(좌→우→좌) 출발 위치로 자연스럽게 돌아옴.
+- [ ] 모바일 터치 환경에서 도착 직후 인접 포탈 미발동(touch radius 고려).
+- [ ] 마운틴 권역 보스 계약 3종(glacier_titan_f5/inferno_drake_f6/crystal_lord_m3) 보드에 표시, 처치 후 turn-in 가능, 반복 수락 가능.
+- [ ] town LEFT 포탈→outpost RIGHT-안쪽(520,120) 도착, outpost RIGHT-TOP 포탈→town LEFT(140,252) 도착. 도착 직후 인접 포탈에 빨려들지 않음(outpost RIGHT-TOP(600,80) ↔ PortalToOldOrcRoad(600,180) 100px 간격 확인).
+
 ## Issue Log
 | Priority | Area | Issue | Repro Steps | Next Action |
 | --- | --- | --- | --- | --- |

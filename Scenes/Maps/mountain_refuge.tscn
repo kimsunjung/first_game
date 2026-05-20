@@ -22,6 +22,16 @@
 [ext_resource type="Resource" uid="uid://itm_con_btlelx_001" path="res://Resources/Items/battle_elixir.tres" id="26_btlelx"]
 [ext_resource type="Resource" uid="uid://cons_revive01" path="res://Resources/Items/revive_scroll.tres" id="27_revive"]
 [ext_resource type="Resource" uid="uid://bi02gfux88d6o" path="res://Resources/Items/return_scroll.tres" id="28_rscroll"]
+[ext_resource type="Resource" uid="uid://wpn_froststaff01" path="res://Resources/Items/frostfang_staff.tres" id="g1_ffstaff"]
+[ext_resource type="Resource" uid="uid://armor_frost01" path="res://Resources/Items/frost_armor.tres" id="g2_farmor"]
+[ext_resource type="Resource" uid="uid://armor_flame01" path="res://Resources/Items/flame_armor.tres" id="g3_flarmor"]
+[ext_resource type="Resource" uid="uid://armor_frostrobe01" path="res://Resources/Items/frost_robe.tres" id="g4_frobe"]
+[ext_resource type="Resource" uid="uid://armor_gboots01" path="res://Resources/Items/glacier_boots.tres" id="g5_gboots"]
+[ext_resource type="Resource" uid="uid://armor_flamboots01" path="res://Resources/Items/flame_boots.tres" id="g6_flboots"]
+[ext_resource type="Resource" uid="uid://ring_fire01" path="res://Resources/Items/fire_ring.tres" id="g7_fring"]
+[ext_resource type="Resource" uid="uid://ring_ice01" path="res://Resources/Items/ice_ring.tres" id="g8_iring"]
+[ext_resource type="Resource" uid="uid://wpn_winterbow01" path="res://Resources/Items/winter_bow.tres" id="g9_wbow"]
+[ext_resource type="Resource" uid="uid://wpn_phoenixbow01" path="res://Resources/Items/phoenix_bow.tres" id="ga_pbow"]
 [ext_resource type="Resource" uid="uid://itm_skb_flwave_001" path="res://Resources/Items/skillbook_flame_wave.tres" id="30_skb_fwave"]
 [ext_resource type="Resource" uid="uid://itm_skb_mnshld_001" path="res://Resources/Items/skillbook_mana_shield.tres" id="31_skb_mshld"]
 [ext_resource type="Resource" uid="uid://itm_skb_arcmsl_001" path="res://Resources/Items/skillbook_arcane_missile.tres" id="32_skb_arc"]
@@ -115,7 +125,7 @@ NpcId = "save_point"
 position = Vector2(320, 90)
 NpcId = "mountain_shop"
 ShopName = "피난처 보급상"
-ShopItems = Array[Resource]([ExtResource("20_megahp"), ExtResource("21_megamp"), ExtResource("22_wdraught"), ExtResource("23_defrost"), ExtResource("24_firelx"), ExtResource("25_mgbrew"), ExtResource("26_btlelx"), ExtResource("27_revive"), ExtResource("28_rscroll"), ExtResource("v3_ashflt"), ExtResource("v3_coolslv")])
+ShopItems = Array[Resource]([ExtResource("g1_ffstaff"), ExtResource("g9_wbow"), ExtResource("ga_pbow"), ExtResource("g2_farmor"), ExtResource("g3_flarmor"), ExtResource("g4_frobe"), ExtResource("g5_gboots"), ExtResource("g6_flboots"), ExtResource("g7_fring"), ExtResource("g8_iring"), ExtResource("20_megahp"), ExtResource("21_megamp"), ExtResource("22_wdraught"), ExtResource("23_defrost"), ExtResource("24_firelx"), ExtResource("25_mgbrew"), ExtResource("26_btlelx"), ExtResource("27_revive"), ExtResource("28_rscroll"), ExtResource("v3_ashflt"), ExtResource("v3_coolslv")])
 
 [node name="ShopUI" parent="MountainMerchant" instance=ExtResource("11_shopUI")]
 

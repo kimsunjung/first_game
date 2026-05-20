@@ -22,6 +22,8 @@
   R13 스킬 .tres Type 전역 유일 / chain_lightning=35·life_drain=36 (Type 충돌·드리프트)
   R14 HuntingContractManager.RepeatableBossIds ↔ 씬 RepeatableBoss=true BossId 정확 일치
   R15 스킬북 .tres RequiredClass/AvailableToAllClasses ↔ LearnedSkill 정합 (탭 필터 오노출)
+  R16 상점 ShopItems 진열 정합: IsShopBlocked=true 또는 Price<=0 품목 금지
+      (ShopUI.RefreshBuyTab가 IsShopBlocked는 사일런트 제외 — 데이터 단계에서 차단)
   (R6+) RegionDrop / (R10+) 계약 보상·타깃 아이템 경로는 ItemData 리소스여야 함
 
 종료 코드: 결함 0건이면 0, 아니면 1.
@@ -634,6 +636,50 @@ def check_skill_types():
                        "(학습중복/쿨다운/상점 게이팅 충돌)")
 
 
+def check_shop_items_sanity():
+    """R16 상점 ShopItems 진열 정합성:
+       - IsShopBlocked=true 품목은 ShopUI.RefreshBuyTab가 진열에서 제외하므로
+         ShopItems에 넣어도 실제로 안 보임 → 데이터 오설정으로 차단.
+       - Price<=0 품목은 구매 의미가 없으므로(드랍/퀘스트 전용) 상점 진열 금지.
+       두 규칙으로 "넣었지만 안 보이는" 상점 데이터 사일런트 갭 방지."""
+    scenes_root = os.path.join(ROOT, "Scenes")
+    for root, dirs, files in os.walk(scenes_root):
+        dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
+        for f in files:
+            if not f.endswith(".tscn"):
+                continue
+            path = os.path.join(root, f)
+            txt = open(path, encoding="utf-8").read()
+            shopitems_blocks = re.findall(
+                r'ShopItems\s*=\s*Array\[Resource\]\(\[([^\]]+)\]\)', txt)
+            if not shopitems_blocks:
+                continue
+            # ext_resource id -> path 매핑 (해당 .tscn 안에서)
+            ext_map = {}
+            for m in re.finditer(
+                r'\[ext_resource[^\]]*type="Resource"[^\]]*'
+                r'path="(res://[^"]+\.tres)"[^\]]*id="([^"]+)"', txt):
+                ext_map[m.group(2)] = m.group(1)
+            rel = os.path.relpath(path, ROOT)
+            for block in shopitems_blocks:
+                for rid in re.findall(r'ExtResource\("([^"]+)"\)', block):
+                    p = ext_map.get(rid)
+                    if not p:
+                        continue
+                    fp = os.path.join(ROOT, p.replace("res://", ""))
+                    if not os.path.isfile(fp):
+                        continue
+                    ttxt = open(fp, encoding="utf-8").read()
+                    if re.search(r'\bIsShopBlocked\s*=\s*true\b', ttxt):
+                        err("R16", f"{rel} ShopItems에 IsShopBlocked=true 품목 포함 — 진열되지 않음: {p}")
+                    # Price 라인 누락 시 ItemData.cs 기본값 0 으로 간주(false negative 봉쇄)
+                    pm = re.search(r'^Price\s*=\s*(\-?\d+)', ttxt, re.MULTILINE)
+                    price = int(pm.group(1)) if pm else 0
+                    if price <= 0:
+                        suffix = "" if pm else " (Price 필드 누락 → 기본값 0)"
+                        err("R16", f"{rel} ShopItems에 Price<=0 품목 포함 — 상점에 부적합(드랍/퀘스트 전용){suffix}: {p}")
+
+
 def check_repeatable_boss_drift():
     """HuntingContractManager.RepeatableBossIds 가 씬의 RepeatableBoss=true
     BossId 집합과 정확히 일치해야 한다. 하드코딩 셋이 씬과 어긋나면 반복 보스
@@ -674,6 +720,7 @@ def main():
     check_contract_boards()
     check_mining_nodes()
     check_skill_types()
+    check_shop_items_sanity()
     check_repeatable_boss_drift()
 
     by_cat = {}

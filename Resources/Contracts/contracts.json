@@ -204,6 +204,42 @@
       "recommendedLevel": 18,
       "goldReward": 460,
       "expReward": 150
+    },
+    {
+      "id": "mountain_boss_glacier",
+      "title": "빙하 거인 토벌 계약",
+      "desc": "설원 깊은 곳의 빙하 거인을 처치한 증표를 가져온다.",
+      "region": "mountain_region",
+      "type": "BossKill",
+      "targetBossId": "glacier_titan_f5",
+      "goal": 1,
+      "recommendedLevel": 16,
+      "goldReward": 700,
+      "expReward": 340
+    },
+    {
+      "id": "mountain_boss_inferno",
+      "title": "지옥불 드레이크 토벌 계약",
+      "desc": "화산의 지옥불 드레이크를 처치한 증표를 가져온다.",
+      "region": "mountain_region",
+      "type": "BossKill",
+      "targetBossId": "inferno_drake_f6",
+      "goal": 1,
+      "recommendedLevel": 17,
+      "goldReward": 780,
+      "expReward": 380
+    },
+    {
+      "id": "mountain_boss_crystal",
+      "title": "수정 군주 토벌 계약",
+      "desc": "3번 광산 심부의 수정 군주를 처치한 증표를 가져온다.",
+      "region": "mountain_region",
+      "type": "BossKill",
+      "targetBossId": "crystal_lord_m3",
+      "goal": 1,
+      "recommendedLevel": 18,
+      "goldReward": 850,
+      "expReward": 420
     }
   ]
 }

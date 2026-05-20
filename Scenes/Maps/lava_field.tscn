@@ -87,7 +87,7 @@ DestinationName = "화산 진입로"
 [node name="PortalToField6Volcano" parent="." instance=ExtResource("9_portal")]
 position = Vector2(1230, 360)
 TargetScenePath = "res://Scenes/Maps/field_6_volcano.tscn"
-TargetSpawnPosition = Vector2(80, 360)
+TargetSpawnPosition = Vector2(200, 360)
 DestinationName = "화산 (필드6)"
 
 [node name="EnemySpawner" type="Node2D" parent="."]

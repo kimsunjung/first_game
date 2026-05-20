@@ -79,7 +79,7 @@ DestinationName = "설원 변경"
 [node name="PortalToField5Snowfield" parent="." instance=ExtResource("9_portal")]
 position = Vector2(1230, 360)
 TargetScenePath = "res://Scenes/Maps/field_5_snowfield.tscn"
-TargetSpawnPosition = Vector2(80, 360)
+TargetSpawnPosition = Vector2(200, 360)
 DestinationName = "설원 (필드5)"
 
 [node name="EnemySpawner" type="Node2D" parent="."]

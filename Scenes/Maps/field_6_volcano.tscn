@@ -80,7 +80,7 @@ ShopItems = Array[Resource]([ExtResource("22_firelx"), ExtResource("23_mgbrew"),
 [node name="PortalToField3" parent="." instance=ExtResource("9_portal")]
 position = Vector2(50, 360)
 TargetScenePath = "res://Scenes/Maps/field_3.tscn"
-TargetSpawnPosition = Vector2(640, 360)
+TargetSpawnPosition = Vector2(1150, 520)
 
 [node name="PortalToLavaField" parent="." instance=ExtResource("9_portal")]
 position = Vector2(640, 60)
@@ -91,7 +91,7 @@ DestinationName = "용암 평원"
 [node name="PortalToMine3" parent="." instance=ExtResource("9_portal")]
 position = Vector2(1220, 360)
 TargetScenePath = "res://Scenes/Maps/mine_3.tscn"
-TargetSpawnPosition = Vector2(80, 360)
+TargetSpawnPosition = Vector2(200, 360)
 DestinationName = "광산 3"
 
 [node name="Walls" type="Node2D" parent="."]

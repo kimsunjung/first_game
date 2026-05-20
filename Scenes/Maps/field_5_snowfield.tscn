@@ -79,7 +79,7 @@ ShopItems = Array[Resource]([ExtResource("22_wdraught"), ExtResource("23_defrost
 [node name="PortalToField3" parent="." instance=ExtResource("9_portal")]
 position = Vector2(50, 360)
 TargetScenePath = "res://Scenes/Maps/field_3.tscn"
-TargetSpawnPosition = Vector2(640, 360)
+TargetSpawnPosition = Vector2(1150, 200)
 
 [node name="PortalToFrozenValley" parent="." instance=ExtResource("9_portal")]
 position = Vector2(640, 60)
@@ -96,7 +96,7 @@ DestinationName = "화산 진입로"
 [node name="PortalToMountainRefuge" parent="." instance=ExtResource("9_portal")]
 position = Vector2(1220, 60)
 TargetScenePath = "res://Scenes/Maps/mountain_refuge.tscn"
-TargetSpawnPosition = Vector2(560, 180)
+TargetSpawnPosition = Vector2(320, 200)
 DestinationName = "산악 피난처"
 
 [node name="Walls" type="Node2D" parent="."]

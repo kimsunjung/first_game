@@ -93,7 +93,7 @@ DestinationName = "게 해변"
 [node name="PortalToField4Harbor" parent="." instance=ExtResource("9_portal")]
 position = Vector2(1230, 360)
 TargetScenePath = "res://Scenes/Maps/field_4_harbor.tscn"
-TargetSpawnPosition = Vector2(80, 360)
+TargetSpawnPosition = Vector2(200, 360)
 DestinationName = "항구 (필드4)"
 
 [node name="EnemySpawner" type="Node2D" parent="."]

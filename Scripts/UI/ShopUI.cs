@@ -102,9 +102,9 @@ namespace FirstGame.UI
                 if (item == null) continue;
                 // 상점 차단 — 적/보스 드랍 전용 무기는 진열 자체 제외.
                 if (item.IsShopBlocked) continue;
-                // 클래스 전용 무기는 현재 직업과 일치할 때만 진열.
-                // 방어구/장신구는 AvailableToAllClasses=true라 항상 노출.
-                if (item.Type == ItemType.Weapon && !item.AvailableToAllClasses
+                // 클래스 전용 장비는 현재 직업과 일치할 때만 진열(무기/방어구/장신구 공통).
+                // AvailableToAllClasses=true(기본) 품목은 항상 노출(소모품/공용 장신구).
+                if (!item.AvailableToAllClasses
                     && playerCls.HasValue && item.RequiredClass != playerCls.Value)
                     continue;
                 var panel = CreateItemPanel(item, isBuyMode: true);

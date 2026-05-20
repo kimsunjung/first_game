@@ -20,6 +20,12 @@
 [ext_resource type="Resource" uid="uid://itm_con_mhextr_001" path="res://Resources/Items/mana_herb_extract.tres" id="24_mhextr"]
 [ext_resource type="Resource" uid="uid://bi02gfux88d6o" path="res://Resources/Items/return_scroll.tres" id="25_rscroll"]
 [ext_resource type="Resource" uid="uid://i13rutlbykcm" path="res://Resources/Items/swift_potion.tres" id="26_swift"]
+[ext_resource type="Resource" uid="uid://wpn_fishbow01" path="res://Resources/Items/fishermans_bow.tres" id="g1_fbow"]
+[ext_resource type="Resource" uid="uid://wpn_tidestaff01" path="res://Resources/Items/tide_staff.tres" id="g3_tstaff"]
+[ext_resource type="Resource" uid="uid://armor_storm01" path="res://Resources/Items/storm_armor.tres" id="g4_sarmor"]
+[ext_resource type="Resource" uid="uid://armor_stormrobe01" path="res://Resources/Items/storm_robe.tres" id="g5_srobe"]
+[ext_resource type="Resource" uid="uid://ring_storm01" path="res://Resources/Items/storm_ring.tres" id="g6_sring"]
+[ext_resource type="Resource" uid="uid://armor_stormboots01" path="res://Resources/Items/storm_boots.tres" id="g7_sboots"]
 [ext_resource type="Resource" uid="uid://itm_skb_prcshot_001" path="res://Resources/Items/skillbook_piercing_shot.tres" id="30_skb_prc"]
 [ext_resource type="Resource" uid="uid://itm_skb_bkshot_001" path="res://Resources/Items/skillbook_backstep_shot.tres" id="31_skb_bk"]
 [ext_resource type="Resource" uid="uid://itm_skb_rainoa_001" path="res://Resources/Items/skillbook_rain_of_arrows.tres" id="32_skb_rain"]
@@ -121,7 +127,7 @@ NpcId = "save_point"
 position = Vector2(320, 90)
 NpcId = "harbor_shop"
 ShopName = "항구마을 종합상점"
-ShopItems = Array[Resource]([ExtResource("20_hipot"), ExtResource("21_mpot"), ExtResource("22_megahp"), ExtResource("23_ttonic"), ExtResource("24_mhextr"), ExtResource("25_rscroll"), ExtResource("26_swift"), ExtResource("v3_stormwd"), ExtResource("v3_grndslv")])
+ShopItems = Array[Resource]([ExtResource("g1_fbow"), ExtResource("g3_tstaff"), ExtResource("g4_sarmor"), ExtResource("g5_srobe"), ExtResource("g6_sring"), ExtResource("g7_sboots"), ExtResource("20_hipot"), ExtResource("21_mpot"), ExtResource("22_megahp"), ExtResource("23_ttonic"), ExtResource("24_mhextr"), ExtResource("25_rscroll"), ExtResource("26_swift"), ExtResource("v3_stormwd"), ExtResource("v3_grndslv")])
 
 [node name="ShopUI" parent="HarborMerchant" instance=ExtResource("11_shopUI")]
 

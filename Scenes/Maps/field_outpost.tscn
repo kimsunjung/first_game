@@ -20,6 +20,12 @@
 [ext_resource type="Resource" uid="uid://iit3xdkgjkcm" path="res://Resources/Items/antidote.tres" id="18_anti"]
 [ext_resource type="Resource" uid="uid://cons_def_pot01" path="res://Resources/Items/defense_potion.tres" id="19_defpot"]
 [ext_resource type="Resource" uid="uid://cons_revive01" path="res://Resources/Items/revive_scroll.tres" id="20_revive"]
+[ext_resource type="Resource" uid="uid://gbs5iod06ctt" path="res://Resources/Items/steel_sword.tres" id="g1_ssword"]
+[ext_resource type="Resource" uid="uid://b83gkkhx54dt3" path="res://Resources/Items/steel_armor.tres" id="g2_sarmor"]
+[ext_resource type="Resource" uid="uid://bitem_chainmail01" path="res://Resources/Items/chainmail_armor.tres" id="g3_chain"]
+[ext_resource type="Resource" uid="uid://bitem_steelhelm" path="res://Resources/Items/steel_helm.tres" id="g5_shelm"]
+[ext_resource type="Resource" uid="uid://bitem_knightboots" path="res://Resources/Items/knight_boots.tres" id="g6_kboots"]
+[ext_resource type="Resource" uid="uid://itembrace002" path="res://Resources/Items/silver_bracelet.tres" id="g7_sbrace"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/skill_shop_npc.tscn" id="30_skillnpc"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/skill_shop_ui.tscn" id="31_skillshopUI"]
 [ext_resource type="Resource" uid="uid://itm_skb_cleave_001" path="res://Resources/Items/skillbook_cleave.tres" id="40_skb_cleave"]
@@ -77,8 +83,8 @@ position = Vector2(80, 180)
 
 [node name="TravelMerchant" parent="." instance=ExtResource("14_shopnpc")]
 position = Vector2(220, 100)
-ShopName = "여행 상인"
-ShopItems = Array[Resource]([ExtResource("16_hipot"), ExtResource("17_swift"), ExtResource("18_anti"), ExtResource("19_defpot"), ExtResource("20_revive")])
+ShopName = "전초기지 무구상"
+ShopItems = Array[Resource]([ExtResource("g1_ssword"), ExtResource("g2_sarmor"), ExtResource("g3_chain"), ExtResource("g5_shelm"), ExtResource("g6_kboots"), ExtResource("g7_sbrace"), ExtResource("16_hipot"), ExtResource("17_swift"), ExtResource("18_anti"), ExtResource("19_defpot"), ExtResource("20_revive")])
 
 [node name="ShopUI" parent="TravelMerchant" instance=ExtResource("15_shopUI")]
 
@@ -116,7 +122,7 @@ SkillBooks = Array[Resource]([ExtResource("40_skb_cleave"), ExtResource("41_skb_
 position = Vector2(100, 100)
 
 [node name="PortalToTown" parent="." instance=ExtResource("9_portal")]
-position = Vector2(40, 180)
+position = Vector2(600, 80)
 TargetScenePath = "res://Scenes/Maps/town.tscn"
 TargetSpawnPosition = Vector2(140, 252)
 DestinationName = "마을"
@@ -142,7 +148,7 @@ DestinationName = "항구마을"
 [node name="PortalToMountainRefuge" parent="." instance=ExtResource("9_portal")]
 position = Vector2(320, 30)
 TargetScenePath = "res://Scenes/Maps/mountain_refuge.tscn"
-TargetSpawnPosition = Vector2(80, 180)
+TargetSpawnPosition = Vector2(320, 60)
 DestinationName = "산악 피난처"
 
 [node name="EnemySpawner" type="Node2D" parent="."]

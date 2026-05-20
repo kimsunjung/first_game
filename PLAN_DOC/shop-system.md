@@ -642,3 +642,57 @@ Main (Node2D)
 7. **UI 충돌**: 상점 열린 상태에서 I키 → 인벤토리 안 열리는지 확인
 8. **상점 닫기**: E키 또는 닫기 버튼 → 상점 닫히고 게임 재개 확인
 9. **자동저장 안함**: 구매/판매 후 사망 → Load Save → 구매/판매 전 상태인지 확인
+
+---
+
+## 지역별 장비 상점 재분배 v2 (2026-05-19)
+
+### 배경/문제
+기존: `shop_npc.tscn` 기본 ShopItems = 21종 무기/방어구 전부가 **town 한 곳**에
+집중(steel/frostfang/tide/guardian_amulet/shadow_ring 등 중·고티어 포함). 결과:
+(1) 초반 town 상점 정보 과부하, (2) 지역 진행에 따른 장비 성장 동선 부재,
+(3) 다른 3거점은 소모품만 판매 → 거점 정체성 약함.
+
+### 변경 (데이터 전용 — .tscn ShopItems/ShopName, 코드·SaveData 무변경)
+- **town (`Scenes/Objects/shop_npc.tscn` 기본 목록, ShopName "기본 장비 상점")**
+  21→**14 기본티어만**: iron_sword/iron_spear/battle_axe/long_bow(궁수)/
+  apprentice_robe(법사 방어구)/iron_armor/leather_armor/leather_cap/iron_helm/
+  leather_boots/iron_boots/iron_ring/bronze_bracelet/wolf_necklace. 전 Common~
+  Uncommon·저가. 직업별 최소 1종(전사 무기·궁수 활·법사 로브) 보장.
+  ※ town ShopNPC만 기본 목록 사용(타 3거점 머천트는 ShopItems override).
+- **field_outpost (ShopName "전초기지 무구상")** 중티어 추가:
+  steel_sword/hunter_bow/steel_armor/chainmail_armor/steel_helm/knight_boots/
+  silver_bracelet + 기존 소모품 유지(보급 차단 방지 위해 무게이트 유지).
+- **harbor_village** 해안 정체성: fishermans_bow/composite_bow/tide_staff/
+  storm_armor/storm_robe/storm_ring/storm_boots + 기존 해양 소모품.
+- **mountain_refuge** 설원·화산 고티어: frostfang_staff/frost_armor/flame_armor/
+  frost_robe/glacier_boots/flame_boots/fire_ring/ice_ring + 기존 저항 소모품.
+- 전 추가 품목 Price>0 (Price=0 = 드랍/퀘스트 전용이라 상점 제외). 전 .tres 기존
+  자산, 신규 PNG 없음. validate.py(uid·경로)·balance·build·test·diff green.
+
+### 알려진 데이터 갭 (Priority A 후속 TODO, 본 패스 범위 밖)
+- **법사 중티어 무기 부재**: starter_staff(Lv1 기증, +1dmg)와 rare
+  frostfang/tide_staff(≈Lv11+, 1000g) 사이 *완성된* 지팡이 없음. wooden/
+  frost/nature/crystal/shadow_staff 전부 "밸런스 미정" placeholder(Bonus 무).
+  town이 과거 판매하던 staff는 rare frostfang/tide(올바르게 harbor/mountain
+  으로 이전)뿐 → 회귀 아님. 법사는 스킬 중심이라 영향 완화. **수정엔 스탯
+  밸런싱 설계 필요(컨텐츠 기획) → 보류·문서화.**
+- **활 아이콘 미스매치(cosmetic, P3)**: long_bow→phoenix_bow.png,
+  fishermans_bow→winter_bow.png. 올바른 long_bow.png/fishermans_bow.png
+  미존재 → 신규 PNG 금지 규칙상 보류. 카테고리(활→활)는 일치라 저심각.
+
+### v2 핫픽스 (Codex 어드버서리얼 리뷰 후속)
+- **[P1] 활 진열 누락 수정**: `hunter_bow`/`composite_bow`는 `IsShopBlocked=true`(드랍 전용)
+  라 ShopUI line 103에서 제외됨. outpost 무구상에서 `hunter_bow` 제거(중티어 활 후보 부재
+  → 외피상 warrior-leaning 정체성으로 정착), harbor에서 `composite_bow` 제거(coast 궁수는
+  `fishermans_bow`만 유지). 대신 **mountain에 `winter_bow`(서리)·`phoenix_bow`(불) 추가**
+  — 둘 다 IsShopBlocked 미설정, Rarity 2, 설원·화산 테마 정합. 결과: 활 진행 동선
+  town `long_bow`(rar1) → harbor `fishermans_bow`(rar1) → mountain `winter_bow`/`phoenix_bow`(rar2).
+- **[P2] 클래스 필터를 무기 외 장비로 확장**: `ShopUI.RefreshBuyTab`의
+  `item.Type == ItemType.Weapon && !item.AvailableToAllClasses` → `!item.AvailableToAllClasses`.
+  방어구/장신구도 `RequiredClass`+`AvailableToAllClasses=false`라면 동일 직업에만 진열.
+  소모품·공용 장신구(`AvailableToAllClasses=true` 기본)는 영향 없음.
+  방지 효과: 법사가 plate armor 못 입는데 살 수 있던 데드 골드 지출 차단.
+- **[P3] 레시피 골드 비용 규칙**: gold ≥ 결과물 판매가 총합 = "제작은 사용용, 되팔아 차익
+  금지". v2 신규 2건 보정: `town_leather_armor` 40→100G(leather_armor sell 75 ≤ 100),
+  `town_field_remedy` 20→60G(health_potion×2 sell 50 ≤ 60). recipes.json `_rule` 키로 명시.

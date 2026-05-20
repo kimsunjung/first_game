@@ -86,7 +86,7 @@ TargetSpawnPosition = Vector2(80, 360)
 [node name="PortalToHarborVillage" parent="." instance=ExtResource("9_portal")]
 position = Vector2(60, 520)
 TargetScenePath = "res://Scenes/Maps/harbor_village.tscn"
-TargetSpawnPosition = Vector2(80, 180)
+TargetSpawnPosition = Vector2(320, 200)
 DestinationName = "항구마을"
 
 [node name="PortalToRuinedCrossroad" parent="." instance=ExtResource("9_portal")]

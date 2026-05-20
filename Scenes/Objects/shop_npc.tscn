@@ -28,6 +28,7 @@
 [ext_resource type="Resource" uid="uid://wpn_fishbow01" path="res://Resources/Items/fishermans_bow.tres" id="25_fishbow"]
 [ext_resource type="Resource" uid="uid://wpn_froststaff01" path="res://Resources/Items/frostfang_staff.tres" id="26_frostfang"]
 [ext_resource type="Resource" uid="uid://wpn_tidestaff01" path="res://Resources/Items/tide_staff.tres" id="27_tide"]
+[ext_resource type="Resource" uid="uid://itm_robe_app_001" path="res://Resources/Items/apprentice_robe.tres" id="28_approbe"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_shop"]
 radius = 40.0
@@ -40,8 +41,8 @@ collision_layer = 1
 collision_mask = 1
 script = ExtResource("1_shop")
 PromptIcon = ExtResource("prompt_icon")
-ShopItems = Array[Resource]([ExtResource("5_sword"), ExtResource("6_steelsword"), ExtResource("7_axe"), ExtResource("8_spear"), ExtResource("24_longbow"), ExtResource("25_fishbow"), ExtResource("26_frostfang"), ExtResource("27_tide"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("11_steel"), ExtResource("12_ring"), ExtResource("13_wolf"), ExtResource("14_amulet"), ExtResource("15_shadow"), ExtResource("17_lcap"), ExtResource("18_ihelm"), ExtResource("19_lboots"), ExtResource("20_iboots"), ExtResource("21_bbrace"), ExtResource("22_sbrace")])
-ShopName = "무기/방어구 상점"
+ShopItems = Array[Resource]([ExtResource("5_sword"), ExtResource("8_spear"), ExtResource("7_axe"), ExtResource("24_longbow"), ExtResource("28_approbe"), ExtResource("9_armor"), ExtResource("10_leather"), ExtResource("17_lcap"), ExtResource("18_ihelm"), ExtResource("19_lboots"), ExtResource("20_iboots"), ExtResource("12_ring"), ExtResource("21_bbrace"), ExtResource("13_wolf")])
+ShopName = "기본 장비 상점"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_shop")

@@ -79,7 +79,7 @@ DestinationName = "고블린 숲"
 [node name="PortalToFieldOutpost" parent="." instance=ExtResource("9_portal")]
 position = Vector2(1230, 360)
 TargetScenePath = "res://Scenes/Maps/field_outpost.tscn"
-TargetSpawnPosition = Vector2(80, 180)
+TargetSpawnPosition = Vector2(560, 180)
 DestinationName = "전초기지"
 
 [node name="EnemySpawner" type="Node2D" parent="."]

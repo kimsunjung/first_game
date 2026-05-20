@@ -92,6 +92,23 @@
         { "path": "res://Resources/Items/mithril_ore.tres", "qty": 1 }
       ],
       "result": { "path": "res://Resources/Items/prismatic_crystal.tres", "qty": 1 }
+    },
+    {
+      "_rule": "제작 비용 규칙: gold ≥ 결과물 판매가 총합 (제작은 사용용 — 즉시 되팔아 차익 금지)",
+      "id": "town_leather_armor",
+      "name": "거친 가죽 갑옷 제작",
+      "desc": "마을 권역 사냥으로 모은 오크 가죽으로 기본 가죽 갑옷을 확정 제작. (판매가 75G ≤ 비용 100G)",
+      "gold": 100,
+      "materials": [ { "path": "res://Resources/Items/orc_leather.tres", "qty": 5 } ],
+      "result": { "path": "res://Resources/Items/leather_armor.tres", "qty": 1 }
+    },
+    {
+      "id": "town_field_remedy",
+      "name": "사냥 구급낭 제작",
+      "desc": "오크 가죽을 손질해 회복약 2개를 확정 제작. (판매가 50G ≤ 비용 60G)",
+      "gold": 60,
+      "materials": [ { "path": "res://Resources/Items/orc_leather.tres", "qty": 3 } ],
+      "result": { "path": "res://Resources/Items/health_potion.tres", "qty": 2 }
     }
   ]
 }
